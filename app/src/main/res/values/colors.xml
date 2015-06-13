@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <color name="primary">@color/teal_500</color>
+    <color name="primary_dark">@color/teal_600</color>
+    <!--<color name="accent">@color/teal_800</color>-->
+    <color name="accent">#f04155</color>
+    <color name="control_normal">@color/teal_800</color>
+    <color name="control_highlight">@color/teal_700</color>
+    <color name="control_activated">@color/teal_500</color>
+
+    <!--<color name="window_background">#FFF5F5F5</color>-->
+
+    <!--<color name="semi_subtle_soundcloud">#FFAA80</color>-->
+    <!--<color name="subtle_soundcloud">#FFEEE6</color>-->
+    <color name="debug_yellow">#ffff00</color>
+    <color name="debug_red">#ff0000</color>
+    <color name="debug_blue">#0000ff</color>
+
+
+    <color name="transparent_black_five">#0D000000</color>
+    <color name="transparent_black_ten">#1A000000</color>
+    <color name="transparent_black_twenty">#33000000</color>
+    <color name="transparent_black_forty">#66000000</color>
+    <color name="transparent_black_fifty">#80000000</color>
+    <color name="transparent_black_sixty">#99000000</color>
+    <color name="transparent_black_seventy">#B3000000</color>
+    <color name="transparent_black_eighty">#CC000000</color>
+    <color name="transparent_black_ninty">#E6000000</color>
+    <color name="transparent_black_ninty_five">#F2000000</color>
+
+</resources>

@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="horizontal"
+    android:id="@+id/video_row_root_ll"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:padding="16dp"
+    android:background="?android:attr/selectableItemBackground">
+
+    <RelativeLayout
+        android:layout_width="144dp"
+        android:layout_height="96dp">
+
+        <ImageView
+            android:id="@+id/video_thumbnail_iv"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:transitionName="videoTransition"
+            android:scaleType="centerCrop"
+            android:background="?colorPrimary"/>
+
+        <com.etiennelawlor.loop.ui.CustomFontTextView
+            android:id="@+id/duration_tv"
+            android:layout_alignParentBottom="true"
+            android:layout_alignParentRight="true"
+            android:layout_margin="8dp"
+            android:background="@color/transparent_black_seventy"
+            android:padding="4dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="@android:color/white"
+            tools:text="Duration"
+            android:textSize="14sp"
+            app:textFont="Roboto_Regular"/>
+
+    </RelativeLayout>
+
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:layout_marginLeft="16dp">
+
+
+        <com.etiennelawlor.loop.ui.CustomFontTextView
+            android:id="@+id/title_tv"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="@color/grey_700"
+            android:transitionName="titleTransition"
+            tools:text="Video Title"
+            android:maxLines="2"
+            android:ellipsize="end"
+            android:textSize="16sp"
+            app:textFont="Roboto_Medium"/>
+
+        <com.etiennelawlor.loop.ui.CustomFontTextView
+            android:id="@+id/subtitle_tv"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="@color/grey_600"
+            android:transitionName="subtitleTransition"
+            tools:text="Video Subtitle"
+            android:maxLines="5"
+            android:ellipsize="end"
+            android:textSize="14sp"
+            app:textFont="Roboto_Regular"/>
+
+        <com.etiennelawlor.loop.ui.CustomFontTextView
+            android:id="@+id/uploaded_date_tv"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="@color/grey_600"
+            android:transitionName="uploadedTransition"
+            tools:text="Uploaded date"
+            android:textSize="14sp"
+            android:layout_marginTop="8dp"
+            app:textFont="Roboto_Regular"/>
+
+
+    </LinearLayout>
+
+
+</LinearLayout>

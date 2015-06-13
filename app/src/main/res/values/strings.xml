@@ -1,0 +1,24 @@
+<resources>
+    <string name="app_name">Loop</string>
+    <!--<string name="loading">Loading...</string>-->
+    <!--<string name="file_not_found">File not found</string>-->
+    <!--<string name="likes">Likes</string>-->
+    <!--<string name="no_liked_tracks">No Liked Tracks</string>-->
+
+    <string name="drawer_open">Open navigation drawer</string>
+    <string name="drawer_close">Close navigation drawer</string>
+    <string name="snowboarding">Snowboarding</string>
+    <string name="skateboarding">Skateboarding</string>
+    <string name="surfing">Surfing</string>
+    <string name="wind_surfing">Wind Surfing</string>
+    <string name="bodyboarding">Bodyboarding</string>
+    <string name="skiing">Skiing</string>
+    <string name="bmx">BMX</string>
+    <string name="motocross">Motocross</string>
+
+    <string name="email_subject">Loop Support</string>
+    <string name="email_message">Please describe the issue you are having here.</string>
+    <string name="support_email">lawloretienne@gmail.com</string>
+    <string name="platform">Phone</string>
+
+</resources>

@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <declare-styleable name="CustomFontTextView">
+        <attr name="textFont" format="enum">
+            <enum name="Roboto_Black" value="0" />
+            <enum name="Roboto_BlackItalic" value="1" />
+            <enum name="Roboto_Bold" value="2" />
+            <enum name="Roboto_BoldItalic" value="3" />
+            <enum name="Roboto_Italic" value="4" />
+            <enum name="Roboto_Light" value="5" />
+            <enum name="Roboto_LightItalic" value="6" />
+            <enum name="Roboto_Medium" value="7" />
+            <enum name="Roboto_MediumItalic" value="8" />
+            <enum name="Roboto_Regular" value="9" />
+            <enum name="Roboto_Thin" value="10" />
+            <enum name="Roboto_ThinItalic" value="11" />
+            <enum name="RobotoCondensed_Bold" value="12" />
+            <enum name="RobotoCondensed_BoldItalic" value="13" />
+            <enum name="RobotoCondensed_Italic" value="14" />
+            <enum name="RobotoCondensed_Light" value="15" />
+            <enum name="RobotoCondensed_LightItalic" value="16" />
+            <enum name="RobotoCondensed_Regular" value="17" />
+        </attr>
+    </declare-styleable>
+
+    <!--<declare-styleable name="ScrimInsetsView">-->
+        <!--<attr name="insetForeground" format="reference|color" />-->
+    <!--</declare-styleable>-->
+
+    <!--<declare-styleable name="RoundedImageView">-->
+        <!--<attr name="corner_radius" format="dimension" />-->
+        <!--<attr name="border_width" format="dimension" />-->
+        <!--<attr name="border_color" format="color" />-->
+        <!--<attr name="round_background" format="boolean" />-->
+        <!--<attr name="is_oval" format="boolean" />-->
+        <!--<attr name="android:scaleType" />-->
+    <!--</declare-styleable>-->
+
+</resources>

@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.v7.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+    <FrameLayout
+        android:id="@+id/category_card_root_fl"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:foreground="?android:attr/selectableItemBackground">
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <FrameLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:foreground="@color/transparent_black_forty">
+
+                <com.etiennelawlor.loop.ui.DynamicHeightImageView
+                    android:id="@+id/thumbnail_iv"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"/>
+            </FrameLayout>
+
+            <TextView
+                android:id="@+id/title_tv"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_centerInParent="true"
+                android:gravity="center"
+                android:text="Comedy"
+                android:textColor="@android:color/white"
+                android:textSize="16sp"
+                android:shadowDy="1"
+                android:shadowDx="1"
+                android:shadowRadius="1"
+                android:shadowColor="@color/transparent_black_ninty_five"/>
+
+        </RelativeLayout>
+
+    </FrameLayout>
+
+</android.support.v7.widget.CardView>

@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <style name="DialogTheme" parent="Theme.AppCompat.Light.Dialog">
+        <item name="colorPrimary">@color/primary</item>
+        <item name="colorPrimaryDark">@color/primary_dark</item>
+        <item name="colorAccent">@color/accent</item>
+        <item name="colorControlNormal">@color/control_normal</item>
+        <item name="colorControlActivated">@color/control_activated</item>
+        <item name="colorControlHighlight">@color/control_highlight</item>
+    </style>
+
+    <style name="PopupMenuStyle" parent="Theme.AppCompat.Light"/>
+
+    <!--&lt;!&ndash; Misc &ndash;&gt;-->
+    <!--<style name="TabIndicator" />-->
+
+    <!--<style name="ActionBarThemeOverlay" parent="">-->
+        <!--<item name="android:textColorPrimary">@android:color/white</item>-->
+        <!--<item name="colorControlHighlight">#3fff</item>-->
+    <!--</style>-->
+
+</resources>

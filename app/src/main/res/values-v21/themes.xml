@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <style name="Theme.Loop" parent="Base.Theme.Loop">
+        <item name="android:windowDrawsSystemBarBackgrounds">true</item>
+        <item name="android:windowContentTransitions">true</item>
+        <item name="android:windowAllowReturnTransitionOverlap">false</item>
+    </style>
+
+    <style name="Theme.MainActivity" parent="@style/Theme.Loop">
+        <item name="android:statusBarColor">@android:color/transparent</item>
+    </style>
+
+</resources>

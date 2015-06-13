@@ -1,0 +1,245 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<android.support.v4.widget.DrawerLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/drawer_layout"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:fitsSystemWindows="true">
+
+    <!--<LinearLayout-->
+        <!--android:layout_width="match_parent"-->
+        <!--android:layout_height="wrap_content"-->
+        <!--android:orientation="vertical">-->
+
+        <!--&lt;!&ndash; Toolbar &ndash;&gt;-->
+        <!--<include layout="@layout/toolbar"/>-->
+
+        <!--<FrameLayout-->
+            <!--android:layout_width="match_parent"-->
+            <!--android:layout_height="match_parent">-->
+
+            <!--<FrameLayout-->
+                <!--android:id="@+id/content_fl"-->
+                <!--android:layout_width="match_parent"-->
+                <!--android:layout_height="match_parent"/>-->
+
+            <!--<View-->
+                <!--android:layout_width="match_parent"-->
+                <!--android:layout_height="8dp"-->
+                <!--android:background="@drawable/view_dropshadow" />-->
+
+        <!--</FrameLayout>-->
+
+    <!--</LinearLayout>-->
+
+    <include layout="@layout/include_list_viewpager"/>
+
+    <FrameLayout
+        android:id="@+id/content_fl"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1">
+
+    </FrameLayout>
+
+    <android.support.design.widget.NavigationView
+        android:id="@+id/nav_view"
+        android:layout_height="match_parent"
+        android:layout_width="wrap_content"
+        android:layout_gravity="start"
+        android:fitsSystemWindows="true"
+        app:headerLayout="@layout/nav_header"
+        app:menu="@menu/drawer_view"/>
+
+
+
+    <!--<com.etiennelawlor.loop.ui.ScrimInsetsFrameLayout-->
+        <!--android:layout_width="304dp"-->
+        <!--android:layout_height="match_parent"-->
+        <!--android:id="@+id/left_drawer"-->
+        <!--android:layout_gravity="left"-->
+        <!--android:elevation="10dp"-->
+        <!--android:fitsSystemWindows="true"-->
+        <!--app:insetForeground="#4000">-->
+
+        <!--<ScrollView-->
+            <!--android:layout_width="match_parent"-->
+            <!--android:layout_height="match_parent"-->
+            <!--android:orientation="vertical"-->
+            <!--android:background="@android:color/white"-->
+            <!--android:scrollbarThumbVertical="@color/grey_400"-->
+            <!--android:scrollbarSize="3dp"-->
+            <!--android:scrollbarStyle="outsideOverlay">-->
+
+            <!--&lt;!&ndash;android:layout_marginRight="?actionBarSize"&ndash;&gt;-->
+
+            <!--<LinearLayout-->
+                <!--android:layout_width="match_parent"-->
+                <!--android:layout_height="wrap_content"-->
+                <!--android:orientation="vertical">-->
+
+                <!--&lt;!&ndash;<RelativeLayout&ndash;&gt;-->
+                    <!--&lt;!&ndash;android:background="@drawable/md_wallpaper5"&ndash;&gt;-->
+                    <!--&lt;!&ndash;android:layout_width="match_parent"&ndash;&gt;-->
+                    <!--&lt;!&ndash;android:layout_height="168dp"&ndash;&gt;-->
+                    <!--&lt;!&ndash;android:paddingTop="40dp"&ndash;&gt;-->
+                    <!--&lt;!&ndash;android:layout_marginBottom="8dp">&ndash;&gt;-->
+
+                    <!--&lt;!&ndash;&lt;!&ndash;android:background="@color/shopsavvy_green"&ndash;&gt;&ndash;&gt;-->
+
+                    <!--&lt;!&ndash;<FrameLayout&ndash;&gt;-->
+                        <!--&lt;!&ndash;android:id="@+id/nav_drawer_fl"&ndash;&gt;-->
+                        <!--&lt;!&ndash;android:layout_width="match_parent"&ndash;&gt;-->
+                        <!--&lt;!&ndash;android:layout_height="56dp"&ndash;&gt;-->
+                        <!--&lt;!&ndash;android:layout_alignParentBottom="true">&ndash;&gt;-->
+
+                        <!--&lt;!&ndash;<LinearLayout&ndash;&gt;-->
+                            <!--&lt;!&ndash;android:id="@+id/user_info_ll"&ndash;&gt;-->
+                            <!--&lt;!&ndash;android:layout_width="match_parent"&ndash;&gt;-->
+                            <!--&lt;!&ndash;android:layout_height="match_parent"&ndash;&gt;-->
+                            <!--&lt;!&ndash;android:orientation="vertical"&ndash;&gt;-->
+                            <!--&lt;!&ndash;android:paddingLeft="16dp"&ndash;&gt;-->
+                            <!--&lt;!&ndash;android:paddingRight="16dp"&ndash;&gt;-->
+                            <!--&lt;!&ndash;android:layout_marginBottom="8dp"&ndash;&gt;-->
+                            <!--&lt;!&ndash;android:gravity="center_vertical"&ndash;&gt;-->
+                            <!--&lt;!&ndash;android:visibility="gone">&ndash;&gt;-->
+
+                            <!--&lt;!&ndash;<com.etiennelawlor.loop.ui.CustomFontTextView&ndash;&gt;-->
+                                <!--&lt;!&ndash;android:id="@+id/full_name_tv"&ndash;&gt;-->
+                                <!--&lt;!&ndash;android:layout_width="wrap_content"&ndash;&gt;-->
+                                <!--&lt;!&ndash;android:layout_height="wrap_content"&ndash;&gt;-->
+                                <!--&lt;!&ndash;android:gravity="center_vertical"&ndash;&gt;-->
+                                <!--&lt;!&ndash;android:singleLine="true"&ndash;&gt;-->
+                                <!--&lt;!&ndash;android:textSize="14sp"&ndash;&gt;-->
+                                <!--&lt;!&ndash;android:textColor="@android:color/white"&ndash;&gt;-->
+                                <!--&lt;!&ndash;app:textFont="Roboto_Medium"/>&ndash;&gt;-->
+
+                            <!--&lt;!&ndash;<com.etiennelawlor.loop.ui.CustomFontTextView&ndash;&gt;-->
+                                <!--&lt;!&ndash;android:id="@+id/email_tv"&ndash;&gt;-->
+                                <!--&lt;!&ndash;android:layout_width="wrap_content"&ndash;&gt;-->
+                                <!--&lt;!&ndash;android:layout_height="wrap_content"&ndash;&gt;-->
+                                <!--&lt;!&ndash;android:gravity="center_vertical"&ndash;&gt;-->
+                                <!--&lt;!&ndash;android:singleLine="true"&ndash;&gt;-->
+                                <!--&lt;!&ndash;android:textSize="14sp"&ndash;&gt;-->
+                                <!--&lt;!&ndash;android:textColor="@android:color/white"&ndash;&gt;-->
+                                <!--&lt;!&ndash;app:textFont="Roboto_Regular"/>&ndash;&gt;-->
+
+                        <!--&lt;!&ndash;</LinearLayout>&ndash;&gt;-->
+
+                        <!--&lt;!&ndash;<com.etiennelawlor.loop.ui.CustomFontTextView&ndash;&gt;-->
+                            <!--&lt;!&ndash;android:id="@+id/login_tv"&ndash;&gt;-->
+                            <!--&lt;!&ndash;android:layout_width="match_parent"&ndash;&gt;-->
+                            <!--&lt;!&ndash;android:layout_height="48dp"&ndash;&gt;-->
+                            <!--&lt;!&ndash;android:gravity="center_vertical"&ndash;&gt;-->
+                            <!--&lt;!&ndash;android:textSize="14sp"&ndash;&gt;-->
+                            <!--&lt;!&ndash;android:drawablePadding="40dp"&ndash;&gt;-->
+                            <!--&lt;!&ndash;android:paddingLeft="16dp"&ndash;&gt;-->
+                            <!--&lt;!&ndash;android:paddingRight="16dp"&ndash;&gt;-->
+                            <!--&lt;!&ndash;android:text="Sign Up or Log In"&ndash;&gt;-->
+                            <!--&lt;!&ndash;android:background="?android:attr/selectableItemBackground"&ndash;&gt;-->
+                            <!--&lt;!&ndash;android:textColor="@android:color/white"&ndash;&gt;-->
+                            <!--&lt;!&ndash;app:textFont="Roboto_Medium"&ndash;&gt;-->
+                            <!--&lt;!&ndash;android:visibility="gone"/>&ndash;&gt;-->
+
+                        <!--&lt;!&ndash;&lt;!&ndash;android:drawableLeft="@drawable/ic_drawer_profile"&ndash;&gt;&ndash;&gt;-->
+
+                    <!--&lt;!&ndash;</FrameLayout>&ndash;&gt;-->
+
+                    <!--&lt;!&ndash;<de.hdodenhof.circleimageview.CircleImageView&ndash;&gt;-->
+                        <!--&lt;!&ndash;android:id="@+id/user_avatar_riv"&ndash;&gt;-->
+                        <!--&lt;!&ndash;android:layout_width="64dp"&ndash;&gt;-->
+                        <!--&lt;!&ndash;android:layout_height="64dp"&ndash;&gt;-->
+                        <!--&lt;!&ndash;android:scaleType="centerCrop"&ndash;&gt;-->
+                        <!--&lt;!&ndash;android:layout_marginLeft="16dp"&ndash;&gt;-->
+                        <!--&lt;!&ndash;android:layout_marginRight="16dp"&ndash;&gt;-->
+                        <!--&lt;!&ndash;android:layout_marginBottom="8dp"&ndash;&gt;-->
+                        <!--&lt;!&ndash;android:src="@drawable/ic_loop"&ndash;&gt;-->
+                        <!--&lt;!&ndash;android:background="?colorPrimary"&ndash;&gt;-->
+                        <!--&lt;!&ndash;android:elevation="8dp"&ndash;&gt;-->
+                        <!--&lt;!&ndash;android:layout_above="@id/nav_drawer_fl"/>&ndash;&gt;-->
+
+                    <!--&lt;!&ndash;&lt;!&ndash;android:src="@drawable/ic_profile"&ndash;&gt;&ndash;&gt;-->
+
+
+                <!--&lt;!&ndash;</RelativeLayout>&ndash;&gt;-->
+
+                <!--&lt;!&ndash; Toolbar &ndash;&gt;-->
+                <!--<include layout="@layout/navigation_screens"/>-->
+
+                <!--&lt;!&ndash;<View android:layout_width="match_parent"&ndash;&gt;-->
+                    <!--&lt;!&ndash;android:layout_height="1px"&ndash;&gt;-->
+                    <!--&lt;!&ndash;android:layout_marginTop="8dp"&ndash;&gt;-->
+                    <!--&lt;!&ndash;android:layout_marginBottom="8dp"&ndash;&gt;-->
+                    <!--&lt;!&ndash;android:background="@color/gray11"/>&ndash;&gt;-->
+
+                <!--&lt;!&ndash;<RelativeLayout&ndash;&gt;-->
+                    <!--&lt;!&ndash;android:id="@+id/settings_rl"&ndash;&gt;-->
+                    <!--&lt;!&ndash;android:layout_width="match_parent"&ndash;&gt;-->
+                    <!--&lt;!&ndash;android:layout_height="48dp"&ndash;&gt;-->
+                    <!--&lt;!&ndash;android:paddingLeft="16dp"&ndash;&gt;-->
+                    <!--&lt;!&ndash;android:paddingRight="16dp"&ndash;&gt;-->
+                    <!--&lt;!&ndash;android:background="?android:attr/selectableItemBackground">&ndash;&gt;-->
+
+                    <!--&lt;!&ndash;<com.biggu.shopsavvy.view.CustomFontTextView&ndash;&gt;-->
+                        <!--&lt;!&ndash;android:text="Settings"&ndash;&gt;-->
+                        <!--&lt;!&ndash;android:layout_width="wrap_content"&ndash;&gt;-->
+                        <!--&lt;!&ndash;android:layout_height="match_parent"&ndash;&gt;-->
+                        <!--&lt;!&ndash;android:gravity="center_vertical"&ndash;&gt;-->
+                        <!--&lt;!&ndash;android:textSize="14sp"&ndash;&gt;-->
+                        <!--&lt;!&ndash;android:textColor="@android:color/black"&ndash;&gt;-->
+                        <!--&lt;!&ndash;app:textFont="Roboto_Medium"/>&ndash;&gt;-->
+
+                <!--&lt;!&ndash;</RelativeLayout>&ndash;&gt;-->
+
+                <!--&lt;!&ndash;<RelativeLayout&ndash;&gt;-->
+                    <!--&lt;!&ndash;android:id="@+id/feedback_rl"&ndash;&gt;-->
+                    <!--&lt;!&ndash;android:layout_width="match_parent"&ndash;&gt;-->
+                    <!--&lt;!&ndash;android:layout_height="48dp"&ndash;&gt;-->
+                    <!--&lt;!&ndash;android:paddingLeft="16dp"&ndash;&gt;-->
+                    <!--&lt;!&ndash;android:paddingRight="16dp"&ndash;&gt;-->
+                    <!--&lt;!&ndash;android:background="?android:attr/selectableItemBackground">&ndash;&gt;-->
+
+                    <!--&lt;!&ndash;<com.biggu.shopsavvy.view.CustomFontTextView&ndash;&gt;-->
+                        <!--&lt;!&ndash;android:text="Send Feedback"&ndash;&gt;-->
+                        <!--&lt;!&ndash;android:layout_width="wrap_content"&ndash;&gt;-->
+                        <!--&lt;!&ndash;android:layout_height="match_parent"&ndash;&gt;-->
+                        <!--&lt;!&ndash;android:gravity="center_vertical"&ndash;&gt;-->
+                        <!--&lt;!&ndash;android:textSize="14sp"&ndash;&gt;-->
+                        <!--&lt;!&ndash;android:textColor="@android:color/black"&ndash;&gt;-->
+                        <!--&lt;!&ndash;app:textFont="Roboto_Medium"/>&ndash;&gt;-->
+
+                <!--&lt;!&ndash;</RelativeLayout>&ndash;&gt;-->
+
+            <!--</LinearLayout>-->
+
+        <!--</ScrollView>-->
+
+    <!--</com.etiennelawlor.loop.ui.ScrimInsetsFrameLayout>-->
+
+</android.support.v4.widget.DrawerLayout>
+
+<!--<?xml version="1.0" encoding="utf-8"?>-->
+<!--<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"-->
+    <!--android:orientation="vertical"-->
+    <!--android:layout_width="match_parent"-->
+    <!--android:layout_height="match_parent">-->
+
+    <!--&lt;!&ndash; Toolbar &ndash;&gt;-->
+    <!--<include layout="@layout/toolbar"/>-->
+
+    <!--<FrameLayout-->
+        <!--android:id="@+id/content_fl"-->
+        <!--android:layout_width="match_parent"-->
+        <!--android:layout_height="0dp"-->
+        <!--android:layout_weight="1">-->
+
+        <!--<View-->
+            <!--android:layout_width="match_parent"-->
+            <!--android:layout_height="8dp"-->
+            <!--android:background="@drawable/view_dropshadow" />-->
+
+    <!--</FrameLayout>-->
+
+<!--</LinearLayout>-->

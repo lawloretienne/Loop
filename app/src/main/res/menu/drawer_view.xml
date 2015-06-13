@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <group android:id="@+id/group_1"
+        android:checkableBehavior="single">
+        <item
+            android:id="@+id/nav_watch_now"
+            android:icon="@drawable/ic_watch_now"
+            android:title="Watch Now"
+            android:checked="true"/>
+        <item
+            android:id="@+id/nav_favories"
+            android:icon="@drawable/ic_favorites"
+            android:title="Favorites" />
+        <item
+            android:id="@+id/nav_history"
+            android:icon="@drawable/ic_history"
+            android:title="History" />
+        <item
+            android:id="@+id/nav_explore"
+            android:icon="@drawable/ic_explore"
+            android:title="Explore" />
+    </group>
+
+    <group android:id="@+id/group_2">
+        <item
+            android:icon="@drawable/ic_settings"
+            android:title="Settings" />
+        <item
+            android:icon="@drawable/ic_help"
+            android:title="Help and Feedback" />
+    </group>
+
+</menu>

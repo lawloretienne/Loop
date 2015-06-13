@@ -1,0 +1,216 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:background="@color/grey_200">
+
+
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="203dp"
+        android:background="@android:color/black">
+
+        <VideoView
+            android:id="@+id/vv"
+            android:visibility="gone"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"/>
+
+        <ImageView
+            android:id="@+id/video_thumbnail_iv"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:transitionName="videoTransition"
+            android:scaleType="centerCrop"/>
+
+        <ProgressBar
+            android:id="@+id/pb"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:visibility="gone"/>
+
+    </FrameLayout>
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingTop="16dp"
+            android:paddingBottom="16dp"
+            android:orientation="vertical">
+
+            <!--<WebView-->
+            <!--android:id="@+id/wv"-->
+            <!--android:layout_width="match_parent"-->
+            <!--android:layout_height="240dp"/>-->
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="16dp"
+                android:layout_marginRight="16dp">
+
+                <com.etiennelawlor.loop.ui.CustomFontTextView
+                    android:id="@+id/title_tv"
+                    android:layout_alignParentLeft="true"
+                    android:layout_toLeftOf="@+id/action_iv"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textColor="@color/grey_700"
+                    android:transitionName="titleTransition"
+                    tools:text="Product Title"
+                    android:textSize="22sp"
+                    app:textFont="Roboto_Medium"/>
+
+                <com.etiennelawlor.loop.ui.CustomFontTextView
+                    android:id="@+id/view_count_tv"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@id/title_tv"
+                    android:textColor="@color/grey_600"
+                    tools:text="Views"
+                    android:textSize="16sp"
+                    app:textFont="Roboto_Regular"/>
+
+                <ImageView
+                    android:id="@id/action_iv"
+                    android:layout_marginLeft="16dp"
+                    android:padding="8dp"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:src="@drawable/ic_expand"
+                    android:background="?android:attr/selectableItemBackground"
+                    android:layout_alignParentRight="true"/>
+
+            </RelativeLayout>
+
+            <LinearLayout
+                android:id="@+id/additional_info_ll"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="16dp"
+                android:layout_marginRight="16dp"
+                android:layout_marginTop="16dp"
+                android:visibility="gone"
+                android:orientation="vertical">
+
+                <com.etiennelawlor.loop.ui.CustomFontTextView
+                    android:id="@+id/description_tv"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textColor="@color/grey_600"
+                    tools:text="Description"
+                    android:textSize="14sp"
+                    app:textFont="Roboto_Regular"/>
+
+                <com.etiennelawlor.loop.ui.CustomFontTextView
+                    android:id="@+id/tags_tv"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textColor="@color/grey_600"
+                    tools:text="Tags"
+                    android:textSize="14sp"
+                    android:layout_marginTop="8dp"
+                    app:textFont="Roboto_MediumItalic"/>
+
+            </LinearLayout>
+
+            <View android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="@color/grey_400"
+                android:layout_marginTop="16dp"
+                android:layout_marginBottom="16dp"/>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_marginLeft="16dp"
+                android:layout_marginRight="16dp">
+
+                <ImageView
+                    android:id="@+id/user_iv"
+                    android:scaleType="centerCrop"
+                    android:layout_width="72dp"
+                    android:layout_height="72dp"
+                    android:background="?colorPrimary"/>
+
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="72dp"
+                    android:layout_marginLeft="16dp"
+                    android:orientation="vertical"
+                    android:gravity="center_vertical">
+
+                    <com.etiennelawlor.loop.ui.CustomFontTextView
+                        android:id="@+id/subtitle_tv"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textColor="@color/grey_600"
+                        android:transitionName="subtitleTransition"
+                        tools:text="Video Subtitle"
+                        android:maxLines="5"
+                        android:ellipsize="end"
+                        android:textSize="18sp"
+                        app:textFont="Roboto_Medium"/>
+
+
+                    <com.etiennelawlor.loop.ui.CustomFontTextView
+                        android:id="@+id/upload_date_tv"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textColor="@color/grey_600"
+                        tools:text="Upload date"
+                        android:textSize="14sp"
+                        app:textFont="Roboto_Regular"/>
+
+                </LinearLayout>
+            </LinearLayout>
+
+            <View android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="@color/grey_400"
+                android:layout_marginTop="16dp"
+                android:layout_marginBottom="16dp"/>
+
+            <!--<com.etiennelawlor.loop.ui.CustomFontTextView-->
+                <!--android:layout_width="wrap_content"-->
+                <!--android:layout_height="wrap_content"-->
+                <!--android:textColor="@color/grey_600"-->
+                <!--tools:text="Tags"-->
+                <!--android:text="Before Recylerview"-->
+                <!--android:textSize="14sp"-->
+                <!--android:layout_marginTop="8dp"-->
+                <!--app:textFont="Roboto_Regular"/>-->
+
+            <!--&lt;!&ndash;<include layout="@layout/videos_section" />&ndash;&gt;-->
+
+            <!--<android.support.v7.widget.RecyclerView-->
+                <!--android:id="@+id/videos_rv"-->
+                <!--android:layout_width="match_parent"-->
+                <!--android:layout_height="10000dp"/>-->
+
+            <!--<com.etiennelawlor.loop.ui.CustomFontTextView-->
+                <!--android:layout_width="wrap_content"-->
+                <!--android:layout_height="wrap_content"-->
+                <!--android:textColor="@color/grey_600"-->
+                <!--tools:text="Tags"-->
+                <!--android:text="After Recylerview"-->
+                <!--android:textSize="14sp"-->
+                <!--android:layout_marginTop="8dp"-->
+                <!--app:textFont="Roboto_Regular"/>-->
+
+        </LinearLayout>
+
+    </ScrollView>
+
+
+</LinearLayout>

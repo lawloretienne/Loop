@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string-array name="sort_by_keys">
+        <item>Relevancy</item>
+        <item>Date</item>
+        <item>Views</item>
+        <item>Duration</item>
+    </string-array>
+
+    <string-array name="sort_by_values">
+        <item>relevant</item>
+        <item>date</item>
+        <item>plays</item>
+        <item>duration</item>
+    </string-array>
+
+    <string-array name="sort_order_keys">
+        <item>Ascending</item>
+        <item>Descending</item>
+    </string-array>
+
+    <string-array name="sort_order_values">
+        <item>asc</item>
+        <item>desc</item>
+    </string-array>
+
+    <!-- Nav Drawer Menu Items -->
+    <string-array name="navigation_drawer_items_array">
+        <item>Bodyboarding</item>
+        <item>Surfing</item>
+        <item>Wind Surfing</item>
+        <item>Snowboarding</item>
+        <item>Skiing</item>
+        <item>Skateboarding</item>
+        <item>BMX</item>
+        <item>Motocross</item>
+    </string-array>
+
+    <string-array name="category_thumbnails">
+        <item>https://i.vimeocdn.com/video/489450592_590x332.webp</item> // Animation
+        <item>https://i.vimeocdn.com/video/522388097_590x332.webp</item> // Arts &amp; Design
+        <item>https://i.vimeocdn.com/video/521216476_590x332.webp</item> // Cameras &amp; Techniques
+        <item>https://i.vimeocdn.com/video/505115949_590x332.webp</item> // Comedy
+        <item>https://i.vimeocdn.com/video/522388097_590x332.webp</item> // Documentary
+        <item>https://i.vimeocdn.com/video/521416403_590x332.webp</item> // Experimental
+        <item>https://i.vimeocdn.com/video/511840628_590x332.webp</item> // Fashion
+        <item>https://i.vimeocdn.com/video/499682949_590x332.webp</item> // Food
+        <item>https://i.vimeocdn.com/video/519968501_590x332.webp</item> // Instructionals
+        <item>https://i.vimeocdn.com/video/506114043_590x332.webp</item> // Music
+        <item>https://i.vimeocdn.com/video/505115949_590x332.webp</item> // Narrative
+        <item>https://i.vimeocdn.com/video/507944652_590x332.webp</item> // Personal
+        <item>https://i.vimeocdn.com/video/522329039_590x332.webp</item> // Reporting &amp; Journalism
+        <item>https://i.vimeocdn.com/video/520947638_590x332.webp</item> // Sports
+        <item>https://i.vimeocdn.com/video/521630399_590x332.webp</item> // Talks
+        <item>https://i.vimeocdn.com/video/521775952_590x332.webp</item> // Travel
+    </string-array>
+
+    <!--<item>Settings</item>-->
+    <!--<item>Send Feedback</item>-->
+
+</resources>
