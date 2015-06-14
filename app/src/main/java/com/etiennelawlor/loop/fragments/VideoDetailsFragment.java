@@ -1,9 +1,11 @@
 package com.etiennelawlor.loop.fragments;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.media.MediaPlayer;
 import android.net.Uri;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.ActivityOptionsCompat;
 import android.support.v4.util.Pair;
@@ -22,8 +24,9 @@ import android.widget.VideoView;
 import com.etiennelawlor.loop.R;
 import com.etiennelawlor.loop.activities.VideoDetailsActivity;
 import com.etiennelawlor.loop.adapters.VideosAdapter;
-import com.etiennelawlor.loop.network.Api;
-import com.etiennelawlor.loop.network.EndpointUrl;
+import com.etiennelawlor.loop.network.ServiceGenerator;
+import com.etiennelawlor.loop.network.VimeoPlayerService;
+import com.etiennelawlor.loop.network.models.AccessToken;
 import com.etiennelawlor.loop.network.models.Files;
 import com.etiennelawlor.loop.network.models.H264;
 import com.etiennelawlor.loop.network.models.Pictures;
@@ -35,8 +38,8 @@ import com.etiennelawlor.loop.network.models.User;
 import com.etiennelawlor.loop.network.models.Video;
 import com.etiennelawlor.loop.network.models.VideoConfig;
 import com.etiennelawlor.loop.network.models.VideoFormat;
-import com.etiennelawlor.loop.network.models.VideosCollection;
 import com.etiennelawlor.loop.network.models.VideoWrapper;
+import com.etiennelawlor.loop.network.models.VideosCollection;
 import com.etiennelawlor.loop.otto.BusProvider;
 import com.etiennelawlor.loop.utilities.LoopUtility;
 import com.squareup.picasso.Picasso;
@@ -96,6 +99,7 @@ public class VideoDetailsFragment extends BaseFragment implements VideosAdapter.
     private boolean isExpanded = false;
     private Video mVideo;
     private VideosAdapter mVideosAdapter;
+    private VimeoPlayerService mVimeoPlayerService;
     // endregion
 
     // region Listeners
@@ -219,6 +223,16 @@ public class VideoDetailsFragment extends BaseFragment implements VideosAdapter.
             mVideo = (Video) getArguments().get("video");
         }
 
+        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getActivity().getApplicationContext());
+        String tokenType = sharedPreferences.getString(getString(R.string.token_type), "");
+        String accessToken = sharedPreferences.getString(getString(R.string.access_token), "");
+        AccessToken token = new AccessToken(tokenType, accessToken);
+
+        mVimeoPlayerService = ServiceGenerator.createService(
+                VimeoPlayerService.class,
+                VimeoPlayerService.BASE_URL,
+                token);
+
         Timber.d("");
 
     }
@@ -251,7 +265,7 @@ public class VideoDetailsFragment extends BaseFragment implements VideosAdapter.
                 String lastPathSegment = Uri.parse(uri).getLastPathSegment();
                 Long videoId = Long.parseLong(lastPathSegment);
 
-                Api.getService(EndpointUrl.VIMEO_PLAYER).getVideoConfig(videoId, mGetVideoConfigCallback);
+                mVimeoPlayerService.getVideoConfig(videoId, mGetVideoConfigCallback);
 
 //                final LinearLayoutManager layoutManager = new LinearLayoutManager(getActivity());
 //                mVideosRecyclerView.setLayoutManager(layoutManager);

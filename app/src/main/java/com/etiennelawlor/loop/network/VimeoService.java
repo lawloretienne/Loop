@@ -1,19 +1,19 @@
 package com.etiennelawlor.loop.network;
 
 import com.etiennelawlor.loop.network.models.CategoriesCollection;
-import com.etiennelawlor.loop.network.models.VideoConfig;
 import com.etiennelawlor.loop.network.models.VideosCollection;
 
 import retrofit.Callback;
-import retrofit.client.Response;
 import retrofit.http.GET;
 import retrofit.http.Path;
 import retrofit.http.Query;
 
 /**
- * Created by etiennelawlor on 5/23/15.
+ * Created by etiennelawlor on 6/14/15.
  */
-public interface Service {
+public interface VimeoService {
+
+    public static final String BASE_URL = "https://api.vimeo.com";
 
     @GET("/videos")
     void findVideos(@Query("query") String query,
@@ -28,10 +28,6 @@ public interface Service {
                             @Query("page") Integer page,
                             @Query("per_page") Integer perPage,
                             Callback<VideosCollection> cb);
-
-    @GET("/video/{videoId}/config")
-    void getVideoConfig(@Path("videoId") Long videoId,
-                        Callback<VideoConfig> cb);
 
     @GET("/categories")
     void getCategories(Callback<CategoriesCollection> cb);

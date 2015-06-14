@@ -56,6 +56,12 @@
         <item>https://i.vimeocdn.com/video/521775952_590x332.webp</item> // Travel
     </string-array>
 
+    <string-array name="scopes">
+        <item>public</item>
+        <item>private</item>
+        <item>interact</item>
+    </string-array>
+
     <!--<item>Settings</item>-->
     <!--<item>Send Feedback</item>-->
 

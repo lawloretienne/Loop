@@ -2,37 +2,22 @@ package com.etiennelawlor.loop.adapters;
 
 import android.content.Context;
 import android.support.v7.widget.RecyclerView;
-import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.etiennelawlor.loop.R;
 import com.etiennelawlor.loop.network.models.Category;
-import com.etiennelawlor.loop.network.models.Pictures;
-import com.etiennelawlor.loop.network.models.Size;
-import com.etiennelawlor.loop.network.models.Stats;
-import com.etiennelawlor.loop.network.models.User;
-import com.etiennelawlor.loop.network.models.Video;
-import com.etiennelawlor.loop.network.models.VideoWrapper;
 import com.etiennelawlor.loop.ui.DynamicHeightImageView;
-import com.etiennelawlor.loop.utilities.LoopUtility;
 import com.squareup.picasso.Picasso;
 
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Date;
 import java.util.List;
-import java.util.Locale;
 
 import butterknife.ButterKnife;
 import butterknife.InjectView;
 import butterknife.OnClick;
-import timber.log.Timber;
 
 /**
  * Created by etiennelawlor on 5/23/15.

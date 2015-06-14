@@ -21,4 +21,17 @@
     <string name="support_email">lawloretienne@gmail.com</string>
     <string name="platform">Phone</string>
 
+    <!--<string name="client_redirect_uri">urn:ietf:wg:oauth:2.0:oob</string>-->
+    <string name="client_redirect_uri">http://localhost</string>
+    <string name="vimeo_state">f9bsne76z8vs17cs</string>
+
+
+    <string name="token_type">token_type</string>
+    <string name="access_token">access_token</string>
+
+
+
+
+
+
 </resources>

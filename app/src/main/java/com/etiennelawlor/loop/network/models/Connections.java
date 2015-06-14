@@ -13,10 +13,10 @@ public class Connections implements Parcelable {
     // region Member Variables
     @SerializedName("comments")
     private Connection comments;
-    @SerializedName("credits")
-    private Connection credits;
-    @SerializedName("likes")
-    private Connection likes;
+//    @SerializedName("credits")
+//    private Connection credits;
+//    @SerializedName("likes")
+//    private Connection likes;
     @SerializedName("pictures")
     private Connection pictures;
     @SerializedName("texttracks")
@@ -29,13 +29,13 @@ public class Connections implements Parcelable {
         return comments;
     }
 
-    public Connection getCredits() {
-        return credits;
-    }
+//    public Connection getCredits() {
+//        return credits;
+//    }
 
-    public Connection getLikes() {
-        return likes;
-    }
+//    public Connection getLikes() {
+//        return likes;
+//    }
 
     public Connection getPictures() {
         return pictures;
@@ -52,13 +52,13 @@ public class Connections implements Parcelable {
         this.comments = comments;
     }
 
-    public void setCredits(Connection credits) {
-        this.credits = credits;
-    }
+//    public void setCredits(Connection credits) {
+//        this.credits = credits;
+//    }
 
-    public void setLikes(Connection likes) {
-        this.likes = likes;
-    }
+//    public void setLikes(Connection likes) {
+//        this.likes = likes;
+//    }
 
     public void setPictures(Connection pictures) {
         this.pictures = pictures;
@@ -78,8 +78,8 @@ public class Connections implements Parcelable {
     @Override
     public void writeToParcel(Parcel dest, int flags) {
         dest.writeParcelable(getComments(), flags);
-        dest.writeParcelable(getCredits(), flags);
-        dest.writeParcelable(getLikes(), flags);
+//        dest.writeParcelable(getCredits(), flags);
+//        dest.writeParcelable(getLikes(), flags);
         dest.writeParcelable(getPictures(), flags);
         dest.writeParcelable(getTexttracks(), flags);
     }
@@ -92,8 +92,8 @@ public class Connections implements Parcelable {
             Connections connections = new Connections();
 
             connections.setComments((Connection) source.readParcelable(Connection.class.getClassLoader()));
-            connections.setCredits((Connection) source.readParcelable(Connection.class.getClassLoader()));
-            connections.setLikes((Connection) source.readParcelable(Connection.class.getClassLoader()));
+//            connections.setCredits((Connection) source.readParcelable(Connection.class.getClassLoader()));
+//            connections.setLikes((Connection) source.readParcelable(Connection.class.getClassLoader()));
             connections.setPictures((Connection) source.readParcelable(Connection.class.getClassLoader()));
             connections.setTexttracks((Connection) source.readParcelable(Connection.class.getClassLoader()));
 

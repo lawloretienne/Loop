@@ -7,4 +7,9 @@
     <!--<string name="token">https://api.soundcloud.com/oauth2/token</string>-->
 
     <!--http://api.soundcloud.com/users/lawlorslaw.json?client_id=309011f9713d22ace9b976909ed34a80-->
+
+    <string name="client_id">705eec9a9b7607a334cf12de71a9a877f40db4a9</string>
+    <string name="client_secret">5a9871df0cd7ef3937afc8ac20ee53cf36104454</string>
+
+
 </resources>

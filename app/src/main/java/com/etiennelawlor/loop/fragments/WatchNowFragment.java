@@ -16,10 +16,8 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.etiennelawlor.loop.LoopApplication;
 import com.etiennelawlor.loop.R;
 import com.etiennelawlor.loop.otto.BusProvider;
-import com.squareup.leakcanary.RefWatcher;
 
 import java.util.ArrayList;
 import java.util.List;

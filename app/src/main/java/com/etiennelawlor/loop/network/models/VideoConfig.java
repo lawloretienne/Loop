@@ -2,8 +2,6 @@ package com.etiennelawlor.loop.network.models;
 
 import com.google.gson.annotations.SerializedName;
 
-import java.util.List;
-
 /**
  * Created by etiennelawlor on 5/23/15.
  */

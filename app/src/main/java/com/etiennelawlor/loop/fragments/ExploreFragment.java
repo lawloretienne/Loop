@@ -1,6 +1,8 @@
 package com.etiennelawlor.loop.fragments;
 
+import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.GridLayoutManager;
@@ -8,9 +10,6 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
-import android.view.Menu;
-import android.view.MenuInflater;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
@@ -20,10 +19,11 @@ import android.widget.TextView;
 import com.etiennelawlor.loop.R;
 import com.etiennelawlor.loop.adapters.CategoriesAdapter;
 import com.etiennelawlor.loop.animators.SlideInOutBottomItemAnimator;
-import com.etiennelawlor.loop.network.Api;
+import com.etiennelawlor.loop.network.ServiceGenerator;
+import com.etiennelawlor.loop.network.VimeoService;
+import com.etiennelawlor.loop.network.models.AccessToken;
 import com.etiennelawlor.loop.network.models.CategoriesCollection;
 import com.etiennelawlor.loop.network.models.Category;
-import com.etiennelawlor.loop.network.models.VideoWrapper;
 import com.etiennelawlor.loop.otto.BusProvider;
 import com.etiennelawlor.loop.ui.GridSpacesItemDecoration;
 import com.etiennelawlor.loop.utilities.LoopUtility;
@@ -35,6 +35,7 @@ import butterknife.InjectView;
 import retrofit.Callback;
 import retrofit.RetrofitError;
 import retrofit.client.Response;
+import retrofit.mime.TypedInput;
 import timber.log.Timber;
 
 /**
@@ -62,6 +63,7 @@ public class ExploreFragment extends BaseFragment implements CategoriesAdapter.O
     private boolean mIsLoading = false;
     private CategoriesAdapter mCategoriesAdapter;
     private LinearLayoutManager mLayoutManager;
+    private VimeoService mVimeoService;
     // endregion
 
     // region Listeners
@@ -92,6 +94,32 @@ public class ExploreFragment extends BaseFragment implements CategoriesAdapter.O
                 mIsLoading = false;
 
                 Timber.d("");
+
+                if(error != null){
+                    Response response = error.getResponse();
+                    if(response != null){
+                        String reason = response.getReason();
+                        Timber.d("failure() : reason -"+reason);
+
+                        TypedInput body = response.getBody();
+                        if(body != null){
+                            Timber.d("failure() : body.toString() -"+body.toString());
+                        }
+
+                        int status = response.getStatus();
+                        Timber.d("failure() : status -"+status);
+                    }
+
+                    Throwable cause = error.getCause();
+                    if(cause != null){
+                        Timber.d("failure() : cause.toString() -"+cause.toString());
+                    }
+
+                    Object body = error.getBody();
+                    if(body != null){
+                        Timber.d("failure() : body.toString() -"+body.toString());
+                    }
+                }
             }
         }
     };
@@ -125,6 +153,16 @@ public class ExploreFragment extends BaseFragment implements CategoriesAdapter.O
 //            mQuery = getArguments().getString("query");
         }
 
+        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getActivity().getApplicationContext());
+        String tokenType = sharedPreferences.getString(getString(R.string.token_type), "");
+        String accessToken = sharedPreferences.getString(getString(R.string.access_token), "");
+        AccessToken token = new AccessToken(tokenType, accessToken);
+
+        mVimeoService = ServiceGenerator.createService(
+                VimeoService.class,
+                VimeoService.BASE_URL,
+                token);
+
         setHasOptionsMenu(true);
     }
 
@@ -148,7 +186,6 @@ public class ExploreFragment extends BaseFragment implements CategoriesAdapter.O
         ab.setDisplayHomeAsUpEnabled(true);
         ab.setTitle("Explore");
 
-
 //        ((AppCompatActivity)getActivity()).getSupportActionBar().setTitle(mQuery);
 
         mLayoutManager = new GridLayoutManager(getActivity(), 2);
@@ -162,17 +199,7 @@ public class ExploreFragment extends BaseFragment implements CategoriesAdapter.O
 
         mCategoriesRecyclerView.setAdapter(mCategoriesAdapter);
 
-        // Pagination
-//        mVideosRecyclerView.addOnScrollListener(mRecyclerViewOnScrollListener);
-//
-//        Api.getService(Api.getEndpointUrl()).findVideos(mQuery,
-//                mSortByValue,
-//                mSortOrderValue,
-//                mCurrentPage,
-//                PAGE_SIZE,
-//                mFindVideosFirstFetchCallback);
-
-        Api.getService(Api.getEndpointUrl()).getCategories(mGetCategoriesCallback);
+        mVimeoService.getCategories(mGetCategoriesCallback);
     }
 
     @Override

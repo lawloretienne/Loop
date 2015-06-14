@@ -1,7 +1,6 @@
 package com.etiennelawlor.loop.activities;
 
 import android.os.Bundle;
-import android.support.v4.app.NavUtils;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
@@ -9,7 +8,6 @@ import android.view.MenuItem;
 
 import com.etiennelawlor.loop.R;
 import com.etiennelawlor.loop.fragments.VideoDetailsFragment;
-import com.etiennelawlor.loop.fragments.VideosFragment;
 
 import butterknife.ButterKnife;
 import butterknife.InjectView;

@@ -1,9 +1,10 @@
 package com.etiennelawlor.loop.fragments;
 
-import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.ActivityOptionsCompat;
 import android.support.v4.util.Pair;
@@ -24,10 +25,12 @@ import com.etiennelawlor.loop.R;
 import com.etiennelawlor.loop.activities.VideoDetailsActivity;
 import com.etiennelawlor.loop.adapters.VideosAdapter;
 import com.etiennelawlor.loop.animators.SlideInOutBottomItemAnimator;
-import com.etiennelawlor.loop.network.Api;
+import com.etiennelawlor.loop.network.ServiceGenerator;
+import com.etiennelawlor.loop.network.VimeoService;
+import com.etiennelawlor.loop.network.models.AccessToken;
 import com.etiennelawlor.loop.network.models.Video;
-import com.etiennelawlor.loop.network.models.VideosCollection;
 import com.etiennelawlor.loop.network.models.VideoWrapper;
+import com.etiennelawlor.loop.network.models.VideosCollection;
 import com.etiennelawlor.loop.otto.BusProvider;
 
 import java.util.List;
@@ -37,6 +40,7 @@ import butterknife.InjectView;
 import retrofit.Callback;
 import retrofit.RetrofitError;
 import retrofit.client.Response;
+import retrofit.mime.TypedInput;
 import timber.log.Timber;
 
 /**
@@ -60,7 +64,6 @@ public class VideosFragment extends BaseFragment implements VideosAdapter.OnItem
     @InjectView(R.id.error_tv)
     TextView mErrorTextView;
 
-    //    private int mStartIndex = 0;
     private int mCurrentPage = 1;
     private int mSelectedSortByKey = 0;
     private int mSelectedSortOrderKey = 1;
@@ -70,6 +73,7 @@ public class VideosFragment extends BaseFragment implements VideosAdapter.OnItem
     private VideosAdapter mVideosAdapter;
     private String mQuery;
     private LinearLayoutManager mLayoutManager;
+    private VimeoService mVimeoService;
     // endregion
 
     // region Listeners
@@ -119,6 +123,32 @@ public class VideosFragment extends BaseFragment implements VideosAdapter.OnItem
                 Timber.d("failure()");
                 mIsLoading = false;
                 mProgressBar.setVisibility(View.GONE);
+
+                if(error != null){
+                    Response response = error.getResponse();
+                    if(response != null){
+                        String reason = response.getReason();
+                        Timber.d("failure() : reason -"+reason);
+
+                        TypedInput body = response.getBody();
+                        if(body != null){
+                            Timber.d("failure() : body.toString() -"+body.toString());
+                        }
+
+                        int status = response.getStatus();
+                        Timber.d("failure() : status -"+status);
+                    }
+
+                    Throwable cause = error.getCause();
+                    if(cause != null){
+                        Timber.d("failure() : cause.toString() -"+cause.toString());
+                    }
+
+                    Object body = error.getBody();
+                    if(body != null){
+                        Timber.d("failure() : body.toString() -"+body.toString());
+                    }
+                }
             }
 
         }
@@ -185,6 +215,16 @@ public class VideosFragment extends BaseFragment implements VideosAdapter.OnItem
             mQuery = getArguments().getString("query");
         }
 
+        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getActivity().getApplicationContext());
+        String tokenType = sharedPreferences.getString(getString(R.string.token_type), "");
+        String accessToken = sharedPreferences.getString(getString(R.string.access_token), "");
+        AccessToken token = new AccessToken(tokenType, accessToken);
+
+        mVimeoService = ServiceGenerator.createService(
+                VimeoService.class,
+                VimeoService.BASE_URL,
+                token);
+
         setHasOptionsMenu(true);
     }
 
@@ -215,7 +255,7 @@ public class VideosFragment extends BaseFragment implements VideosAdapter.OnItem
         // Pagination
         mVideosRecyclerView.addOnScrollListener(mRecyclerViewOnScrollListener);
 
-        Api.getService(Api.getEndpointUrl()).findVideos(mQuery,
+        mVimeoService.findVideos(mQuery,
                 mSortByValue,
                 mSortOrderValue,
                 mCurrentPage,
@@ -290,11 +330,9 @@ public class VideosFragment extends BaseFragment implements VideosAdapter.OnItem
     private void loadMoreItems() {
         mIsLoading = true;
 
-//        mStartIndex += PAGE_SIZE;
-
         mCurrentPage += 1;
 
-        Api.getService(Api.getEndpointUrl()).findVideos(mQuery,
+        mVimeoService.findVideos(mQuery,
                 mSortByValue,
                 mSortOrderValue,
                 mCurrentPage,
@@ -318,7 +356,8 @@ public class VideosFragment extends BaseFragment implements VideosAdapter.OnItem
                 mProgressBar.setVisibility(View.VISIBLE);
 
                 mCurrentPage = 1;
-                Api.getService(Api.getEndpointUrl()).findVideos(mQuery,
+
+                mVimeoService.findVideos(mQuery,
                         mSortByValue,
                         mSortOrderValue,
                         mCurrentPage,
@@ -346,7 +385,8 @@ public class VideosFragment extends BaseFragment implements VideosAdapter.OnItem
                 mProgressBar.setVisibility(View.VISIBLE);
 
                 mCurrentPage = 1;
-                Api.getService(Api.getEndpointUrl()).findVideos(mQuery,
+
+                mVimeoService.findVideos(mQuery,
                         mSortByValue,
                         mSortOrderValue,
                         mCurrentPage,
