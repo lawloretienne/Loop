@@ -1,10 +1,14 @@
 package com.etiennelawlor.loop.network;
 
 import com.etiennelawlor.loop.network.models.CategoriesCollection;
+import com.etiennelawlor.loop.network.models.OAuthResponse;
 import com.etiennelawlor.loop.network.models.VideosCollection;
 
 import retrofit.Callback;
+import retrofit.http.Field;
+import retrofit.http.FormUrlEncoded;
 import retrofit.http.GET;
+import retrofit.http.POST;
 import retrofit.http.Path;
 import retrofit.http.Query;
 
@@ -31,5 +35,12 @@ public interface VimeoService {
 
     @GET("/categories")
     void getCategories(Callback<CategoriesCollection> cb);
+
+    @FormUrlEncoded
+    @POST("/oauth/access_token")
+    void exchangeCode(@Field("grant_type") String grantType,
+                      @Field("code") String code,
+                      @Field("redirect_uri") String redirectUri,
+                      Callback<OAuthResponse> cb);
 
 }

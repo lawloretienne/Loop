@@ -12,8 +12,8 @@ import android.webkit.WebView;
 import android.webkit.WebViewClient;
 
 import com.etiennelawlor.loop.R;
-import com.etiennelawlor.loop.network.LoginService;
 import com.etiennelawlor.loop.network.ServiceGenerator;
+import com.etiennelawlor.loop.network.VimeoService;
 import com.etiennelawlor.loop.network.models.OAuthResponse;
 
 import butterknife.ButterKnife;
@@ -56,12 +56,12 @@ public class LoginActivity extends AppCompatActivity {
                 if(state.equals(getString(R.string.vimeo_state))){
                     String code = uri.getQueryParameter("code");
 
-                    LoginService loginService = ServiceGenerator.createService(
-                            LoginService.class,
-                            LoginService.BASE_URL,
+                    VimeoService vimeoService = ServiceGenerator.createService(
+                            VimeoService.class,
+                            VimeoService.BASE_URL,
                             getString(R.string.client_id),
                             getString(R.string.client_secret));
-                    loginService.exchangeCode("authorization_code",
+                    vimeoService.exchangeCode("authorization_code",
                             code,
                             getString(R.string.client_redirect_uri),
                             mExchangeCodeCallback);
