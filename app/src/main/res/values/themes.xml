@@ -19,8 +19,14 @@
     <style name="Theme.Loop" parent="Base.Theme.Loop">
     </style>
 
-    <style name="Theme.MainActivity" parent="@style/Theme.Loop"/>
+    <style name="Theme.Loop.LaucherActivity" parent="Theme.Loop">
+        <item name="colorButtonNormal">@color/vimeo_blue</item>
+    </style>
 
-    <style name="Theme.VideoDetailsActivity" parent="@style/Theme.Loop"/>
+    <style name="Theme.Loop.LoginActivity" parent="Theme.Loop"/>
+
+    <style name="Theme.Loop.MainActivity" parent="Theme.Loop"/>
+
+    <style name="Theme.Loop.VideoDetailsActivity" parent="Theme.Loop"/>
 
 </resources>

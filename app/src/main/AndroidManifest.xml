@@ -18,34 +18,33 @@
 
         <!-- Activities -->
         <activity
-            android:name=".activities.LoginActivity"
+            android:name=".activities.LauncherActivity"
             android:label="@string/app_name"
             android:screenOrientation="portrait"
-            android:theme="@style/Theme.Loop">
+            android:theme="@style/Theme.Loop.LaucherActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-
+        <activity
+            android:name=".activities.LoginActivity"
+            android:label="@string/app_name"
+            android:screenOrientation="portrait"
+            android:theme="@style/Theme.Loop.LoginActivity">
+        </activity>
         <activity
             android:name=".activities.MainActivity"
             android:label="@string/app_name"
             android:screenOrientation="portrait"
-            android:theme="@style/Theme.MainActivity">
-            <!--<intent-filter>-->
-                <!--<action android:name="android.intent.action.MAIN" />-->
-
-                <!--<category android:name="android.intent.category.LAUNCHER" />-->
-            <!--</intent-filter>-->
+            android:theme="@style/Theme.Loop.MainActivity">
         </activity>
-
         <activity
             android:name=".activities.VideoDetailsActivity"
             android:parentActivityName=".activities.MainActivity"
             android:screenOrientation="portrait"
-            android:theme="@style/Theme.VideoDetailsActivity">
+            android:theme="@style/Theme.Loop.VideoDetailsActivity">
 
             <!-- The meta-data element is needed for versions lower than 4.1 -->
             <meta-data

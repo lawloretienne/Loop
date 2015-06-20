@@ -1,10 +1,8 @@
 package com.etiennelawlor.loop.activities;
 
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
-import android.preference.PreferenceManager;
 import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
 import android.webkit.WebSettings;
@@ -12,8 +10,10 @@ import android.webkit.WebView;
 import android.webkit.WebViewClient;
 
 import com.etiennelawlor.loop.R;
+import com.etiennelawlor.loop.helper.PreferencesHelper;
 import com.etiennelawlor.loop.network.ServiceGenerator;
 import com.etiennelawlor.loop.network.VimeoService;
+import com.etiennelawlor.loop.network.models.AccessToken;
 import com.etiennelawlor.loop.network.models.AuthorizedUser;
 import com.etiennelawlor.loop.network.models.OAuthResponse;
 
@@ -30,8 +30,6 @@ import timber.log.Timber;
 public class LoginActivity extends AppCompatActivity {
 
     // region Member Variables
-//    private CharSequence mTitle;
-
     @InjectView(R.id.wv)
     WebView mWebView;
 
@@ -98,19 +96,14 @@ public class LoginActivity extends AppCompatActivity {
     private Callback<OAuthResponse> mExchangeCodeCallback = new Callback<OAuthResponse>() {
         @Override
         public void success(OAuthResponse oAuthResponse, Response response) {
-            Timber.d(""); // 11a6e1154a6ebbce22fc6199a202b941
             if(oAuthResponse != null){
                 String accessToken = oAuthResponse.getAccessToken();
                 String tokenType = oAuthResponse.getTokenType();
                 AuthorizedUser authorizedUser = oAuthResponse.getUser();
 
-                SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
-//                SharedPreferences sharedPref = LoginActivity.this.getPreferences(Context.MODE_PRIVATE);
-                SharedPreferences.Editor editor = sharedPreferences.edit();
-                editor.putString(getString(R.string.token_type), tokenType);
-                editor.putString(getString(R.string.access_token), accessToken);
-
-                editor.commit();
+                AccessToken token = new AccessToken(tokenType, accessToken);
+                PreferencesHelper.saveAccessToken(getApplicationContext(), token);
+                PreferencesHelper.saveAuthorizedUser(getApplicationContext(), authorizedUser);
 
                 Intent intent = new Intent(LoginActivity.this, MainActivity.class);
                 intent.putExtra(getString(R.string.authorized_user), authorizedUser);
@@ -152,25 +145,6 @@ public class LoginActivity extends AppCompatActivity {
     }
     // endregion
 
-//    @Override
-//    public boolean onOptionsItemSelected(MenuItem item) {
-//        switch (item.getItemId()) {
-//            case android.R.id.home:
-//                mDrawerLayout.openDrawer(GravityCompat.START);
-//                return true;
-//        }
-//        return super.onOptionsItemSelected(item);
-//    }
-
-
-//    @Override
-//    public void setTitle(CharSequence title) {
-//        mTitle = title;
-//        if (getSupportActionBar() != null) {
-//            getSupportActionBar().setTitle(mTitle);
-//        }
-//    }
-
     // region Helper Methods
     private String setUpAuthorizeUrl(){
         String authroizeUrl;
@@ -189,8 +163,5 @@ public class LoginActivity extends AppCompatActivity {
 
         return authroizeUrl;
     }
-    // endregion
-
-    // region Inner Classes
     // endregion
 }

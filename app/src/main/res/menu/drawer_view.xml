@@ -29,6 +29,9 @@
         <item
             android:icon="@drawable/ic_help"
             android:title="Help and Feedback" />
+        <item
+            android:icon="@drawable/ic_logout"
+            android:title="Logout" />
     </group>
 
 </menu>

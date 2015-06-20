@@ -19,6 +19,7 @@ import android.widget.TextView;
 import com.etiennelawlor.loop.R;
 import com.etiennelawlor.loop.adapters.CategoriesAdapter;
 import com.etiennelawlor.loop.animators.SlideInOutBottomItemAnimator;
+import com.etiennelawlor.loop.helper.PreferencesHelper;
 import com.etiennelawlor.loop.network.ServiceGenerator;
 import com.etiennelawlor.loop.network.VimeoService;
 import com.etiennelawlor.loop.network.models.AccessToken;
@@ -153,11 +154,7 @@ public class ExploreFragment extends BaseFragment implements CategoriesAdapter.O
 //            mQuery = getArguments().getString("query");
         }
 
-        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getActivity().getApplicationContext());
-        String tokenType = sharedPreferences.getString(getString(R.string.token_type), "");
-        String accessToken = sharedPreferences.getString(getString(R.string.access_token), "");
-        AccessToken token = new AccessToken(tokenType, accessToken);
-
+        AccessToken token = PreferencesHelper.getAccessToken(getActivity());
         mVimeoService = ServiceGenerator.createService(
                 VimeoService.class,
                 VimeoService.BASE_URL,

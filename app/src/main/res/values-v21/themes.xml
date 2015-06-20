@@ -7,7 +7,7 @@
         <item name="android:windowAllowReturnTransitionOverlap">false</item>
     </style>
 
-    <style name="Theme.MainActivity" parent="@style/Theme.Loop">
+    <style name="Theme.Loop.MainActivity" parent="@style/Theme.Loop">
         <item name="android:statusBarColor">@android:color/transparent</item>
     </style>
 

@@ -25,6 +25,7 @@ import com.etiennelawlor.loop.R;
 import com.etiennelawlor.loop.activities.VideoDetailsActivity;
 import com.etiennelawlor.loop.adapters.VideosAdapter;
 import com.etiennelawlor.loop.animators.SlideInOutBottomItemAnimator;
+import com.etiennelawlor.loop.helper.PreferencesHelper;
 import com.etiennelawlor.loop.network.ServiceGenerator;
 import com.etiennelawlor.loop.network.VimeoService;
 import com.etiennelawlor.loop.network.models.AccessToken;
@@ -215,11 +216,7 @@ public class VideosFragment extends BaseFragment implements VideosAdapter.OnItem
             mQuery = getArguments().getString("query");
         }
 
-        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getActivity().getApplicationContext());
-        String tokenType = sharedPreferences.getString(getString(R.string.token_type), "");
-        String accessToken = sharedPreferences.getString(getString(R.string.access_token), "");
-        AccessToken token = new AccessToken(tokenType, accessToken);
-
+        AccessToken token = PreferencesHelper.getAccessToken(getActivity());
         mVimeoService = ServiceGenerator.createService(
                 VimeoService.class,
                 VimeoService.BASE_URL,
@@ -309,12 +306,15 @@ public class VideosFragment extends BaseFragment implements VideosAdapter.OnItem
                 intent.putExtras(bundle);
 
                 Pair<View, String> p1 = Pair.create((View) view.findViewById(R.id.video_thumbnail_iv), "videoTransition");
-                Pair<View, String> p2 = Pair.create((View) view.findViewById(R.id.title_tv), "titleTransition");
-                Pair<View, String> p3 = Pair.create((View) view.findViewById(R.id.subtitle_tv), "subtitleTransition");
+//                Pair<View, String> p2 = Pair.create((View) view.findViewById(R.id.title_tv), "titleTransition");
+//                Pair<View, String> p3 = Pair.create((View) view.findViewById(R.id.subtitle_tv), "subtitleTransition");
 //        Pair<View, String> p4 = Pair.create((View)view.findViewById(R.id.uploaded_tv), "uploadedTransition");
 
                 ActivityOptionsCompat options = ActivityOptionsCompat.makeSceneTransitionAnimation(getActivity(),
-                        p1, p2, p3);
+                        p1);
+
+//                ActivityOptionsCompat options = ActivityOptionsCompat.makeSceneTransitionAnimation(getActivity(),
+//                        p1, p2, p3);
 
 
                 ActivityCompat.startActivity(getActivity(), intent, options.toBundle());

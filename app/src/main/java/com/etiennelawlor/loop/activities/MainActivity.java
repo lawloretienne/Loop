@@ -18,6 +18,7 @@ import com.etiennelawlor.loop.fragments.LikedVideosFragment;
 import com.etiennelawlor.loop.fragments.PlaceholderFragment;
 import com.etiennelawlor.loop.fragments.WatchLaterVideosFragment;
 import com.etiennelawlor.loop.fragments.WatchNowFragment;
+import com.etiennelawlor.loop.helper.PreferencesHelper;
 import com.etiennelawlor.loop.network.models.AuthorizedUser;
 import com.etiennelawlor.loop.network.models.Picture;
 import com.etiennelawlor.loop.utilities.LoopUtility;
@@ -104,6 +105,9 @@ public class MainActivity extends AppCompatActivity {
                                 Toast.makeText(MainActivity.this, "There are no email clients installed", Toast.LENGTH_SHORT);
                             }
                             break;
+                        case "Logout":
+                            PreferencesHelper.signOut(MainActivity.this);
+                            startActivity(new Intent(MainActivity.this, LauncherActivity.class));
                         default:
                             break;
                     }
@@ -123,9 +127,11 @@ public class MainActivity extends AppCompatActivity {
         if(intent != null) {
             Bundle extras = intent.getExtras();
             if (extras != null) {
-                mAuthorizedUser = (AuthorizedUser) extras.get(getString(R.string.authorized_user));
+//                mAuthorizedUser = (AuthorizedUser) extras.get(getString(R.string.authorized_user));
             }
         }
+
+        mAuthorizedUser = PreferencesHelper.getAuthorizedUser(this);
 
         setUpAvatar();
         setUpFullName();
