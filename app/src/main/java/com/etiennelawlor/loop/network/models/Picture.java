@@ -18,9 +18,9 @@ public class Picture implements Parcelable {
     private String type;
     @SerializedName("width")
     private Integer width;
-    @SerializedName("uri")
-    private Integer height;
     @SerializedName("height")
+    private Integer height;
+    @SerializedName("link")
     private String link;
     // endregion
 

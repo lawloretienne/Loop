@@ -14,6 +14,7 @@ import android.webkit.WebViewClient;
 import com.etiennelawlor.loop.R;
 import com.etiennelawlor.loop.network.ServiceGenerator;
 import com.etiennelawlor.loop.network.VimeoService;
+import com.etiennelawlor.loop.network.models.AuthorizedUser;
 import com.etiennelawlor.loop.network.models.OAuthResponse;
 
 import butterknife.ButterKnife;
@@ -101,6 +102,7 @@ public class LoginActivity extends AppCompatActivity {
             if(oAuthResponse != null){
                 String accessToken = oAuthResponse.getAccessToken();
                 String tokenType = oAuthResponse.getTokenType();
+                AuthorizedUser authorizedUser = oAuthResponse.getUser();
 
                 SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
 //                SharedPreferences sharedPref = LoginActivity.this.getPreferences(Context.MODE_PRIVATE);
@@ -110,7 +112,9 @@ public class LoginActivity extends AppCompatActivity {
 
                 editor.commit();
 
-                startActivity(new Intent(LoginActivity.this, MainActivity.class));
+                Intent intent = new Intent(LoginActivity.this, MainActivity.class);
+                intent.putExtra(getString(R.string.authorized_user), authorizedUser);
+                startActivity(intent);
             }
         }
 

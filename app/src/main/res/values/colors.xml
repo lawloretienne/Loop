@@ -29,4 +29,15 @@
     <color name="transparent_black_ninty">#E6000000</color>
     <color name="transparent_black_ninty_five">#F2000000</color>
 
+    <color name="transparent_white_five">#0DFFFFFF</color>
+    <color name="transparent_white_ten">#1AFFFFFF</color>
+    <color name="transparent_white_twenty">#33FFFFFF</color>
+    <color name="transparent_white_forty">#66FFFFFF</color>
+    <color name="transparent_white_fifty">#80FFFFFF</color>
+    <color name="transparent_white_sixty">#99FFFFFF</color>
+    <color name="transparent_white_seventy">#B3FFFFFF</color>
+    <color name="transparent_white_eighty">#CCFFFFFF</color>
+    <color name="transparent_white_ninty">#E6FFFFFF</color>
+    <color name="transparent_white_ninty_five">#F2FFFFFF</color>
+
 </resources>

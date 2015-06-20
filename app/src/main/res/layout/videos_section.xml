@@ -14,20 +14,22 @@
         android:id="@android:id/empty"
         android:visibility="gone"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        android:layout_marginLeft="56dp"
+        android:layout_marginRight="56dp">
 
         <com.etiennelawlor.loop.ui.CustomFontTextView
             android:id="@+id/empty_tv"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textColor="@color/grey_800"
-            android:textSize="16sp"
+            android:textColor="@color/grey_500"
+            android:textSize="14sp"
             android:drawablePadding="8dp"
             android:text="No videos"
-            android:singleLine="true"
             android:gravity="center"
             android:layout_centerInParent="true"
             app:textFont="Roboto_Regular"
+            android:drawableTop="@drawable/ic_watch_later_large"
             />
 
         <!--android:drawableTop="@drawable/ic_large_track"-->

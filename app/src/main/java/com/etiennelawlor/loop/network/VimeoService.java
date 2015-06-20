@@ -27,6 +27,22 @@ public interface VimeoService {
                     @Query("per_page") Integer perPage,
                     Callback<VideosCollection> cb);
 
+    @GET("/me/likes")
+    void findLikedVideos(@Query("query") String query,
+                        @Query("sort") String sort,
+                        @Query("direction") String direction,
+                        @Query("page") Integer page,
+                        @Query("per_page") Integer perPage,
+                        Callback<VideosCollection> cb);
+
+    @GET("/me/watchlater")
+    void findWatchLaterVideos(@Query("query") String query,
+                             @Query("sort") String sort,
+                             @Query("direction") String direction,
+                             @Query("page") Integer page,
+                             @Query("per_page") Integer perPage,
+                             Callback<VideosCollection> cb);
+
     @GET("/videos/{videoId}/videos?filter=related")
     void findRelatedVideos( @Path("videoId") Long videoId,
                             @Query("page") Integer page,

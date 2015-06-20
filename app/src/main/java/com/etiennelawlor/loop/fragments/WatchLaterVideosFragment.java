@@ -3,14 +3,19 @@ package com.etiennelawlor.loop.fragments;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.ActivityOptionsCompat;
+import android.support.v4.graphics.drawable.DrawableCompat;
 import android.support.v4.util.Pair;
+import android.support.v7.app.ActionBar;
 import android.support.v7.app.AlertDialog;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -46,7 +51,7 @@ import timber.log.Timber;
 /**
  * Created by etiennelawlor on 5/23/15.
  */
-public class VideosFragment extends BaseFragment implements VideosAdapter.OnItemClickListener {
+public class WatchLaterVideosFragment extends BaseFragment implements VideosAdapter.OnItemClickListener {
 
     // region Constants
     public static final int PAGE_SIZE = 30;
@@ -57,18 +62,22 @@ public class VideosFragment extends BaseFragment implements VideosAdapter.OnItem
     RecyclerView mVideosRecyclerView;
     @InjectView(android.R.id.empty)
     View mEmptyView;
+    @InjectView(R.id.empty_tv)
+    TextView mEmptyTextView;
     @InjectView(R.id.pb)
     ProgressBar mProgressBar;
     @InjectView(R.id.error_ll)
     LinearLayout mErrorLinearLayout;
     @InjectView(R.id.error_tv)
     TextView mErrorTextView;
+    @InjectView(R.id.toolbar)
+    Toolbar mToolbar;
 
     private int mCurrentPage = 1;
     private int mSelectedSortByKey = 0;
     private int mSelectedSortOrderKey = 1;
     private boolean mIsLoading = false;
-    private String mSortByValue = "relevant";
+    private String mSortByValue = "date";
     private String mSortOrderValue = "desc";
     private VideosAdapter mVideosAdapter;
     private String mQuery;
@@ -113,6 +122,14 @@ public class VideosFragment extends BaseFragment implements VideosAdapter.OnItem
                     if (videos != null) {
                         mVideosAdapter.addAll(videos);
                     }
+                }
+
+                if(mVideosAdapter.isEmpty()){
+                    mEmptyTextView.setText(getString(R.string.watch_later_empty_prompt));
+                    Drawable drawable = getResources().getDrawable(R.drawable.ic_watch_later_large);
+                    DrawableCompat.setTint(drawable, getResources().getColor(R.color.grey_500));
+                    mEmptyTextView.setCompoundDrawablesWithIntrinsicBounds(null, drawable, null, null);
+                    mEmptyView.setVisibility(View.VISIBLE);
                 }
             }
         }
@@ -188,18 +205,18 @@ public class VideosFragment extends BaseFragment implements VideosAdapter.OnItem
     // endregion
 
     // region Constructors
-    public static VideosFragment newInstance() {
-        VideosFragment fragment = new VideosFragment();
+    public static WatchLaterVideosFragment newInstance() {
+        WatchLaterVideosFragment fragment = new WatchLaterVideosFragment();
         return fragment;
     }
 
-    public static VideosFragment newInstance(Bundle extras) {
-        VideosFragment fragment = new VideosFragment();
+    public static WatchLaterVideosFragment newInstance(Bundle extras) {
+        WatchLaterVideosFragment fragment = new WatchLaterVideosFragment();
         fragment.setArguments(extras);
         return fragment;
     }
 
-    public VideosFragment() {
+    public WatchLaterVideosFragment() {
     }
     // endregion
 
@@ -231,7 +248,7 @@ public class VideosFragment extends BaseFragment implements VideosAdapter.OnItem
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        View rootView = inflater.inflate(R.layout.fragment_videos, container, false);
+        View rootView = inflater.inflate(R.layout.fragment_watch_later_videos, container, false);
         ButterKnife.inject(this, rootView);
 
         return rootView;
@@ -241,7 +258,12 @@ public class VideosFragment extends BaseFragment implements VideosAdapter.OnItem
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-//        ((AppCompatActivity)getActivity()).getSupportActionBar().setTitle(mQuery);
+        ((AppCompatActivity) getActivity()).setSupportActionBar(mToolbar);
+
+        final ActionBar ab = ((AppCompatActivity) getActivity()).getSupportActionBar();
+        ab.setHomeAsUpIndicator(R.drawable.ic_menu);
+        ab.setDisplayHomeAsUpEnabled(true);
+        ab.setTitle("Watch Later");
 
         mLayoutManager = new LinearLayoutManager(getActivity());
         mVideosRecyclerView.setLayoutManager(mLayoutManager);
@@ -255,7 +277,7 @@ public class VideosFragment extends BaseFragment implements VideosAdapter.OnItem
         // Pagination
         mVideosRecyclerView.addOnScrollListener(mRecyclerViewOnScrollListener);
 
-        mVimeoService.findVideos(mQuery,
+        mVimeoService.findWatchLaterVideos(mQuery,
                 mSortByValue,
                 mSortOrderValue,
                 mCurrentPage,
@@ -332,7 +354,7 @@ public class VideosFragment extends BaseFragment implements VideosAdapter.OnItem
 
         mCurrentPage += 1;
 
-        mVimeoService.findVideos(mQuery,
+        mVimeoService.findWatchLaterVideos(mQuery,
                 mSortByValue,
                 mSortOrderValue,
                 mCurrentPage,
@@ -344,20 +366,21 @@ public class VideosFragment extends BaseFragment implements VideosAdapter.OnItem
     private void showSortByDialog() {
         AlertDialog.Builder sortByBuilder = new AlertDialog.Builder(getActivity(), R.style.DialogTheme);
         sortByBuilder.setTitle("Sort by");
-        sortByBuilder.setSingleChoiceItems(R.array.videos_sort_by_keys, mSelectedSortByKey, new DialogInterface.OnClickListener() {
+        sortByBuilder.setSingleChoiceItems(R.array.watchlater_sort_by_keys, mSelectedSortByKey, new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int whichButton) {
                 mSelectedSortByKey = whichButton;
 
-                String[] sortByValues = getResources().getStringArray(R.array.videos_sort_by_values);
+                String[] sortByValues = getResources().getStringArray(R.array.watchlater_sort_by_values);
                 mSortByValue = sortByValues[mSelectedSortByKey];
 
                 mVideosAdapter.clear();
 
+                mEmptyView.setVisibility(View.GONE);
                 mProgressBar.setVisibility(View.VISIBLE);
 
                 mCurrentPage = 1;
 
-                mVimeoService.findVideos(mQuery,
+                mVimeoService.findWatchLaterVideos(mQuery,
                         mSortByValue,
                         mSortOrderValue,
                         mCurrentPage,
@@ -373,20 +396,21 @@ public class VideosFragment extends BaseFragment implements VideosAdapter.OnItem
     private void showSortOrderDialog() {
         AlertDialog.Builder sortOrderBuilder = new AlertDialog.Builder(getActivity(), R.style.DialogTheme);
         sortOrderBuilder.setTitle("Sort order");
-        sortOrderBuilder.setSingleChoiceItems(R.array.videos_sort_order_keys, mSelectedSortOrderKey, new DialogInterface.OnClickListener() {
+        sortOrderBuilder.setSingleChoiceItems(R.array.watchlater_sort_order_keys, mSelectedSortOrderKey, new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int whichButton) {
                 mSelectedSortOrderKey = whichButton;
 
-                String[] sortOrderValues = getResources().getStringArray(R.array.videos_sort_order_values);
+                String[] sortOrderValues = getResources().getStringArray(R.array.watchlater_sort_order_values);
                 mSortOrderValue = sortOrderValues[mSelectedSortOrderKey];
 
                 mVideosAdapter.clear();
 
+                mEmptyView.setVisibility(View.GONE);
                 mProgressBar.setVisibility(View.VISIBLE);
 
                 mCurrentPage = 1;
 
-                mVimeoService.findVideos(mQuery,
+                mVimeoService.findWatchLaterVideos(mQuery,
                         mSortByValue,
                         mSortOrderValue,
                         mCurrentPage,

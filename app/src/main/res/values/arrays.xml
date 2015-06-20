@@ -1,26 +1,82 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <string-array name="sort_by_keys">
+    <string-array name="videos_sort_by_keys">
         <item>Relevancy</item>
         <item>Date</item>
         <item>Views</item>
         <item>Duration</item>
     </string-array>
 
-    <string-array name="sort_by_values">
+    <string-array name="videos_sort_by_values">
         <item>relevant</item>
         <item>date</item>
         <item>plays</item>
         <item>duration</item>
     </string-array>
 
-    <string-array name="sort_order_keys">
+    <string-array name="videos_sort_order_keys">
         <item>Ascending</item>
         <item>Descending</item>
     </string-array>
 
-    <string-array name="sort_order_values">
+    <string-array name="videos_sort_order_values">
+        <item>asc</item>
+        <item>desc</item>
+    </string-array>
+
+    <string-array name="likes_sort_by_keys">
+        <item>Date</item>
+        <item>Alphabetical</item>
+        <item>Views</item>
+        <item>Likes</item>
+        <item>Comments</item>
+        <item>Duration</item>
+    </string-array>
+
+    <string-array name="likes_sort_by_values">
+        <item>date</item>
+        <item>alphabetical</item>
+        <item>plays</item>
+        <item>likes</item>
+        <item>comments</item>
+        <item>duration</item>
+    </string-array>
+
+    <string-array name="likes_sort_order_keys">
+        <item>Ascending</item>
+        <item>Descending</item>
+    </string-array>
+
+    <string-array name="likes_sort_order_values">
+        <item>asc</item>
+        <item>desc</item>
+    </string-array>
+
+    <string-array name="watchlater_sort_by_keys">
+        <item>Date</item>
+        <item>Alphabetical</item>
+        <item>Views</item>
+        <item>Likes</item>
+        <item>Comments</item>
+        <item>Duration</item>
+    </string-array>
+
+    <string-array name="watchlater_sort_by_values">
+        <item>date</item>
+        <item>alphabetical</item>
+        <item>plays</item>
+        <item>likes</item>
+        <item>comments</item>
+        <item>duration</item>
+    </string-array>
+
+    <string-array name="watchlater_sort_order_keys">
+        <item>Ascending</item>
+        <item>Descending</item>
+    </string-array>
+
+    <string-array name="watchlater_sort_order_values">
         <item>asc</item>
         <item>desc</item>
     </string-array>

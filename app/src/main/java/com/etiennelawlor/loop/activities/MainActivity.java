@@ -1,22 +1,33 @@
 package com.etiennelawlor.loop.activities;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.AppCompatActivity;
+import android.text.TextUtils;
 import android.view.Gravity;
 import android.view.MenuItem;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.etiennelawlor.loop.R;
 import com.etiennelawlor.loop.fragments.ExploreFragment;
+import com.etiennelawlor.loop.fragments.LikedVideosFragment;
 import com.etiennelawlor.loop.fragments.PlaceholderFragment;
+import com.etiennelawlor.loop.fragments.WatchLaterVideosFragment;
 import com.etiennelawlor.loop.fragments.WatchNowFragment;
+import com.etiennelawlor.loop.network.models.AuthorizedUser;
+import com.etiennelawlor.loop.network.models.Picture;
 import com.etiennelawlor.loop.utilities.LoopUtility;
+import com.squareup.picasso.Picasso;
+
+import java.util.List;
 
 import butterknife.ButterKnife;
 import butterknife.InjectView;
+import de.hdodenhof.circleimageview.CircleImageView;
 import timber.log.Timber;
 
 
@@ -31,6 +42,12 @@ public class MainActivity extends AppCompatActivity {
     DrawerLayout mDrawerLayout;
     @InjectView(R.id.nav_view)
     NavigationView mNavigationView;
+    @InjectView(R.id.user_avatar_riv)
+    CircleImageView mAvatarImageView;
+    @InjectView(R.id.full_name_tv)
+    TextView mFullNameTextView;
+
+    private AuthorizedUser mAuthorizedUser;
     // endregion
 
     // region Listeners
@@ -52,18 +69,18 @@ public class MainActivity extends AppCompatActivity {
                                     .commit();
 
                             break;
-                        case "Favorites":
+                        case "Likes":
                             Timber.d("");
                             getSupportFragmentManager()
                                     .beginTransaction()
-                                    .replace(R.id.content_fl, PlaceholderFragment.newInstance(), "")
+                                    .replace(R.id.content_fl, LikedVideosFragment.newInstance(), "")
                                     .commit();
                             break;
-                        case "History":
+                        case "Watch Later":
                             Timber.d("");
                             getSupportFragmentManager()
                                     .beginTransaction()
-                                    .replace(R.id.content_fl, PlaceholderFragment.newInstance(), "")
+                                    .replace(R.id.content_fl, WatchLaterVideosFragment.newInstance(), "")
                                     .commit();
                             break;
                         case "Explore":
@@ -101,6 +118,17 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         ButterKnife.inject(this);
+
+        Intent intent = getIntent();
+        if(intent != null) {
+            Bundle extras = intent.getExtras();
+            if (extras != null) {
+                mAuthorizedUser = (AuthorizedUser) extras.get(getString(R.string.authorized_user));
+            }
+        }
+
+        setUpAvatar();
+        setUpFullName();
 
         // Setup NavigationView
         mNavigationView.setNavigationItemSelectedListener(mNavigationViewOnNavigationItemSelectedListener);
@@ -145,5 +173,32 @@ public class MainActivity extends AppCompatActivity {
     }
 
     // region Helper Methods
+    private void setUpAvatar(){
+        if(mAuthorizedUser != null){
+            List<Picture> pictures = mAuthorizedUser.getPictures();
+            if(pictures != null && pictures.size()>0){
+                Picture picture = pictures.get(pictures.size() - 1);
+                if(picture != null){
+                    String link = picture.getLink();
+                    if(!TextUtils.isEmpty(link)){
+                        Picasso.with(this)
+                                .load(link)
+//                                .placeholder(R.drawable.ic_placeholder)
+//                                .error(R.drawable.ic_error)
+                                .into(mAvatarImageView);
+                    }
+                }
+            }
+        }
+    }
+
+    private void setUpFullName(){
+        if(mAuthorizedUser != null){
+            String name = mAuthorizedUser.getName();
+            if(!TextUtils.isEmpty(name)){
+                mFullNameTextView.setText(name);
+            }
+        }
+    }
     // endregion
 }

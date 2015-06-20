@@ -14,32 +14,6 @@
         android:layout_height="wrap_content"
         android:layout_gravity="center"/>
 
-    <LinearLayout
-        android:id="@+id/error_ll"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:orientation="vertical"
-        android:visibility="gone"
-        android:gravity="center_horizontal">
-
-        <ImageView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:src="@drawable/ic_error_view_cloud"
-            android:contentDescription=""/>
-
-        <com.etiennelawlor.loop.ui.CustomFontTextView
-            android:id="@+id/error_tv"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:gravity="center"
-            android:textColor="@color/grey_800"
-            android:layout_margin="16dp"
-            tools:text="Can't load data.\nCheck your network connection."
-            android:textSize="16sp"
-            app:textFont="Roboto_Regular"/>
-
-    </LinearLayout>
+    <include layout="@layout/error_layout"/>
 
 </FrameLayout>

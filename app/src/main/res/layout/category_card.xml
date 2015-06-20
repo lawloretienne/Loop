@@ -18,7 +18,7 @@
             <FrameLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:foreground="@color/transparent_black_forty">
+                android:foreground="@color/transparent_black_twenty">
 
                 <com.etiennelawlor.loop.ui.DynamicHeightImageView
                     android:id="@+id/thumbnail_iv"
