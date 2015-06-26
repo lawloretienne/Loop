@@ -55,8 +55,9 @@
             <RelativeLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginLeft="16dp"
-                android:layout_marginRight="16dp">
+                android:paddingLeft="16dp"
+                android:paddingRight="16dp"
+                android:paddingBottom="16dp">
 
                 <com.etiennelawlor.loop.ui.CustomFontTextView
                     android:id="@+id/title_tv"
@@ -96,9 +97,9 @@
                 android:id="@+id/additional_info_ll"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginLeft="16dp"
-                android:layout_marginRight="16dp"
-                android:layout_marginTop="16dp"
+                android:paddingLeft="16dp"
+                android:paddingRight="16dp"
+                android:paddingBottom="16dp"
                 android:visibility="gone"
                 android:orientation="vertical">
 
@@ -125,23 +126,23 @@
 
             <View android:layout_width="match_parent"
                 android:layout_height="1dp"
-                android:background="@color/grey_400"
-                android:layout_marginTop="16dp"
-                android:layout_marginBottom="16dp"/>
+                android:background="@color/grey_400"/>
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"
-                android:layout_marginLeft="16dp"
-                android:layout_marginRight="16dp">
+                android:padding="16dp"
+                android:background="@color/teal_300">
 
-                <ImageView
+                <de.hdodenhof.circleimageview.CircleImageView
                     android:id="@+id/user_iv"
                     android:scaleType="centerCrop"
                     android:layout_width="72dp"
                     android:layout_height="72dp"
-                    android:background="?colorPrimary"/>
+                    app:border_width="2dp"
+                    app:border_color="@android:color/white"
+                    android:background="@drawable/avatar_bg"/>
 
                 <LinearLayout
                     android:layout_width="wrap_content"
@@ -154,7 +155,7 @@
                         android:id="@+id/subtitle_tv"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:textColor="@color/grey_600"
+                        android:textColor="@android:color/white"
                         android:transitionName="subtitleTransition"
                         tools:text="Video Subtitle"
                         android:maxLines="5"
@@ -167,7 +168,7 @@
                         android:id="@+id/upload_date_tv"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:textColor="@color/grey_600"
+                        android:textColor="@android:color/white"
                         tools:text="Upload date"
                         android:textSize="14sp"
                         app:textFont="Roboto_Regular"/>
@@ -177,9 +178,7 @@
 
             <View android:layout_width="match_parent"
                 android:layout_height="1dp"
-                android:background="@color/grey_400"
-                android:layout_marginTop="16dp"
-                android:layout_marginBottom="16dp"/>
+                android:background="@color/grey_400"/>
 
             <!--<com.etiennelawlor.loop.ui.CustomFontTextView-->
                 <!--android:layout_width="wrap_content"-->

@@ -54,6 +54,7 @@ import java.util.Locale;
 import butterknife.ButterKnife;
 import butterknife.InjectView;
 import butterknife.OnClick;
+import de.hdodenhof.circleimageview.CircleImageView;
 import retrofit.Callback;
 import retrofit.RetrofitError;
 import retrofit.client.Response;
@@ -76,7 +77,7 @@ public class VideoDetailsFragment extends BaseFragment implements VideosAdapter.
     @InjectView(R.id.subtitle_tv)
     TextView mSubtitleTextView;
     @InjectView(R.id.user_iv)
-    ImageView mUserImageView;
+    CircleImageView mUserImageView;
     //    @InjectView(R.id.uploaded_tv)
 //    TextView mUploadedTextView;
     @InjectView(R.id.view_count_tv)
@@ -387,7 +388,7 @@ public class VideoDetailsFragment extends BaseFragment implements VideosAdapter.
     private void setUpDescription() {
         String description = mVideo.getDescription();
         if (!TextUtils.isEmpty(description)) {
-            mDescriptionTextView.setText(description);
+            mDescriptionTextView.setText(description.trim());
             mDescriptionTextView.setVisibility(View.VISIBLE);
         } else {
             mDescriptionTextView.setVisibility(View.GONE);
@@ -460,7 +461,12 @@ public class VideoDetailsFragment extends BaseFragment implements VideosAdapter.
                 tagString += String.format("#%s ", tag.getCanonical());
             }
 
-            mTagsTextView.setText(tagString);
+            if(!TextUtils.isEmpty(tagString)){
+                mTagsTextView.setText(tagString);
+                mTagsTextView.setVisibility(View.VISIBLE);
+            } else {
+                mTagsTextView.setVisibility(View.GONE);
+            }
         }
     }
 

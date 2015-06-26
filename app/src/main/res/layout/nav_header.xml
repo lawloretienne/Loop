@@ -78,12 +78,11 @@
         android:layout_marginBottom="8dp"
         android:layout_marginLeft="16dp"
         android:layout_marginRight="16dp"
-        app:border_width="3dp"
+        app:border_width="2dp"
         app:border_color="@android:color/white"
         android:elevation="8dp"
-        android:src="@drawable/ic_loop" />
-
-    <!--android:src="@drawable/ic_profile"-->
+        android:src="@drawable/ic_loop"
+        android:background="@drawable/avatar_bg"/>
 
 
 </RelativeLayout>
