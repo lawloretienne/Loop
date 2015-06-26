@@ -68,7 +68,7 @@
                     android:transitionName="titleTransition"
                     tools:text="Product Title"
                     android:textSize="22sp"
-                    app:textFont="Roboto_Medium"/>
+                    app:textFont="RobotoCondensed_Bold"/>
 
                 <com.etiennelawlor.loop.ui.CustomFontTextView
                     android:id="@+id/view_count_tv"

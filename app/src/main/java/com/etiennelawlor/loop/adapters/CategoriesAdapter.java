@@ -7,10 +7,10 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import com.bumptech.glide.Glide;
 import com.etiennelawlor.loop.R;
 import com.etiennelawlor.loop.network.models.Category;
 import com.etiennelawlor.loop.ui.DynamicHeightImageView;
-import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -150,7 +150,7 @@ public class CategoriesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
 //            holder.mVideoThumbnailImageView.setHeightRatio(1.0D/1.0D);
 
 
-            Picasso.with(mContext)
+            Glide.with(mContext)
                     .load(categoryThumbnails[position])
 //                                .placeholder(R.drawable.ic_placeholder)
 //                                .error(R.drawable.ic_error)

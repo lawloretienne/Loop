@@ -12,6 +12,7 @@ import android.view.MenuItem;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.bumptech.glide.Glide;
 import com.etiennelawlor.loop.R;
 import com.etiennelawlor.loop.fragments.ExploreFragment;
 import com.etiennelawlor.loop.fragments.LikedVideosFragment;
@@ -22,7 +23,6 @@ import com.etiennelawlor.loop.helper.PreferencesHelper;
 import com.etiennelawlor.loop.network.models.AuthorizedUser;
 import com.etiennelawlor.loop.network.models.Picture;
 import com.etiennelawlor.loop.utilities.LoopUtility;
-import com.squareup.picasso.Picasso;
 
 import java.util.List;
 
@@ -187,7 +187,7 @@ public class MainActivity extends AppCompatActivity {
                 if(picture != null){
                     String link = picture.getLink();
                     if(!TextUtils.isEmpty(link)){
-                        Picasso.with(this)
+                        Glide.with(this)
                                 .load(link)
 //                                .placeholder(R.drawable.ic_placeholder)
 //                                .error(R.drawable.ic_error)

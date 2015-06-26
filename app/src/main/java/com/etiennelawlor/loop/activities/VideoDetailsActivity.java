@@ -8,6 +8,7 @@ import android.view.MenuItem;
 
 import com.etiennelawlor.loop.R;
 import com.etiennelawlor.loop.fragments.VideoDetailsFragment;
+import com.etiennelawlor.loop.fragments.VideoDetailsFragment2;
 
 import butterknife.ButterKnife;
 import butterknife.InjectView;
@@ -35,6 +36,11 @@ public class VideoDetailsActivity extends AppCompatActivity {
         ab.setHomeAsUpIndicator(R.drawable.ic_arrow_back);
         ab.setDisplayHomeAsUpEnabled(true);
         ab.setTitle("");
+
+//        getSupportFragmentManager()
+//                .beginTransaction()
+//                .add(R.id.content_fl, VideoDetailsFragment2.newInstance(getIntent().getExtras()), "")
+//                .commit();
 
         getSupportFragmentManager()
                 .beginTransaction()

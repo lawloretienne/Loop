@@ -11,6 +11,7 @@ import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
+import com.bumptech.glide.Glide;
 import com.etiennelawlor.loop.R;
 import com.etiennelawlor.loop.network.models.Pictures;
 import com.etiennelawlor.loop.network.models.Size;
@@ -19,7 +20,6 @@ import com.etiennelawlor.loop.network.models.User;
 import com.etiennelawlor.loop.network.models.Video;
 import com.etiennelawlor.loop.network.models.VideoWrapper;
 import com.etiennelawlor.loop.utilities.LoopUtility;
-import com.squareup.picasso.Picasso;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -219,7 +219,7 @@ public class VideosAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
                 if (size != null) {
                     String link = size.getLink();
                     if (!TextUtils.isEmpty(link)) {
-                        Picasso.with(mContext)
+                        Glide.with(mContext)
                                 .load(link)
 //                                .placeholder(R.drawable.ic_placeholder)
 //                                .error(R.drawable.ic_error)
@@ -286,7 +286,11 @@ public class VideosAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
         if (viewCount > 0) {
 //                String formattedViewCount = NumberFormat.getNumberInstance(Locale.US).format(viewCount);
             String formattedViewCount = formatViewCount(viewCount);
-            tv.setText(String.format("%s - %s", uploadDate, formattedViewCount));
+            if(!TextUtils.isEmpty(uploadDate))
+                tv.setText(String.format("%s - %s", uploadDate, formattedViewCount));
+            else
+                tv.setText(formattedViewCount);
+
         } else {
             tv.setText(String.format("%s", uploadDate));
         }

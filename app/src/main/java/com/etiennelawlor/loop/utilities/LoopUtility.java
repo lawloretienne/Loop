@@ -1,9 +1,12 @@
 package com.etiennelawlor.loop.utilities;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
+import android.content.res.Configuration;
+import android.graphics.Point;
 import android.net.Uri;
 import android.text.format.DateUtils;
 import android.util.DisplayMetrics;
@@ -126,6 +129,20 @@ public class LoopUtility {
                 + agent.osVersion + "\n"
                 + "GUID: " + agent.uniqueId + "\n"
                 + context.getResources().getString(R.string.email_message) + "\n";
+    }
+
+    public static int getScreenWidth(Context context){
+        Point size = new Point();
+        ((Activity)context).getWindowManager().getDefaultDisplay().getSize(size);
+        return size.x;
+    }
+
+    public static boolean isInLandscapeMode(Context context){
+        boolean isLandscape = false;
+        if(context.getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE){
+            isLandscape =  true;
+        }
+        return isLandscape;
     }
     // endregion
 }

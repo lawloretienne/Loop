@@ -1,11 +1,9 @@
 package com.etiennelawlor.loop.fragments;
 
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.media.MediaPlayer;
 import android.net.Uri;
 import android.os.Bundle;
-import android.preference.PreferenceManager;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.ActivityOptionsCompat;
 import android.support.v4.util.Pair;
@@ -21,6 +19,7 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.VideoView;
 
+import com.bumptech.glide.Glide;
 import com.etiennelawlor.loop.R;
 import com.etiennelawlor.loop.activities.VideoDetailsActivity;
 import com.etiennelawlor.loop.adapters.VideosAdapter;
@@ -43,7 +42,6 @@ import com.etiennelawlor.loop.network.models.VideoWrapper;
 import com.etiennelawlor.loop.network.models.VideosCollection;
 import com.etiennelawlor.loop.otto.BusProvider;
 import com.etiennelawlor.loop.utilities.LoopUtility;
-import com.squareup.picasso.Picasso;
 
 import java.text.NumberFormat;
 import java.text.ParseException;
@@ -370,7 +368,7 @@ public class VideoDetailsFragment extends BaseFragment implements VideosAdapter.
                         String link = size.getLink();
                         if (!TextUtils.isEmpty(link)) {
                             isPictureAvailable = true;
-                            Picasso.with(getActivity())
+                            Glide.with(getActivity())
                                     .load(link)
 //                                .placeholder(R.drawable.ic_placeholder)
 //                                .error(R.drawable.ic_error)
@@ -405,7 +403,7 @@ public class VideoDetailsFragment extends BaseFragment implements VideosAdapter.
                 if (size != null) {
                     String link = size.getLink();
                     if (!TextUtils.isEmpty(link)) {
-                        Picasso.with(getActivity())
+                        Glide.with(getActivity())
                                 .load(link)
 //                                .placeholder(R.drawable.ic_placeholder)
 //                                .error(R.drawable.ic_error)
