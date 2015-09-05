@@ -11,7 +11,6 @@ import com.etiennelawlor.loop.network.models.AccessToken;
 import com.etiennelawlor.loop.network.models.AuthorizedUser;
 
 import butterknife.ButterKnife;
-import butterknife.InjectView;
 import butterknife.OnClick;
 
 /**
@@ -37,7 +36,7 @@ public class LauncherActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_launcher);
-        ButterKnife.inject(this);
+        ButterKnife.bind(this);
 
         AccessToken token = PreferencesHelper.getAccessToken(this);
         AuthorizedUser authorizedUser = PreferencesHelper.getAuthorizedUser(this);

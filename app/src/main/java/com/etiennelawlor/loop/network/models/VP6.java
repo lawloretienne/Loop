@@ -5,7 +5,7 @@ import com.google.gson.annotations.SerializedName;
 /**
  * Created by etiennelawlor on 5/23/15.
  */
-public class H264 {
+public class VP6 {
 
     // region Member Variables
     @SerializedName("sd")

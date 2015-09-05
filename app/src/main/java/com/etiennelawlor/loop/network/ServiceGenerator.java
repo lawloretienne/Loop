@@ -7,9 +7,13 @@ import com.etiennelawlor.loop.BuildConfig;
 import com.etiennelawlor.loop.LoopApplication;
 import com.etiennelawlor.loop.network.models.AccessToken;
 import com.squareup.okhttp.Cache;
+import com.squareup.okhttp.Interceptor;
 import com.squareup.okhttp.OkHttpClient;
+import com.squareup.okhttp.Request;
+import com.squareup.okhttp.Response;
 
 import java.io.File;
+import java.io.IOException;
 import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
 
@@ -18,10 +22,8 @@ import javax.net.ssl.SSLSocketFactory;
 import javax.net.ssl.TrustManager;
 import javax.net.ssl.X509TrustManager;
 
-import retrofit.RequestInterceptor;
-import retrofit.RestAdapter;
-import retrofit.client.Client;
-import retrofit.client.OkClient;
+import retrofit.GsonConverterFactory;
+import retrofit.Retrofit;
 import timber.log.Timber;
 
 /**
@@ -33,61 +35,89 @@ public class ServiceGenerator {
     private static final int DISK_CACHE_SIZE = 50 * 1024 * 1024; // 50MB
     // endregion
 
-    private static RestAdapter.Builder builder =
-        new RestAdapter.Builder()
-            .setClient(getClient())
-            .setLogLevel(getLogLevel());
+//    private static RestAdapter.Builder builder =
+//        new RestAdapter.Builder()
+//            .setClient(getClient())
+//            .setLogLevel(getLogLevel());
+
+    private static Retrofit.Builder sRetrofitBuilder =
+            new Retrofit.Builder();
 
     // No need to instantiate this class.
     private ServiceGenerator() {
     }
 
-    public static <S> S createService(Class<S> serviceClass, String baseUrl, String clientId, String clientSecret) {
-        // set endpoint url
-        builder.setEndpoint(baseUrl);
+    public static <S> S createService(Class<S> serviceClass, String baseUrl, final String clientId, final String clientSecret) {
 
-        if (!TextUtils.isEmpty(clientId) && !TextUtils.isEmpty(clientSecret)) {
-            // concatenate username and password with colon for authentication
-            final String credentials = clientId + ":" + clientSecret;
+        OkHttpClient okHttpClient = getClient();
+        okHttpClient.networkInterceptors().add(new Interceptor() {
+            @Override
+            public Response intercept(Chain chain) throws IOException {
+                if (chain != null) {
+                    Request originalRequest = chain.request();
 
-            builder.setRequestInterceptor(new RequestInterceptor() {
-                @Override
-                public void intercept(RequestFacade request) {
-                    // create Base64 encoded string
-                    String string = "Basic " + Base64.encodeToString(credentials.getBytes(), Base64.NO_WRAP);
-                    request.addHeader("Authorization", string);
-                    request.addHeader("Accept", "application/json");
+                    if (!TextUtils.isEmpty(clientId) && !TextUtils.isEmpty(clientSecret)) {
+                        // concatenate username and password with colon for authentication
+                        final String credentials = clientId + ":" + clientSecret;
+
+                        String authorization = "Basic " + Base64.encodeToString(credentials.getBytes(), Base64.NO_WRAP);
+
+                        Request modifiedRequest = originalRequest.newBuilder()
+                                .header("Authorization", authorization)
+                                .header("Accept", "application/json")
+                                .build();
+
+                        return chain.proceed(modifiedRequest);
+                    } else {
+                        return chain.proceed(originalRequest);
+                    }
                 }
-            });
-        }
 
-        RestAdapter adapter = builder.build();
+                return null;
+            }
+        });
 
-        return adapter.create(serviceClass);
+        sRetrofitBuilder.client(okHttpClient);
+        sRetrofitBuilder.baseUrl(baseUrl);
+        sRetrofitBuilder.addConverterFactory(GsonConverterFactory.create());
+
+        Retrofit retrofit = sRetrofitBuilder.build();
+        return retrofit.create(serviceClass);
     }
 
     public static <S> S createService(Class<S> serviceClass, String baseUrl, final AccessToken accessToken) {
-        // set endpoint url
-        builder.setEndpoint(baseUrl);
+        OkHttpClient okHttpClient = getClient();
+        okHttpClient.networkInterceptors().add(new Interceptor() {
+            @Override
+            public Response intercept(Chain chain) throws IOException {
+                if(chain != null){
+                    Request originalRequest = chain.request();
 
-        if (accessToken != null) {
-            builder.setRequestInterceptor(new RequestInterceptor() {
-                @Override
-                public void intercept(RequestFacade request) {
-                    request.addHeader("Authorization", accessToken.getTokenType() + " " + accessToken.getAccessToken());
-//                    request.addHeader("Accept", "application/json");
-                    request.addHeader("Accept", "application/vnd.vimeo.*+json; version=3.2");
+                    if (accessToken != null) {
+                        Request modifiedRequest = originalRequest.newBuilder()
+                                .header("Authorization", accessToken.getTokenType() + " " + accessToken.getAccessToken())
+                                .header("Accept", "application/vnd.vimeo.*+json; version=3.2")
+                                .build();
 
+                        return chain.proceed(modifiedRequest);
+                    } else {
+                        return chain.proceed(originalRequest);
+                    }
                 }
-            });
-        }
 
-        RestAdapter adapter = builder.build();
+                return null;
+            }
+        });
 
-        return adapter.create(serviceClass);
+        sRetrofitBuilder.client(okHttpClient);
+        sRetrofitBuilder.baseUrl(baseUrl);
+        sRetrofitBuilder.addConverterFactory(GsonConverterFactory.create());
+
+        Retrofit retrofit = sRetrofitBuilder.build();
+        return retrofit.create(serviceClass);
     }
 
-    private static Client getClient() {
+    private static OkHttpClient getClient() {
         OkHttpClient client = new OkHttpClient();
 
         // Install an HTTP cache in the application cache directory.
@@ -100,7 +130,7 @@ public class ServiceGenerator {
         }
         client.setSslSocketFactory(createBadSslSocketFactory());
 
-        return new OkClient(client);
+        return client;
     }
 
     private static SSLSocketFactory createBadSslSocketFactory() {
@@ -130,15 +160,15 @@ public class ServiceGenerator {
         }
     }
 
-    private static RestAdapter.LogLevel getLogLevel(){
-        RestAdapter.LogLevel logLevel;
-        if (BuildConfig.DEBUG){
-            logLevel = RestAdapter.LogLevel.FULL;
-        } else {
-            logLevel = RestAdapter.LogLevel.NONE;
-        }
-
-        return logLevel;
-    }
+//    private static RestAdapter.LogLevel getLogLevel(){
+//        RestAdapter.LogLevel logLevel;
+//        if (BuildConfig.DEBUG){
+//            logLevel = RestAdapter.LogLevel.FULL;
+//        } else {
+//            logLevel = RestAdapter.LogLevel.NONE;
+//        }
+//
+//        return logLevel;
+//    }
 }
 

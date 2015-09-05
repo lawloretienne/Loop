@@ -26,8 +26,8 @@ import com.etiennelawlor.loop.utilities.LoopUtility;
 
 import java.util.List;
 
+import butterknife.Bind;
 import butterknife.ButterKnife;
-import butterknife.InjectView;
 import de.hdodenhof.circleimageview.CircleImageView;
 import timber.log.Timber;
 
@@ -39,13 +39,13 @@ public class MainActivity extends AppCompatActivity {
 
     // region Member Variables
     private CharSequence mTitle;
-    @InjectView(R.id.drawer_layout)
+    @Bind(R.id.drawer_layout)
     DrawerLayout mDrawerLayout;
-    @InjectView(R.id.nav_view)
+    @Bind(R.id.nav_view)
     NavigationView mNavigationView;
-    @InjectView(R.id.user_avatar_riv)
+    @Bind(R.id.user_avatar_riv)
     CircleImageView mAvatarImageView;
-    @InjectView(R.id.full_name_tv)
+    @Bind(R.id.full_name_tv)
     TextView mFullNameTextView;
 
     private AuthorizedUser mAuthorizedUser;
@@ -121,7 +121,7 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        ButterKnife.inject(this);
+        ButterKnife.bind(this);
 
         Intent intent = getIntent();
         if(intent != null) {

@@ -16,6 +16,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -41,12 +42,11 @@ import com.etiennelawlor.loop.otto.BusProvider;
 
 import java.util.List;
 
+import butterknife.Bind;
 import butterknife.ButterKnife;
-import butterknife.InjectView;
+import retrofit.Call;
 import retrofit.Callback;
-import retrofit.RetrofitError;
-import retrofit.client.Response;
-import retrofit.mime.TypedInput;
+import retrofit.Response;
 import timber.log.Timber;
 
 /**
@@ -59,19 +59,19 @@ public class WatchLaterVideosFragment extends BaseFragment implements VideosAdap
     // endregion
 
     // region Member Variables
-    @InjectView(R.id.videos_rv)
+    @Bind(R.id.videos_rv)
     RecyclerView mVideosRecyclerView;
-    @InjectView(android.R.id.empty)
+    @Bind(android.R.id.empty)
     View mEmptyView;
-    @InjectView(R.id.empty_tv)
+    @Bind(R.id.empty_tv)
     TextView mEmptyTextView;
-    @InjectView(R.id.pb)
+    @Bind(R.id.pb)
     ProgressBar mProgressBar;
-    @InjectView(R.id.error_ll)
+    @Bind(R.id.error_ll)
     LinearLayout mErrorLinearLayout;
-    @InjectView(R.id.error_tv)
+    @Bind(R.id.error_tv)
     TextView mErrorTextView;
-    @InjectView(R.id.toolbar)
+    @Bind(R.id.toolbar)
     Toolbar mToolbar;
 
     private int mCurrentPage = 1;
@@ -112,16 +112,19 @@ public class WatchLaterVideosFragment extends BaseFragment implements VideosAdap
     // region Callbacks
     private Callback<VideosCollection> mFindVideosFirstFetchCallback = new Callback<VideosCollection>() {
         @Override
-        public void success(VideosCollection videosCollection, Response response) {
+        public void onResponse(Response<VideosCollection> response) {
             Timber.d("success()");
             if (isAdded() && isResumed()) {
                 mProgressBar.setVisibility(View.GONE);
                 mIsLoading = false;
 
-                if (videosCollection != null) {
-                    List<Video> videos = videosCollection.getVideos();
-                    if (videos != null) {
-                        mVideosAdapter.addAll(videos);
+                if(response != null){
+                    VideosCollection videosCollection = response.body();
+                    if(videosCollection != null){
+                        List<Video> videos = videosCollection.getVideos();
+                        if (videos != null) {
+                            mVideosAdapter.addAll(videos);
+                        }
                     }
                 }
 
@@ -136,70 +139,74 @@ public class WatchLaterVideosFragment extends BaseFragment implements VideosAdap
         }
 
         @Override
-        public void failure(RetrofitError error) {
+        public void onFailure(Throwable t) {
             if (isAdded() && isResumed()) {
-                Timber.d("failure()");
+                Timber.e("failure()");
                 mIsLoading = false;
                 mProgressBar.setVisibility(View.GONE);
 
-                if(error != null){
-                    Response response = error.getResponse();
-                    if(response != null){
-                        String reason = response.getReason();
-                        Timber.d("failure() : reason -"+reason);
+                if(t != null){
+                    Throwable cause = t.getCause();
+                    String message = t.getMessage();
 
-                        TypedInput body = response.getBody();
-                        if(body != null){
-                            Timber.d("failure() : body.toString() -"+body.toString());
-                        }
-
-                        int status = response.getStatus();
-                        Timber.d("failure() : status -"+status);
-                    }
-
-                    Throwable cause = error.getCause();
                     if(cause != null){
-                        Timber.d("failure() : cause.toString() -"+cause.toString());
+                        Timber.e("failure() : cause.toString() -"+cause.toString());
                     }
 
-                    Object body = error.getBody();
-                    if(body != null){
-                        Timber.d("failure() : body.toString() -"+body.toString());
+                    if(TextUtils.isEmpty(message)){
+                        Timber.e("failure() : message - " + message);
                     }
+
+                    t.printStackTrace();
                 }
             }
-
         }
     };
 
     private Callback<VideosCollection> mFindVideosNextFetchCallback = new Callback<VideosCollection>() {
         @Override
-        public void success(VideosCollection videosCollection, Response response) {
+        public void onResponse(Response<VideosCollection> response) {
             Timber.d("success()");
             if (isAdded() && isResumed()) {
 //                mProgressBar.setVisibility(View.GONE);
 
                 mVideosAdapter.removeLoading();
-
                 mIsLoading = false;
 
-                if (videosCollection != null) {
-                    List<Video> videos = videosCollection.getVideos();
-                    if (videos != null) {
-                        mVideosAdapter.addAll(videos);
+                if(response != null){
+                    VideosCollection videosCollection = response.body();
+                    if (videosCollection != null) {
+                        List<Video> videos = videosCollection.getVideos();
+                        if (videos != null) {
+                            mVideosAdapter.addAll(videos);
+                        }
                     }
                 }
             }
         }
 
         @Override
-        public void failure(RetrofitError error) {
+        public void onFailure(Throwable t) {
             if (isAdded() && isResumed()) {
                 Timber.d("failure()");
                 mIsLoading = false;
 //                mProgressBar.setVisibility(View.GONE);
-
                 mVideosAdapter.removeLoading();
+
+                if(t != null){
+                    Throwable cause = t.getCause();
+                    String message = t.getMessage();
+
+                    if(cause != null){
+                        Timber.e("failure() : cause.toString() -"+cause.toString());
+                    }
+
+                    if(TextUtils.isEmpty(message)){
+                        Timber.e("failure() : message - " + message);
+                    }
+
+                    t.printStackTrace();
+                }
             }
         }
     };
@@ -246,7 +253,7 @@ public class WatchLaterVideosFragment extends BaseFragment implements VideosAdap
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_watch_later_videos, container, false);
-        ButterKnife.inject(this, rootView);
+        ButterKnife.bind(this, rootView);
 
         return rootView;
     }
@@ -274,12 +281,12 @@ public class WatchLaterVideosFragment extends BaseFragment implements VideosAdap
         // Pagination
         mVideosRecyclerView.addOnScrollListener(mRecyclerViewOnScrollListener);
 
-        mVimeoService.findWatchLaterVideos(mQuery,
+        Call findWatchLaterVideosCall = mVimeoService.findWatchLaterVideos(mQuery,
                 mSortByValue,
                 mSortOrderValue,
                 mCurrentPage,
-                PAGE_SIZE,
-                mFindVideosFirstFetchCallback);
+                PAGE_SIZE);
+        findWatchLaterVideosCall.enqueue(mFindVideosFirstFetchCallback);
     }
 
     @Override
@@ -287,7 +294,7 @@ public class WatchLaterVideosFragment extends BaseFragment implements VideosAdap
         super.onDestroyView();
 
         mVideosRecyclerView.removeOnScrollListener(mRecyclerViewOnScrollListener);
-        ButterKnife.reset(this);
+        ButterKnife.unbind(this);
     }
     // endregion
 
@@ -353,13 +360,12 @@ public class WatchLaterVideosFragment extends BaseFragment implements VideosAdap
 
         mCurrentPage += 1;
 
-        mVimeoService.findWatchLaterVideos(mQuery,
+        Call findWatchLaterVideosCall = mVimeoService.findWatchLaterVideos(mQuery,
                 mSortByValue,
                 mSortOrderValue,
                 mCurrentPage,
-                PAGE_SIZE,
-                mFindVideosNextFetchCallback);
-
+                PAGE_SIZE);
+        findWatchLaterVideosCall.enqueue(mFindVideosNextFetchCallback);
     }
 
     private void showSortByDialog() {
@@ -379,12 +385,12 @@ public class WatchLaterVideosFragment extends BaseFragment implements VideosAdap
 
                 mCurrentPage = 1;
 
-                mVimeoService.findWatchLaterVideos(mQuery,
+                Call findWatchLaterVideosCall = mVimeoService.findWatchLaterVideos(mQuery,
                         mSortByValue,
                         mSortOrderValue,
                         mCurrentPage,
-                        PAGE_SIZE,
-                        mFindVideosFirstFetchCallback);
+                        PAGE_SIZE);
+                findWatchLaterVideosCall.enqueue(mFindVideosFirstFetchCallback);
 
                 dialog.dismiss();
             }
@@ -409,12 +415,13 @@ public class WatchLaterVideosFragment extends BaseFragment implements VideosAdap
 
                 mCurrentPage = 1;
 
-                mVimeoService.findWatchLaterVideos(mQuery,
+                Call findWatchLaterVideosCall = mVimeoService.findWatchLaterVideos(mQuery,
                         mSortByValue,
                         mSortOrderValue,
                         mCurrentPage,
-                        PAGE_SIZE,
-                        mFindVideosFirstFetchCallback);
+                        PAGE_SIZE);
+
+                findWatchLaterVideosCall.enqueue(mFindVideosFirstFetchCallback);
 
                 dialog.dismiss();
 

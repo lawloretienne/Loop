@@ -9,6 +9,7 @@ import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -31,12 +32,11 @@ import com.etiennelawlor.loop.utilities.LoopUtility;
 
 import java.util.List;
 
+import butterknife.Bind;
 import butterknife.ButterKnife;
-import butterknife.InjectView;
+import retrofit.Call;
 import retrofit.Callback;
-import retrofit.RetrofitError;
-import retrofit.client.Response;
-import retrofit.mime.TypedInput;
+import retrofit.Response;
 import timber.log.Timber;
 
 /**
@@ -48,17 +48,17 @@ public class ExploreFragment extends BaseFragment implements CategoriesAdapter.O
     // endregion
 
     // region Member Variables
-    @InjectView(R.id.categories_rv)
+    @Bind(R.id.categories_rv)
     RecyclerView mCategoriesRecyclerView;
-    @InjectView(android.R.id.empty)
+    @Bind(android.R.id.empty)
     View mEmptyView;
-    @InjectView(R.id.pb)
+    @Bind(R.id.pb)
     ProgressBar mProgressBar;
-    @InjectView(R.id.error_ll)
+    @Bind(R.id.error_ll)
     LinearLayout mErrorLinearLayout;
-    @InjectView(R.id.error_tv)
+    @Bind(R.id.error_tv)
     TextView mErrorTextView;
-    @InjectView(R.id.toolbar)
+    @Bind(R.id.toolbar)
     Toolbar mToolbar;
 
     private boolean mIsLoading = false;
@@ -73,53 +73,45 @@ public class ExploreFragment extends BaseFragment implements CategoriesAdapter.O
     // region Callbacks
     private Callback<CategoriesCollection> mGetCategoriesCallback = new Callback<CategoriesCollection>() {
         @Override
-        public void success(CategoriesCollection categoriesCollection, Response response) {
-            if(isAdded() && isResumed()){
+        public void onResponse(Response<CategoriesCollection> response) {
+            if(isAdded() && isResumed()) {
                 mProgressBar.setVisibility(View.GONE);
                 mIsLoading = false;
 
                 Timber.d("");
-                if(categoriesCollection != null){
-                    List<Category> categories = categoriesCollection.getCategories();
+                if(response != null){
+                    CategoriesCollection categoriesCollection = response.body();
+                    if(categoriesCollection != null){
+                        List<Category> categories = categoriesCollection.getCategories();
 
-                    Timber.d("");
-                    mCategoriesAdapter.addAll(categories);
+                        Timber.d("");
+                        mCategoriesAdapter.addAll(categories);
+                    }
                 }
             }
         }
 
         @Override
-        public void failure(RetrofitError error) {
-            if(isAdded() && isResumed()){
+        public void onFailure(Throwable t) {
+            if(isAdded() && isResumed()) {
                 mProgressBar.setVisibility(View.GONE);
                 mIsLoading = false;
 
-                Timber.d("");
+                Timber.e("");
 
-                if(error != null){
-                    Response response = error.getResponse();
-                    if(response != null){
-                        String reason = response.getReason();
-                        Timber.d("failure() : reason -"+reason);
+                if(t != null){
+                    Throwable cause = t.getCause();
+                    String message = t.getMessage();
 
-                        TypedInput body = response.getBody();
-                        if(body != null){
-                            Timber.d("failure() : body.toString() -"+body.toString());
-                        }
-
-                        int status = response.getStatus();
-                        Timber.d("failure() : status -"+status);
-                    }
-
-                    Throwable cause = error.getCause();
                     if(cause != null){
-                        Timber.d("failure() : cause.toString() -"+cause.toString());
+                        Timber.e("failure() : cause.toString() -"+cause.toString());
                     }
 
-                    Object body = error.getBody();
-                    if(body != null){
-                        Timber.d("failure() : body.toString() -"+body.toString());
+                    if(TextUtils.isEmpty(message)){
+                        Timber.e("failure() : message - " + message);
                     }
+
+                    t.printStackTrace();
                 }
             }
         }
@@ -167,7 +159,7 @@ public class ExploreFragment extends BaseFragment implements CategoriesAdapter.O
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_explore, container, false);
-        ButterKnife.inject(this, rootView);
+        ButterKnife.bind(this, rootView);
 
         return rootView;
     }
@@ -196,7 +188,8 @@ public class ExploreFragment extends BaseFragment implements CategoriesAdapter.O
 
         mCategoriesRecyclerView.setAdapter(mCategoriesAdapter);
 
-        mVimeoService.getCategories(mGetCategoriesCallback);
+        Call getCategoriesCall = mVimeoService.getCategories();
+        getCategoriesCall.enqueue(mGetCategoriesCallback);
     }
 
     @Override
@@ -204,7 +197,7 @@ public class ExploreFragment extends BaseFragment implements CategoriesAdapter.O
         super.onDestroyView();
 
 //        mVideosRecyclerView.removeOnScrollListener(mRecyclerViewOnScrollListener);
-        ButterKnife.reset(this);
+        ButterKnife.unbind(this);
     }
     // endregion
 

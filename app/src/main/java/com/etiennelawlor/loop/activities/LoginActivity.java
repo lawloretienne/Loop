@@ -17,11 +17,11 @@ import com.etiennelawlor.loop.network.models.AccessToken;
 import com.etiennelawlor.loop.network.models.AuthorizedUser;
 import com.etiennelawlor.loop.network.models.OAuthResponse;
 
+import butterknife.Bind;
 import butterknife.ButterKnife;
-import butterknife.InjectView;
+import retrofit.Call;
 import retrofit.Callback;
-import retrofit.RetrofitError;
-import retrofit.client.Response;
+import retrofit.Response;
 import timber.log.Timber;
 
 /**
@@ -30,13 +30,13 @@ import timber.log.Timber;
 public class LoginActivity extends AppCompatActivity {
 
     // region Member Variables
-    @InjectView(R.id.wv)
+    @Bind(R.id.wv)
     WebView mWebView;
 
     private WebViewClient mWebViewClient = new WebViewClient() {
         public boolean shouldOverrideUrlLoading(WebView view, String url) {
             Timber.i("Processing webview url click..."); // http://localhost/?code=0e4c71d1ed6f61c70b708a6098f37337033082ff
-            if(!TextUtils.isEmpty(url) && !url.startsWith(getString(R.string.client_redirect_uri))){
+            if (!TextUtils.isEmpty(url) && !url.startsWith(getString(R.string.client_redirect_uri))) {
                 view.loadUrl(url); // Uri.parse(url).getQueryParameter("code")
             }
 
@@ -44,15 +44,15 @@ public class LoginActivity extends AppCompatActivity {
         }
 
         @Override
-        public void onPageFinished(WebView view, String url)  {
-            Timber.i("Finished loading URL: " +url);
+        public void onPageFinished(WebView view, String url) {
+            Timber.i("Finished loading URL: " + url);
 //                setSupportProgressBarIndeterminateVisibility(false);
 //                mSmoothProgressBar.setVisibility(View.GONE);
 
-            if(!TextUtils.isEmpty(url) && url.startsWith(getString(R.string.client_redirect_uri))){
+            if (!TextUtils.isEmpty(url) && url.startsWith(getString(R.string.client_redirect_uri))) {
                 Uri uri = Uri.parse(url);
                 String state = uri.getQueryParameter("state");
-                if(state.equals(getString(R.string.vimeo_state))){
+                if (state.equals(getString(R.string.vimeo_state))) {
                     String code = uri.getQueryParameter("code");
 
                     VimeoService vimeoService = ServiceGenerator.createService(
@@ -60,10 +60,10 @@ public class LoginActivity extends AppCompatActivity {
                             VimeoService.BASE_URL,
                             getString(R.string.client_id),
                             getString(R.string.client_secret));
-                    vimeoService.exchangeCode("authorization_code",
+                    Call exchangeCodeCall = vimeoService.exchangeCode("authorization_code",
                             code,
-                            getString(R.string.client_redirect_uri),
-                            mExchangeCodeCallback);
+                            getString(R.string.client_redirect_uri));
+                    exchangeCodeCall.enqueue(mExchangeCodeCallback);
                 }
 
             }
@@ -74,7 +74,7 @@ public class LoginActivity extends AppCompatActivity {
 
 //                mSmoothProgressBar.setVisibility(View.GONE);
 
-            if(!isFinishing()){
+            if (!isFinishing()) {
 //                    alertDialog.setTitle("Error");
 //                    alertDialog.setMessage("Unable to connect. Please check your internet connectivity.");
 //                    alertDialog.setButton(DialogInterface.BUTTON_POSITIVE, getString(android.R.string.ok), new DialogInterface.OnClickListener() {
@@ -95,26 +95,45 @@ public class LoginActivity extends AppCompatActivity {
     // region Callbacks
     private Callback<OAuthResponse> mExchangeCodeCallback = new Callback<OAuthResponse>() {
         @Override
-        public void success(OAuthResponse oAuthResponse, Response response) {
-            if(oAuthResponse != null){
-                String accessToken = oAuthResponse.getAccessToken();
-                String tokenType = oAuthResponse.getTokenType();
-                AuthorizedUser authorizedUser = oAuthResponse.getUser();
+        public void onResponse(Response<OAuthResponse> response) {
+            if (response != null) {
+                OAuthResponse oAuthResponse = response.body();
+                if (oAuthResponse != null) {
+                    String accessToken = oAuthResponse.getAccessToken();
+                    String tokenType = oAuthResponse.getTokenType();
+                    AuthorizedUser authorizedUser = oAuthResponse.getUser();
 
-                AccessToken token = new AccessToken(tokenType, accessToken);
-                PreferencesHelper.saveAccessToken(getApplicationContext(), token);
-                PreferencesHelper.saveAuthorizedUser(getApplicationContext(), authorizedUser);
+                    AccessToken token = new AccessToken(tokenType, accessToken);
+                    PreferencesHelper.saveAccessToken(getApplicationContext(), token);
+                    PreferencesHelper.saveAuthorizedUser(getApplicationContext(), authorizedUser);
 
-                Intent intent = new Intent(LoginActivity.this, MainActivity.class);
-                intent.putExtra(getString(R.string.authorized_user), authorizedUser);
-                startActivity(intent);
-                finish();
+                    Intent intent = new Intent(LoginActivity.this, MainActivity.class);
+                    intent.putExtra(getString(R.string.authorized_user), authorizedUser);
+                    startActivity(intent);
+                    finish();
+                }
             }
+
         }
 
         @Override
-        public void failure(RetrofitError error) {
-            Timber.d("");
+        public void onFailure(Throwable t) {
+            Timber.e("");
+
+            if(t != null){
+                Throwable cause = t.getCause();
+                String message = t.getMessage();
+
+                if(cause != null){
+                    Timber.e("failure() : cause.toString() -"+cause.toString());
+                }
+
+                if(TextUtils.isEmpty(message)){
+                    Timber.e("failure() : message - " + message);
+                }
+
+                t.printStackTrace();
+            }
         }
     };
     // endregion
@@ -124,7 +143,7 @@ public class LoginActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
-        ButterKnife.inject(this);
+        ButterKnife.bind(this);
 
         WebSettings webSettings = mWebView.getSettings();
         webSettings.setJavaScriptEnabled(true);
@@ -147,7 +166,7 @@ public class LoginActivity extends AppCompatActivity {
     // endregion
 
     // region Helper Methods
-    private String setUpAuthorizeUrl(){
+    private String setUpAuthorizeUrl() {
         String authroizeUrl;
 
         String webLoginClientId = getString(R.string.client_id);

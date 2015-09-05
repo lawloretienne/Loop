@@ -22,8 +22,8 @@ import com.etiennelawlor.loop.otto.BusProvider;
 import java.util.ArrayList;
 import java.util.List;
 
+import butterknife.Bind;
 import butterknife.ButterKnife;
-import butterknife.InjectView;
 
 /**
  * Created by etiennelawlor on 5/23/15.
@@ -34,11 +34,11 @@ public class WatchNowFragment extends BaseFragment {
     // endregion
 
     // region Member Variables
-    @InjectView(R.id.viewpager)
+    @Bind(R.id.viewpager)
     ViewPager mViewPager;
-    @InjectView(R.id.tabs)
+    @Bind(R.id.tabs)
     TabLayout mTabLayout;
-    @InjectView(R.id.toolbar)
+    @Bind(R.id.toolbar)
     Toolbar mToolbar;
     // endregion
 
@@ -80,7 +80,7 @@ public class WatchNowFragment extends BaseFragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_watch_now, container, false);
-        ButterKnife.inject(this, rootView);
+        ButterKnife.bind(this, rootView);
 
         return rootView;
     }
@@ -111,7 +111,7 @@ public class WatchNowFragment extends BaseFragment {
     @Override
     public void onDestroyView() {
         super.onDestroyView();
-        ButterKnife.reset(this);
+        ButterKnife.unbind(this);
     }
     // endregion
 

@@ -7,17 +7,23 @@
     android:orientation="vertical"
     android:background="@color/grey_200">
 
-
     <FrameLayout
         android:layout_width="match_parent"
-        android:layout_height="203dp"
+        android:layout_height="202dp"
         android:background="@android:color/black">
 
-        <VideoView
-            android:id="@+id/vv"
-            android:visibility="gone"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+        <!--<VideoView-->
+            <!--android:id="@+id/vv"-->
+            <!--android:visibility="gone"-->
+            <!--android:layout_width="match_parent"-->
+            <!--android:layout_height="match_parent"-->
+            <!--android:layout_gravity="center"/>-->
+
+        <TextureView
+            android:id="@+id/texture_view"
+            android:visibility="visible"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
             android:layout_gravity="center"/>
 
         <ImageView

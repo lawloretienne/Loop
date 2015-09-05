@@ -29,8 +29,8 @@ import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 
+import butterknife.Bind;
 import butterknife.ButterKnife;
-import butterknife.InjectView;
 import butterknife.OnClick;
 import timber.log.Timber;
 
@@ -316,15 +316,15 @@ public class VideosAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
     // region Inner Classes
 
     public class VideoViewHolder extends RecyclerView.ViewHolder {
-        @InjectView(R.id.video_thumbnail_iv)
+        @Bind(R.id.video_thumbnail_iv)
         ImageView mVideoThumbnailImageView;
-        @InjectView(R.id.title_tv)
+        @Bind(R.id.title_tv)
         TextView mTitleTextView;
-        @InjectView(R.id.uploaded_date_tv)
+        @Bind(R.id.uploaded_date_tv)
         TextView mUploadedDateTextView;
-        @InjectView(R.id.duration_tv)
+        @Bind(R.id.duration_tv)
         TextView mDurationTextView;
-        @InjectView(R.id.subtitle_tv)
+        @Bind(R.id.subtitle_tv)
         TextView mSubtitleTextView;
 
         @OnClick(R.id.video_row_root_ll)
@@ -336,7 +336,7 @@ public class VideosAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
 
         VideoViewHolder(View view) {
             super(view);
-            ButterKnife.inject(this, view);
+            ButterKnife.bind(this, view);
         }
     }
 

@@ -15,8 +15,8 @@ import com.etiennelawlor.loop.ui.DynamicHeightImageView;
 import java.util.ArrayList;
 import java.util.List;
 
+import butterknife.Bind;
 import butterknife.ButterKnife;
-import butterknife.InjectView;
 import butterknife.OnClick;
 
 /**
@@ -289,9 +289,9 @@ public class CategoriesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
     // region Inner Classes
 
     public class CategoryViewHolder extends RecyclerView.ViewHolder {
-        @InjectView(R.id.thumbnail_iv)
+        @Bind(R.id.thumbnail_iv)
         DynamicHeightImageView mVideoThumbnailImageView;
-        @InjectView(R.id.title_tv)
+        @Bind(R.id.title_tv)
         TextView mTitleTextView;
 
         @OnClick(R.id.category_card_root_fl)
@@ -303,7 +303,7 @@ public class CategoriesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
 
         CategoryViewHolder(View view) {
             super(view);
-            ButterKnife.inject(this, view);
+            ButterKnife.bind(this, view);
         }
     }
 

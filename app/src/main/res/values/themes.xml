@@ -27,6 +27,8 @@
 
     <style name="Theme.Loop.MainActivity" parent="Theme.Loop"/>
 
-    <style name="Theme.Loop.VideoDetailsActivity" parent="Theme.Loop"/>
+    <style name="Theme.Loop.VideoDetailsActivity" parent="Theme.Loop">
+        <item name="colorButtonNormal">@color/accent</item>
+    </style>
 
 </resources>

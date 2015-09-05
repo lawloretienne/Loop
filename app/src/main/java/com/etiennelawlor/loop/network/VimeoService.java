@@ -4,6 +4,7 @@ import com.etiennelawlor.loop.network.models.CategoriesCollection;
 import com.etiennelawlor.loop.network.models.OAuthResponse;
 import com.etiennelawlor.loop.network.models.VideosCollection;
 
+import retrofit.Call;
 import retrofit.Callback;
 import retrofit.http.Field;
 import retrofit.http.FormUrlEncoded;
@@ -17,46 +18,41 @@ import retrofit.http.Query;
  */
 public interface VimeoService {
 
-    public static final String BASE_URL = "https://api.vimeo.com";
+    String BASE_URL = "https://api.vimeo.com";
 
     @GET("/videos")
-    void findVideos(@Query("query") String query,
+    Call<VideosCollection> findVideos(@Query("query") String query,
                     @Query("sort") String sort,
                     @Query("direction") String direction,
                     @Query("page") Integer page,
-                    @Query("per_page") Integer perPage,
-                    Callback<VideosCollection> cb);
+                    @Query("per_page") Integer perPage);
 
     @GET("/me/likes")
-    void findLikedVideos(@Query("query") String query,
+    Call<VideosCollection> findLikedVideos(@Query("query") String query,
                         @Query("sort") String sort,
                         @Query("direction") String direction,
                         @Query("page") Integer page,
-                        @Query("per_page") Integer perPage,
-                        Callback<VideosCollection> cb);
+                        @Query("per_page") Integer perPage);
 
     @GET("/me/watchlater")
-    void findWatchLaterVideos(@Query("query") String query,
+    Call<VideosCollection> findWatchLaterVideos(@Query("query") String query,
                              @Query("sort") String sort,
                              @Query("direction") String direction,
                              @Query("page") Integer page,
-                             @Query("per_page") Integer perPage,
-                             Callback<VideosCollection> cb);
+                             @Query("per_page") Integer perPage);
 
     @GET("/videos/{videoId}/videos?filter=related")
-    void findRelatedVideos( @Path("videoId") Long videoId,
+    Call<VideosCollection> findRelatedVideos( @Path("videoId") Long videoId,
                             @Query("page") Integer page,
-                            @Query("per_page") Integer perPage,
-                            Callback<VideosCollection> cb);
+                            @Query("per_page") Integer perPage);
 
     @GET("/categories")
-    void getCategories(Callback<CategoriesCollection> cb);
+    Call<CategoriesCollection> getCategories();
 
     @FormUrlEncoded
     @POST("/oauth/access_token")
-    void exchangeCode(@Field("grant_type") String grantType,
+    Call<OAuthResponse> exchangeCode(@Field("grant_type") String grantType,
                       @Field("code") String code,
-                      @Field("redirect_uri") String redirectUri,
-                      Callback<OAuthResponse> cb);
+                      @Field("redirect_uri") String redirectUri);
 
 }

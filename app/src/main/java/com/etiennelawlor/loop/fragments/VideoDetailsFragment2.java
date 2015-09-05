@@ -58,12 +58,10 @@ import java.util.Locale;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import butterknife.Bind;
 import butterknife.ButterKnife;
-import butterknife.InjectView;
 import butterknife.OnClick;
 import retrofit.Callback;
-import retrofit.RetrofitError;
-import retrofit.client.Response;
 import timber.log.Timber;
 
 /**
@@ -72,7 +70,7 @@ import timber.log.Timber;
 public class VideoDetailsFragment2 extends BaseFragment implements VideosAdapter.OnItemClickListener {
 
     // region Member Variables
-    @InjectView(R.id.wv)
+    @Bind(R.id.wv)
     WebView mWebView;
 //    @InjectView(R.id.vv)
 //    VideoView mVideoView;
@@ -245,7 +243,7 @@ public class VideoDetailsFragment2 extends BaseFragment implements VideosAdapter
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_video_details2, container, false);
-        ButterKnife.inject(this, rootView);
+        ButterKnife.bind(this, rootView);
 
         return rootView;
     }
@@ -360,7 +358,7 @@ public class VideoDetailsFragment2 extends BaseFragment implements VideosAdapter
     @Override
     public void onDestroyView() {
         super.onDestroyView();
-        ButterKnife.reset(this);
+        ButterKnife.unbind(this);
     }
 
     @Override

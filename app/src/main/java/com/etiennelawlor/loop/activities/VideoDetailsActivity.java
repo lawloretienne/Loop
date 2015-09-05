@@ -10,9 +10,8 @@ import com.etiennelawlor.loop.R;
 import com.etiennelawlor.loop.fragments.VideoDetailsFragment;
 import com.etiennelawlor.loop.fragments.VideoDetailsFragment2;
 
+import butterknife.Bind;
 import butterknife.ButterKnife;
-import butterknife.InjectView;
-
 
 /**
  * Created by etiennelawlor on 5/23/15.
@@ -20,7 +19,7 @@ import butterknife.InjectView;
 public class VideoDetailsActivity extends AppCompatActivity {
 
     // region Member Variables
-    @InjectView(R.id.toolbar) Toolbar mToolbar;
+    @Bind(R.id.toolbar) Toolbar mToolbar;
     // endregion
 
     // region Lifecycle Methods
@@ -28,7 +27,7 @@ public class VideoDetailsActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_video_details);
-        ButterKnife.inject(this);
+        ButterKnife.bind(this);
 
         setSupportActionBar(mToolbar);
 
