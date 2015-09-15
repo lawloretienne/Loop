@@ -37,6 +37,7 @@ import com.etiennelawlor.loop.network.models.VideosCollection;
 import com.etiennelawlor.loop.otto.BusProvider;
 
 import java.net.SocketTimeoutException;
+import java.net.UnknownHostException;
 import java.util.List;
 
 import butterknife.Bind;
@@ -161,7 +162,7 @@ public class VideosFragment extends BaseFragment implements VideosAdapter.OnItem
 
                     t.printStackTrace();
 
-                    if(t instanceof SocketTimeoutException){
+                    if(t instanceof SocketTimeoutException || t instanceof UnknownHostException){
                         Timber.e("Timeout occurred");
                         mErrorTextView.setText("Can't load data.\nCheck your network connection.");
                         mErrorLinearLayout.setVisibility(View.VISIBLE);

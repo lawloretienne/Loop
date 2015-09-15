@@ -52,9 +52,9 @@ public class ServiceGenerator {
 
         OkHttpClient okHttpClient = getClient();
         okHttpClient.setConnectTimeout(10, TimeUnit.SECONDS);
-        okHttpClient.setReadTimeout(1, TimeUnit.SECONDS);
+        okHttpClient.setReadTimeout(10, TimeUnit.SECONDS);
         okHttpClient.setWriteTimeout(10, TimeUnit.SECONDS);
-        okHttpClient.interceptors().add(new LoggingInterceptor());
+//        okHttpClient.interceptors().add(new LoggingInterceptor()); // Add only for debugging purposes
         okHttpClient.networkInterceptors().add(new Interceptor() {
             @Override
             public Response intercept(Chain chain) throws IOException {
@@ -93,9 +93,9 @@ public class ServiceGenerator {
     public static <S> S createService(Class<S> serviceClass, String baseUrl, final AccessToken accessToken) {
         OkHttpClient okHttpClient = getClient();
         okHttpClient.setConnectTimeout(10, TimeUnit.SECONDS);
-        okHttpClient.setReadTimeout(1, TimeUnit.SECONDS);
+        okHttpClient.setReadTimeout(10, TimeUnit.SECONDS);
         okHttpClient.setWriteTimeout(10, TimeUnit.SECONDS);
-        okHttpClient.interceptors().add(new LoggingInterceptor());
+//        okHttpClient.interceptors().add(new LoggingInterceptor()); // Add only for debugging purposes
         okHttpClient.networkInterceptors().add(new Interceptor() {
             @Override
             public Response intercept(Chain chain) throws IOException {
