@@ -131,19 +131,17 @@ public class VideoDetailsFragment extends BaseFragment implements VideosAdapter.
     private Callback<VideoConfig> mGetVideoConfigCallback = new Callback<VideoConfig>() {
         @Override
         public void onResponse(Response<VideoConfig> response) {
-            if (isAdded() && isResumed()) {
-                Timber.d("mGetVideoConfigCallback : success()");
+            Timber.d("mGetVideoConfigCallback : success()");
 
-                if (response != null) {
-                    VideoConfig videoConfig = response.body();
-                    if (videoConfig != null) {
-                        mVideoUrl = getVideoUrl(videoConfig);
-                        Timber.d("mGetVideoConfigCallback : success() : videoUrl - " + mVideoUrl);
+            if (response != null) {
+                VideoConfig videoConfig = response.body();
+                if (videoConfig != null) {
+                    mVideoUrl = getVideoUrl(videoConfig);
+                    Timber.d("mGetVideoConfigCallback : success() : videoUrl - " + mVideoUrl);
 
-                        if (!TextUtils.isEmpty(mVideoUrl)) {
-                            Timber.d("playVideo()");
-                            playVideo(mVideoUrl);
-                        }
+                    if (!TextUtils.isEmpty(mVideoUrl)) {
+                        Timber.d("playVideo()");
+                        playVideo(mVideoUrl);
                     }
                 }
             }
@@ -151,39 +149,36 @@ public class VideoDetailsFragment extends BaseFragment implements VideosAdapter.
 
         @Override
         public void onFailure(Throwable t) {
-            if (isAdded() && isResumed()) {
-                Timber.e("mGetVideoConfigCallback : failure()");
+            Timber.e("mGetVideoConfigCallback : failure()");
 
-                if(t != null){
-                    Throwable cause = t.getCause();
-                    String message = t.getMessage();
+            if (t != null) {
+                Throwable cause = t.getCause();
+                String message = t.getMessage();
 
-                    if(cause != null){
-                        Timber.e("failure() : cause.toString() -"+cause.toString());
-                    }
-
-                    if(TextUtils.isEmpty(message)){
-                        Timber.e("failure() : message - " + message);
-                    }
-
-                    t.printStackTrace();
+                if (cause != null) {
+                    Timber.e("failure() : cause.toString() -" + cause.toString());
                 }
+
+                if (TextUtils.isEmpty(message)) {
+                    Timber.e("failure() : message - " + message);
+                }
+
+                t.printStackTrace();
             }
+
         }
     };
 
     private Callback<VideosCollection> mGetRelatedVideosCallback = new Callback<VideosCollection>() {
         @Override
         public void onResponse(Response<VideosCollection> response) {
-            if (isAdded() && isResumed()) {
-                Timber.d("");
-                VideosCollection videosCollection = response.body();
-                if(videosCollection != null){
-                    if (videosCollection != null) {
-                        List<Video> videos = videosCollection.getVideos();
-                        if (videos != null) {
-                            mVideosAdapter.addAll(videos);
-                        }
+            Timber.d("");
+            VideosCollection videosCollection = response.body();
+            if (videosCollection != null) {
+                if (videosCollection != null) {
+                    List<Video> videos = videosCollection.getVideos();
+                    if (videos != null) {
+                        mVideosAdapter.addAll(videos);
                     }
                 }
             }
@@ -191,23 +186,21 @@ public class VideoDetailsFragment extends BaseFragment implements VideosAdapter.
 
         @Override
         public void onFailure(Throwable t) {
-            if (isAdded() && isResumed()) {
-                Timber.e("");
+            Timber.e("");
 
-                if(t != null){
-                    Throwable cause = t.getCause();
-                    String message = t.getMessage();
+            if (t != null) {
+                Throwable cause = t.getCause();
+                String message = t.getMessage();
 
-                    if(cause != null){
-                        Timber.e("failure() : cause.toString() -"+cause.toString());
-                    }
-
-                    if(TextUtils.isEmpty(message)){
-                        Timber.e("failure() : message - " + message);
-                    }
-
-                    t.printStackTrace();
+                if (cause != null) {
+                    Timber.e("failure() : cause.toString() -" + cause.toString());
                 }
+
+                if (TextUtils.isEmpty(message)) {
+                    Timber.e("failure() : message - " + message);
+                }
+
+                t.printStackTrace();
             }
         }
     };
@@ -284,6 +277,7 @@ public class VideoDetailsFragment extends BaseFragment implements VideosAdapter.
                 Long videoId = Long.parseLong(lastPathSegment);
 
                 Call getVideoConfigCall = mVimeoPlayerService.getVideoConfig(videoId);
+                mCalls.add(getVideoConfigCall);
                 getVideoConfigCall.enqueue(mGetVideoConfigCallback);
 
 //                final LinearLayoutManager layoutManager = new LinearLayoutManager(getActivity());
@@ -476,7 +470,7 @@ public class VideoDetailsFragment extends BaseFragment implements VideosAdapter.
             Timber.e("");
         }
 
-        if(!TextUtils.isEmpty(uploadDate)){
+        if (!TextUtils.isEmpty(uploadDate)) {
             mUploadDateTextView.setText(String.format("Uploaded %s", uploadDate));
             mUploadDateTextView.setVisibility(View.VISIBLE);
         } else {
@@ -492,7 +486,7 @@ public class VideoDetailsFragment extends BaseFragment implements VideosAdapter.
                 tagString += String.format("#%s ", tag.getCanonical());
             }
 
-            if(!TextUtils.isEmpty(tagString)){
+            if (!TextUtils.isEmpty(tagString)) {
                 mTagsTextView.setText(tagString);
                 mTagsTextView.setVisibility(View.VISIBLE);
             } else {
@@ -501,16 +495,16 @@ public class VideoDetailsFragment extends BaseFragment implements VideosAdapter.
         }
     }
 
-    private String getHLSVideoUrl(HLS hls){
+    private String getHLSVideoUrl(HLS hls) {
         String videoUrl = "";
-        if(hls != null){
+        if (hls != null) {
             String all = hls.getAll();
-            videoUrl =  all;
+            videoUrl = all;
         }
         return videoUrl;
     }
 
-    private String getH264VideoUrl(H264 h264){
+    private String getH264VideoUrl(H264 h264) {
         String videoUrl = "";
         if (h264 != null) {
 
@@ -541,7 +535,7 @@ public class VideoDetailsFragment extends BaseFragment implements VideosAdapter.
         return videoUrl;
     }
 
-    private String getVP6VideoUrl(VP6 vp6){
+    private String getVP6VideoUrl(VP6 vp6) {
         String videoUrl = "";
         if (vp6 != null) {
 
@@ -572,7 +566,7 @@ public class VideoDetailsFragment extends BaseFragment implements VideosAdapter.
         return videoUrl;
     }
 
-    private String getVideoUrl(VideoConfig videoConfig){
+    private String getVideoUrl(VideoConfig videoConfig) {
         String videoUrl = "";
 
         if (videoConfig != null) {
@@ -588,11 +582,11 @@ public class VideoDetailsFragment extends BaseFragment implements VideosAdapter.
                     String vp6VideoUrl = getVP6VideoUrl(vp6);
                     String hlsVideoUrl = getHLSVideoUrl(hls);
 
-                    if(!TextUtils.isEmpty(h264VideoUrl)){
+                    if (!TextUtils.isEmpty(h264VideoUrl)) {
                         videoUrl = h264VideoUrl;
-                    } else if(!TextUtils.isEmpty(vp6VideoUrl)){
+                    } else if (!TextUtils.isEmpty(vp6VideoUrl)) {
                         videoUrl = vp6VideoUrl;
-                    } else if(!TextUtils.isEmpty(hlsVideoUrl)){
+                    } else if (!TextUtils.isEmpty(hlsVideoUrl)) {
                         videoUrl = hlsVideoUrl;
                     }
                 }
@@ -618,7 +612,7 @@ public class VideoDetailsFragment extends BaseFragment implements VideosAdapter.
         return formattedViewCount;
     }
 
-    private void playVideo(String videoUrl){
+    private void playVideo(String videoUrl) {
         mVideoView.setVideoPath(videoUrl);
 
         MediaController controller = new MediaController(getActivity());

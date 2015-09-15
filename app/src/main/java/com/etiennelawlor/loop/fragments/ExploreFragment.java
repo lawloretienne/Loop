@@ -74,45 +74,41 @@ public class ExploreFragment extends BaseFragment implements CategoriesAdapter.O
     private Callback<CategoriesCollection> mGetCategoriesCallback = new Callback<CategoriesCollection>() {
         @Override
         public void onResponse(Response<CategoriesCollection> response) {
-            if(isAdded() && isResumed()) {
-                mProgressBar.setVisibility(View.GONE);
-                mIsLoading = false;
+            mProgressBar.setVisibility(View.GONE);
+            mIsLoading = false;
 
-                Timber.d("");
-                if(response != null){
-                    CategoriesCollection categoriesCollection = response.body();
-                    if(categoriesCollection != null){
-                        List<Category> categories = categoriesCollection.getCategories();
+            Timber.d("");
+            if (response != null) {
+                CategoriesCollection categoriesCollection = response.body();
+                if (categoriesCollection != null) {
+                    List<Category> categories = categoriesCollection.getCategories();
 
-                        Timber.d("");
-                        mCategoriesAdapter.addAll(categories);
-                    }
+                    Timber.d("");
+                    mCategoriesAdapter.addAll(categories);
                 }
             }
         }
 
         @Override
         public void onFailure(Throwable t) {
-            if(isAdded() && isResumed()) {
-                mProgressBar.setVisibility(View.GONE);
-                mIsLoading = false;
+            mProgressBar.setVisibility(View.GONE);
+            mIsLoading = false;
 
-                Timber.e("");
+            Timber.e("");
 
-                if(t != null){
-                    Throwable cause = t.getCause();
-                    String message = t.getMessage();
+            if (t != null) {
+                Throwable cause = t.getCause();
+                String message = t.getMessage();
 
-                    if(cause != null){
-                        Timber.e("failure() : cause.toString() -"+cause.toString());
-                    }
-
-                    if(TextUtils.isEmpty(message)){
-                        Timber.e("failure() : message - " + message);
-                    }
-
-                    t.printStackTrace();
+                if (cause != null) {
+                    Timber.e("failure() : cause.toString() -" + cause.toString());
                 }
+
+                if (TextUtils.isEmpty(message)) {
+                    Timber.e("failure() : message - " + message);
+                }
+
+                t.printStackTrace();
             }
         }
     };
@@ -189,6 +185,7 @@ public class ExploreFragment extends BaseFragment implements CategoriesAdapter.O
         mCategoriesRecyclerView.setAdapter(mCategoriesAdapter);
 
         Call getCategoriesCall = mVimeoService.getCategories();
+        mCalls.add(getCategoriesCall);
         getCategoriesCall.enqueue(mGetCategoriesCallback);
     }
 

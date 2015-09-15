@@ -115,6 +115,7 @@ public class VideosFragment extends BaseFragment implements VideosAdapter.OnItem
                 mSortOrderValue,
                 mCurrentPage,
                 PAGE_SIZE);
+        mCalls.add(findVideosCall);
         findVideosCall.enqueue(mFindVideosFirstFetchCallback);
     }
 
@@ -125,17 +126,15 @@ public class VideosFragment extends BaseFragment implements VideosAdapter.OnItem
         @Override
         public void onResponse(Response<VideosCollection> response) {
             Timber.d("success()");
-            if (isAdded() && isResumed()) {
-                mProgressBar.setVisibility(View.GONE);
-                mIsLoading = false;
+            mProgressBar.setVisibility(View.GONE);
+            mIsLoading = false;
 
-                if(response != null){
-                    VideosCollection videosCollection = response.body();
-                    if (videosCollection != null) {
-                        List<Video> videos = videosCollection.getVideos();
-                        if (videos != null) {
-                            mVideosAdapter.addAll(videos);
-                        }
+            if (response != null) {
+                VideosCollection videosCollection = response.body();
+                if (videosCollection != null) {
+                    List<Video> videos = videosCollection.getVideos();
+                    if (videos != null) {
+                        mVideosAdapter.addAll(videos);
                     }
                 }
             }
@@ -143,30 +142,28 @@ public class VideosFragment extends BaseFragment implements VideosAdapter.OnItem
 
         @Override
         public void onFailure(Throwable t) {
-            if (isAdded() && isResumed()) {
-                Timber.d("failure()");
-                mIsLoading = false;
-                mProgressBar.setVisibility(View.GONE);
+            Timber.d("failure()");
+            mIsLoading = false;
+            mProgressBar.setVisibility(View.GONE);
 
-                if(t != null){
-                    Throwable cause = t.getCause();
-                    String message = t.getMessage();
+            if (t != null) {
+                Throwable cause = t.getCause();
+                String message = t.getMessage();
 
-                    if(cause != null){
-                        Timber.e("failure() : cause.toString() -"+cause.toString());
-                    }
+                if (cause != null) {
+                    Timber.e("failure() : cause.toString() -" + cause.toString());
+                }
 
-                    if(TextUtils.isEmpty(message)){
-                        Timber.e("failure() : message - " + message);
-                    }
+                if (TextUtils.isEmpty(message)) {
+                    Timber.e("failure() : message - " + message);
+                }
 
-                    t.printStackTrace();
+                t.printStackTrace();
 
-                    if(t instanceof SocketTimeoutException || t instanceof UnknownHostException){
-                        Timber.e("Timeout occurred");
-                        mErrorTextView.setText("Can't load data.\nCheck your network connection.");
-                        mErrorLinearLayout.setVisibility(View.VISIBLE);
-                    }
+                if (t instanceof SocketTimeoutException || t instanceof UnknownHostException) {
+                    Timber.e("Timeout occurred");
+                    mErrorTextView.setText("Can't load data.\nCheck your network connection.");
+                    mErrorLinearLayout.setVisibility(View.VISIBLE);
                 }
             }
         }
@@ -176,19 +173,17 @@ public class VideosFragment extends BaseFragment implements VideosAdapter.OnItem
         @Override
         public void onResponse(Response<VideosCollection> response) {
             Timber.d("success()");
-            if (isAdded() && isResumed()) {
 //                mProgressBar.setVisibility(View.GONE);
 
-                mVideosAdapter.removeLoading();
-                mIsLoading = false;
+            mVideosAdapter.removeLoading();
+            mIsLoading = false;
 
-                if(response != null){
-                    VideosCollection videosCollection = response.body();
-                    if (videosCollection != null) {
-                        List<Video> videos = videosCollection.getVideos();
-                        if (videos != null) {
-                            mVideosAdapter.addAll(videos);
-                        }
+            if (response != null) {
+                VideosCollection videosCollection = response.body();
+                if (videosCollection != null) {
+                    List<Video> videos = videosCollection.getVideos();
+                    if (videos != null) {
+                        mVideosAdapter.addAll(videos);
                     }
                 }
             }
@@ -196,27 +191,25 @@ public class VideosFragment extends BaseFragment implements VideosAdapter.OnItem
 
         @Override
         public void onFailure(Throwable t) {
-            if (isAdded() && isResumed()) {
-                Timber.d("failure()");
-                mIsLoading = false;
+            Timber.d("failure()");
+            mIsLoading = false;
 //                mProgressBar.setVisibility(View.GONE);
 
-                mVideosAdapter.removeLoading();
+            mVideosAdapter.removeLoading();
 
-                if(t != null){
-                    Throwable cause = t.getCause();
-                    String message = t.getMessage();
+            if (t != null) {
+                Throwable cause = t.getCause();
+                String message = t.getMessage();
 
-                    if(cause != null){
-                        Timber.e("failure() : cause.toString() -"+cause.toString());
-                    }
-
-                    if(TextUtils.isEmpty(message)){
-                        Timber.e("failure() : message - " + message);
-                    }
-
-                    t.printStackTrace();
+                if (cause != null) {
+                    Timber.e("failure() : cause.toString() -" + cause.toString());
                 }
+
+                if (TextUtils.isEmpty(message)) {
+                    Timber.e("failure() : message - " + message);
+                }
+
+                t.printStackTrace();
             }
         }
     };
@@ -291,6 +284,7 @@ public class VideosFragment extends BaseFragment implements VideosAdapter.OnItem
                 mSortOrderValue,
                 mCurrentPage,
                 PAGE_SIZE);
+        mCalls.add(findVideosCall);
         findVideosCall.enqueue(mFindVideosFirstFetchCallback);
     }
 
@@ -371,6 +365,7 @@ public class VideosFragment extends BaseFragment implements VideosAdapter.OnItem
                 mSortOrderValue,
                 mCurrentPage,
                 PAGE_SIZE);
+        mCalls.add(findVideosCall);
         findVideosCall.enqueue(mFindVideosNextFetchCallback);
     }
 
@@ -395,6 +390,7 @@ public class VideosFragment extends BaseFragment implements VideosAdapter.OnItem
                         mSortOrderValue,
                         mCurrentPage,
                         PAGE_SIZE);
+                mCalls.add(findVideosCall);
                 findVideosCall.enqueue(mFindVideosFirstFetchCallback);
 
                 dialog.dismiss();
@@ -424,6 +420,7 @@ public class VideosFragment extends BaseFragment implements VideosAdapter.OnItem
                         mSortOrderValue,
                         mCurrentPage,
                         PAGE_SIZE);
+                mCalls.add(findVideosCall);
                 findVideosCall.enqueue(mFindVideosFirstFetchCallback);
 
                 dialog.dismiss();

@@ -114,51 +114,48 @@ public class WatchLaterVideosFragment extends BaseFragment implements VideosAdap
         @Override
         public void onResponse(Response<VideosCollection> response) {
             Timber.d("success()");
-            if (isAdded() && isResumed()) {
-                mProgressBar.setVisibility(View.GONE);
-                mIsLoading = false;
+            mProgressBar.setVisibility(View.GONE);
+            mIsLoading = false;
 
-                if(response != null){
-                    VideosCollection videosCollection = response.body();
-                    if(videosCollection != null){
-                        List<Video> videos = videosCollection.getVideos();
-                        if (videos != null) {
-                            mVideosAdapter.addAll(videos);
-                        }
+            if (response != null) {
+                VideosCollection videosCollection = response.body();
+                if (videosCollection != null) {
+                    List<Video> videos = videosCollection.getVideos();
+                    if (videos != null) {
+                        mVideosAdapter.addAll(videos);
                     }
                 }
-
-                if(mVideosAdapter.isEmpty()){
-                    mEmptyTextView.setText(getString(R.string.watch_later_empty_prompt));
-                    Drawable drawable = getResources().getDrawable(R.drawable.ic_watch_later_large);
-                    DrawableCompat.setTint(drawable, getResources().getColor(R.color.grey_500));
-                    mEmptyTextView.setCompoundDrawablesWithIntrinsicBounds(null, drawable, null, null);
-                    mEmptyView.setVisibility(View.VISIBLE);
-                }
             }
+
+            if (mVideosAdapter.isEmpty()) {
+                mEmptyTextView.setText(getString(R.string.watch_later_empty_prompt));
+                Drawable drawable = getResources().getDrawable(R.drawable.ic_watch_later_large);
+                DrawableCompat.setTint(drawable, getResources().getColor(R.color.grey_500));
+                mEmptyTextView.setCompoundDrawablesWithIntrinsicBounds(null, drawable, null, null);
+                mEmptyView.setVisibility(View.VISIBLE);
+            }
+
         }
 
         @Override
         public void onFailure(Throwable t) {
-            if (isAdded() && isResumed()) {
-                Timber.e("failure()");
-                mIsLoading = false;
-                mProgressBar.setVisibility(View.GONE);
+            Timber.e("failure()");
+            mIsLoading = false;
+            mProgressBar.setVisibility(View.GONE);
 
-                if(t != null){
-                    Throwable cause = t.getCause();
-                    String message = t.getMessage();
+            if (t != null) {
+                Throwable cause = t.getCause();
+                String message = t.getMessage();
 
-                    if(cause != null){
-                        Timber.e("failure() : cause.toString() -"+cause.toString());
-                    }
-
-                    if(TextUtils.isEmpty(message)){
-                        Timber.e("failure() : message - " + message);
-                    }
-
-                    t.printStackTrace();
+                if (cause != null) {
+                    Timber.e("failure() : cause.toString() -" + cause.toString());
                 }
+
+                if (TextUtils.isEmpty(message)) {
+                    Timber.e("failure() : message - " + message);
+                }
+
+                t.printStackTrace();
             }
         }
     };
@@ -167,19 +164,17 @@ public class WatchLaterVideosFragment extends BaseFragment implements VideosAdap
         @Override
         public void onResponse(Response<VideosCollection> response) {
             Timber.d("success()");
-            if (isAdded() && isResumed()) {
 //                mProgressBar.setVisibility(View.GONE);
 
-                mVideosAdapter.removeLoading();
-                mIsLoading = false;
+            mVideosAdapter.removeLoading();
+            mIsLoading = false;
 
-                if(response != null){
-                    VideosCollection videosCollection = response.body();
-                    if (videosCollection != null) {
-                        List<Video> videos = videosCollection.getVideos();
-                        if (videos != null) {
-                            mVideosAdapter.addAll(videos);
-                        }
+            if (response != null) {
+                VideosCollection videosCollection = response.body();
+                if (videosCollection != null) {
+                    List<Video> videos = videosCollection.getVideos();
+                    if (videos != null) {
+                        mVideosAdapter.addAll(videos);
                     }
                 }
             }
@@ -187,26 +182,24 @@ public class WatchLaterVideosFragment extends BaseFragment implements VideosAdap
 
         @Override
         public void onFailure(Throwable t) {
-            if (isAdded() && isResumed()) {
-                Timber.d("failure()");
-                mIsLoading = false;
+            Timber.d("failure()");
+            mIsLoading = false;
 //                mProgressBar.setVisibility(View.GONE);
-                mVideosAdapter.removeLoading();
+            mVideosAdapter.removeLoading();
 
-                if(t != null){
-                    Throwable cause = t.getCause();
-                    String message = t.getMessage();
+            if (t != null) {
+                Throwable cause = t.getCause();
+                String message = t.getMessage();
 
-                    if(cause != null){
-                        Timber.e("failure() : cause.toString() -"+cause.toString());
-                    }
-
-                    if(TextUtils.isEmpty(message)){
-                        Timber.e("failure() : message - " + message);
-                    }
-
-                    t.printStackTrace();
+                if (cause != null) {
+                    Timber.e("failure() : cause.toString() -" + cause.toString());
                 }
+
+                if (TextUtils.isEmpty(message)) {
+                    Timber.e("failure() : message - " + message);
+                }
+
+                t.printStackTrace();
             }
         }
     };
@@ -286,6 +279,7 @@ public class WatchLaterVideosFragment extends BaseFragment implements VideosAdap
                 mSortOrderValue,
                 mCurrentPage,
                 PAGE_SIZE);
+        mCalls.add(findWatchLaterVideosCall);
         findWatchLaterVideosCall.enqueue(mFindVideosFirstFetchCallback);
     }
 
@@ -365,6 +359,7 @@ public class WatchLaterVideosFragment extends BaseFragment implements VideosAdap
                 mSortOrderValue,
                 mCurrentPage,
                 PAGE_SIZE);
+        mCalls.add(findWatchLaterVideosCall);
         findWatchLaterVideosCall.enqueue(mFindVideosNextFetchCallback);
     }
 
@@ -390,6 +385,7 @@ public class WatchLaterVideosFragment extends BaseFragment implements VideosAdap
                         mSortOrderValue,
                         mCurrentPage,
                         PAGE_SIZE);
+                mCalls.add(findWatchLaterVideosCall);
                 findWatchLaterVideosCall.enqueue(mFindVideosFirstFetchCallback);
 
                 dialog.dismiss();
@@ -420,7 +416,7 @@ public class WatchLaterVideosFragment extends BaseFragment implements VideosAdap
                         mSortOrderValue,
                         mCurrentPage,
                         PAGE_SIZE);
-
+                mCalls.add(findWatchLaterVideosCall);
                 findWatchLaterVideosCall.enqueue(mFindVideosFirstFetchCallback);
 
                 dialog.dismiss();
