@@ -125,16 +125,34 @@ public class VideosFragment extends BaseFragment implements VideosAdapter.OnItem
     private Callback<VideosCollection> mFindVideosFirstFetchCallback = new Callback<VideosCollection>() {
         @Override
         public void onResponse(Response<VideosCollection> response) {
-            Timber.d("success()");
+            Timber.d("onResponse()");
             mProgressBar.setVisibility(View.GONE);
             mIsLoading = false;
 
             if (response != null) {
+
+
                 VideosCollection videosCollection = response.body();
+                com.squareup.okhttp.Response rawResponse = response.raw();
+
                 if (videosCollection != null) {
                     List<Video> videos = videosCollection.getVideos();
                     if (videos != null) {
                         mVideosAdapter.addAll(videos);
+                    }
+                } else if (rawResponse != null) {
+                    String message = rawResponse.message();
+                    int code = rawResponse.code();
+                    Timber.d("onResponse() : message - " + message);
+                    Timber.d("onResponse() : code - " + code);
+
+                    switch (code) {
+                        case 500:
+                            mErrorTextView.setText("Can't load data.\nCheck your network connection.");
+                            mErrorLinearLayout.setVisibility(View.VISIBLE);
+                            break;
+                        default:
+                            break;
                     }
                 }
             }
@@ -142,7 +160,7 @@ public class VideosFragment extends BaseFragment implements VideosAdapter.OnItem
 
         @Override
         public void onFailure(Throwable t) {
-            Timber.d("failure()");
+            Timber.d("onFailure()");
             mIsLoading = false;
             mProgressBar.setVisibility(View.GONE);
 
@@ -172,7 +190,7 @@ public class VideosFragment extends BaseFragment implements VideosAdapter.OnItem
     private Callback<VideosCollection> mFindVideosNextFetchCallback = new Callback<VideosCollection>() {
         @Override
         public void onResponse(Response<VideosCollection> response) {
-            Timber.d("success()");
+            Timber.d("onResponse()");
 //                mProgressBar.setVisibility(View.GONE);
 
             mVideosAdapter.removeLoading();
@@ -180,10 +198,26 @@ public class VideosFragment extends BaseFragment implements VideosAdapter.OnItem
 
             if (response != null) {
                 VideosCollection videosCollection = response.body();
+                com.squareup.okhttp.Response rawResponse = response.raw();
+
                 if (videosCollection != null) {
                     List<Video> videos = videosCollection.getVideos();
                     if (videos != null) {
                         mVideosAdapter.addAll(videos);
+                    }
+                } else if (rawResponse != null) {
+                    String message = rawResponse.message();
+                    int code = rawResponse.code();
+                    Timber.d("onResponse() : message - " + message);
+                    Timber.d("onResponse() : code - " + code);
+
+                    switch (code) {
+                        case 500:
+                            mErrorTextView.setText("Can't load data.\nCheck your network connection.");
+                            mErrorLinearLayout.setVisibility(View.VISIBLE);
+                            break;
+                        default:
+                            break;
                     }
                 }
             }
@@ -191,7 +225,7 @@ public class VideosFragment extends BaseFragment implements VideosAdapter.OnItem
 
         @Override
         public void onFailure(Throwable t) {
-            Timber.d("failure()");
+            Timber.d("onFailure()");
             mIsLoading = false;
 //                mProgressBar.setVisibility(View.GONE);
 
@@ -397,6 +431,10 @@ public class VideosFragment extends BaseFragment implements VideosAdapter.OnItem
             }
         });
         sortByBuilder.show();
+    }
+
+    public String getQuery() {
+        return mQuery;
     }
 
     private void showSortOrderDialog() {

@@ -74,23 +74,43 @@ public class ExploreFragment extends BaseFragment implements CategoriesAdapter.O
     private Callback<CategoriesCollection> mGetCategoriesCallback = new Callback<CategoriesCollection>() {
         @Override
         public void onResponse(Response<CategoriesCollection> response) {
+            Timber.d("onResponse()");
+
             mProgressBar.setVisibility(View.GONE);
             mIsLoading = false;
 
             Timber.d("");
             if (response != null) {
                 CategoriesCollection categoriesCollection = response.body();
+                com.squareup.okhttp.Response rawResponse = response.raw();
+
                 if (categoriesCollection != null) {
                     List<Category> categories = categoriesCollection.getCategories();
 
                     Timber.d("");
                     mCategoriesAdapter.addAll(categories);
+                } else if (rawResponse != null) {
+                    String message = rawResponse.message();
+                    int code = rawResponse.code();
+                    Timber.d("onResponse() : message - " + message);
+                    Timber.d("onResponse() : code - " + code);
+
+                    switch (code) {
+                        case 500:
+                            mErrorTextView.setText("Can't load data.\nCheck your network connection.");
+                            mErrorLinearLayout.setVisibility(View.VISIBLE);
+                            break;
+                        default:
+                            break;
+                    }
                 }
             }
         }
 
         @Override
         public void onFailure(Throwable t) {
+            Timber.d("onFailure()");
+
             mProgressBar.setVisibility(View.GONE);
             mIsLoading = false;
 

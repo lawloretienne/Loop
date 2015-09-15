@@ -131,17 +131,33 @@ public class VideoDetailsFragment extends BaseFragment implements VideosAdapter.
     private Callback<VideoConfig> mGetVideoConfigCallback = new Callback<VideoConfig>() {
         @Override
         public void onResponse(Response<VideoConfig> response) {
-            Timber.d("mGetVideoConfigCallback : success()");
+            Timber.d("onResponse()");
 
             if (response != null) {
                 VideoConfig videoConfig = response.body();
+                com.squareup.okhttp.Response rawResponse = response.raw();
+
                 if (videoConfig != null) {
                     mVideoUrl = getVideoUrl(videoConfig);
-                    Timber.d("mGetVideoConfigCallback : success() : videoUrl - " + mVideoUrl);
+                    Timber.d("onResponse() : videoUrl - " + mVideoUrl);
 
                     if (!TextUtils.isEmpty(mVideoUrl)) {
                         Timber.d("playVideo()");
                         playVideo(mVideoUrl);
+                    }
+                } else if (rawResponse != null) {
+                    String message = rawResponse.message();
+                    int code = rawResponse.code();
+                    Timber.d("onResponse() : message - " + message);
+                    Timber.d("onResponse() : code - " + code);
+
+                    switch (code) {
+                        case 500:
+//                            mErrorTextView.setText("Can't load data.\nCheck your network connection.");
+//                            mErrorLinearLayout.setVisibility(View.VISIBLE);
+                            break;
+                        default:
+                            break;
                     }
                 }
             }
@@ -149,18 +165,18 @@ public class VideoDetailsFragment extends BaseFragment implements VideosAdapter.
 
         @Override
         public void onFailure(Throwable t) {
-            Timber.e("mGetVideoConfigCallback : failure()");
+            Timber.e("onFailure()");
 
             if (t != null) {
                 Throwable cause = t.getCause();
                 String message = t.getMessage();
 
                 if (cause != null) {
-                    Timber.e("failure() : cause.toString() -" + cause.toString());
+                    Timber.e("onFailure() : cause.toString() -" + cause.toString());
                 }
 
                 if (TextUtils.isEmpty(message)) {
-                    Timber.e("failure() : message - " + message);
+                    Timber.e("onFailure() : message - " + message);
                 }
 
                 t.printStackTrace();
@@ -172,21 +188,36 @@ public class VideoDetailsFragment extends BaseFragment implements VideosAdapter.
     private Callback<VideosCollection> mGetRelatedVideosCallback = new Callback<VideosCollection>() {
         @Override
         public void onResponse(Response<VideosCollection> response) {
-            Timber.d("");
+            Timber.d("onResponse()");
+
             VideosCollection videosCollection = response.body();
+            com.squareup.okhttp.Response rawResponse = response.raw();
+
             if (videosCollection != null) {
-                if (videosCollection != null) {
-                    List<Video> videos = videosCollection.getVideos();
-                    if (videos != null) {
-                        mVideosAdapter.addAll(videos);
-                    }
+                List<Video> videos = videosCollection.getVideos();
+                if (videos != null) {
+                    mVideosAdapter.addAll(videos);
+                }
+            } else if (rawResponse != null) {
+                String message = rawResponse.message();
+                int code = rawResponse.code();
+                Timber.d("onResponse() : message - " + message);
+                Timber.d("onResponse() : code - " + code);
+
+                switch (code) {
+                    case 500:
+//                        mErrorTextView.setText("Can't load data.\nCheck your network connection.");
+//                        mErrorLinearLayout.setVisibility(View.VISIBLE);
+                        break;
+                    default:
+                        break;
                 }
             }
         }
 
         @Override
         public void onFailure(Throwable t) {
-            Timber.e("");
+            Timber.d("onFailure()");
 
             if (t != null) {
                 Throwable cause = t.getCause();
