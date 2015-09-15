@@ -18,6 +18,7 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
@@ -35,10 +36,12 @@ import com.etiennelawlor.loop.network.models.VideoWrapper;
 import com.etiennelawlor.loop.network.models.VideosCollection;
 import com.etiennelawlor.loop.otto.BusProvider;
 
+import java.net.SocketTimeoutException;
 import java.util.List;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
+import butterknife.OnClick;
 import retrofit.Call;
 import retrofit.Callback;
 import retrofit.Response;
@@ -64,6 +67,8 @@ public class VideosFragment extends BaseFragment implements VideosAdapter.OnItem
     LinearLayout mErrorLinearLayout;
     @Bind(R.id.error_tv)
     TextView mErrorTextView;
+    @Bind(R.id.reload_btn)
+    Button mReloadButton;
 
     private int mCurrentPage = 1;
     private int mSelectedSortByKey = 0;
@@ -98,6 +103,20 @@ public class VideosFragment extends BaseFragment implements VideosAdapter.OnItem
             }
         }
     };
+
+    @OnClick(R.id.reload_btn)
+    public void onReloadButtonClicked() {
+        mErrorLinearLayout.setVisibility(View.GONE);
+        mProgressBar.setVisibility(View.VISIBLE);
+
+        Call findVideosCall = mVimeoService.findVideos(mQuery,
+                mSortByValue,
+                mSortOrderValue,
+                mCurrentPage,
+                PAGE_SIZE);
+        findVideosCall.enqueue(mFindVideosFirstFetchCallback);
+    }
+
     // endregion
 
     // region Callbacks
@@ -141,6 +160,12 @@ public class VideosFragment extends BaseFragment implements VideosAdapter.OnItem
                     }
 
                     t.printStackTrace();
+
+                    if(t instanceof SocketTimeoutException){
+                        Timber.e("Timeout occurred");
+                        mErrorTextView.setText("Can't load data.\nCheck your network connection.");
+                        mErrorLinearLayout.setVisibility(View.VISIBLE);
+                    }
                 }
             }
         }

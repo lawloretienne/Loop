@@ -16,6 +16,7 @@ import java.io.File;
 import java.io.IOException;
 import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
+import java.util.concurrent.TimeUnit;
 
 import javax.net.ssl.SSLContext;
 import javax.net.ssl.SSLSocketFactory;
@@ -50,6 +51,9 @@ public class ServiceGenerator {
     public static <S> S createService(Class<S> serviceClass, String baseUrl, final String clientId, final String clientSecret) {
 
         OkHttpClient okHttpClient = getClient();
+        okHttpClient.setConnectTimeout(10, TimeUnit.SECONDS);
+        okHttpClient.setReadTimeout(1, TimeUnit.SECONDS);
+        okHttpClient.setWriteTimeout(10, TimeUnit.SECONDS);
         okHttpClient.interceptors().add(new LoggingInterceptor());
         okHttpClient.networkInterceptors().add(new Interceptor() {
             @Override
@@ -88,6 +92,9 @@ public class ServiceGenerator {
 
     public static <S> S createService(Class<S> serviceClass, String baseUrl, final AccessToken accessToken) {
         OkHttpClient okHttpClient = getClient();
+        okHttpClient.setConnectTimeout(10, TimeUnit.SECONDS);
+        okHttpClient.setReadTimeout(1, TimeUnit.SECONDS);
+        okHttpClient.setWriteTimeout(10, TimeUnit.SECONDS);
         okHttpClient.interceptors().add(new LoggingInterceptor());
         okHttpClient.networkInterceptors().add(new Interceptor() {
             @Override

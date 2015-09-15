@@ -27,4 +27,11 @@
         app:textFont="Roboto_Regular"
         tools:text="Can't load data.\nCheck your network connection." />
 
+    <Button
+        android:id="@+id/reload_btn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="RELOAD"
+        android:textColor="@android:color/white"/>
+
 </LinearLayout>
