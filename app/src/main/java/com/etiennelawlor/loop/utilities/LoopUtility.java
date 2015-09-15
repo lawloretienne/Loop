@@ -60,7 +60,8 @@ public class LoopUtility {
 
 //      Timber.d("relativeTime - " + relativeTime);
 
-            if (relativeTime.toString().equals("0 minutes ago") || relativeTime.toString().equals("in 0 minutes")) {
+            if (relativeTime.toString().equals("0 minutes ago")
+                    || relativeTime.toString().equals("in 0 minutes")) {
                 relativeDate = "Just now";
             } else {
                 relativeDate = relativeTime.toString();

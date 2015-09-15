@@ -9,6 +9,7 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.ActivityOptionsCompat;
 import android.support.v4.util.Pair;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Surface;
 import android.view.TextureView;
@@ -70,13 +71,11 @@ import timber.log.Timber;
 /**
  * Created by etiennelawlor on 5/23/15.
  */
-public class VideoDetailsFragment extends BaseFragment implements VideosAdapter.OnItemClickListener, TextureView.SurfaceTextureListener {
+public class VideoDetailsFragment extends BaseFragment implements VideosAdapter.OnItemClickListener {
 
     // region Member Variables
-//    @InjectView(R.id.vv)
-//    VideoView mVideoView;
-    @Bind(R.id.texture_view)
-    TextureView mTextureView;
+    @Bind(R.id.vv)
+    VideoView mVideoView;
     @Bind(R.id.pb)
     ProgressBar mProgressBar;
     @Bind(R.id.video_thumbnail_iv)
@@ -108,11 +107,8 @@ public class VideoDetailsFragment extends BaseFragment implements VideosAdapter.
     private boolean isExpanded = false;
     private Video mVideo;
     private VideosAdapter mVideosAdapter;
-    private MediaPlayer mMediaPlayer;
-    private MediaController mVideoController;
     private String mVideoUrl;
     private VimeoPlayerService mVimeoPlayerService;
-    private Surface mSurface;
     // endregion
 
     // region Listeners
@@ -146,14 +142,7 @@ public class VideoDetailsFragment extends BaseFragment implements VideosAdapter.
 
                         if (!TextUtils.isEmpty(mVideoUrl)) {
                             Timber.d("playVideo()");
-//                    playVideo(videoUrl);
-
-                            if (mSurface != null) {
-                                Timber.d("playVideo() : mSurface != null");
-                                playVideo(mSurface, mVideoUrl);
-                            } else {
-                                Timber.d("playVideo() : mSurface == null");
-                            }
+                            playVideo(mVideoUrl);
                         }
                     }
                 }
@@ -182,107 +171,6 @@ public class VideoDetailsFragment extends BaseFragment implements VideosAdapter.
             }
         }
     };
-
-    private void playVideo(Surface surface, String videoUrl){
-        mMediaPlayer = new MediaPlayer();
-//        String videoUrl = "https://pdlvimeocdn-a.akamaihd.net/65468/386/344394064.mp4?token2=1435402234_3b63bc9920830a1a10d00bb62d8c2a25&aksessionid=0bb57fd5bee941d2";
-//        String videoUrl = "https://pdlvimeocdn-a.akamaihd.net/65468/386/344394064.mp4?token2=1435402234_3b63bc9920830a1a10d00bb62d8c2a25&aksessionid=0bb57fd5bee941d2";
-//        mVideoUrl = "https://pdlvimeocdn-a.akamaihd.net/65468/386/344394064.mp4?token2=1435402234_3b63bc9920830a1a10d00bb62d8c2a25&aksessionid=0bb57fd5bee941d2";
-        try{
-            mMediaPlayer.setDataSource(videoUrl);
-        } catch (IOException e){
-
-        }
-
-        mMediaPlayer.setSurface(surface);
-        mMediaPlayer.setLooping(true);
-        mMediaPlayer.prepareAsync();
-
-        mVideoController = new CustomMediaController(getActivity(), mTextureView);
-//        mVideoController.setAnchorView(mTextureView);
-        mVideoController.setMediaPlayer(new MediaController.MediaPlayerControl() {
-            @Override
-            public void start() {
-                mMediaPlayer.start();
-            }
-
-            @Override
-            public void pause() {
-                mMediaPlayer.pause();
-            }
-
-            @Override
-            public int getDuration() {
-                return mMediaPlayer.getDuration();
-            }
-
-            @Override
-            public int getCurrentPosition() {
-                return mMediaPlayer.getCurrentPosition();
-            }
-
-            @Override
-            public void seekTo(int i) {
-                mMediaPlayer.seekTo(i);
-            }
-
-            @Override
-            public boolean isPlaying() {
-                return mMediaPlayer.isPlaying();
-            }
-
-            @Override
-            public int getBufferPercentage() {
-                return 0;
-            }
-
-            @Override
-            public boolean canPause() {
-                return true;
-            }
-
-            @Override
-            public boolean canSeekBackward() {
-                return true;
-            }
-
-            @Override
-            public boolean canSeekForward() {
-                return true;
-            }
-
-            @Override
-            public int getAudioSessionId() {
-                return mMediaPlayer.getAudioSessionId();
-            }
-        });//your activity which implemented MediaPlayerControl
-        mVideoController.setAnchorView(mTextureView);
-
-        mVideoController.setEnabled(true);
-        mVideoController.show();
-
-        mTextureView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                mVideoController.show();
-            }
-        });
-
-        mTextureView.setVisibility(View.VISIBLE);
-        mProgressBar.setVisibility(View.VISIBLE);
-        // Play video when the media source is ready for playback.
-        mMediaPlayer.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
-            @Override
-            public void onPrepared(MediaPlayer mediaPlayer) {
-                mProgressBar.setVisibility(View.GONE);
-                mVideoThumbnailImageView.setVisibility(View.GONE);
-                mediaPlayer.start();
-
-//                mTextureView.requestFocus();
-
-            }
-        });
-    }
 
     private Callback<VideosCollection> mGetRelatedVideosCallback = new Callback<VideosCollection>() {
         @Override
@@ -380,9 +268,6 @@ public class VideoDetailsFragment extends BaseFragment implements VideosAdapter.
 //        int width = LoopUtility.getScreenWidth(getActivity());
 //        mVideoView.getHolder().setFixedSize(width, LoopUtility.dp2px(getActivity(), 202));
 
-        Timber.d("onViewCreated() : setSurfaceTextureListener()");
-        mTextureView.setSurfaceTextureListener(VideoDetailsFragment.this);
-
         if (mVideo != null) {
             setUpTitle();
             setUpSubtitle();
@@ -417,15 +302,15 @@ public class VideoDetailsFragment extends BaseFragment implements VideosAdapter.
     public void onResume() {
         super.onResume();
 
-//        if (!mVideoView.isPlaying())
-//            mVideoView.resume();
+        if (!mVideoView.isPlaying())
+            mVideoView.resume();
     }
 
     @Override
     public void onPause() {
         super.onPause();
-//        if (mVideoView.isPlaying())
-//            mVideoView.suspend();
+        if (mVideoView.isPlaying())
+            mVideoView.suspend();
     }
 
     @Override
@@ -434,23 +319,12 @@ public class VideoDetailsFragment extends BaseFragment implements VideosAdapter.
         ButterKnife.unbind(this);
     }
 
-//    @Override
-//    public void onDestroy() {
-//        super.onDestroy();
-////        if (mVideoView != null) {
-////            mVideoView.stopPlayback();
-////            mVideoView.setVisibility(View.GONE);
-////        }
-//    }
-
-
     @Override
     public void onDestroy() {
         super.onDestroy();
-        if (mMediaPlayer != null) {
-            mMediaPlayer.stop();
-            mMediaPlayer.release();
-            mMediaPlayer = null;
+        if (mVideoView != null) {
+            mVideoView.stopPlayback();
+            mVideoView.setVisibility(View.GONE);
         }
     }
     // endregion
@@ -485,85 +359,6 @@ public class VideoDetailsFragment extends BaseFragment implements VideosAdapter.
 //        startActivity(intent);
             }
         }
-    }
-    // endregion
-
-    // region TextureView.SurfaceTextureListener Methods
-    @Override
-    public void onSurfaceTextureAvailable(SurfaceTexture surfaceTexture, int i, int i1) {
-        Timber.d("onSurfaceTextureAvailable()");
-
-        mSurface = new Surface(surfaceTexture);
-
-//        mMediaPlayer = new MediaPlayer();
-////        String videoUrl = "https://pdlvimeocdn-a.akamaihd.net/65468/386/344394064.mp4?token2=1435402234_3b63bc9920830a1a10d00bb62d8c2a25&aksessionid=0bb57fd5bee941d2";
-//        String videoUrl = "https://pdlvimeocdn-a.akamaihd.net/65468/386/344394064.mp4?token2=1435402234_3b63bc9920830a1a10d00bb62d8c2a25&aksessionid=0bb57fd5bee941d2";
-//        mVideoUrl = "https://pdlvimeocdn-a.akamaihd.net/65468/386/344394064.mp4?token2=1435402234_3b63bc9920830a1a10d00bb62d8c2a25&aksessionid=0bb57fd5bee941d2";
-//        try{
-//            mMediaPlayer.setDataSource(mVideoUrl);
-//        } catch (IOException e){
-//
-//        }
-//
-//        mMediaPlayer.setSurface(surface);
-//        mMediaPlayer.setLooping(true);
-//        mMediaPlayer.prepareAsync();
-//
-//        mTextureView.setVisibility(View.VISIBLE);
-//        mProgressBar.setVisibility(View.VISIBLE);
-//        // Play video when the media source is ready for playback.
-//        mMediaPlayer.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
-//            @Override
-//            public void onPrepared(MediaPlayer mediaPlayer) {
-//                mProgressBar.setVisibility(View.GONE);
-//                mVideoThumbnailImageView.setVisibility(View.GONE);
-//                mediaPlayer.start();
-//
-//            }
-//        });
-    }
-
-
-//    private void playVideo(String videoUrl){
-//        mVideoView.setVideoPath(videoUrl);
-//
-//        MediaController controller = new MediaController(getActivity());
-//        controller.setAnchorView(mVideoView);
-//        controller.setMediaPlayer(mVideoView);
-//        mVideoView.setMediaController(controller);
-//
-////                                    mVideoView.start();
-//
-//        mVideoView.setVisibility(View.VISIBLE);
-//
-//        mProgressBar.setVisibility(View.VISIBLE);
-//        mVideoView.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
-//            @Override
-//            public void onPrepared(MediaPlayer arg0) {
-//                mProgressBar.setVisibility(View.GONE);
-//                mVideoView.start();
-//                mVideoThumbnailImageView.setVisibility(View.GONE);
-//
-//
-//                mVideoView.requestFocus();
-//
-//            }
-//        });
-//    }
-
-    @Override
-    public void onSurfaceTextureSizeChanged(SurfaceTexture surfaceTexture, int i, int i1) {
-
-    }
-
-    @Override
-    public boolean onSurfaceTextureDestroyed(SurfaceTexture surfaceTexture) {
-        return false;
-    }
-
-    @Override
-    public void onSurfaceTextureUpdated(SurfaceTexture surfaceTexture) {
-
     }
     // endregion
 
@@ -823,31 +618,25 @@ public class VideoDetailsFragment extends BaseFragment implements VideosAdapter.
         return formattedViewCount;
     }
 
-//    private void playVideo(String videoUrl){
-//        mVideoView.setVideoPath(videoUrl);
-//
-//        MediaController controller = new MediaController(getActivity());
-//        controller.setAnchorView(mVideoView);
-//        controller.setMediaPlayer(mVideoView);
-//        mVideoView.setMediaController(controller);
-//
-////                                    mVideoView.start();
-//
-//        mVideoView.setVisibility(View.VISIBLE);
-//
-//        mProgressBar.setVisibility(View.VISIBLE);
-//        mVideoView.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
-//            @Override
-//            public void onPrepared(MediaPlayer arg0) {
-//                mProgressBar.setVisibility(View.GONE);
-//                mVideoView.start();
-//                mVideoThumbnailImageView.setVisibility(View.GONE);
-//
-//
-//                mVideoView.requestFocus();
-//
-//            }
-//        });
-//    }
+    private void playVideo(String videoUrl){
+        mVideoView.setVideoPath(videoUrl);
+
+        MediaController controller = new MediaController(getActivity());
+        controller.setAnchorView(mVideoView);
+        controller.setMediaPlayer(mVideoView);
+        mVideoView.setMediaController(controller);
+
+        mVideoView.setVisibility(View.VISIBLE);
+        mProgressBar.setVisibility(View.VISIBLE);
+        mVideoView.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
+            @Override
+            public void onPrepared(MediaPlayer arg0) {
+                mProgressBar.setVisibility(View.GONE);
+                mVideoView.start();
+                mVideoThumbnailImageView.setVisibility(View.GONE);
+                mVideoView.requestFocus();
+            }
+        });
+    }
     // endregion
 }

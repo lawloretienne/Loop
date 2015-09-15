@@ -12,19 +12,19 @@
         android:layout_height="202dp"
         android:background="@android:color/black">
 
-        <!--<VideoView-->
-            <!--android:id="@+id/vv"-->
-            <!--android:visibility="gone"-->
-            <!--android:layout_width="match_parent"-->
-            <!--android:layout_height="match_parent"-->
-            <!--android:layout_gravity="center"/>-->
-
-        <TextureView
-            android:id="@+id/texture_view"
+        <VideoView
+            android:id="@+id/vv"
             android:visibility="visible"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_gravity="center"/>
+
+        <!--<TextureView-->
+            <!--android:id="@+id/texture_view"-->
+            <!--android:visibility="visible"-->
+            <!--android:layout_width="match_parent"-->
+            <!--android:layout_height="match_parent"-->
+            <!--android:layout_gravity="center"/>-->
 
         <ImageView
             android:id="@+id/video_thumbnail_iv"

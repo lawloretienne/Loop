@@ -150,7 +150,8 @@ public class VideosAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
             return mVideoWrappers.get(position);
         } catch (IndexOutOfBoundsException e) {
             Timber.e(e, "index is %d, and size is %d", position, getItemCount());
-            return mVideoWrappers.get(getItemCount() - 1);
+//            return mVideoWrappers.get(getItemCount() - 1);
+            return null;
         }
     }
 
