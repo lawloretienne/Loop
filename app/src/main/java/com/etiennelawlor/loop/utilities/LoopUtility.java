@@ -78,8 +78,8 @@ public class LoopUtility {
             relativeDate = String.format("%d years ago", (days / 365));
         }
 
-        Timber.d("getRelativeDate() : days - " + days);
-        Timber.d("getRelativeDate() : relativeDate - " + relativeDate);
+//        Timber.d("getRelativeDate() : days - " + days);
+//        Timber.d("getRelativeDate() : relativeDate - " + relativeDate);
 
         return relativeDate;
     }

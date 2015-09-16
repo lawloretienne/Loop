@@ -1,6 +1,7 @@
 package com.etiennelawlor.loop.fragments;
 
 import android.os.Bundle;
+import android.os.NetworkOnMainThreadException;
 import android.support.v4.app.Fragment;
 
 import com.etiennelawlor.loop.LoopApplication;
@@ -27,6 +28,12 @@ public abstract class BaseFragment extends Fragment {
     }
 
     @Override
+    public void onStop() {
+        super.onStop();
+
+    }
+
+    @Override
     public void onDestroy() {
         super.onDestroy();
 
@@ -40,12 +47,16 @@ public abstract class BaseFragment extends Fragment {
             Timber.d("onDestory() : query - "+ query);
         }
 
-        Timber.d("onDestory() : mCalls.size() - "+ mCalls.size());
+        Timber.d("onDestory() : mCalls.size() - " + mCalls.size());
 
         for(Call call : mCalls){
             Timber.d("onDestory() : call.cancel()");
 
-            call.cancel();
+            try {
+                call.cancel();
+            } catch (NetworkOnMainThreadException e){
+                e.printStackTrace();
+            }
         }
     }
 }

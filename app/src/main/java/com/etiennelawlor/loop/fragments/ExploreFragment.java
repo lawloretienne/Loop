@@ -30,6 +30,9 @@ import com.etiennelawlor.loop.otto.BusProvider;
 import com.etiennelawlor.loop.ui.GridSpacesItemDecoration;
 import com.etiennelawlor.loop.utilities.LoopUtility;
 
+import java.io.IOException;
+import java.net.SocketTimeoutException;
+import java.net.UnknownHostException;
 import java.util.List;
 
 import butterknife.Bind;
@@ -79,7 +82,6 @@ public class ExploreFragment extends BaseFragment implements CategoriesAdapter.O
             mProgressBar.setVisibility(View.GONE);
             mIsLoading = false;
 
-            Timber.d("");
             if (response != null) {
                 CategoriesCollection categoriesCollection = response.body();
                 com.squareup.okhttp.Response rawResponse = response.raw();
@@ -111,11 +113,6 @@ public class ExploreFragment extends BaseFragment implements CategoriesAdapter.O
         public void onFailure(Throwable t) {
             Timber.d("onFailure()");
 
-            mProgressBar.setVisibility(View.GONE);
-            mIsLoading = false;
-
-            Timber.e("");
-
             if (t != null) {
                 Throwable cause = t.getCause();
                 String message = t.getMessage();
@@ -129,6 +126,22 @@ public class ExploreFragment extends BaseFragment implements CategoriesAdapter.O
                 }
 
                 t.printStackTrace();
+
+                if (t instanceof SocketTimeoutException || t instanceof UnknownHostException) {
+                    Timber.e("Timeout occurred");
+                    mIsLoading = false;
+                    mProgressBar.setVisibility(View.GONE);
+
+                    mErrorTextView.setText("Can't load data.\nCheck your network connection.");
+                    mErrorLinearLayout.setVisibility(View.VISIBLE);
+                } else if(t instanceof IOException){
+                    if(message.equals("Canceled")){
+                        Timber.e("onFailure() : Canceled");
+                    } else {
+                        mIsLoading = false;
+                        mProgressBar.setVisibility(View.GONE);
+                    }
+                }
             }
         }
     };

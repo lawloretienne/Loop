@@ -40,6 +40,9 @@ import com.etiennelawlor.loop.network.models.VideoWrapper;
 import com.etiennelawlor.loop.network.models.VideosCollection;
 import com.etiennelawlor.loop.otto.BusProvider;
 
+import java.io.IOException;
+import java.net.SocketTimeoutException;
+import java.net.UnknownHostException;
 import java.util.List;
 
 import butterknife.Bind;
@@ -155,8 +158,6 @@ public class LikedVideosFragment extends BaseFragment implements VideosAdapter.O
         @Override
         public void onFailure(Throwable t) {
             Timber.d("onFailure()");
-            mIsLoading = false;
-            mProgressBar.setVisibility(View.GONE);
 
             if (t != null) {
                 Throwable cause = t.getCause();
@@ -171,6 +172,22 @@ public class LikedVideosFragment extends BaseFragment implements VideosAdapter.O
                 }
 
                 t.printStackTrace();
+
+                if (t instanceof SocketTimeoutException || t instanceof UnknownHostException) {
+                    Timber.e("Timeout occurred");
+                    mIsLoading = false;
+                    mProgressBar.setVisibility(View.GONE);
+
+                    mErrorTextView.setText("Can't load data.\nCheck your network connection.");
+                    mErrorLinearLayout.setVisibility(View.VISIBLE);
+                } else if(t instanceof IOException){
+                    if(message.equals("Canceled")){
+                        Timber.e("onFailure() : Canceled");
+                    } else {
+                        mIsLoading = false;
+                        mProgressBar.setVisibility(View.GONE);
+                    }
+                }
             }
 
         }
@@ -216,9 +233,7 @@ public class LikedVideosFragment extends BaseFragment implements VideosAdapter.O
         @Override
         public void onFailure(Throwable t) {
             Timber.d("onFailure()");
-            mIsLoading = false;
-//                mProgressBar.setVisibility(View.GONE);
-            mVideosAdapter.removeLoading();
+
 
             if (t != null) {
                 Throwable cause = t.getCause();
@@ -233,6 +248,24 @@ public class LikedVideosFragment extends BaseFragment implements VideosAdapter.O
                 }
 
                 t.printStackTrace();
+
+                if (t instanceof SocketTimeoutException || t instanceof UnknownHostException) {
+                    Timber.e("Timeout occurred");
+                    mIsLoading = false;
+//                mProgressBar.setVisibility(View.GONE);
+                    mVideosAdapter.removeLoading();
+
+                    mErrorTextView.setText("Can't load data.\nCheck your network connection.");
+                    mErrorLinearLayout.setVisibility(View.VISIBLE);
+                } else if(t instanceof IOException){
+                    if(message.equals("Canceled")){
+                        Timber.e("onFailure() : Canceled");
+                    } else {
+                        mIsLoading = false;
+//                mProgressBar.setVisibility(View.GONE);
+                        mVideosAdapter.removeLoading();
+                    }
+                }
             }
         }
     };

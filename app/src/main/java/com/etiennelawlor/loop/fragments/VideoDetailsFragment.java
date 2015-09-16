@@ -51,6 +51,8 @@ import com.etiennelawlor.loop.ui.CustomMediaController;
 import com.etiennelawlor.loop.utilities.LoopUtility;
 
 import java.io.IOException;
+import java.net.SocketTimeoutException;
+import java.net.UnknownHostException;
 import java.text.NumberFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -180,6 +182,22 @@ public class VideoDetailsFragment extends BaseFragment implements VideosAdapter.
                 }
 
                 t.printStackTrace();
+
+                if (t instanceof SocketTimeoutException || t instanceof UnknownHostException) {
+                    Timber.e("Timeout occurred");
+//                    mIsLoading = false;
+//                    mProgressBar.setVisibility(View.GONE);
+
+//                    mErrorTextView.setText("Can't load data.\nCheck your network connection.");
+//                    mErrorLinearLayout.setVisibility(View.VISIBLE);
+                } else if(t instanceof IOException){
+                    if(message.equals("Canceled")){
+                        Timber.e("onFailure() : Canceled");
+                    } else {
+//                        mIsLoading = false;
+//                        mProgressBar.setVisibility(View.GONE);
+                    }
+                }
             }
 
         }
@@ -232,6 +250,22 @@ public class VideoDetailsFragment extends BaseFragment implements VideosAdapter.
                 }
 
                 t.printStackTrace();
+
+                if (t instanceof SocketTimeoutException || t instanceof UnknownHostException) {
+                    Timber.e("Timeout occurred");
+//                    mIsLoading = false;
+//                    mProgressBar.setVisibility(View.GONE);
+
+//                    mErrorTextView.setText("Can't load data.\nCheck your network connection.");
+//                    mErrorLinearLayout.setVisibility(View.VISIBLE);
+                } else if(t instanceof IOException){
+                    if(message.equals("Canceled")){
+                        Timber.e("onFailure() : Canceled");
+                    } else {
+//                        mIsLoading = false;
+//                        mProgressBar.setVisibility(View.GONE);
+                    }
+                }
             }
         }
     };
