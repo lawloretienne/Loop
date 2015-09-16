@@ -30,7 +30,31 @@ public abstract class BaseFragment extends Fragment {
     @Override
     public void onStop() {
         super.onStop();
+    }
 
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+
+        String className = this.getClass().toString();
+        Timber.d("onDestroyView() : className - "+ className);
+        if(this instanceof VideosFragment){
+            String query = ((VideosFragment)this).getQuery();
+            Timber.d("onDestroyView() : query - "+ query);
+        }
+
+        Timber.d("onDestroyView() : mCalls.size() - " + mCalls.size());
+
+        for(Call call : mCalls){
+            Timber.d("onDestroyView() : call.cancel()");
+
+            try {
+                call.cancel();
+            } catch (NetworkOnMainThreadException e){
+                Timber.d("onDestroyView() : NetworkOnMainThreadException thrown");
+                e.printStackTrace();
+            }
+        }
     }
 
     @Override
@@ -39,24 +63,5 @@ public abstract class BaseFragment extends Fragment {
 
         RefWatcher refWatcher = LoopApplication.getRefWatcher(getActivity());
         refWatcher.watch(this);
-
-        String className = this.getClass().toString();
-        Timber.d("onDestory() : className - "+ className);
-        if(this instanceof VideosFragment){
-            String query = ((VideosFragment)this).getQuery();
-            Timber.d("onDestory() : query - "+ query);
-        }
-
-        Timber.d("onDestory() : mCalls.size() - " + mCalls.size());
-
-        for(Call call : mCalls){
-            Timber.d("onDestory() : call.cancel()");
-
-            try {
-                call.cancel();
-            } catch (NetworkOnMainThreadException e){
-                e.printStackTrace();
-            }
-        }
     }
 }
