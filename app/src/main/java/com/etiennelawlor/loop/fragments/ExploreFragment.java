@@ -29,6 +29,7 @@ import com.etiennelawlor.loop.network.models.Category;
 import com.etiennelawlor.loop.otto.BusProvider;
 import com.etiennelawlor.loop.ui.GridSpacesItemDecoration;
 import com.etiennelawlor.loop.utilities.LoopUtility;
+import com.squareup.okhttp.ResponseBody;
 
 import java.io.IOException;
 import java.net.SocketTimeoutException;
@@ -83,27 +84,29 @@ public class ExploreFragment extends BaseFragment implements CategoriesAdapter.O
             mIsLoading = false;
 
             if (response != null) {
-                CategoriesCollection categoriesCollection = response.body();
-                com.squareup.okhttp.Response rawResponse = response.raw();
+                if(response.isSuccess()){
+                    CategoriesCollection categoriesCollection = response.body();
+                    if (categoriesCollection != null) {
+                        List<Category> categories = categoriesCollection.getCategories();
+                        mCategoriesAdapter.addAll(categories);
+                    }
+                } else {
+                    ResponseBody responseBody = response.errorBody();
+                    com.squareup.okhttp.Response rawResponse = response.raw();
+                    if (rawResponse != null) {
+                        String message = rawResponse.message();
+                        int code = rawResponse.code();
+                        Timber.d("onResponse() : message - " + message);
+                        Timber.d("onResponse() : code - " + code);
 
-                if (categoriesCollection != null) {
-                    List<Category> categories = categoriesCollection.getCategories();
-
-                    Timber.d("");
-                    mCategoriesAdapter.addAll(categories);
-                } else if (rawResponse != null) {
-                    String message = rawResponse.message();
-                    int code = rawResponse.code();
-                    Timber.d("onResponse() : message - " + message);
-                    Timber.d("onResponse() : code - " + code);
-
-                    switch (code) {
-                        case 500:
-                            mErrorTextView.setText("Can't load data.\nCheck your network connection.");
-                            mErrorLinearLayout.setVisibility(View.VISIBLE);
-                            break;
-                        default:
-                            break;
+                        switch (code) {
+                            case 500:
+                                mErrorTextView.setText("Can't load data.\nCheck your network connection.");
+                                mErrorLinearLayout.setVisibility(View.VISIBLE);
+                                break;
+                            default:
+                                break;
+                        }
                     }
                 }
             }

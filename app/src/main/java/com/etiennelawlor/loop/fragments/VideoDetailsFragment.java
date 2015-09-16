@@ -49,6 +49,7 @@ import com.etiennelawlor.loop.network.models.VideosCollection;
 import com.etiennelawlor.loop.otto.BusProvider;
 import com.etiennelawlor.loop.ui.CustomMediaController;
 import com.etiennelawlor.loop.utilities.LoopUtility;
+import com.squareup.okhttp.ResponseBody;
 
 import java.io.IOException;
 import java.net.SocketTimeoutException;
@@ -136,30 +137,34 @@ public class VideoDetailsFragment extends BaseFragment implements VideosAdapter.
             Timber.d("onResponse()");
 
             if (response != null) {
-                VideoConfig videoConfig = response.body();
-                com.squareup.okhttp.Response rawResponse = response.raw();
+                if(response.isSuccess()){
+                    VideoConfig videoConfig = response.body();
+                    if (videoConfig != null) {
+                        mVideoUrl = getVideoUrl(videoConfig);
+                        Timber.d("onResponse() : videoUrl - " + mVideoUrl);
 
-                if (videoConfig != null) {
-                    mVideoUrl = getVideoUrl(videoConfig);
-                    Timber.d("onResponse() : videoUrl - " + mVideoUrl);
-
-                    if (!TextUtils.isEmpty(mVideoUrl)) {
-                        Timber.d("playVideo()");
-                        playVideo(mVideoUrl);
+                        if (!TextUtils.isEmpty(mVideoUrl)) {
+                            Timber.d("playVideo()");
+                            playVideo(mVideoUrl);
+                        }
                     }
-                } else if (rawResponse != null) {
-                    String message = rawResponse.message();
-                    int code = rawResponse.code();
-                    Timber.d("onResponse() : message - " + message);
-                    Timber.d("onResponse() : code - " + code);
+                } else {
+                    ResponseBody responseBody = response.errorBody();
+                    com.squareup.okhttp.Response rawResponse = response.raw();
+                    if (rawResponse != null) {
+                        String message = rawResponse.message();
+                        int code = rawResponse.code();
+                        Timber.d("onResponse() : message - " + message);
+                        Timber.d("onResponse() : code - " + code);
 
-                    switch (code) {
-                        case 500:
-//                            mErrorTextView.setText("Can't load data.\nCheck your network connection.");
-//                            mErrorLinearLayout.setVisibility(View.VISIBLE);
-                            break;
-                        default:
-                            break;
+                        switch (code) {
+                            case 500:
+//                                mErrorTextView.setText("Can't load data.\nCheck your network connection.");
+//                                mErrorLinearLayout.setVisibility(View.VISIBLE);
+                                break;
+                            default:
+                                break;
+                        }
                     }
                 }
             }
@@ -206,29 +211,34 @@ public class VideoDetailsFragment extends BaseFragment implements VideosAdapter.
     private Callback<VideosCollection> mGetRelatedVideosCallback = new Callback<VideosCollection>() {
         @Override
         public void onResponse(Response<VideosCollection> response) {
-            Timber.d("onResponse()");
 
-            VideosCollection videosCollection = response.body();
-            com.squareup.okhttp.Response rawResponse = response.raw();
+            if(response != null){
+                if(response.isSuccess()){
+                    VideosCollection videosCollection = response.body();
+                    if (videosCollection != null) {
+                        List<Video> videos = videosCollection.getVideos();
+                        if (videos != null) {
+                            mVideosAdapter.addAll(videos);
+                        }
+                    }
+                } else {
+                    ResponseBody responseBody = response.errorBody();
+                    com.squareup.okhttp.Response rawResponse = response.raw();
+                    if (rawResponse != null) {
+                        String message = rawResponse.message();
+                        int code = rawResponse.code();
+                        Timber.d("onResponse() : message - " + message);
+                        Timber.d("onResponse() : code - " + code);
 
-            if (videosCollection != null) {
-                List<Video> videos = videosCollection.getVideos();
-                if (videos != null) {
-                    mVideosAdapter.addAll(videos);
-                }
-            } else if (rawResponse != null) {
-                String message = rawResponse.message();
-                int code = rawResponse.code();
-                Timber.d("onResponse() : message - " + message);
-                Timber.d("onResponse() : code - " + code);
-
-                switch (code) {
-                    case 500:
-//                        mErrorTextView.setText("Can't load data.\nCheck your network connection.");
-//                        mErrorLinearLayout.setVisibility(View.VISIBLE);
-                        break;
-                    default:
-                        break;
+                        switch (code) {
+                            case 500:
+//                                mErrorTextView.setText("Can't load data.\nCheck your network connection.");
+//                                mErrorLinearLayout.setVisibility(View.VISIBLE);
+                                break;
+                            default:
+                                break;
+                        }
+                    }
                 }
             }
         }
