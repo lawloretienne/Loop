@@ -28,7 +28,6 @@ import android.widget.TextView;
 import com.etiennelawlor.loop.R;
 import com.etiennelawlor.loop.activities.VideoDetailsActivity;
 import com.etiennelawlor.loop.adapters.VideosAdapter;
-import com.etiennelawlor.loop.animators.SlideInOutBottomItemAnimator;
 import com.etiennelawlor.loop.helper.PreferencesHelper;
 import com.etiennelawlor.loop.network.ServiceGenerator;
 import com.etiennelawlor.loop.network.VimeoService;
@@ -45,6 +44,7 @@ import java.util.List;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
+import jp.wasabeef.recyclerview.animators.SlideInUpAnimator;
 import retrofit.Call;
 import retrofit.Callback;
 import retrofit.Response;
@@ -336,8 +336,7 @@ public class LikedVideosFragment extends BaseFragment implements VideosAdapter.O
         mVideosAdapter = new VideosAdapter(getActivity());
         mVideosAdapter.setOnItemClickListener(this);
 
-//        mVideosRecyclerView.setItemAnimator(new SlideInOutBottomItemAnimator(mVideosRecyclerView));
-
+        mVideosRecyclerView.setItemAnimator(new SlideInUpAnimator());
         mVideosRecyclerView.setAdapter(mVideosAdapter);
 
         // Pagination

@@ -2,7 +2,11 @@ package com.etiennelawlor.loop.fragments;
 
 import android.os.Bundle;
 import android.os.NetworkOnMainThreadException;
+import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
 
 import com.etiennelawlor.loop.LoopApplication;
 import com.squareup.leakcanary.RefWatcher;
@@ -23,18 +27,27 @@ public abstract class BaseFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        Timber.d("onCreate()");
 
         mCalls = new ArrayList<>();
     }
 
     @Override
+    public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+        Timber.d("onViewCreated()");
+    }
+
+    @Override
     public void onStop() {
         super.onStop();
+        Timber.d("onStop()");
     }
 
     @Override
     public void onDestroyView() {
         super.onDestroyView();
+        Timber.d("onDestroyView()");
 
         String className = this.getClass().toString();
         Timber.d("onDestroyView() : className - "+ className);

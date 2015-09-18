@@ -1,8 +1,6 @@
 package com.etiennelawlor.loop.fragments;
 
-import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.preference.PreferenceManager;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.GridLayoutManager;
@@ -19,7 +17,6 @@ import android.widget.TextView;
 
 import com.etiennelawlor.loop.R;
 import com.etiennelawlor.loop.adapters.CategoriesAdapter;
-import com.etiennelawlor.loop.animators.SlideInOutBottomItemAnimator;
 import com.etiennelawlor.loop.helper.PreferencesHelper;
 import com.etiennelawlor.loop.network.ServiceGenerator;
 import com.etiennelawlor.loop.network.VimeoService;
@@ -38,6 +35,7 @@ import java.util.List;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
+import jp.wasabeef.recyclerview.animators.SlideInUpAnimator;
 import retrofit.Call;
 import retrofit.Callback;
 import retrofit.Response;
@@ -216,8 +214,7 @@ public class ExploreFragment extends BaseFragment implements CategoriesAdapter.O
         mCategoriesAdapter = new CategoriesAdapter(getActivity());
         mCategoriesAdapter.setOnItemClickListener(this);
 
-//        mCategoriesRecyclerView.setItemAnimator(new SlideInOutBottomItemAnimator(mCategoriesRecyclerView));
-
+        mCategoriesRecyclerView.setItemAnimator(new SlideInUpAnimator());
         mCategoriesRecyclerView.setAdapter(mCategoriesAdapter);
 
         Call getCategoriesCall = mVimeoService.getCategories();

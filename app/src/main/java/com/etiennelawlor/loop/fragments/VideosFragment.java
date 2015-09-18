@@ -23,7 +23,6 @@ import android.widget.TextView;
 import com.etiennelawlor.loop.R;
 import com.etiennelawlor.loop.activities.VideoDetailsActivity;
 import com.etiennelawlor.loop.adapters.VideosAdapter;
-import com.etiennelawlor.loop.animators.SlideInOutBottomItemAnimator;
 import com.etiennelawlor.loop.helper.PreferencesHelper;
 import com.etiennelawlor.loop.network.ServiceGenerator;
 import com.etiennelawlor.loop.network.VimeoService;
@@ -42,6 +41,7 @@ import java.util.List;
 import butterknife.Bind;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
+import jp.wasabeef.recyclerview.animators.SlideInUpAnimator;
 import retrofit.Call;
 import retrofit.Callback;
 import retrofit.Response;
@@ -325,7 +325,7 @@ public class VideosFragment extends BaseFragment implements VideosAdapter.OnItem
         mVideosAdapter = new VideosAdapter(getActivity());
         mVideosAdapter.setOnItemClickListener(this);
 
-//        mVideosRecyclerView.setItemAnimator(new SlideInOutBottomItemAnimator(mVideosRecyclerView));
+        mVideosRecyclerView.setItemAnimator(new SlideInUpAnimator());
         mVideosRecyclerView.setAdapter(mVideosAdapter);
 
         // Pagination
@@ -337,6 +337,8 @@ public class VideosFragment extends BaseFragment implements VideosAdapter.OnItem
                 mCurrentPage,
                 PAGE_SIZE);
         Timber.d("mCalls.add() : mQuery - "+mQuery);
+        Timber.d("onViewCreated() : mCalls.add() : mCurrentPage - "+mCurrentPage);
+
         mCalls.add(findVideosCall);
         findVideosCall.enqueue(mFindVideosFirstFetchCallback);
     }
@@ -346,6 +348,7 @@ public class VideosFragment extends BaseFragment implements VideosAdapter.OnItem
         super.onDestroyView();
 
         mVideosRecyclerView.removeOnScrollListener(mRecyclerViewOnScrollListener);
+        mCurrentPage = 1;
         ButterKnife.unbind(this);
     }
     // endregion
@@ -417,6 +420,8 @@ public class VideosFragment extends BaseFragment implements VideosAdapter.OnItem
                 mCurrentPage,
                 PAGE_SIZE);
         Timber.d("mCalls.add() : mQuery - "+mQuery);
+        Timber.d("loadMoreItems() : mCalls.add() : mCurrentPage - "+mCurrentPage);
+
         mCalls.add(findVideosCall);
         findVideosCall.enqueue(mFindVideosNextFetchCallback);
     }
