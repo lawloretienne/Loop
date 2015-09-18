@@ -18,7 +18,6 @@ import com.etiennelawlor.loop.network.models.Size;
 import com.etiennelawlor.loop.network.models.Stats;
 import com.etiennelawlor.loop.network.models.User;
 import com.etiennelawlor.loop.network.models.Video;
-import com.etiennelawlor.loop.network.models.VideoWrapper;
 import com.etiennelawlor.loop.utilities.LoopUtility;
 
 import java.text.ParseException;
@@ -40,10 +39,17 @@ import timber.log.Timber;
 
 public class VideosAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
+    // region Constants
+    public static final int ITEM = 6;
+    public static final int LOADING = 7;
+    public static final int HEADER = 8;
+    // endregion
+
     // region Member Variables
     private Context mContext;
-    private List<VideoWrapper> mVideoWrappers;
+    private List<Video> mVideos;
     private OnItemClickListener mOnItemClickListener;
+    private boolean mIsLoadingFooterAdded = false;
     // endregion
 
     // region Listeners
@@ -58,19 +64,19 @@ public class VideosAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
     // region Constructors
     public VideosAdapter(Context context) {
         mContext = context;
-        mVideoWrappers = new ArrayList<>();
+        mVideos = new ArrayList<>();
     }
     // endregion
 
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         switch (viewType) {
-//            case VideoWrapper.HEADER:
-//                return createHeaderViewHolder(mHeaderView);
-            case VideoWrapper.VIDEO:
+            case ITEM:
                 return createVideoViewHolder(parent);
-            case VideoWrapper.LOADING:
+            case LOADING:
                 return createLoadingViewHolder(parent);
+            case HEADER:
+                return null;
             default:
                 Timber.e("[ERR] type is not supported!!! type is %d", viewType);
                 return null;
@@ -80,12 +86,11 @@ public class VideosAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
     @Override
     public void onBindViewHolder(RecyclerView.ViewHolder viewHolder, int position) {
         switch (getItemViewType(position)) {
-            case VideoWrapper.VIDEO:
+            case ITEM:
                 bindVideoViewHolder(viewHolder, position);
                 break;
-            case VideoWrapper.HEADER:
-            case VideoWrapper.LOADING:
-            case VideoWrapper.NONE:
+            case LOADING:
+            case HEADER:
             default:
                 break;
         }
@@ -93,34 +98,32 @@ public class VideosAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
 
     @Override
     public int getItemCount() {
-        return mVideoWrappers.size();
+        return mVideos.size();
     }
 
     @Override
     public int getItemViewType(int position) {
-        return getItem(position).getType();
+//        Timber.d("getItemViewType() : position - "+position);
+//        Timber.d("getItemViewType() : mVideos.size() - "+mVideos.size());
+        return (position == mVideos.size()-1 && mIsLoadingFooterAdded) ? LOADING : ITEM;
     }
 
     // region Helper Methods
-    private void add(VideoWrapper item) {
-        mVideoWrappers.add(item);
-        notifyItemInserted(mVideoWrappers.size());
+    private void add(Video item) {
+        mVideos.add(item);
+        notifyItemInserted(mVideos.size());
     }
 
     public void addAll(List<Video> videos) {
         for (Video video : videos) {
-            add(VideoWrapper.createVideoType(video));
-        }
-
-        if (mVideoWrappers.size() > 3) {
-            add(VideoWrapper.createLoadingType());
+            add(video);
         }
     }
 
-    public void remove(VideoWrapper item) {
-        int position = mVideoWrappers.indexOf(item);
+    public void remove(Video item) {
+        int position = mVideos.indexOf(item);
         if (position > -1) {
-            mVideoWrappers.remove(position);
+            mVideos.remove(position);
             notifyItemRemoved(position);
         }
     }
@@ -135,22 +138,34 @@ public class VideosAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
         return getItemCount() == 0;
     }
 
-    public void removeLoading() {
-        int position = mVideoWrappers.size() - 1;
-        VideoWrapper item = getItem(position);
+    public void addLoading(){
+        mIsLoadingFooterAdded = true;
 
-        if (item != null && item.getType() == VideoWrapper.LOADING) {
-            mVideoWrappers.remove(position);
-            notifyItemChanged(position + 1);
+        add(new Video());
+    }
+
+    public void removeLoading() {
+        mIsLoadingFooterAdded = false;
+
+        int position = mVideos.size() - 1;
+        Video item = getItem(position);
+
+        if (item != null) {
+            mVideos.remove(position);
+
+            if(mVideos.size() < 3){ // If there are only a few items in the first page
+                notifyDataSetChanged();
+            } else {
+                notifyItemChanged(position+1);
+            }
         }
     }
 
-    public VideoWrapper getItem(int position) {
+    public Video getItem(int position) {
         try {
-            return mVideoWrappers.get(position);
+            return mVideos.get(position);
         } catch (IndexOutOfBoundsException e) {
             Timber.e(e, "index is %d, and size is %d", position, getItemCount());
-//            return mVideoWrappers.get(getItemCount() - 1);
             return null;
         }
     }
@@ -180,17 +195,13 @@ public class VideosAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
     private void bindVideoViewHolder(RecyclerView.ViewHolder viewHolder, int position) {
         VideoViewHolder holder = (VideoViewHolder) viewHolder;
 
-        VideoWrapper videoWrapper = mVideoWrappers.get(position);
-        if (videoWrapper != null) {
-            final Video video = videoWrapper.getVideo();
-
-            if (video != null) {
-                setUpTitle(holder.mTitleTextView, video);
-                setUpSubtitle(holder.mSubtitleTextView, video);
-                setUpVideoThumbnail(holder.mVideoThumbnailImageView, video);
-                setUpDuration(holder.mDurationTextView, video);
-                setUpUploadedDate(holder.mUploadedDateTextView, video);
-            }
+        final Video video = mVideos.get(position);
+        if (video != null) {
+            setUpTitle(holder.mTitleTextView, video);
+            setUpSubtitle(holder.mSubtitleTextView, video);
+            setUpVideoThumbnail(holder.mVideoThumbnailImageView, video);
+            setUpDuration(holder.mDurationTextView, video);
+            setUpUploadedDate(holder.mUploadedDateTextView, video);
         }
     }
 

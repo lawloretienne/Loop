@@ -1,7 +1,6 @@
 package com.etiennelawlor.loop.fragments;
 
 import android.content.Intent;
-import android.graphics.SurfaceTexture;
 import android.media.MediaPlayer;
 import android.net.Uri;
 import android.os.Bundle;
@@ -9,13 +8,9 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.ActivityOptionsCompat;
 import android.support.v4.util.Pair;
 import android.text.TextUtils;
-import android.util.Log;
 import android.view.LayoutInflater;
-import android.view.Surface;
-import android.view.TextureView;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.MediaController;
@@ -44,10 +39,8 @@ import com.etiennelawlor.loop.network.models.VP6;
 import com.etiennelawlor.loop.network.models.Video;
 import com.etiennelawlor.loop.network.models.VideoConfig;
 import com.etiennelawlor.loop.network.models.VideoFormat;
-import com.etiennelawlor.loop.network.models.VideoWrapper;
 import com.etiennelawlor.loop.network.models.VideosCollection;
 import com.etiennelawlor.loop.otto.BusProvider;
-import com.etiennelawlor.loop.ui.CustomMediaController;
 import com.etiennelawlor.loop.utilities.LoopUtility;
 import com.squareup.okhttp.ResponseBody;
 
@@ -219,6 +212,7 @@ public class VideoDetailsFragment extends BaseFragment implements VideosAdapter.
                         List<Video> videos = videosCollection.getVideos();
                         if (videos != null) {
                             mVideosAdapter.addAll(videos);
+                            mVideosAdapter.addLoading();
                         }
                     }
                 } else {
@@ -401,17 +395,15 @@ public class VideoDetailsFragment extends BaseFragment implements VideosAdapter.
     // region VideosAdapter.OnItemClickListener Methods
     @Override
     public void onItemClick(int position, View view) {
-        VideoWrapper videoWrapper = mVideosAdapter.getItem(position);
-        if (videoWrapper != null) {
-            Video video = videoWrapper.getVideo();
-            if (video != null) {
-                Intent intent = new Intent(getActivity(), VideoDetailsActivity.class);
+        Video video = mVideosAdapter.getItem(position);
+        if (video != null) {
+            Intent intent = new Intent(getActivity(), VideoDetailsActivity.class);
 
-                Bundle bundle = new Bundle();
-                bundle.putParcelable("video", video);
-                intent.putExtras(bundle);
+            Bundle bundle = new Bundle();
+            bundle.putParcelable("video", video);
+            intent.putExtras(bundle);
 
-                Pair<View, String> p1 = Pair.create((View) view.findViewById(R.id.video_thumbnail_iv), "videoTransition");
+            Pair<View, String> p1 = Pair.create((View) view.findViewById(R.id.video_thumbnail_iv), "videoTransition");
 //                Pair<View, String> p2 = Pair.create((View) view.findViewById(R.id.title_tv), "titleTransition");
 //                Pair<View, String> p3 = Pair.create((View) view.findViewById(R.id.subtitle_tv), "subtitleTransition");
 //        Pair<View, String> p4 = Pair.create((View)view.findViewById(R.id.uploaded_tv), "uploadedTransition");
@@ -419,14 +411,13 @@ public class VideoDetailsFragment extends BaseFragment implements VideosAdapter.
 //                ActivityOptionsCompat options = ActivityOptionsCompat.makeSceneTransitionAnimation(getActivity(),
 //                        p1, p2, p3);
 
-                ActivityOptionsCompat options = ActivityOptionsCompat.makeSceneTransitionAnimation(getActivity(),
-                        p1);
+            ActivityOptionsCompat options = ActivityOptionsCompat.makeSceneTransitionAnimation(getActivity(),
+                    p1);
 
 
-                ActivityCompat.startActivity(getActivity(), intent, options.toBundle());
+            ActivityCompat.startActivity(getActivity(), intent, options.toBundle());
 
 //        startActivity(intent);
-            }
         }
     }
     // endregion

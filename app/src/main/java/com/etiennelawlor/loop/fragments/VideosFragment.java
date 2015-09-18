@@ -2,10 +2,7 @@ package com.etiennelawlor.loop.fragments;
 
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.preference.PreferenceManager;
-import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.ActivityOptionsCompat;
 import android.support.v4.util.Pair;
 import android.support.v7.app.AlertDialog;
@@ -32,12 +29,12 @@ import com.etiennelawlor.loop.network.ServiceGenerator;
 import com.etiennelawlor.loop.network.VimeoService;
 import com.etiennelawlor.loop.network.models.AccessToken;
 import com.etiennelawlor.loop.network.models.Video;
-import com.etiennelawlor.loop.network.models.VideoWrapper;
 import com.etiennelawlor.loop.network.models.VideosCollection;
 import com.etiennelawlor.loop.otto.BusProvider;
 import com.squareup.okhttp.ResponseBody;
 
 import java.io.IOException;
+import java.net.SocketException;
 import java.net.SocketTimeoutException;
 import java.net.UnknownHostException;
 import java.util.List;
@@ -80,6 +77,7 @@ public class VideosFragment extends BaseFragment implements VideosAdapter.OnItem
     private String mSortByValue = "relevant";
     private String mSortOrderValue = "desc";
     private VideosAdapter mVideosAdapter;
+
     private String mQuery;
     private LinearLayoutManager mLayoutManager;
     private VimeoService mVimeoService;
@@ -139,6 +137,7 @@ public class VideosFragment extends BaseFragment implements VideosAdapter.OnItem
                         List<Video> videos = videosCollection.getVideos();
                         if (videos != null) {
                             mVideosAdapter.addAll(videos);
+                            mVideosAdapter.addLoading();
                         }
                     }
                 } else {
@@ -181,7 +180,9 @@ public class VideosFragment extends BaseFragment implements VideosAdapter.OnItem
 
                 t.printStackTrace();
 
-                if (t instanceof SocketTimeoutException || t instanceof UnknownHostException) {
+                if (t instanceof SocketTimeoutException
+                        || t instanceof UnknownHostException
+                        || t instanceof SocketException) {
                     Timber.e("Timeout occurred");
                     mIsLoading = false;
                     mProgressBar.setVisibility(View.GONE);
@@ -204,8 +205,6 @@ public class VideosFragment extends BaseFragment implements VideosAdapter.OnItem
         @Override
         public void onResponse(Response<VideosCollection> response) {
             Timber.d("onResponse()");
-//                mProgressBar.setVisibility(View.GONE);
-
             mVideosAdapter.removeLoading();
             mIsLoading = false;
 
@@ -217,6 +216,7 @@ public class VideosFragment extends BaseFragment implements VideosAdapter.OnItem
                         List<Video> videos = videosCollection.getVideos();
                         if (videos != null) {
                             mVideosAdapter.addAll(videos);
+                            mVideosAdapter.addLoading();
                         }
                     }
                 } else {
@@ -245,8 +245,6 @@ public class VideosFragment extends BaseFragment implements VideosAdapter.OnItem
         public void onFailure(Throwable t) {
             Timber.d("onFailure()");
             mIsLoading = false;
-//                mProgressBar.setVisibility(View.GONE);
-
             mVideosAdapter.removeLoading();
 
             if (t != null) {
@@ -254,11 +252,11 @@ public class VideosFragment extends BaseFragment implements VideosAdapter.OnItem
                 String message = t.getMessage();
 
                 if (cause != null) {
-                    Timber.e("failure() : cause.toString() -" + cause.toString());
+                    Timber.e("onFailure() : cause.toString() -" + cause.toString());
                 }
 
                 if (TextUtils.isEmpty(message)) {
-                    Timber.e("failure() : message - " + message);
+                    Timber.e("onFailure() : message - " + message);
                 }
 
                 t.printStackTrace();
@@ -321,6 +319,9 @@ public class VideosFragment extends BaseFragment implements VideosAdapter.OnItem
 
         mLayoutManager = new LinearLayoutManager(getActivity());
         mVideosRecyclerView.setLayoutManager(mLayoutManager);
+//        mVideosAdapter = new VideosAdapter(getActivity());
+//        mVideosAdapter.setOnItemClickListener(this);
+
         mVideosAdapter = new VideosAdapter(getActivity());
         mVideosAdapter.setOnItemClickListener(this);
 
@@ -375,23 +376,22 @@ public class VideosFragment extends BaseFragment implements VideosAdapter.OnItem
     // region VideosAdapter.OnItemClickListener Methods
     @Override
     public void onItemClick(int position, View view) {
-        VideoWrapper videoWrapper = mVideosAdapter.getItem(position);
-        if (videoWrapper != null) {
-            Video video = videoWrapper.getVideo();
-            if (video != null) {
-                Intent intent = new Intent(getActivity(), VideoDetailsActivity.class);
+        Video video = mVideosAdapter.getItem(position);
 
-                Bundle bundle = new Bundle();
-                bundle.putParcelable("video", video);
-                intent.putExtras(bundle);
+        if (video != null) {
+            Intent intent = new Intent(getActivity(), VideoDetailsActivity.class);
 
-                Pair<View, String> p1 = Pair.create((View) view.findViewById(R.id.video_thumbnail_iv), "videoTransition");
+            Bundle bundle = new Bundle();
+            bundle.putParcelable("video", video);
+            intent.putExtras(bundle);
+
+            Pair<View, String> p1 = Pair.create((View) view.findViewById(R.id.video_thumbnail_iv), "videoTransition");
 //                Pair<View, String> p2 = Pair.create((View) view.findViewById(R.id.title_tv), "titleTransition");
 //                Pair<View, String> p3 = Pair.create((View) view.findViewById(R.id.subtitle_tv), "subtitleTransition");
 //        Pair<View, String> p4 = Pair.create((View)view.findViewById(R.id.uploaded_tv), "uploadedTransition");
 
-                ActivityOptionsCompat options = ActivityOptionsCompat.makeSceneTransitionAnimation(getActivity(),
-                        p1);
+            ActivityOptionsCompat options = ActivityOptionsCompat.makeSceneTransitionAnimation(getActivity(),
+                    p1);
 
 //                ActivityOptionsCompat options = ActivityOptionsCompat.makeSceneTransitionAnimation(getActivity(),
 //                        p1, p2, p3);
@@ -399,8 +399,7 @@ public class VideosFragment extends BaseFragment implements VideosAdapter.OnItem
 
 //                ActivityCompat.startActivity(getActivity(), intent, options.toBundle());
 
-                startActivity(intent);
-            }
+            startActivity(intent);
         }
 
     }

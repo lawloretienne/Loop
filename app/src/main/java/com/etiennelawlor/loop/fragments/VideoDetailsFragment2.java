@@ -1,27 +1,16 @@
 package com.etiennelawlor.loop.fragments;
 
 import android.content.Intent;
-import android.media.MediaPlayer;
-import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.ActivityOptionsCompat;
 import android.support.v4.util.Pair;
-import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.webkit.WebChromeClient;
-import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
-import android.widget.FrameLayout;
-import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.MediaController;
-import android.widget.ProgressBar;
-import android.widget.TextView;
-import android.widget.VideoView;
 
 import com.etiennelawlor.loop.R;
 import com.etiennelawlor.loop.activities.VideoDetailsActivity;
@@ -31,37 +20,13 @@ import com.etiennelawlor.loop.network.ServiceGenerator;
 import com.etiennelawlor.loop.network.VimeoPlayerService;
 import com.etiennelawlor.loop.network.models.AccessToken;
 import com.etiennelawlor.loop.network.models.Embed;
-import com.etiennelawlor.loop.network.models.Files;
-import com.etiennelawlor.loop.network.models.H264;
-import com.etiennelawlor.loop.network.models.Pictures;
-import com.etiennelawlor.loop.network.models.Request;
-import com.etiennelawlor.loop.network.models.Size;
-import com.etiennelawlor.loop.network.models.Stats;
-import com.etiennelawlor.loop.network.models.Tag;
-import com.etiennelawlor.loop.network.models.User;
 import com.etiennelawlor.loop.network.models.Video;
-import com.etiennelawlor.loop.network.models.VideoConfig;
-import com.etiennelawlor.loop.network.models.VideoFormat;
-import com.etiennelawlor.loop.network.models.VideoWrapper;
-import com.etiennelawlor.loop.network.models.VideosCollection;
 import com.etiennelawlor.loop.otto.BusProvider;
 import com.etiennelawlor.loop.utilities.LoopUtility;
 //import com.squareup.picasso.Picasso;
 
-import java.text.NumberFormat;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.List;
-import java.util.Locale;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-
 import butterknife.Bind;
 import butterknife.ButterKnife;
-import butterknife.OnClick;
-import retrofit.Callback;
 import timber.log.Timber;
 
 /**
@@ -373,17 +338,43 @@ public class VideoDetailsFragment2 extends BaseFragment implements VideosAdapter
 
     @Override
     public void onItemClick(int position, View view) {
-        VideoWrapper videoWrapper = mVideosAdapter.getItem(position);
-        if (videoWrapper != null) {
-            Video video = videoWrapper.getVideo();
-            if (video != null) {
-                Intent intent = new Intent(getActivity(), VideoDetailsActivity.class);
+//        VideoWrapper videoWrapper = mVideosAdapter.getItem(position);
+//        if (videoWrapper != null) {
+//            Video video = videoWrapper.getVideo();
+//            if (video != null) {
+//                Intent intent = new Intent(getActivity(), VideoDetailsActivity.class);
+//
+//                Bundle bundle = new Bundle();
+//                bundle.putParcelable("video", video);
+//                intent.putExtras(bundle);
+//
+//                Pair<View, String> p1 = Pair.create((View) view.findViewById(R.id.video_thumbnail_iv), "videoTransition");
+////                Pair<View, String> p2 = Pair.create((View) view.findViewById(R.id.title_tv), "titleTransition");
+////                Pair<View, String> p3 = Pair.create((View) view.findViewById(R.id.subtitle_tv), "subtitleTransition");
+////        Pair<View, String> p4 = Pair.create((View)view.findViewById(R.id.uploaded_tv), "uploadedTransition");
+//
+////                ActivityOptionsCompat options = ActivityOptionsCompat.makeSceneTransitionAnimation(getActivity(),
+////                        p1, p2, p3);
+//
+//                ActivityOptionsCompat options = ActivityOptionsCompat.makeSceneTransitionAnimation(getActivity(),
+//                        p1);
+//
+//
+//                ActivityCompat.startActivity(getActivity(), intent, options.toBundle());
+//
+////        startActivity(intent);
+//            }
+//        }
 
-                Bundle bundle = new Bundle();
-                bundle.putParcelable("video", video);
-                intent.putExtras(bundle);
+        Video video = mVideosAdapter.getItem(position);
+        if (video != null) {
+            Intent intent = new Intent(getActivity(), VideoDetailsActivity.class);
 
-                Pair<View, String> p1 = Pair.create((View) view.findViewById(R.id.video_thumbnail_iv), "videoTransition");
+            Bundle bundle = new Bundle();
+            bundle.putParcelable("video", video);
+            intent.putExtras(bundle);
+
+            Pair<View, String> p1 = Pair.create((View) view.findViewById(R.id.video_thumbnail_iv), "videoTransition");
 //                Pair<View, String> p2 = Pair.create((View) view.findViewById(R.id.title_tv), "titleTransition");
 //                Pair<View, String> p3 = Pair.create((View) view.findViewById(R.id.subtitle_tv), "subtitleTransition");
 //        Pair<View, String> p4 = Pair.create((View)view.findViewById(R.id.uploaded_tv), "uploadedTransition");
@@ -391,14 +382,13 @@ public class VideoDetailsFragment2 extends BaseFragment implements VideosAdapter
 //                ActivityOptionsCompat options = ActivityOptionsCompat.makeSceneTransitionAnimation(getActivity(),
 //                        p1, p2, p3);
 
-                ActivityOptionsCompat options = ActivityOptionsCompat.makeSceneTransitionAnimation(getActivity(),
-                        p1);
+            ActivityOptionsCompat options = ActivityOptionsCompat.makeSceneTransitionAnimation(getActivity(),
+                    p1);
 
 
-                ActivityCompat.startActivity(getActivity(), intent, options.toBundle());
+            ActivityCompat.startActivity(getActivity(), intent, options.toBundle());
 
 //        startActivity(intent);
-            }
         }
     }
 

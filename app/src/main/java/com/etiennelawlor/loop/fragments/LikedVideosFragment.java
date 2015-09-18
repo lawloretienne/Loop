@@ -2,10 +2,8 @@ package com.etiennelawlor.loop.fragments;
 
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
-import android.preference.PreferenceManager;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.ActivityOptionsCompat;
 import android.support.v4.graphics.drawable.DrawableCompat;
@@ -36,7 +34,6 @@ import com.etiennelawlor.loop.network.ServiceGenerator;
 import com.etiennelawlor.loop.network.VimeoService;
 import com.etiennelawlor.loop.network.models.AccessToken;
 import com.etiennelawlor.loop.network.models.Video;
-import com.etiennelawlor.loop.network.models.VideoWrapper;
 import com.etiennelawlor.loop.network.models.VideosCollection;
 import com.etiennelawlor.loop.otto.BusProvider;
 import com.squareup.okhttp.ResponseBody;
@@ -128,6 +125,7 @@ public class LikedVideosFragment extends BaseFragment implements VideosAdapter.O
                         List<Video> videos = videosCollection.getVideos();
                         if (videos != null) {
                             mVideosAdapter.addAll(videos);
+                            mVideosAdapter.addLoading();
                         }
                     }
                 } else {
@@ -202,8 +200,6 @@ public class LikedVideosFragment extends BaseFragment implements VideosAdapter.O
         @Override
         public void onResponse(Response<VideosCollection> response) {
             Timber.d("onResponse()");
-//                mProgressBar.setVisibility(View.GONE);
-
             mVideosAdapter.removeLoading();
             mIsLoading = false;
 
@@ -214,6 +210,7 @@ public class LikedVideosFragment extends BaseFragment implements VideosAdapter.O
                         List<Video> videos = videosCollection.getVideos();
                         if (videos != null) {
                             mVideosAdapter.addAll(videos);
+                            mVideosAdapter.addLoading();
                         }
                     }
                 } else {
@@ -260,7 +257,6 @@ public class LikedVideosFragment extends BaseFragment implements VideosAdapter.O
                 if (t instanceof SocketTimeoutException || t instanceof UnknownHostException) {
                     Timber.e("Timeout occurred");
                     mIsLoading = false;
-//                mProgressBar.setVisibility(View.GONE);
                     mVideosAdapter.removeLoading();
 
                     mErrorTextView.setText("Can't load data.\nCheck your network connection.");
@@ -270,7 +266,6 @@ public class LikedVideosFragment extends BaseFragment implements VideosAdapter.O
                         Timber.e("onFailure() : Canceled");
                     } else {
                         mIsLoading = false;
-//                mProgressBar.setVisibility(View.GONE);
                         mVideosAdapter.removeLoading();
                     }
                 }
@@ -392,17 +387,15 @@ public class LikedVideosFragment extends BaseFragment implements VideosAdapter.O
     // region VideosAdapter.OnItemClickListener Methods
     @Override
     public void onItemClick(int position, View view) {
-        VideoWrapper videoWrapper = mVideosAdapter.getItem(position);
-        if (videoWrapper != null) {
-            Video video = videoWrapper.getVideo();
-            if (video != null) {
-                Intent intent = new Intent(getActivity(), VideoDetailsActivity.class);
+        Video video = mVideosAdapter.getItem(position);
+        if (video != null) {
+            Intent intent = new Intent(getActivity(), VideoDetailsActivity.class);
 
-                Bundle bundle = new Bundle();
-                bundle.putParcelable("video", video);
-                intent.putExtras(bundle);
+            Bundle bundle = new Bundle();
+            bundle.putParcelable("video", video);
+            intent.putExtras(bundle);
 
-                Pair<View, String> p1 = Pair.create((View) view.findViewById(R.id.video_thumbnail_iv), "videoTransition");
+            Pair<View, String> p1 = Pair.create((View) view.findViewById(R.id.video_thumbnail_iv), "videoTransition");
 //                Pair<View, String> p2 = Pair.create((View) view.findViewById(R.id.title_tv), "titleTransition");
 //                Pair<View, String> p3 = Pair.create((View) view.findViewById(R.id.subtitle_tv), "subtitleTransition");
 //        Pair<View, String> p4 = Pair.create((View)view.findViewById(R.id.uploaded_tv), "uploadedTransition");
@@ -410,14 +403,13 @@ public class LikedVideosFragment extends BaseFragment implements VideosAdapter.O
 //                ActivityOptionsCompat options = ActivityOptionsCompat.makeSceneTransitionAnimation(getActivity(),
 //                        p1, p2, p3);
 
-                ActivityOptionsCompat options = ActivityOptionsCompat.makeSceneTransitionAnimation(getActivity(),
-                        p1);
+            ActivityOptionsCompat options = ActivityOptionsCompat.makeSceneTransitionAnimation(getActivity(),
+                    p1);
 
 
-                ActivityCompat.startActivity(getActivity(), intent, options.toBundle());
+            ActivityCompat.startActivity(getActivity(), intent, options.toBundle());
 
 //                startActivity(intent);
-            }
         }
 
     }
