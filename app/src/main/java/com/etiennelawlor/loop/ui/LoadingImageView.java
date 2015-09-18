@@ -25,13 +25,26 @@ import com.nineoldandroids.animation.ValueAnimator;
  * Created by chiemy on 15/8/19.
  */
 public class LoadingImageView extends ImageView {
+
+    // region Member Variables
     private Paint imagePaint;
     private BitmapShader shader;
     private Paint paint;
     private int imageHeight, imageWidth;
-    private boolean autoStart = true;
     private int maskColor = Color.TRANSPARENT;
+    private ClipDrawable clipDrawable;
+    private Drawable maskDrawable;
+    private int maskHeight;
+    private ObjectAnimator animator;
+    private int gravity = Gravity.LEFT;
+    private int orientaion = ClipDrawable.HORIZONTAL;
+    private int maskOrientation = MaskOrientation.LeftToRight;
+    private float scaleX,scaleY;
+    private boolean autoStart = true;
+    private long animDuration = 1000;
+    // endregion
 
+    // region Constructors
     public LoadingImageView(Context context) {
         this(context, null);
     }
@@ -45,27 +58,8 @@ public class LoadingImageView extends ImageView {
         init();
         initAttrs(context, attrs);
     }
+    // endregion
 
-    private void initAttrs(Context context, AttributeSet attrs){
-        if(attrs == null){
-            return;
-        }
-        TypedArray t = context.obtainStyledAttributes(attrs, R.styleable.LoadingImageView);
-        maskColor = t.getColor(R.styleable.LoadingImageView_mask_color, maskColor);
-        autoStart = t.getBoolean(R.styleable.LoadingImageView_anim_auto_start, autoStart);
-        setMaskColor(maskColor);
-        t.recycle();
-    }
-
-    private void init() {
-        if (paint == null) {
-            imagePaint = new Paint(Paint.ANTI_ALIAS_FLAG);
-            imagePaint.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.SRC_ATOP));
-            paint = new Paint(Paint.ANTI_ALIAS_FLAG);
-        }
-    }
-
-    private float scaleX,scaleY;
     @Override
     protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
         super.onMeasure(widthMeasureSpec, heightMeasureSpec);
@@ -74,7 +68,6 @@ public class LoadingImageView extends ImageView {
 
         scaleX = f[Matrix.MSCALE_X];
         scaleY = f[Matrix.MSCALE_Y];
-
     }
 
     @Override
@@ -94,7 +87,6 @@ public class LoadingImageView extends ImageView {
         stopAnim();
     }
 
-
     @Override
     public void setImageDrawable(Drawable drawable) {
         super.setImageDrawable(drawable);
@@ -102,6 +94,26 @@ public class LoadingImageView extends ImageView {
             init();
             initMaskBitmap(maskColor);
             initAnim();
+        }
+    }
+
+    // region Helper Methods
+    private void initAttrs(Context context, AttributeSet attrs){
+        if(attrs == null){
+            return;
+        }
+        TypedArray t = context.obtainStyledAttributes(attrs, R.styleable.LoadingImageView);
+        maskColor = t.getColor(R.styleable.LoadingImageView_mask_color, maskColor);
+        autoStart = t.getBoolean(R.styleable.LoadingImageView_anim_auto_start, autoStart);
+        setMaskColor(maskColor);
+        t.recycle();
+    }
+
+    private void init() {
+        if (paint == null) {
+            imagePaint = new Paint(Paint.ANTI_ALIAS_FLAG);
+            imagePaint.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.SRC_ATOP));
+            paint = new Paint(Paint.ANTI_ALIAS_FLAG);
         }
     }
 
@@ -113,8 +125,6 @@ public class LoadingImageView extends ImageView {
         return bmp;
     }
 
-    private ClipDrawable clipDrawable;
-    private Drawable maskDrawable;
     private void initMaskBitmap(int maskColor) {
         Drawable drawable = getDrawable();
         if(drawable == null){
@@ -137,14 +147,10 @@ public class LoadingImageView extends ImageView {
         //paint.setShader(shader);
     }
 
-    private int maskHeight;
-
     private void setMaskHeight(int y) {
         maskHeight = y;
         invalidate();
     }
-
-    private ObjectAnimator animator;
 
     private void initAnim() {
         stopAnim();
@@ -170,9 +176,6 @@ public class LoadingImageView extends ImageView {
         }
     }
 
-
-    private long animDuration = 2000;
-
     /**
      * 设置动画时长
      */
@@ -195,9 +198,6 @@ public class LoadingImageView extends ImageView {
         initAnim();
     }
 
-    private int gravity = Gravity.LEFT;
-    private int orientaion = ClipDrawable.HORIZONTAL;
-    private int maskOrientation = MaskOrientation.LeftToRight;
     /**
      * 设置方向
      * @param orientation {@link MaskOrientation}
@@ -232,6 +232,9 @@ public class LoadingImageView extends ImageView {
     public int getMaskOrientation() {
         return maskOrientation;
     }
+    // endregion
+
+    // region Inner Classes
 
     public static final class MaskOrientation{
         public static final int LeftToRight = 1;
@@ -239,5 +242,6 @@ public class LoadingImageView extends ImageView {
         public static final int TopToBottom = 3;
         public static final int BottomToTop = 4;
     }
+    // endregion
 
 }

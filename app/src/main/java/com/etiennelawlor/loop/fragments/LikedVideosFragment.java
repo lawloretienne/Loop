@@ -339,7 +339,7 @@ public class LikedVideosFragment extends BaseFragment implements VideosAdapter.O
 
         mLayoutManager = new LinearLayoutManager(getActivity());
         mVideosRecyclerView.setLayoutManager(mLayoutManager);
-        mVideosAdapter = new VideosAdapter(getActivity());
+        mVideosAdapter = new VideosAdapter();
         mVideosAdapter.setOnItemClickListener(this);
 
         mVideosRecyclerView.setItemAnimator(new SlideInUpAnimator());

@@ -339,7 +339,7 @@ public class WatchLaterVideosFragment extends BaseFragment implements VideosAdap
 
         mLayoutManager = new LinearLayoutManager(getActivity());
         mVideosRecyclerView.setLayoutManager(mLayoutManager);
-        mVideosAdapter = new VideosAdapter(getActivity());
+        mVideosAdapter = new VideosAdapter();
         mVideosAdapter.setOnItemClickListener(this);
 
         mVideosRecyclerView.setItemAnimator(new SlideInUpAnimator());

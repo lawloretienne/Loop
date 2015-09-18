@@ -7,6 +7,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
@@ -45,7 +46,6 @@ public class VideosAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
     // endregion
 
     // region Member Variables
-    private Context mContext;
     private List<Video> mVideos;
     private OnItemClickListener mOnItemClickListener;
     private boolean mIsLoadingFooterAdded = false;
@@ -61,8 +61,7 @@ public class VideosAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
     // endregion
 
     // region Constructors
-    public VideosAdapter(Context context) {
-        mContext = context;
+    public VideosAdapter() {
         mVideos = new ArrayList<>();
     }
     // endregion
@@ -181,8 +180,8 @@ public class VideosAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
         return new MoreViewHolder(v);
     }
 
-    private void bindVideoViewHolder(RecyclerView.ViewHolder viewHolder, int position) {
-        VideoViewHolder holder = (VideoViewHolder) viewHolder;
+    private void bindVideoViewHolder(RecyclerView.ViewHolder viewHolder, final int position) {
+        final VideoViewHolder holder = (VideoViewHolder) viewHolder;
 
         final Video video = mVideos.get(position);
         if (video != null) {
@@ -191,6 +190,16 @@ public class VideosAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
             setUpVideoThumbnail(holder.mVideoThumbnailImageView, video);
             setUpDuration(holder.mDurationTextView, video);
             setUpUploadedDate(holder.mUploadedDateTextView, video);
+
+            holder.mVideoRowRootLinearLayout.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    if (mOnItemClickListener != null) {
+                        mOnItemClickListener.onItemClick(position, holder.itemView);
+                    }
+                }
+            });
+
         }
     }
 
@@ -226,7 +235,7 @@ public class VideosAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
                 if (size != null) {
                     String link = size.getLink();
                     if (!TextUtils.isEmpty(link)) {
-                        Glide.with(mContext)
+                        Glide.with(iv.getContext())
                                 .load(link)
 //                                .placeholder(R.drawable.ic_placeholder)
 //                                .error(R.drawable.ic_error)
@@ -322,7 +331,7 @@ public class VideosAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
 
     // region Inner Classes
 
-    public class VideoViewHolder extends RecyclerView.ViewHolder {
+    public static class VideoViewHolder extends RecyclerView.ViewHolder {
         @Bind(R.id.video_thumbnail_iv)
         ImageView mVideoThumbnailImageView;
         @Bind(R.id.title_tv)
@@ -333,13 +342,8 @@ public class VideosAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
         TextView mDurationTextView;
         @Bind(R.id.subtitle_tv)
         TextView mSubtitleTextView;
-
-        @OnClick(R.id.video_row_root_ll)
-        void onVideoClick() {
-            if (mOnItemClickListener != null) {
-                mOnItemClickListener.onItemClick(getPosition(), itemView);
-            }
-        }
+        @Bind(R.id.video_row_root_ll)
+        LinearLayout mVideoRowRootLinearLayout;
 
         VideoViewHolder(View view) {
             super(view);

@@ -211,7 +211,7 @@ public class ExploreFragment extends BaseFragment implements CategoriesAdapter.O
         mCategoriesRecyclerView.setLayoutManager(mLayoutManager);
         mCategoriesRecyclerView.addItemDecoration(new GridSpacesItemDecoration(LoopUtility.dp2px(getActivity(), 8)));
 
-        mCategoriesAdapter = new CategoriesAdapter(getActivity());
+        mCategoriesAdapter = new CategoriesAdapter();
         mCategoriesAdapter.setOnItemClickListener(this);
 
         mCategoriesRecyclerView.setItemAnimator(new SlideInUpAnimator());

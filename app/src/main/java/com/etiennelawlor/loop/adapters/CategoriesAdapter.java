@@ -5,6 +5,7 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.FrameLayout;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
@@ -26,7 +27,6 @@ import butterknife.OnClick;
 public class CategoriesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
     // region Member Variables
-    private Context mContext;
     private List<Category> mCategories;
     private OnItemClickListener mOnItemClickListener;
     // endregion
@@ -41,8 +41,7 @@ public class CategoriesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
     // endregion
 
     // region Constructors
-    public CategoriesAdapter(Context context) {
-        mContext = context;
+    public CategoriesAdapter() {
         mCategories = new ArrayList<>();
     }
     // endregion
@@ -128,8 +127,8 @@ public class CategoriesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
 //        return new MoreViewHolder(v);
 //    }
 
-    private void bindCategoryViewHolder(RecyclerView.ViewHolder viewHolder, int position) {
-        CategoryViewHolder holder = (CategoryViewHolder) viewHolder;
+    private void bindCategoryViewHolder(RecyclerView.ViewHolder viewHolder, final int position) {
+        final CategoryViewHolder holder = (CategoryViewHolder) viewHolder;
 
         Category category = mCategories.get(position);
         if (category != null) {
@@ -144,18 +143,27 @@ public class CategoriesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
 
             String link = "";
 
-            String[] categoryThumbnails = mContext.getResources().getStringArray(R.array.category_thumbnails);
+            Context context = holder.mVideoThumbnailImageView.getContext();
+            String[] categoryThumbnails = context.getResources().getStringArray(R.array.category_thumbnails);
 
             holder.mVideoThumbnailImageView.setHeightRatio(9.0D/16.0D);
 //            holder.mVideoThumbnailImageView.setHeightRatio(1.0D/1.0D);
 
 
-            Glide.with(mContext)
+            Glide.with(context)
                     .load(categoryThumbnails[position])
 //                                .placeholder(R.drawable.ic_placeholder)
 //                                .error(R.drawable.ic_error)
                     .into(holder.mVideoThumbnailImageView);
 
+            holder.mCategoryCardRootFrameLayout.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    if (mOnItemClickListener != null) {
+                        mOnItemClickListener.onItemClick(position, holder.itemView);
+                    }
+                }
+            });
 
 
 //            final Video video = videoWrapper.getVideo();
@@ -288,18 +296,13 @@ public class CategoriesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
 
     // region Inner Classes
 
-    public class CategoryViewHolder extends RecyclerView.ViewHolder {
+    public static class CategoryViewHolder extends RecyclerView.ViewHolder {
         @Bind(R.id.thumbnail_iv)
         DynamicHeightImageView mVideoThumbnailImageView;
         @Bind(R.id.title_tv)
         TextView mTitleTextView;
-
-        @OnClick(R.id.category_card_root_fl)
-        void onCategoryClick() {
-            if (mOnItemClickListener != null) {
-                mOnItemClickListener.onItemClick(getPosition(), itemView);
-            }
-        }
+        @Bind(R.id.category_card_root_fl)
+        FrameLayout mCategoryCardRootFrameLayout;
 
         CategoryViewHolder(View view) {
             super(view);
