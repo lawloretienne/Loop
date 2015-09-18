@@ -3,7 +3,6 @@ package com.etiennelawlor.loop.network;
 import android.text.TextUtils;
 import android.util.Base64;
 
-import com.etiennelawlor.loop.BuildConfig;
 import com.etiennelawlor.loop.LoopApplication;
 import com.etiennelawlor.loop.network.models.AccessToken;
 import com.squareup.okhttp.Cache;

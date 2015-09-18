@@ -24,6 +24,11 @@
         </attr>
     </declare-styleable>
 
+    <declare-styleable name="LoadingImageView">
+        <attr name="anim_auto_start" format="boolean" />
+        <attr name="mask_color" format="color" />
+    </declare-styleable>
+
     <!--<declare-styleable name="ScrimInsetsView">-->
         <!--<attr name="insetForeground" format="reference|color" />-->
     <!--</declare-styleable>-->

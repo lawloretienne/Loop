@@ -6,7 +6,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <include layout="@layout/toolbar_without_tabs"/>
+    <include layout="@layout/toolbar_without_tabs" />
 
     <FrameLayout
         android:layout_width="match_parent"
@@ -16,11 +16,14 @@
 
         <include layout="@layout/categories_section" />
 
-        <ProgressBar
-            android:id="@+id/pb"
+        <com.etiennelawlor.loop.ui.LoadingImageView
+            android:id="@+id/loading_iv"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_gravity="center" />
+            android:layout_gravity="center"
+            android:src="@drawable/ic_loop_loading"
+            app:anim_auto_start="true"
+            app:mask_color="?colorAccent" />
 
         <include layout="@layout/error_layout" />
 

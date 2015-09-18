@@ -3,19 +3,10 @@ package com.etiennelawlor.loop.ui;
 /**
  * Created by etiennelawlor on 6/27/15.
  */
+
 import android.content.Context;
-import android.os.Build;
-import android.view.Gravity;
-import android.view.LayoutInflater;
 import android.view.View;
-import android.view.WindowManager;
-import android.widget.FrameLayout;
-import android.widget.ImageButton;
 import android.widget.MediaController;
-
-import com.etiennelawlor.loop.R;
-
-import java.lang.reflect.Field;
 
 
 public class CustomMediaController extends MediaController {

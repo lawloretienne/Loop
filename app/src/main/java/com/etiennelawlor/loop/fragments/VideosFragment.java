@@ -17,7 +17,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.LinearLayout;
-import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.etiennelawlor.loop.R;
@@ -30,6 +29,7 @@ import com.etiennelawlor.loop.network.models.AccessToken;
 import com.etiennelawlor.loop.network.models.Video;
 import com.etiennelawlor.loop.network.models.VideosCollection;
 import com.etiennelawlor.loop.otto.BusProvider;
+import com.etiennelawlor.loop.ui.LoadingImageView;
 import com.squareup.okhttp.ResponseBody;
 
 import java.io.IOException;
@@ -61,8 +61,8 @@ public class VideosFragment extends BaseFragment implements VideosAdapter.OnItem
     RecyclerView mVideosRecyclerView;
     @Bind(android.R.id.empty)
     View mEmptyView;
-    @Bind(R.id.pb)
-    ProgressBar mProgressBar;
+    @Bind(R.id.loading_iv)
+    LoadingImageView mLoadingImageView;
     @Bind(R.id.error_ll)
     LinearLayout mErrorLinearLayout;
     @Bind(R.id.error_tv)
@@ -70,6 +70,7 @@ public class VideosFragment extends BaseFragment implements VideosAdapter.OnItem
     @Bind(R.id.reload_btn)
     Button mReloadButton;
 
+    private boolean mIsLastPage = false;
     private int mCurrentPage = 1;
     private int mSelectedSortByKey = 0;
     private int mSelectedSortOrderKey = 1;
@@ -97,7 +98,7 @@ public class VideosFragment extends BaseFragment implements VideosAdapter.OnItem
             int totalItemCount = mLayoutManager.getItemCount();
             int firstVisibleItemPosition = mLayoutManager.findFirstVisibleItemPosition();
 
-            if (!mIsLoading) {
+            if (!mIsLoading && !mIsLastPage) {
                 if ((visibleItemCount + firstVisibleItemPosition) >= totalItemCount) {
                     loadMoreItems();
                 }
@@ -108,7 +109,7 @@ public class VideosFragment extends BaseFragment implements VideosAdapter.OnItem
     @OnClick(R.id.reload_btn)
     public void onReloadButtonClicked() {
         mErrorLinearLayout.setVisibility(View.GONE);
-        mProgressBar.setVisibility(View.VISIBLE);
+        mLoadingImageView.setVisibility(View.VISIBLE);
 
         Call findVideosCall = mVimeoService.findVideos(mQuery,
                 mSortByValue,
@@ -126,7 +127,8 @@ public class VideosFragment extends BaseFragment implements VideosAdapter.OnItem
         @Override
         public void onResponse(Response<VideosCollection> response) {
             Timber.d("onResponse()");
-            mProgressBar.setVisibility(View.GONE);
+            mLoadingImageView.setVisibility(View.GONE);
+
             mIsLoading = false;
 
             if (response != null) {
@@ -137,7 +139,12 @@ public class VideosFragment extends BaseFragment implements VideosAdapter.OnItem
                         List<Video> videos = videosCollection.getVideos();
                         if (videos != null) {
                             mVideosAdapter.addAll(videos);
-                            mVideosAdapter.addLoading();
+
+                            if(videos.size() >= PAGE_SIZE){
+                                mVideosAdapter.addLoading();
+                            } else {
+                                mIsLastPage = true;
+                            }
                         }
                     }
                 } else {
@@ -185,7 +192,7 @@ public class VideosFragment extends BaseFragment implements VideosAdapter.OnItem
                         || t instanceof SocketException) {
                     Timber.e("Timeout occurred");
                     mIsLoading = false;
-                    mProgressBar.setVisibility(View.GONE);
+                    mLoadingImageView.setVisibility(View.GONE);
 
                     mErrorTextView.setText("Can't load data.\nCheck your network connection.");
                     mErrorLinearLayout.setVisibility(View.VISIBLE);
@@ -194,7 +201,8 @@ public class VideosFragment extends BaseFragment implements VideosAdapter.OnItem
                         Timber.e("onFailure() : Canceled");
                     } else {
                         mIsLoading = false;
-                        mProgressBar.setVisibility(View.GONE);
+                        mLoadingImageView.setVisibility(View.GONE);
+
                     }
                 }
             }
@@ -438,7 +446,8 @@ public class VideosFragment extends BaseFragment implements VideosAdapter.OnItem
 
                 mVideosAdapter.clear();
 
-                mProgressBar.setVisibility(View.VISIBLE);
+                mLoadingImageView.setVisibility(View.VISIBLE);
+
 
                 mCurrentPage = 1;
 
@@ -472,7 +481,7 @@ public class VideosFragment extends BaseFragment implements VideosAdapter.OnItem
 
                 mVideosAdapter.clear();
 
-                mProgressBar.setVisibility(View.VISIBLE);
+                mLoadingImageView.setVisibility(View.VISIBLE);
 
                 mCurrentPage = 1;
 

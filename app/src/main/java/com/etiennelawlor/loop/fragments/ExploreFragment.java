@@ -12,7 +12,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
-import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.etiennelawlor.loop.R;
@@ -25,6 +24,7 @@ import com.etiennelawlor.loop.network.models.CategoriesCollection;
 import com.etiennelawlor.loop.network.models.Category;
 import com.etiennelawlor.loop.otto.BusProvider;
 import com.etiennelawlor.loop.ui.GridSpacesItemDecoration;
+import com.etiennelawlor.loop.ui.LoadingImageView;
 import com.etiennelawlor.loop.utilities.LoopUtility;
 import com.squareup.okhttp.ResponseBody;
 
@@ -54,8 +54,8 @@ public class ExploreFragment extends BaseFragment implements CategoriesAdapter.O
     RecyclerView mCategoriesRecyclerView;
     @Bind(android.R.id.empty)
     View mEmptyView;
-    @Bind(R.id.pb)
-    ProgressBar mProgressBar;
+    @Bind(R.id.loading_iv)
+    LoadingImageView mLoadingImageView;
     @Bind(R.id.error_ll)
     LinearLayout mErrorLinearLayout;
     @Bind(R.id.error_tv)
@@ -78,7 +78,7 @@ public class ExploreFragment extends BaseFragment implements CategoriesAdapter.O
         public void onResponse(Response<CategoriesCollection> response) {
             Timber.d("onResponse()");
 
-            mProgressBar.setVisibility(View.GONE);
+            mLoadingImageView.setVisibility(View.GONE);
             mIsLoading = false;
 
             if (response != null) {
@@ -131,7 +131,7 @@ public class ExploreFragment extends BaseFragment implements CategoriesAdapter.O
                 if (t instanceof SocketTimeoutException || t instanceof UnknownHostException) {
                     Timber.e("Timeout occurred");
                     mIsLoading = false;
-                    mProgressBar.setVisibility(View.GONE);
+                    mLoadingImageView.setVisibility(View.GONE);
 
                     mErrorTextView.setText("Can't load data.\nCheck your network connection.");
                     mErrorLinearLayout.setVisibility(View.VISIBLE);
@@ -140,7 +140,7 @@ public class ExploreFragment extends BaseFragment implements CategoriesAdapter.O
                         Timber.e("onFailure() : Canceled");
                     } else {
                         mIsLoading = false;
-                        mProgressBar.setVisibility(View.GONE);
+                        mLoadingImageView.setVisibility(View.GONE);
                     }
                 }
             }

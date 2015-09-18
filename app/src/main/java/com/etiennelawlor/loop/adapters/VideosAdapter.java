@@ -1,14 +1,12 @@
 package com.etiennelawlor.loop.adapters;
 
 import android.content.Context;
-import android.graphics.PorterDuff;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
-import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
@@ -18,6 +16,7 @@ import com.etiennelawlor.loop.network.models.Size;
 import com.etiennelawlor.loop.network.models.Stats;
 import com.etiennelawlor.loop.network.models.User;
 import com.etiennelawlor.loop.network.models.Video;
+import com.etiennelawlor.loop.ui.LoadingImageView;
 import com.etiennelawlor.loop.utilities.LoopUtility;
 
 import java.text.ParseException;
@@ -90,6 +89,7 @@ public class VideosAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
                 bindVideoViewHolder(viewHolder, position);
                 break;
             case LOADING:
+                bindLoadingViewHolder(viewHolder);
             case HEADER:
             default:
                 break;
@@ -192,6 +192,12 @@ public class VideosAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
             setUpDuration(holder.mDurationTextView, video);
             setUpUploadedDate(holder.mUploadedDateTextView, video);
         }
+    }
+
+    private void bindLoadingViewHolder(RecyclerView.ViewHolder viewHolder){
+        MoreViewHolder holder = (MoreViewHolder) viewHolder;
+
+        holder.mLoadingImageView.setMaskOrientation(LoadingImageView.MaskOrientation.LeftToRight);
     }
 
     private void setUpTitle(TextView tv, Video video) {
@@ -342,12 +348,12 @@ public class VideosAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
     }
 
     public static class MoreViewHolder extends RecyclerView.ViewHolder {
-        public MoreViewHolder(View view) {
+        @Bind(R.id.loading_iv)
+        LoadingImageView mLoadingImageView;
+
+        MoreViewHolder(View view) {
             super(view);
-            ProgressBar pb = ButterKnife.findById(view, R.id.progress_bar);
-            pb.getIndeterminateDrawable()
-                    .mutate()
-                    .setColorFilter(view.getResources().getColor(R.color.accent), PorterDuff.Mode.SRC_ATOP);
+            ButterKnife.bind(this, view);
         }
     }
 

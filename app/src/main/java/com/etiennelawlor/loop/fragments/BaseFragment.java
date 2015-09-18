@@ -4,9 +4,7 @@ import android.os.Bundle;
 import android.os.NetworkOnMainThreadException;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
-import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
 
 import com.etiennelawlor.loop.LoopApplication;
 import com.squareup.leakcanary.RefWatcher;

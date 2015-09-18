@@ -3,7 +3,6 @@ package com.etiennelawlor.loop.network;
 import com.etiennelawlor.loop.network.models.VideoConfig;
 
 import retrofit.Call;
-import retrofit.Callback;
 import retrofit.http.GET;
 import retrofit.http.Path;
 

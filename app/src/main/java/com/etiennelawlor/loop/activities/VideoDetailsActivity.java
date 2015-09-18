@@ -8,7 +8,6 @@ import android.view.MenuItem;
 
 import com.etiennelawlor.loop.R;
 import com.etiennelawlor.loop.fragments.VideoDetailsFragment;
-import com.etiennelawlor.loop.fragments.VideoDetailsFragment2;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;

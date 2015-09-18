@@ -5,7 +5,6 @@ import com.etiennelawlor.loop.network.models.OAuthResponse;
 import com.etiennelawlor.loop.network.models.VideosCollection;
 
 import retrofit.Call;
-import retrofit.Callback;
 import retrofit.http.Field;
 import retrofit.http.FormUrlEncoded;
 import retrofit.http.GET;

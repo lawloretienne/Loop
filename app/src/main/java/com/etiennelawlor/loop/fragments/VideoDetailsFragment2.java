@@ -23,11 +23,12 @@ import com.etiennelawlor.loop.network.models.Embed;
 import com.etiennelawlor.loop.network.models.Video;
 import com.etiennelawlor.loop.otto.BusProvider;
 import com.etiennelawlor.loop.utilities.LoopUtility;
-//import com.squareup.picasso.Picasso;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
 import timber.log.Timber;
+
+//import com.squareup.picasso.Picasso;
 
 /**
  * Created by etiennelawlor on 5/23/15.
