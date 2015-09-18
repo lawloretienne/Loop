@@ -164,7 +164,7 @@ public class VideosFragment extends BaseFragment implements VideosAdapter.OnItem
 
         @Override
         public void onFailure(Throwable t) {
-            Timber.d("onFailure()");
+            Timber.d("onFailure() : mQuery - "+mQuery);
 
             if (t != null) {
                 Throwable cause = t.getCause();

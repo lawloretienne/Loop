@@ -46,7 +46,7 @@ public abstract class BaseFragment extends Fragment {
         Timber.d("onDestroyView() : mCalls.size() - " + mCalls.size());
 
         for(Call call : mCalls){
-            Timber.d("onDestroyView() : call.cancel()");
+            Timber.d("onDestroyView() : call.cancel() - "+call.toString());
 
             try {
                 call.cancel();
@@ -55,6 +55,8 @@ public abstract class BaseFragment extends Fragment {
                 e.printStackTrace();
             }
         }
+
+        mCalls.clear();
     }
 
     @Override
