@@ -111,7 +111,7 @@ public class VideosAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
     // region Helper Methods
     private void add(Video item) {
         mVideos.add(item);
-        notifyItemInserted(mVideos.size());
+        notifyItemInserted(mVideos.size()-1);
     }
 
     public void addAll(List<Video> videos) {
@@ -140,7 +140,6 @@ public class VideosAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
 
     public void addLoading(){
         mIsLoadingFooterAdded = true;
-
         add(new Video());
     }
 
@@ -152,22 +151,12 @@ public class VideosAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
 
         if (item != null) {
             mVideos.remove(position);
-
-            if(mVideos.size() < 3){ // If there are only a few items in the first page
-                notifyDataSetChanged();
-            } else {
-                notifyItemChanged(position+1);
-            }
+            notifyItemRemoved(position);
         }
     }
 
     public Video getItem(int position) {
-        try {
-            return mVideos.get(position);
-        } catch (IndexOutOfBoundsException e) {
-            Timber.e(e, "index is %d, and size is %d", position, getItemCount());
-            return null;
-        }
+        return mVideos.get(position);
     }
 
     public void setOnItemClickListener(OnItemClickListener onItemClickListener) {

@@ -216,7 +216,7 @@ public class ExploreFragment extends BaseFragment implements CategoriesAdapter.O
         mCategoriesAdapter = new CategoriesAdapter(getActivity());
         mCategoriesAdapter.setOnItemClickListener(this);
 
-        mCategoriesRecyclerView.setItemAnimator(new SlideInOutBottomItemAnimator(mCategoriesRecyclerView));
+//        mCategoriesRecyclerView.setItemAnimator(new SlideInOutBottomItemAnimator(mCategoriesRecyclerView));
 
         mCategoriesRecyclerView.setAdapter(mCategoriesAdapter);
 

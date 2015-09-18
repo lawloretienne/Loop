@@ -336,7 +336,7 @@ public class LikedVideosFragment extends BaseFragment implements VideosAdapter.O
         mVideosAdapter = new VideosAdapter(getActivity());
         mVideosAdapter.setOnItemClickListener(this);
 
-        mVideosRecyclerView.setItemAnimator(new SlideInOutBottomItemAnimator(mVideosRecyclerView));
+//        mVideosRecyclerView.setItemAnimator(new SlideInOutBottomItemAnimator(mVideosRecyclerView));
 
         mVideosRecyclerView.setAdapter(mVideosAdapter);
 

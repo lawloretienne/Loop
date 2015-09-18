@@ -325,8 +325,7 @@ public class VideosFragment extends BaseFragment implements VideosAdapter.OnItem
         mVideosAdapter = new VideosAdapter(getActivity());
         mVideosAdapter.setOnItemClickListener(this);
 
-        mVideosRecyclerView.setItemAnimator(new SlideInOutBottomItemAnimator(mVideosRecyclerView));
-
+//        mVideosRecyclerView.setItemAnimator(new SlideInOutBottomItemAnimator(mVideosRecyclerView));
         mVideosRecyclerView.setAdapter(mVideosAdapter);
 
         // Pagination
@@ -337,6 +336,7 @@ public class VideosFragment extends BaseFragment implements VideosAdapter.OnItem
                 mSortOrderValue,
                 mCurrentPage,
                 PAGE_SIZE);
+        Timber.d("mCalls.add() : mQuery - "+mQuery);
         mCalls.add(findVideosCall);
         findVideosCall.enqueue(mFindVideosFirstFetchCallback);
     }
@@ -416,6 +416,7 @@ public class VideosFragment extends BaseFragment implements VideosAdapter.OnItem
                 mSortOrderValue,
                 mCurrentPage,
                 PAGE_SIZE);
+        Timber.d("mCalls.add() : mQuery - "+mQuery);
         mCalls.add(findVideosCall);
         findVideosCall.enqueue(mFindVideosNextFetchCallback);
     }

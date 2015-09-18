@@ -336,8 +336,7 @@ public class WatchLaterVideosFragment extends BaseFragment implements VideosAdap
         mVideosAdapter = new VideosAdapter(getActivity());
         mVideosAdapter.setOnItemClickListener(this);
 
-        mVideosRecyclerView.setItemAnimator(new SlideInOutBottomItemAnimator(mVideosRecyclerView));
-
+//        mVideosRecyclerView.setItemAnimator(new SlideInOutBottomItemAnimator(mVideosRecyclerView));
         mVideosRecyclerView.setAdapter(mVideosAdapter);
 
         // Pagination
