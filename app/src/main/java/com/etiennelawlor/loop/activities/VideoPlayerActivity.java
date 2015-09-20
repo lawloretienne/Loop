@@ -5,14 +5,14 @@ import android.support.v7.app.AppCompatActivity;
 import android.view.MenuItem;
 
 import com.etiennelawlor.loop.R;
-import com.etiennelawlor.loop.fragments.VideoDetailsFragment;
+import com.etiennelawlor.loop.fragments.VideoPlayerFragment;
 
 import butterknife.ButterKnife;
 
 /**
  * Created by etiennelawlor on 5/23/15.
  */
-public class VideoDetailsActivity extends AppCompatActivity {
+public class VideoPlayerActivity extends AppCompatActivity {
 
     // region Member Variables
     // endregion
@@ -26,7 +26,7 @@ public class VideoDetailsActivity extends AppCompatActivity {
 
         getSupportFragmentManager()
                 .beginTransaction()
-                .add(android.R.id.content, VideoDetailsFragment.newInstance(getIntent().getExtras()), "")
+                .add(android.R.id.content, VideoPlayerFragment.newInstance(getIntent().getExtras()), "")
                 .commit();
     }
 
@@ -47,6 +47,5 @@ public class VideoDetailsActivity extends AppCompatActivity {
         }
         return super.onOptionsItemSelected(item);
     }
-
 
 }

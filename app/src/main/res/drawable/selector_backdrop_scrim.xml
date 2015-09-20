@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<selector xmlns:android="http://schemas.android.com/apk/res/android" android:enterFadeDuration="@android:integer/config_mediumAnimTime" android:exitFadeDuration="@android:integer/config_mediumAnimTime">
+    <item android:drawable="@drawable/backdrop_darker_scrim" android:state_pressed="true" />
+    <!-- pressed -->
+    <item android:drawable="@drawable/backdrop_darker_scrim" android:state_focused="true" />
+    <!-- focused -->
+    <item android:drawable="@drawable/backdrop_darker_scrim" android:state_hovered="true" />
+    <!-- hovered -->
+    <item android:drawable="@drawable/backdrop_scrim" />
+    <!-- default -->
+</selector>

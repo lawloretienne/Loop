@@ -32,4 +32,7 @@
         <item name="colorButtonNormal">@color/accent</item>
     </style>
 
+    <style name="Theme.Loop.VideoPlayerActivity" parent="Theme.Loop">
+    </style>
+
 </resources>

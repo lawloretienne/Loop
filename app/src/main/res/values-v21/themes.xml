@@ -11,4 +11,17 @@
         <item name="android:statusBarColor">@android:color/transparent</item>
     </style>
 
+    <style name="Theme.Loop.VideoDetailsActivity" parent="Theme.Loop">
+        <item name="android:windowDrawsSystemBarBackgrounds">true</item>
+        <item name="android:statusBarColor">@color/transparent_black_ten</item>
+        <item name="colorButtonNormal">@color/accent</item>
+    </style>
+
+    <style name="Theme.Loop.VideoPlayerActivity" parent="Theme.Loop">
+        <item name="android:windowDrawsSystemBarBackgrounds">true</item>
+        <item name="android:statusBarColor">@color/transparent_black_ten</item>
+    </style>
+
+
+
 </resources>

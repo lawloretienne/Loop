@@ -3,6 +3,7 @@ package com.etiennelawlor.loop.fragments;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.ActivityOptionsCompat;
 import android.support.v4.util.Pair;
 import android.support.v7.app.AlertDialog;
@@ -408,9 +409,9 @@ public class VideosFragment extends BaseFragment implements VideosAdapter.OnItem
 //                        p1, p2, p3);
 
 
-//                ActivityCompat.startActivity(getActivity(), intent, options.toBundle());
+            ActivityCompat.startActivity(getActivity(), intent, options.toBundle());
 
-            startActivity(intent);
+//            startActivity(intent);
         }
 
     }

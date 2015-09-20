@@ -41,6 +41,12 @@
             android:theme="@style/Theme.Loop.MainActivity">
         </activity>
         <activity
+            android:name=".activities.VideoPlayerActivity"
+            android:label="@string/app_name"
+            android:screenOrientation="landscape"
+            android:theme="@style/Theme.Loop.VideoPlayerActivity">
+        </activity>
+        <activity
             android:name=".activities.VideoDetailsActivity"
             android:parentActivityName=".activities.MainActivity"
             android:screenOrientation="portrait"

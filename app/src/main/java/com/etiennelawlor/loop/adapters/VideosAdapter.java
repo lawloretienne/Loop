@@ -40,9 +40,9 @@ import timber.log.Timber;
 public class VideosAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
     // region Constants
-    public static final int ITEM = 6;
-    public static final int LOADING = 7;
-    public static final int HEADER = 8;
+    public static final int ITEM = 0;
+    public static final int LOADING = 1;
+    public static final int HEADER = 2;
     // endregion
 
     // region Member Variables

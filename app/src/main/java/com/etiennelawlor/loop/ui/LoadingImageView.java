@@ -41,7 +41,7 @@ public class LoadingImageView extends ImageView {
     private int maskOrientation = MaskOrientation.LeftToRight;
     private float scaleX,scaleY;
     private boolean autoStart = true;
-    private long animDuration = 1000;
+    private long animDuration = 800;
     // endregion
 
     // region Constructors
