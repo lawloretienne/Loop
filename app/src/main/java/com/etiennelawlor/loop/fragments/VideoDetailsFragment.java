@@ -1,18 +1,26 @@
 package com.etiennelawlor.loop.fragments;
 
+import android.app.Activity;
+import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.ActivityOptionsCompat;
+import android.support.v4.content.ContextCompat;
 import android.support.v4.util.Pair;
 import android.support.v7.app.ActionBar;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
@@ -26,6 +34,9 @@ import com.etiennelawlor.loop.helper.PreferencesHelper;
 import com.etiennelawlor.loop.network.ServiceGenerator;
 import com.etiennelawlor.loop.network.VimeoService;
 import com.etiennelawlor.loop.network.models.AccessToken;
+import com.etiennelawlor.loop.network.models.Interaction;
+import com.etiennelawlor.loop.network.models.Interactions;
+import com.etiennelawlor.loop.network.models.Metadata;
 import com.etiennelawlor.loop.network.models.Pictures;
 import com.etiennelawlor.loop.network.models.Size;
 import com.etiennelawlor.loop.network.models.Video;
@@ -53,6 +64,7 @@ public class VideoDetailsFragment extends BaseFragment implements RelatedVideosA
 
     // region Constants
     public static final int PAGE_SIZE = 30;
+    private static final int VIDEO_SHARE_REQUEST_CODE = 1002;
     // endregion
 
     // region Member Variables
@@ -72,6 +84,8 @@ public class VideoDetailsFragment extends BaseFragment implements RelatedVideosA
     private boolean mIsLastPage = false;
     private int mCurrentPage = 1;
     private boolean mIsLoading = false;
+    private boolean mLikeOn = false;
+    private boolean mWatchLaterOn = false;
     // endregion
 
     // region Listeners
@@ -306,7 +320,7 @@ public class VideoDetailsFragment extends BaseFragment implements RelatedVideosA
                 VimeoService.BASE_URL,
                 token);
 
-        Timber.d("");
+        setHasOptionsMenu(true);
     }
 
     @Override
@@ -317,7 +331,6 @@ public class VideoDetailsFragment extends BaseFragment implements RelatedVideosA
 
         return rootView;
     }
-
     @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
@@ -356,7 +369,6 @@ public class VideoDetailsFragment extends BaseFragment implements RelatedVideosA
 
     }
 
-
     @Override
     public void onDestroyView() {
         super.onDestroyView();
@@ -364,6 +376,132 @@ public class VideoDetailsFragment extends BaseFragment implements RelatedVideosA
     }
 
     // endregion
+
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        super.onCreateOptionsMenu(menu, inflater);
+        inflater.inflate(R.menu.video_details_menu, menu);
+    }
+
+    @Override
+    public void onPrepareOptionsMenu(Menu menu) {
+        super.onPrepareOptionsMenu(menu);
+
+        if(mVideo != null){
+            Metadata metadata = mVideo.getMetadata();
+            if(metadata != null){
+                Interactions interactions = metadata.getInteractions();
+                if(interactions != null){
+                    Interaction likeInteraction = interactions.getLike();
+                    Interaction watchLaterInteraction = interactions.getWatchlater();
+
+                    if(likeInteraction != null){
+                        if(likeInteraction.getAdded()){
+                            mLikeOn = true;
+                            MenuItem likeMenuItem = menu.findItem(R.id.like);
+                            likeMenuItem.setIcon(ContextCompat.getDrawable(getActivity(), R.drawable.ic_menu_like_on));
+                        }
+                    }
+
+                    if(watchLaterInteraction != null){
+                        if(watchLaterInteraction.getAdded()){
+                            mWatchLaterOn = true;
+                            MenuItem watchLaterMenuItem = menu.findItem(R.id.watch_later);
+                            watchLaterMenuItem.setIcon(ContextCompat.getDrawable(getActivity(), R.drawable.ic_menu_watch_later_on));
+                        }
+                    }
+                }
+            }
+        }
+
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(final MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.like:
+                if(mLikeOn){
+                    AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(getActivity(), R.style.DialogTheme);
+                    alertDialogBuilder.setMessage("Are you sure you want to unlike this video?");
+                    alertDialogBuilder.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int whichButton) {
+                            mLikeOn = false;
+                            item.setIcon(ContextCompat.getDrawable(getActivity(), R.drawable.ic_menu_like_off));
+                        }
+                    });
+                    alertDialogBuilder.setNegativeButton("No", new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int whichButton) {
+                            // Canceled.
+                        }
+                    });
+                    alertDialogBuilder.show();
+                } else {
+                    mLikeOn = true;
+                    item.setIcon(ContextCompat.getDrawable(getActivity(), R.drawable.ic_menu_like_on));
+                }
+                return true;
+            case R.id.watch_later:
+                if(mWatchLaterOn){
+                    AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(getActivity(), R.style.DialogTheme);
+                    alertDialogBuilder.setMessage("Are you sure you want to remove this video from your Watch Later collection?");
+                    alertDialogBuilder.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int whichButton) {
+                            mWatchLaterOn = false;
+                            item.setIcon(ContextCompat.getDrawable(getActivity(), R.drawable.ic_menu_watch_later_off));
+                        }
+                    });
+                    alertDialogBuilder.setNegativeButton("No", new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int whichButton) {
+                            // Canceled.
+                        }
+                    });
+                    alertDialogBuilder.show();
+                } else {
+                    mWatchLaterOn = true;
+                    item.setIcon(ContextCompat.getDrawable(getActivity(), R.drawable.ic_menu_watch_later_on));
+                }
+                return true;
+            case R.id.share:
+                if (mVideo != null) {
+//                    Event.fire(ProductShareEvent.start(mProduct.getId()));
+
+                    Intent sendIntent = new Intent(Intent.ACTION_SEND);
+                    sendIntent.setType("text/plain");
+                    sendIntent.putExtra(Intent.EXTRA_TEXT,
+                            String.format("I found this on Loop. Check it out.\n\n%s\n\n%s", mVideo.getName(), mVideo.getLink()));
+
+                    String title = getResources().getString(R.string.share_this_video);
+                    Intent chooser = Intent.createChooser(sendIntent, title);
+
+                    if (sendIntent.resolveActivity(getActivity().getPackageManager()) != null) {
+                        startActivityForResult(chooser, VIDEO_SHARE_REQUEST_CODE);
+                    }
+                }
+                return true;
+            default:
+                break;
+        }
+
+        return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        switch (requestCode) {
+            case VIDEO_SHARE_REQUEST_CODE:
+                if (resultCode == Activity.RESULT_OK) {
+                    if (mVideo != null) {
+//                        Event.fire(ProductShareEvent.submit(mProduct.getId()));
+                    }
+                } else if (resultCode == Activity.RESULT_CANCELED) {
+                }
+                break;
+            default:
+                break;
+        }
+    }
 
     // region RelatedVideosAdapter.OnItemClickListener Methods
     @Override

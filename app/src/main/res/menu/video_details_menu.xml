@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <item
+        android:id="@+id/like"
+        android:title="@string/like"
+        app:showAsAction="always"
+        android:icon="@drawable/ic_menu_like_off"
+        android:orderInCategory="0" />
+    <item
+        android:id="@+id/watch_later"
+        android:title="@string/watch_later"
+        app:showAsAction="always"
+        android:icon="@drawable/ic_menu_watch_later_off"
+        android:orderInCategory="1" />
+    <item
+        android:id="@+id/share"
+        android:title="@string/share"
+        app:showAsAction="always"
+        android:icon="@drawable/ic_menu_share"
+        android:orderInCategory="2" />
+</menu>

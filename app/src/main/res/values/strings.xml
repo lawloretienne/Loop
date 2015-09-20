@@ -35,5 +35,9 @@
 
     <string name="likes_empty_prompt">Likes are a quick and friendly way to let a video creator know that you appreciate, value, or maybe even love their video.
         When you click the Like icon on any video screen, it will be added here.</string>
+    <string name="share">Share</string>
+    <string name="watch_later">Watch Later</string>
+    <string name="like">Like</string>
+    <string name="share_this_video">Share this video with</string>
 
 </resources>

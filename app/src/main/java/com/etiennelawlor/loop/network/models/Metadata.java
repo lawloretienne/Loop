@@ -13,17 +13,27 @@ public class Metadata implements Parcelable {
     // region Member Variables
     @SerializedName("connections")
     private Connections connections;
+    @SerializedName("interactions")
+    private Interactions interactions;
     // endregion
 
     // region Getters
     public Connections getConnections() {
         return connections;
     }
+
+    public Interactions getInteractions() {
+        return interactions;
+    }
     // endregion
 
     // region Setters
     public void setConnections(Connections connections) {
         this.connections = connections;
+    }
+
+    public void setInteractions(Interactions interactions) {
+        this.interactions = interactions;
     }
     // endregion
 
@@ -36,6 +46,7 @@ public class Metadata implements Parcelable {
     @Override
     public void writeToParcel(Parcel dest, int flags) {
         dest.writeParcelable(getConnections(), flags);
+        dest.writeParcelable(getInteractions(), flags);
     }
     // endregion
 
@@ -46,6 +57,7 @@ public class Metadata implements Parcelable {
             Metadata metadata = new Metadata();
 
             metadata.setConnections((Connections) source.readParcelable(Connections.class.getClassLoader()));
+            metadata.setInteractions((Interactions) source.readParcelable(Interactions.class.getClassLoader()));
 
             return metadata;
         }
