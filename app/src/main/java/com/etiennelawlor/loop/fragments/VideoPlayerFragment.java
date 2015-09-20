@@ -191,10 +191,10 @@ public class VideoPlayerFragment extends BaseFragment {
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-//        mMediaController = new MediaController(getActivity());
-//        mMediaController.setAnchorView(mVideoView);
-//        mMediaController.setMediaPlayer(mVideoView);
-//        mVideoView.setMediaController(mMediaController);
+        mMediaController = new MediaController(getActivity());
+        mMediaController.setAnchorView(mVideoView);
+        mMediaController.setMediaPlayer(mVideoView);
+        mVideoView.setMediaController(mMediaController);
 
         setUpSystemUiControls();
 
@@ -247,10 +247,17 @@ public class VideoPlayerFragment extends BaseFragment {
     // region Helper Methods
     private void setUpSystemUiControls(){
         final View decorView = getActivity().getWindow().getDecorView();
+//        final int uiOptions = View.SYSTEM_UI_FLAG_FULLSCREEN |
+//                View.SYSTEM_UI_FLAG_HIDE_NAVIGATION |
+//                View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN |
+//                View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION |
+//                View.SYSTEM_UI_FLAG_LAYOUT_STABLE;
+
         final int uiOptions = View.SYSTEM_UI_FLAG_FULLSCREEN |
                 View.SYSTEM_UI_FLAG_HIDE_NAVIGATION |
                 View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN |
                 View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION;
+
         decorView.setSystemUiVisibility(uiOptions);
 
         decorView.setOnSystemUiVisibilityChangeListener
@@ -265,6 +272,8 @@ public class VideoPlayerFragment extends BaseFragment {
                             // other navigational controls.
                             Timber.d("onSystemUiVisibilityChange() : system bars VISIBLE");
 
+                            mMediaController.show(3000);
+
                             new Handler().postDelayed(new Runnable() {
 
                                 @Override
@@ -277,14 +286,12 @@ public class VideoPlayerFragment extends BaseFragment {
 //                                    actionBar.hide();
                                 }
                             }, 3000);
-
-//                            mMediaController.show(3000);
                         } else {
                             // TODO: The system bars are NOT visible. Make any desired
                             // adjustments to your UI, such as hiding the action bar or
                             // other navigational controls.
                             Timber.d("onSystemUiVisibilityChange() : system bars NOT VISIBLE");
-//                            mMediaController.hide();
+                            mMediaController.hide();
                         }
                     }
                 });

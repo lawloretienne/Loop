@@ -22,6 +22,4 @@
         <item name="android:statusBarColor">@color/transparent_black_ten</item>
     </style>
 
-
-
 </resources>
