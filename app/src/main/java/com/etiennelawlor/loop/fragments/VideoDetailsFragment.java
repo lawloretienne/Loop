@@ -8,49 +8,40 @@ import android.support.v4.app.ActivityOptionsCompat;
 import android.support.v4.util.Pair;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
-import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 import com.etiennelawlor.loop.R;
 import com.etiennelawlor.loop.activities.VideoDetailsActivity;
 import com.etiennelawlor.loop.activities.VideoPlayerActivity;
-import com.etiennelawlor.loop.adapters.VideosAdapter;
+import com.etiennelawlor.loop.adapters.RelatedVideosAdapter;
 import com.etiennelawlor.loop.helper.PreferencesHelper;
 import com.etiennelawlor.loop.network.ServiceGenerator;
-import com.etiennelawlor.loop.network.VimeoPlayerService;
+import com.etiennelawlor.loop.network.VimeoService;
 import com.etiennelawlor.loop.network.models.AccessToken;
 import com.etiennelawlor.loop.network.models.Pictures;
 import com.etiennelawlor.loop.network.models.Size;
-import com.etiennelawlor.loop.network.models.Stats;
-import com.etiennelawlor.loop.network.models.Tag;
-import com.etiennelawlor.loop.network.models.User;
 import com.etiennelawlor.loop.network.models.Video;
 import com.etiennelawlor.loop.network.models.VideosCollection;
 import com.etiennelawlor.loop.otto.BusProvider;
-import com.etiennelawlor.loop.utilities.LoopUtility;
 import com.squareup.okhttp.ResponseBody;
 
 import java.io.IOException;
 import java.net.SocketTimeoutException;
 import java.net.UnknownHostException;
-import java.text.NumberFormat;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.Calendar;
-import java.util.Date;
 import java.util.List;
-import java.util.Locale;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
-import de.hdodenhof.circleimageview.CircleImageView;
+import retrofit.Call;
 import retrofit.Callback;
 import retrofit.Response;
 import timber.log.Timber;
@@ -58,57 +49,35 @@ import timber.log.Timber;
 /**
  * Created by etiennelawlor on 5/23/15.
  */
-public class VideoDetailsFragment extends BaseFragment implements VideosAdapter.OnItemClickListener {
+public class VideoDetailsFragment extends BaseFragment implements RelatedVideosAdapter.OnItemClickListener {
+
+    // region Constants
+    public static final int PAGE_SIZE = 30;
+    // endregion
 
     // region Member Variables
-//    @Bind(R.id.vv)
-//    VideoView mVideoView;
-//    @Bind(R.id.pb)
-//    ProgressBar mProgressBar;
+
     @Bind(R.id.video_thumbnail_iv)
     ImageView mVideoThumbnailImageView;
-    @Bind(R.id.title_tv)
-    TextView mTitleTextView;
-    @Bind(R.id.subtitle_tv)
-    TextView mSubtitleTextView;
-    @Bind(R.id.user_iv)
-    CircleImageView mUserImageView;
-    //    @InjectView(R.id.uploaded_tv)
-//    TextView mUploadedTextView;
-    @Bind(R.id.view_count_tv)
-    TextView mViewCountTextView;
-    @Bind(R.id.upload_date_tv)
-    TextView mUploadDateTextView;
-    @Bind(R.id.tags_tv)
-    TextView mTagsTextView;
-    @Bind(R.id.description_tv)
-    TextView mDescriptionTextView;
-//    @Bind(R.id.additional_info_ll)
-//    LinearLayout mAdditionalInfoLinearLayout;
-//    @Bind(R.id.action_iv)
-//    ImageView mActionImageView;
     @Bind(R.id.toolbar)
     Toolbar mToolbar;
+    @Bind(R.id.videos_rv)
+    RecyclerView mVideosRecyclerView;
 
-//    @InjectView(R.id.videos_rv)
-//    RecyclerView mVideosRecyclerView;
-
-    private boolean isExpanded = false;
     private Video mVideo;
-    private VideosAdapter mVideosAdapter;
-    private String mVideoUrl;
-    private VimeoPlayerService mVimeoPlayerService;
+    private RelatedVideosAdapter mRelatedVideosAdapter;
+    private VimeoService mVimeoService;
+    private LinearLayoutManager mLayoutManager;
     private Long mVideoId = -1L;
+    private boolean mIsLastPage = false;
+    private int mCurrentPage = 1;
+    private boolean mIsLoading = false;
     // endregion
 
     // region Listeners
     @OnClick(R.id.play_fab)
     public void onPlayFABClicked(final View v) {
         Timber.d("onPlayFABClicked");
-//        Intent intent = new Intent();
-//
-//        startActivity(intent);
-
         if(mVideoId != -1L){
             Intent intent = new Intent(getActivity(), VideoPlayerActivity.class);
 
@@ -119,104 +88,31 @@ public class VideoDetailsFragment extends BaseFragment implements VideosAdapter.
         }
     }
 
-//    @OnClick(R.id.action_iv)
-//    public void onActionImageViewClicked() {
-//        if (!isExpanded) {
-//            isExpanded = true;
-//            mAdditionalInfoLinearLayout.setVisibility(View.VISIBLE);
-//            mActionImageView.setImageResource(R.drawable.ic_collapse);
-//        } else {
-//            isExpanded = false;
-//            mAdditionalInfoLinearLayout.setVisibility(View.GONE);
-//            mActionImageView.setImageResource(R.drawable.ic_expand);
-//        }
-//    }
+    private RecyclerView.OnScrollListener mRecyclerViewOnScrollListener = new RecyclerView.OnScrollListener() {
+        @Override
+        public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
+            super.onScrollStateChanged(recyclerView, newState);
+        }
 
+        @Override
+        public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
+            super.onScrolled(recyclerView, dx, dy);
+            int visibleItemCount = mLayoutManager.getChildCount();
+            int totalItemCount = mLayoutManager.getItemCount();
+            int firstVisibleItemPosition = mLayoutManager.findFirstVisibleItemPosition();
+
+            if (!mIsLoading && !mIsLastPage) {
+                if ((visibleItemCount + firstVisibleItemPosition) >= totalItemCount) {
+                    loadMoreItems();
+                }
+            }
+        }
+    };
     // endregion
 
     // region Callbacks
 
-
-//    private Callback<VideoConfig> mGetVideoConfigCallback = new Callback<VideoConfig>() {
-//        @Override
-//        public void onResponse(Response<VideoConfig> response) {
-//            Timber.d("onResponse()");
-//
-//            if (response != null) {
-//                if(response.isSuccess()){
-//                    VideoConfig videoConfig = response.body();
-//                    if (videoConfig != null) {
-//                        mVideoUrl = getVideoUrl(videoConfig);
-//                        Timber.d("onResponse() : videoUrl - " + mVideoUrl);
-//
-//                        if (!TextUtils.isEmpty(mVideoUrl)) {
-//                            Timber.d("playVideo()");
-////                            playVideo(mVideoUrl);
-//                        }
-//                    }
-//                } else {
-//                    ResponseBody responseBody = response.errorBody();
-//                    com.squareup.okhttp.Response rawResponse = response.raw();
-//                    if (rawResponse != null) {
-//                        String message = rawResponse.message();
-//                        int code = rawResponse.code();
-//                        Timber.d("onResponse() : message - " + message);
-//                        Timber.d("onResponse() : code - " + code);
-//
-//                        switch (code) {
-//                            case 500:
-////                                mErrorTextView.setText("Can't load data.\nCheck your network connection.");
-////                                mErrorLinearLayout.setVisibility(View.VISIBLE);
-//                                break;
-//                            default:
-//                                break;
-//                        }
-//                    }
-//                }
-//            }
-//        }
-//
-//        @Override
-//        public void onFailure(Throwable t) {
-//            Timber.e("onFailure()");
-//
-//            if (t != null) {
-//                Throwable cause = t.getCause();
-//                String message = t.getMessage();
-//
-//                if (cause != null) {
-//                    Timber.e("onFailure() : cause.toString() -" + cause.toString());
-//                }
-//
-//                if (TextUtils.isEmpty(message)) {
-//                    Timber.e("onFailure() : message - " + message);
-//                }
-//
-//                t.printStackTrace();
-//
-//                if (t instanceof SocketTimeoutException || t instanceof UnknownHostException) {
-//                    Timber.e("Timeout occurred");
-////                    mIsLoading = false;
-////                    mProgressBar.setVisibility(View.GONE);
-//
-////                    mErrorTextView.setText("Can't load data.\nCheck your network connection.");
-////                    mErrorLinearLayout.setVisibility(View.VISIBLE);
-//                } else if(t instanceof IOException){
-//                    if(message.equals("Canceled")){
-//                        Timber.e("onFailure() : Canceled");
-//                    } else {
-////                        mIsLoading = false;
-////                        mProgressBar.setVisibility(View.GONE);
-//                    }
-//                }
-//            }
-//
-//        }
-//    };
-
-
-
-    private Callback<VideosCollection> mGetRelatedVideosCallback = new Callback<VideosCollection>() {
+    private Callback<VideosCollection> mGetRelatedVideosFirstFetchCallback = new Callback<VideosCollection>() {
         @Override
         public void onResponse(Response<VideosCollection> response) {
 
@@ -226,8 +122,13 @@ public class VideoDetailsFragment extends BaseFragment implements VideosAdapter.
                     if (videosCollection != null) {
                         List<Video> videos = videosCollection.getVideos();
                         if (videos != null) {
-                            mVideosAdapter.addAll(videos);
-                            mVideosAdapter.addLoading();
+                            mRelatedVideosAdapter.addAll(videos);
+
+                            if(videos.size() >= PAGE_SIZE){
+                                mRelatedVideosAdapter.addLoading();
+                            } else {
+                                mIsLastPage = true;
+                            }
                         }
                     }
                 } else {
@@ -288,6 +189,86 @@ public class VideoDetailsFragment extends BaseFragment implements VideosAdapter.
             }
         }
     };
+
+    private Callback<VideosCollection> mGetRelatedVideosNextFetchCallback = new Callback<VideosCollection>() {
+        @Override
+        public void onResponse(Response<VideosCollection> response) {
+
+            mRelatedVideosAdapter.removeLoading();
+            mIsLoading = false;
+
+            if(response != null){
+                if(response.isSuccess()){
+                    VideosCollection videosCollection = response.body();
+                    if (videosCollection != null) {
+                        List<Video> videos = videosCollection.getVideos();
+                        if (videos != null) {
+                            mRelatedVideosAdapter.addAll(videos);
+                            mRelatedVideosAdapter.addLoading();
+                        }
+                    }
+                } else {
+                    ResponseBody responseBody = response.errorBody();
+                    com.squareup.okhttp.Response rawResponse = response.raw();
+                    if (rawResponse != null) {
+                        String message = rawResponse.message();
+                        int code = rawResponse.code();
+                        Timber.d("onResponse() : message - " + message);
+                        Timber.d("onResponse() : code - " + code);
+
+                        switch (code) {
+                            case 500:
+//                                mErrorTextView.setText("Can't load data.\nCheck your network connection.");
+//                                mErrorLinearLayout.setVisibility(View.VISIBLE);
+                                break;
+                            default:
+                                break;
+                        }
+                    }
+                }
+            }
+        }
+
+        @Override
+        public void onFailure(Throwable t) {
+            Timber.d("onFailure()");
+
+            mRelatedVideosAdapter.removeLoading();
+            mIsLoading = false;
+
+            if (t != null) {
+                Throwable cause = t.getCause();
+                String message = t.getMessage();
+
+                if (cause != null) {
+                    Timber.e("failure() : cause.toString() -" + cause.toString());
+                }
+
+                if (TextUtils.isEmpty(message)) {
+                    Timber.e("failure() : message - " + message);
+                }
+
+                t.printStackTrace();
+
+                if (t instanceof SocketTimeoutException || t instanceof UnknownHostException) {
+                    Timber.e("Timeout occurred");
+//                    mIsLoading = false;
+//                    mProgressBar.setVisibility(View.GONE);
+
+//                    mErrorTextView.setText("Can't load data.\nCheck your network connection.");
+//                    mErrorLinearLayout.setVisibility(View.VISIBLE);
+                } else if(t instanceof IOException){
+                    if(message.equals("Canceled")){
+                        Timber.e("onFailure() : Canceled");
+                    } else {
+//                        mIsLoading = false;
+//                        mProgressBar.setVisibility(View.GONE);
+                    }
+                }
+            }
+        }
+    };
+
     // endregion
 
     // region Constructors
@@ -320,9 +301,9 @@ public class VideoDetailsFragment extends BaseFragment implements VideosAdapter.
         }
 
         AccessToken token = PreferencesHelper.getAccessToken(getActivity());
-        mVimeoPlayerService = ServiceGenerator.createService(
-                VimeoPlayerService.class,
-                VimeoPlayerService.BASE_URL,
+        mVimeoService = ServiceGenerator.createService(
+                VimeoService.class,
+                VimeoService.BASE_URL,
                 token);
 
         Timber.d("");
@@ -350,56 +331,32 @@ public class VideoDetailsFragment extends BaseFragment implements VideosAdapter.
             actionBar.setTitle("");
         }
 
-//        int width = LoopUtility.getScreenWidth(getActivity());
-//        mVideoView.getHolder().setFixedSize(width, LoopUtility.dp2px(getActivity(), 202));
-
         if (mVideo != null) {
-            setUpTitle();
-            setUpSubtitle();
-            setUpUserImage();
-            setUpDescription();
             setUpVideoThumbnail();
-            setUpViewCount();
-            setUpUploadedDate();
-            setUpTags();
 
             String uri = mVideo.getUri();
             if (!TextUtils.isEmpty(uri)) {
                 String lastPathSegment = Uri.parse(uri).getLastPathSegment();
                 mVideoId = Long.parseLong(lastPathSegment);
 
-//                Call getVideoConfigCall = mVimeoPlayerService.getVideoConfig(videoId);
-//                mCalls.add(getVideoConfigCall);
-//                getVideoConfigCall.enqueue(mGetVideoConfigCallback);
+                mLayoutManager = new LinearLayoutManager(getActivity());
+                mVideosRecyclerView.setLayoutManager(mLayoutManager);
+                mRelatedVideosAdapter = new RelatedVideosAdapter(mVideo);
+                mRelatedVideosAdapter.setOnItemClickListener(this);
+                mRelatedVideosAdapter.addHeader();
+                mVideosRecyclerView.setAdapter(mRelatedVideosAdapter);
 
+                // Pagination
+                mVideosRecyclerView.addOnScrollListener(mRecyclerViewOnScrollListener);
 
-
-//                final LinearLayoutManager layoutManager = new LinearLayoutManager(getActivity());
-//                mVideosRecyclerView.setLayoutManager(layoutManager);
-//                mVideosAdapter = new VideosAdapter(getActivity());
-//                mVideosAdapter.setOnItemClickListener(this);
-//
-//                mVideosRecyclerView.setAdapter(mVideosAdapter);
-//                Api.getService(Api.getEndpointUrl()).findRelatedVideos(videoId, 1, 10, mGetRelatedVideosCallback);
+                Call findRelatedVideosCall = mVimeoService.findRelatedVideos(mVideoId, mCurrentPage, PAGE_SIZE);
+                mCalls.add(findRelatedVideosCall);
+                findRelatedVideosCall.enqueue(mGetRelatedVideosFirstFetchCallback);
             }
         }
 
     }
 
-    @Override
-    public void onResume() {
-        super.onResume();
-
-//        if (!mVideoView.isPlaying())
-//            mVideoView.resume();
-    }
-
-    @Override
-    public void onPause() {
-        super.onPause();
-//        if (mVideoView.isPlaying())
-//            mVideoView.suspend();
-    }
 
     @Override
     public void onDestroyView() {
@@ -407,20 +364,12 @@ public class VideoDetailsFragment extends BaseFragment implements VideosAdapter.
         ButterKnife.unbind(this);
     }
 
-    @Override
-    public void onDestroy() {
-        super.onDestroy();
-//        if (mVideoView != null) {
-//            mVideoView.stopPlayback();
-//            mVideoView.setVisibility(View.GONE);
-//        }
-    }
     // endregion
 
-    // region VideosAdapter.OnItemClickListener Methods
+    // region RelatedVideosAdapter.OnItemClickListener Methods
     @Override
     public void onItemClick(int position, View view) {
-        Video video = mVideosAdapter.getItem(position);
+        Video video = mRelatedVideosAdapter.getItem(position);
         if (video != null) {
             Intent intent = new Intent(getActivity(), VideoDetailsActivity.class);
 
@@ -448,63 +397,6 @@ public class VideoDetailsFragment extends BaseFragment implements VideosAdapter.
     // endregion
 
     // region Helper Methods
-    private void setUpTitle() {
-        String name = mVideo.getName();
-        if (!TextUtils.isEmpty(name)) {
-            mTitleTextView.setText(name);
-        }
-    }
-
-    private void setUpSubtitle() {
-        User user = mVideo.getUser();
-        if (user != null) {
-            String userName = user.getName();
-            if (!TextUtils.isEmpty(userName)) {
-                mSubtitleTextView.setText(userName);
-            }
-        }
-    }
-
-    private void setUpUserImage() {
-        boolean isPictureAvailable = false;
-
-        User user = mVideo.getUser();
-        if (user != null) {
-
-            Pictures pictures = user.getPictures();
-            if (pictures != null) {
-                List<Size> sizes = pictures.getSizes();
-                if (sizes != null && sizes.size() > 0) {
-                    Size size = sizes.get(sizes.size() - 1);
-                    if (size != null) {
-                        String link = size.getLink();
-                        if (!TextUtils.isEmpty(link)) {
-                            isPictureAvailable = true;
-                            Glide.with(getActivity())
-                                    .load(link)
-//                                .placeholder(R.drawable.ic_placeholder)
-//                                .error(R.drawable.ic_error)
-                                    .into(mUserImageView);
-                        }
-                    }
-                }
-            }
-        }
-
-        if (!isPictureAvailable) {
-            mUserImageView.setImageResource(R.drawable.ic_loop);
-        }
-    }
-
-    private void setUpDescription() {
-        String description = mVideo.getDescription();
-        if (!TextUtils.isEmpty(description)) {
-            mDescriptionTextView.setText(description.trim());
-            mDescriptionTextView.setVisibility(View.VISIBLE);
-        } else {
-            mDescriptionTextView.setVisibility(View.GONE);
-        }
-    }
 
     private void setUpVideoThumbnail() {
         Pictures pictures = mVideo.getPictures();
@@ -526,202 +418,30 @@ public class VideoDetailsFragment extends BaseFragment implements VideosAdapter.
         }
     }
 
-    private void setUpViewCount() {
-        int viewCount = 0;
-        Stats stats = mVideo.getStats();
-        if (stats != null) {
-            viewCount = stats.getPlays();
-        }
+    private void loadMoreItems() {
+        mIsLoading = true;
 
-        if (viewCount > 0) {
-            String formattedViewCount = NumberFormat.getNumberInstance(Locale.US).format(viewCount);
-//                String formattedViewCount = formatViewCount(viewCount);
-            if (viewCount > 1) {
-                mViewCountTextView.setText(String.format("%s views", formattedViewCount));
-            } else {
-                mViewCountTextView.setText(String.format("%s view", formattedViewCount));
-            }
-        }
+        mCurrentPage += 1;
+
+        Call findRelatedVideosCall = mVimeoService.findRelatedVideos(mVideoId, mCurrentPage, PAGE_SIZE);
+        mCalls.add(findRelatedVideosCall);
+        findRelatedVideosCall.enqueue(mGetRelatedVideosNextFetchCallback);
     }
 
-    private void setUpUploadedDate() {
-        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'hh:mm:ssZ", Locale.ENGLISH);
-        String uploadDate = "";
-
-        String createdTime = mVideo.getCreatedTime();
-
-        try {
-            Date date = sdf.parse(createdTime);
-
-            Calendar futureCalendar = Calendar.getInstance();
-            futureCalendar.setTime(date);
-
-            uploadDate = LoopUtility.getRelativeDate(futureCalendar);
-        } catch (ParseException e) {
-            Timber.e("");
-        }
-
-        if (!TextUtils.isEmpty(uploadDate)) {
-            mUploadDateTextView.setText(String.format("Uploaded %s", uploadDate));
-            mUploadDateTextView.setVisibility(View.VISIBLE);
-        } else {
-            mUploadDateTextView.setVisibility(View.GONE);
-        }
-    }
-
-    private void setUpTags() {
-        List<Tag> tags = mVideo.getTags();
-        if (tags != null && tags.size() > 0) {
-            String tagString = "";
-            for (Tag tag : tags) {
-                tagString += String.format("#%s ", tag.getCanonical());
-            }
-
-            if (!TextUtils.isEmpty(tagString)) {
-                mTagsTextView.setText(tagString);
-                mTagsTextView.setVisibility(View.VISIBLE);
-            } else {
-                mTagsTextView.setVisibility(View.GONE);
-            }
-        }
-    }
-
-//    private String getHLSVideoUrl(HLS hls) {
-//        String videoUrl = "";
-//        if (hls != null) {
-//            String all = hls.getAll();
-//            videoUrl = all;
-//        }
-//        return videoUrl;
-//    }
+//    private String formatViewCount(int viewCount) {
+//        String formattedViewCount = "";
 //
-//    private String getH264VideoUrl(H264 h264) {
-//        String videoUrl = "";
-//        if (h264 != null) {
-//
-//            VideoFormat hdVideoFormat = h264.getHd();
-//            VideoFormat sdVideoFormat = h264.getSd();
-//            VideoFormat mobileVideoFormat = h264.getMobile();
-//
-//            int width = -1;
-//            int height = -1;
-//            if (hdVideoFormat != null) {
-//                videoUrl = hdVideoFormat.getUrl();
-//                width = hdVideoFormat.getWidth();
-//                height = hdVideoFormat.getHeight();
-//            } else if (sdVideoFormat != null) {
-//                videoUrl = sdVideoFormat.getUrl();
-//                width = sdVideoFormat.getWidth();
-//                height = sdVideoFormat.getHeight();
-//            } else if (mobileVideoFormat != null) {
-//                videoUrl = mobileVideoFormat.getUrl();
-//                width = mobileVideoFormat.getWidth();
-//                height = mobileVideoFormat.getHeight();
-//            }
-//
-//            Timber.d(String.format("mGetVideoConfigCallback : url - %s", videoUrl));
-//            Timber.d(String.format("mGetVideoConfigCallback : width - %d : height - %d", width, height));
+//        if (viewCount < 1000000000 && viewCount >= 1000000) {
+//            formattedViewCount = String.format("%dM views", viewCount / 1000000);
+//        } else if (viewCount < 1000000 && viewCount >= 1000) {
+//            formattedViewCount = String.format("%dK views", viewCount / 1000);
+//        } else if (viewCount < 1000 && viewCount > 1) {
+//            formattedViewCount = String.format("%d views", viewCount);
+//        } else if (viewCount == 1) {
+//            formattedViewCount = String.format("%d view", viewCount);
 //        }
 //
-//        return videoUrl;
-//    }
-//
-//    private String getVP6VideoUrl(VP6 vp6) {
-//        String videoUrl = "";
-//        if (vp6 != null) {
-//
-//            VideoFormat hdVideoFormat = vp6.getHd();
-//            VideoFormat sdVideoFormat = vp6.getSd();
-//            VideoFormat mobileVideoFormat = vp6.getMobile();
-//
-//            int width = -1;
-//            int height = -1;
-//            if (hdVideoFormat != null) {
-//                videoUrl = hdVideoFormat.getUrl();
-//                width = hdVideoFormat.getWidth();
-//                height = hdVideoFormat.getHeight();
-//            } else if (sdVideoFormat != null) {
-//                videoUrl = sdVideoFormat.getUrl();
-//                width = sdVideoFormat.getWidth();
-//                height = sdVideoFormat.getHeight();
-//            } else if (mobileVideoFormat != null) {
-//                videoUrl = mobileVideoFormat.getUrl();
-//                width = mobileVideoFormat.getWidth();
-//                height = mobileVideoFormat.getHeight();
-//            }
-//
-//            Timber.d(String.format("mGetVideoConfigCallback : url - %s", videoUrl));
-//            Timber.d(String.format("mGetVideoConfigCallback : width - %d : height - %d", width, height));
-//        }
-//
-//        return videoUrl;
-//    }
-
-//    private String getVideoUrl(VideoConfig videoConfig) {
-//        String videoUrl = "";
-//
-//        if (videoConfig != null) {
-//            Request request = videoConfig.getRequest();
-//            if (request != null) {
-//                Files files = request.getFiles();
-//                if (files != null) {
-//                    H264 h264 = files.getH264();
-//                    HLS hls = files.getHls();
-//                    VP6 vp6 = files.getVp6();
-//
-//                    String h264VideoUrl = getH264VideoUrl(h264);
-//                    String vp6VideoUrl = getVP6VideoUrl(vp6);
-//                    String hlsVideoUrl = getHLSVideoUrl(hls);
-//
-//                    if (!TextUtils.isEmpty(h264VideoUrl)) {
-//                        videoUrl = h264VideoUrl;
-//                    } else if (!TextUtils.isEmpty(vp6VideoUrl)) {
-//                        videoUrl = vp6VideoUrl;
-//                    } else if (!TextUtils.isEmpty(hlsVideoUrl)) {
-//                        videoUrl = hlsVideoUrl;
-//                    }
-//                }
-//            }
-//        }
-//
-//        return videoUrl;
-//    }
-
-    private String formatViewCount(int viewCount) {
-        String formattedViewCount = "";
-
-        if (viewCount < 1000000000 && viewCount >= 1000000) {
-            formattedViewCount = String.format("%dM views", viewCount / 1000000);
-        } else if (viewCount < 1000000 && viewCount >= 1000) {
-            formattedViewCount = String.format("%dK views", viewCount / 1000);
-        } else if (viewCount < 1000 && viewCount > 1) {
-            formattedViewCount = String.format("%d views", viewCount);
-        } else if (viewCount == 1) {
-            formattedViewCount = String.format("%d view", viewCount);
-        }
-
-        return formattedViewCount;
-    }
-
-//    private void playVideo(String videoUrl) {
-//        mVideoView.setVideoPath(videoUrl);
-//
-//        MediaController controller = new MediaController(getActivity());
-//        controller.setAnchorView(mVideoView);
-//        controller.setMediaPlayer(mVideoView);
-//        mVideoView.setMediaController(controller);
-//
-//        mVideoView.setVisibility(View.VISIBLE);
-//        mProgressBar.setVisibility(View.VISIBLE);
-//        mVideoView.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
-//            @Override
-//            public void onPrepared(MediaPlayer arg0) {
-//                mProgressBar.setVisibility(View.GONE);
-//                mVideoView.start();
-//                mVideoThumbnailImageView.setVisibility(View.GONE);
-//                mVideoView.requestFocus();
-//            }
-//        });
+//        return formattedViewCount;
 //    }
     // endregion
 }
