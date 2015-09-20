@@ -34,6 +34,7 @@ import com.etiennelawlor.loop.helper.PreferencesHelper;
 import com.etiennelawlor.loop.network.ServiceGenerator;
 import com.etiennelawlor.loop.network.VimeoService;
 import com.etiennelawlor.loop.network.models.AccessToken;
+import com.etiennelawlor.loop.network.models.AuthorizedUser;
 import com.etiennelawlor.loop.network.models.Interaction;
 import com.etiennelawlor.loop.network.models.Interactions;
 import com.etiennelawlor.loop.network.models.Metadata;
@@ -80,6 +81,8 @@ public class VideoDetailsFragment extends BaseFragment implements RelatedVideosA
     private RelatedVideosAdapter mRelatedVideosAdapter;
     private VimeoService mVimeoService;
     private LinearLayoutManager mLayoutManager;
+    private AuthorizedUser mAuthorizedUser;
+    private String mAuthorizedUserId;
     private Long mVideoId = -1L;
     private boolean mIsLastPage = false;
     private int mCurrentPage = 1;
@@ -283,6 +286,213 @@ public class VideoDetailsFragment extends BaseFragment implements RelatedVideosA
         }
     };
 
+    private Callback<Object> mLikeVideoCallback = new Callback<Object>() {
+        @Override
+        public void onResponse(Response<Object> response) {
+
+//            mRelatedVideosAdapter.removeLoading();
+//            mIsLoading = false;
+
+            if(response != null){
+                if(response.isSuccess()){
+                    Timber.d("callbackResponse");
+
+//                    Response callbackResponse = response.body();
+//                    if(callbackResponse != null){
+//                        Timber.d("callbackResponse");
+//                    }
+
+//                    VideosCollection videosCollection = response.body();
+//                    if (videosCollection != null) {
+//                        List<Video> videos = videosCollection.getVideos();
+//                        if (videos != null) {
+//                            mRelatedVideosAdapter.addAll(videos);
+//                            mRelatedVideosAdapter.addLoading();
+//                        }
+//                    }
+                    com.squareup.okhttp.Response rawResponse = response.raw();
+                    if (rawResponse != null) {
+                        String message = rawResponse.message();
+                        int code = rawResponse.code();
+                        Timber.d("onResponse() : message - " + message);
+                        Timber.d("onResponse() : code - " + code);
+
+                        switch (code) {
+                            case 204:
+                                // No Content
+                                break;
+                            case 400:
+                                // If the video is owned by the authenticated user
+                                break;
+                            case 403:
+                                // If the authenticated user is not allowed to like videos
+                                break;
+                        }
+                    }
+                } else {
+                    ResponseBody responseBody = response.errorBody();
+                    com.squareup.okhttp.Response rawResponse = response.raw();
+                    if (rawResponse != null) {
+                        String message = rawResponse.message();
+                        int code = rawResponse.code();
+                        Timber.d("onResponse() : message - " + message);
+                        Timber.d("onResponse() : code - " + code);
+
+                        switch (code) {
+                            case 500:
+//                                mErrorTextView.setText("Can't load data.\nCheck your network connection.");
+//                                mErrorLinearLayout.setVisibility(View.VISIBLE);
+                                break;
+                            default:
+                                break;
+                        }
+                    }
+                }
+            }
+        }
+
+        @Override
+        public void onFailure(Throwable t) {
+            Timber.d("onFailure()");
+
+//            mRelatedVideosAdapter.removeLoading();
+//            mIsLoading = false;
+
+            if (t != null) {
+                Throwable cause = t.getCause();
+                String message = t.getMessage();
+
+                if (cause != null) {
+                    Timber.e("failure() : cause.toString() -" + cause.toString());
+                }
+
+                if (TextUtils.isEmpty(message)) {
+                    Timber.e("failure() : message - " + message);
+                }
+
+                t.printStackTrace();
+
+                if (t instanceof SocketTimeoutException || t instanceof UnknownHostException) {
+                    Timber.e("Timeout occurred");
+//                    mIsLoading = false;
+//                    mProgressBar.setVisibility(View.GONE);
+
+//                    mErrorTextView.setText("Can't load data.\nCheck your network connection.");
+//                    mErrorLinearLayout.setVisibility(View.VISIBLE);
+                } else if(t instanceof IOException){
+                    if(message.equals("Canceled")){
+                        Timber.e("onFailure() : Canceled");
+                    } else {
+//                        mIsLoading = false;
+//                        mProgressBar.setVisibility(View.GONE);
+                    }
+                }
+            }
+        }
+    };
+
+    private Callback<Object> mUnlikeVideoCallback = new Callback<Object>() {
+        @Override
+        public void onResponse(Response<Object> response) {
+
+//            mRelatedVideosAdapter.removeLoading();
+//            mIsLoading = false;
+
+            if(response != null){
+                if(response.isSuccess()){
+                    Timber.d("callbackResponse");
+
+//                    Response callbackResponse = response.body();
+//                    if(callbackResponse != null){
+//                        Timber.d("callbackResponse");
+//                    }
+
+//                    VideosCollection videosCollection = response.body();
+//                    if (videosCollection != null) {
+//                        List<Video> videos = videosCollection.getVideos();
+//                        if (videos != null) {
+//                            mRelatedVideosAdapter.addAll(videos);
+//                            mRelatedVideosAdapter.addLoading();
+//                        }
+//                    }
+                    com.squareup.okhttp.Response rawResponse = response.raw();
+                    if (rawResponse != null) {
+                        String message = rawResponse.message();
+                        int code = rawResponse.code();
+                        Timber.d("onResponse() : message - " + message);
+                        Timber.d("onResponse() : code - " + code);
+
+                        switch (code) {
+                            case 204:
+                                // No Content
+                                break;
+                            case 403:
+                                // If the authenticated user is not allowed to like videos
+                                break;
+                        }
+                    }
+                } else {
+                    ResponseBody responseBody = response.errorBody();
+                    com.squareup.okhttp.Response rawResponse = response.raw();
+                    if (rawResponse != null) {
+                        String message = rawResponse.message();
+                        int code = rawResponse.code();
+                        Timber.d("onResponse() : message - " + message);
+                        Timber.d("onResponse() : code - " + code);
+
+                        switch (code) {
+                            case 500:
+//                                mErrorTextView.setText("Can't load data.\nCheck your network connection.");
+//                                mErrorLinearLayout.setVisibility(View.VISIBLE);
+                                break;
+                            default:
+                                break;
+                        }
+                    }
+                }
+            }
+        }
+
+        @Override
+        public void onFailure(Throwable t) {
+            Timber.d("onFailure()");
+
+//            mRelatedVideosAdapter.removeLoading();
+//            mIsLoading = false;
+
+            if (t != null) {
+                Throwable cause = t.getCause();
+                String message = t.getMessage();
+
+                if (cause != null) {
+                    Timber.e("failure() : cause.toString() -" + cause.toString());
+                }
+
+                if (TextUtils.isEmpty(message)) {
+                    Timber.e("failure() : message - " + message);
+                }
+
+                t.printStackTrace();
+
+                if (t instanceof SocketTimeoutException || t instanceof UnknownHostException) {
+                    Timber.e("Timeout occurred");
+//                    mIsLoading = false;
+//                    mProgressBar.setVisibility(View.GONE);
+
+//                    mErrorTextView.setText("Can't load data.\nCheck your network connection.");
+//                    mErrorLinearLayout.setVisibility(View.VISIBLE);
+                } else if(t instanceof IOException){
+                    if(message.equals("Canceled")){
+                        Timber.e("onFailure() : Canceled");
+                    } else {
+//                        mIsLoading = false;
+//                        mProgressBar.setVisibility(View.GONE);
+                    }
+                }
+            }
+        }
+    };
+
     // endregion
 
     // region Constructors
@@ -319,6 +529,9 @@ public class VideoDetailsFragment extends BaseFragment implements RelatedVideosA
                 VimeoService.class,
                 VimeoService.BASE_URL,
                 token);
+
+        mAuthorizedUser = PreferencesHelper.getAuthorizedUser(getActivity());
+        mAuthorizedUserId = Uri.parse(mAuthorizedUser.getUri()).getLastPathSegment();
 
         setHasOptionsMenu(true);
     }
@@ -427,6 +640,10 @@ public class VideoDetailsFragment extends BaseFragment implements RelatedVideosA
                         public void onClick(DialogInterface dialog, int whichButton) {
                             mLikeOn = false;
                             item.setIcon(ContextCompat.getDrawable(getActivity(), R.drawable.ic_menu_like_off));
+
+                            Call unlikeVideoCall  = mVimeoService.unlikeVideo(mAuthorizedUserId, String.valueOf(mVideoId));
+                            mCalls.add(unlikeVideoCall);
+                            unlikeVideoCall.enqueue(mUnlikeVideoCallback);
                         }
                     });
                     alertDialogBuilder.setNegativeButton("No", new DialogInterface.OnClickListener() {
@@ -438,6 +655,10 @@ public class VideoDetailsFragment extends BaseFragment implements RelatedVideosA
                 } else {
                     mLikeOn = true;
                     item.setIcon(ContextCompat.getDrawable(getActivity(), R.drawable.ic_menu_like_on));
+
+                    Call likeVideoCall  = mVimeoService.likeVideo(mAuthorizedUserId, String.valueOf(mVideoId));
+                    mCalls.add(likeVideoCall);
+                    likeVideoCall.enqueue(mLikeVideoCallback);
                 }
                 return true;
             case R.id.watch_later:

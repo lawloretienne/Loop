@@ -3,12 +3,16 @@ package com.etiennelawlor.loop.network;
 import com.etiennelawlor.loop.network.models.CategoriesCollection;
 import com.etiennelawlor.loop.network.models.OAuthResponse;
 import com.etiennelawlor.loop.network.models.VideosCollection;
+import com.squareup.okhttp.Response;
 
 import retrofit.Call;
+//import retrofit.Response;
+import retrofit.http.DELETE;
 import retrofit.http.Field;
 import retrofit.http.FormUrlEncoded;
 import retrofit.http.GET;
 import retrofit.http.POST;
+import retrofit.http.PUT;
 import retrofit.http.Path;
 import retrofit.http.Query;
 
@@ -53,5 +57,12 @@ public interface VimeoService {
     Call<OAuthResponse> exchangeCode(@Field("grant_type") String grantType,
                       @Field("code") String code,
                       @Field("redirect_uri") String redirectUri);
+
+    @PUT("/users/{userId}/likes/{videoId}")
+    Call<Object> likeVideo(@Path("userId") String userId, @Path("videoId") String videoId);
+
+
+    @DELETE("/users/{userId}/likes/{videoId}")
+    Call<Object> unlikeVideo(@Path("userId") String userId, @Path("videoId") String videoId);
 
 }
