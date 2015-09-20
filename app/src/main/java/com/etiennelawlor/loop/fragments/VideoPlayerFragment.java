@@ -2,6 +2,7 @@ package com.etiennelawlor.loop.fragments;
 
 import android.media.MediaPlayer;
 import android.os.Bundle;
+import android.os.Handler;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -51,12 +52,11 @@ public class VideoPlayerFragment extends BaseFragment {
     // region Member Variables
     private Long mVideoId;
     private String mVideoUrl;
+    private MediaController mMediaController;
     private VimeoPlayerService mVimeoPlayerService;
 
     @Bind(R.id.vv)
     VideoView mVideoView;
-//    @Bind(R.id.pb)
-//    ProgressBar mProgressBar;
     @Bind(R.id.loading_iv)
     LoadingImageView mLoadingImageView;
     // endregion
@@ -176,16 +176,6 @@ public class VideoPlayerFragment extends BaseFragment {
                 token);
 
         setHasOptionsMenu(true);
-
-//        View decorView = getActivity().getWindow().getDecorView();
-//// Hide the status bar.
-//        int uiOptions = View.SYSTEM_UI_FLAG_FULLSCREEN;
-//        decorView.setSystemUiVisibility(uiOptions);
-
-// Remember that you should never show the action bar if the
-// status bar is hidden, so hide that too if necessary.
-//        ActionBar actionBar = getActionBar();
-//        actionBar.hide();
     }
 
     @Override
@@ -201,7 +191,12 @@ public class VideoPlayerFragment extends BaseFragment {
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
+//        mMediaController = new MediaController(getActivity());
+//        mMediaController.setAnchorView(mVideoView);
+//        mMediaController.setMediaPlayer(mVideoView);
+//        mVideoView.setMediaController(mMediaController);
 
+        setUpSystemUiControls();
 
         Call getVideoConfigCall = mVimeoPlayerService.getVideoConfig(mVideoId);
         mCalls.add(getVideoConfigCall);
@@ -250,6 +245,51 @@ public class VideoPlayerFragment extends BaseFragment {
     }
 
     // region Helper Methods
+    private void setUpSystemUiControls(){
+        final View decorView = getActivity().getWindow().getDecorView();
+        final int uiOptions = View.SYSTEM_UI_FLAG_FULLSCREEN |
+                View.SYSTEM_UI_FLAG_HIDE_NAVIGATION |
+                View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN |
+                View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION;
+        decorView.setSystemUiVisibility(uiOptions);
+
+        decorView.setOnSystemUiVisibilityChangeListener
+                (new View.OnSystemUiVisibilityChangeListener() {
+                    @Override
+                    public void onSystemUiVisibilityChange(int visibility) {
+                        // Note that system bars will only be "visible" if none of the
+                        // LOW_PROFILE, HIDE_NAVIGATION, or FULLSCREEN flags are set.
+                        if ((visibility & View.SYSTEM_UI_FLAG_FULLSCREEN) == 0) {
+                            // TODO: The system bars are visible. Make any desired
+                            // adjustments to your UI, such as showing the action bar or
+                            // other navigational controls.
+                            Timber.d("onSystemUiVisibilityChange() : system bars VISIBLE");
+
+                            new Handler().postDelayed(new Runnable() {
+
+                                @Override
+                                public void run() {
+                                    decorView.setSystemUiVisibility(uiOptions);
+
+//                                    // Remember that you should never show the action bar if the
+//                                    // status bar is hidden, so hide that too if necessary.
+//                                    ActionBar actionBar = getActionBar();
+//                                    actionBar.hide();
+                                }
+                            }, 3000);
+
+//                            mMediaController.show(3000);
+                        } else {
+                            // TODO: The system bars are NOT visible. Make any desired
+                            // adjustments to your UI, such as hiding the action bar or
+                            // other navigational controls.
+                            Timber.d("onSystemUiVisibilityChange() : system bars NOT VISIBLE");
+//                            mMediaController.hide();
+                        }
+                    }
+                });
+    }
+
     private String getVideoUrl(VideoConfig videoConfig) {
         String videoUrl = "";
 
@@ -354,20 +394,15 @@ public class VideoPlayerFragment extends BaseFragment {
     private void playVideo(String videoUrl) {
         mVideoView.setVideoPath(videoUrl);
 
-        MediaController controller = new MediaController(getActivity());
-        controller.setAnchorView(mVideoView);
-        controller.setMediaPlayer(mVideoView);
-        mVideoView.setMediaController(controller);
+        mVideoView.requestFocus();
 
-        mVideoView.setVisibility(View.VISIBLE);
-        mLoadingImageView.setVisibility(View.VISIBLE);
         mVideoView.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
             @Override
             public void onPrepared(MediaPlayer arg0) {
                 mLoadingImageView.setVisibility(View.GONE);
                 mVideoView.start();
-//                mVideoThumbnailImageView.setVisibility(View.GONE);
-                mVideoView.requestFocus();
+
+//                mVideoView.requestFocus();
             }
         });
     }
