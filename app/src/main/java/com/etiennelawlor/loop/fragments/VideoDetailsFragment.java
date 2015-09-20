@@ -307,7 +307,6 @@ public class VideoDetailsFragment extends BaseFragment implements RelatedVideosA
                 token);
 
         Timber.d("");
-
     }
 
     @Override

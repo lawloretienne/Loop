@@ -68,6 +68,7 @@
         android:src="@drawable/ic_fab_play"
         app:backgroundTint="?colorAccent"
         app:borderWidth="0dp"
+        android:scaleType="center"
         app:fab_shadow="true"
         app:layout_anchor="@id/appbar"
         app:layout_anchorGravity="bottom|right|end"
