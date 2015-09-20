@@ -58,11 +58,18 @@ public interface VimeoService {
                       @Field("code") String code,
                       @Field("redirect_uri") String redirectUri);
 
-    @PUT("/users/{userId}/likes/{videoId}")
-    Call<Object> likeVideo(@Path("userId") String userId, @Path("videoId") String videoId);
+    @PUT("/me/likes/{videoId}")
+    Call<Object> likeVideo(@Path("videoId") String videoId);
 
 
-    @DELETE("/users/{userId}/likes/{videoId}")
-    Call<Object> unlikeVideo(@Path("userId") String userId, @Path("videoId") String videoId);
+    @DELETE("/me/likes/{videoId}")
+    Call<Object> unlikeVideo(@Path("videoId") String videoId);
+
+    @PUT("/me/watchlater/{videoId}")
+    Call<Object> addVideoToWatchLater(@Path("videoId") String videoId);
+
+
+    @DELETE("/me/watchlater/{videoId}")
+    Call<Object> removeVideoFromWatchLater(@Path("videoId") String videoId);
 
 }
