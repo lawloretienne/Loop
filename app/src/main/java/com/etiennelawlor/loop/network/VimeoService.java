@@ -1,9 +1,8 @@
 package com.etiennelawlor.loop.network;
 
-import com.etiennelawlor.loop.network.models.CategoriesCollection;
-import com.etiennelawlor.loop.network.models.OAuthResponse;
-import com.etiennelawlor.loop.network.models.VideosCollection;
-import com.squareup.okhttp.Response;
+import com.etiennelawlor.loop.network.models.response.CategoriesCollection;
+import com.etiennelawlor.loop.network.models.response.OAuthResponse;
+import com.etiennelawlor.loop.network.models.response.VideosCollection;
 
 import retrofit.Call;
 //import retrofit.Response;

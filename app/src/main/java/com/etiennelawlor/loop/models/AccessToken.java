@@ -1,4 +1,4 @@
-package com.etiennelawlor.loop.network.models;
+package com.etiennelawlor.loop.models;
 
 /**
  * Created by etiennelawlor on 6/14/15.

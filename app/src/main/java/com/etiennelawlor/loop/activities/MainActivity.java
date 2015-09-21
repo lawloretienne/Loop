@@ -20,8 +20,8 @@ import com.etiennelawlor.loop.fragments.PlaceholderFragment;
 import com.etiennelawlor.loop.fragments.WatchLaterVideosFragment;
 import com.etiennelawlor.loop.fragments.WatchNowFragment;
 import com.etiennelawlor.loop.helper.PreferencesHelper;
-import com.etiennelawlor.loop.network.models.AuthorizedUser;
-import com.etiennelawlor.loop.network.models.Picture;
+import com.etiennelawlor.loop.network.models.response.AuthorizedUser;
+import com.etiennelawlor.loop.network.models.response.Picture;
 import com.etiennelawlor.loop.utilities.LoopUtility;
 
 import java.util.List;

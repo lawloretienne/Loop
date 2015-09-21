@@ -6,8 +6,8 @@ import android.support.v7.app.AppCompatActivity;
 
 import com.etiennelawlor.loop.R;
 import com.etiennelawlor.loop.helper.PreferencesHelper;
-import com.etiennelawlor.loop.network.models.AccessToken;
-import com.etiennelawlor.loop.network.models.AuthorizedUser;
+import com.etiennelawlor.loop.models.AccessToken;
+import com.etiennelawlor.loop.network.models.response.AuthorizedUser;
 
 import butterknife.ButterKnife;
 import butterknife.OnClick;

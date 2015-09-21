@@ -1,11 +1,11 @@
-package com.etiennelawlor.loop.network.models;
+package com.etiennelawlor.loop.network.models.response;
 
 import com.google.gson.annotations.SerializedName;
 
 /**
  * Created by etiennelawlor on 5/23/15.
  */
-public class VP6 {
+public class H264 {
 
     // region Member Variables
     @SerializedName("sd")

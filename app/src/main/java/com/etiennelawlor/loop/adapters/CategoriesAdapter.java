@@ -10,7 +10,7 @@ import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 import com.etiennelawlor.loop.R;
-import com.etiennelawlor.loop.network.models.Category;
+import com.etiennelawlor.loop.network.models.response.Category;
 import com.etiennelawlor.loop.ui.DynamicHeightImageView;
 
 import java.util.ArrayList;
@@ -18,7 +18,6 @@ import java.util.List;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
-import butterknife.OnClick;
 
 /**
  * Created by etiennelawlor on 5/23/15.

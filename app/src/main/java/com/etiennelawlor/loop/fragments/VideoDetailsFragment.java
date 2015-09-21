@@ -1,7 +1,6 @@
 package com.etiennelawlor.loop.fragments;
 
 import android.app.Activity;
-import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.Uri;
@@ -33,16 +32,17 @@ import com.etiennelawlor.loop.adapters.RelatedVideosAdapter;
 import com.etiennelawlor.loop.helper.PreferencesHelper;
 import com.etiennelawlor.loop.network.ServiceGenerator;
 import com.etiennelawlor.loop.network.VimeoService;
-import com.etiennelawlor.loop.network.models.AccessToken;
-import com.etiennelawlor.loop.network.models.AuthorizedUser;
-import com.etiennelawlor.loop.network.models.Interaction;
-import com.etiennelawlor.loop.network.models.Interactions;
-import com.etiennelawlor.loop.network.models.Metadata;
-import com.etiennelawlor.loop.network.models.Pictures;
-import com.etiennelawlor.loop.network.models.Size;
-import com.etiennelawlor.loop.network.models.Video;
-import com.etiennelawlor.loop.network.models.VideosCollection;
+import com.etiennelawlor.loop.models.AccessToken;
+import com.etiennelawlor.loop.network.models.response.Interaction;
+import com.etiennelawlor.loop.network.models.response.Interactions;
+import com.etiennelawlor.loop.network.models.response.Metadata;
+import com.etiennelawlor.loop.network.models.response.Pictures;
+import com.etiennelawlor.loop.network.models.response.Size;
+import com.etiennelawlor.loop.network.models.response.Video;
+import com.etiennelawlor.loop.network.models.response.VideosCollection;
 import com.etiennelawlor.loop.otto.BusProvider;
+import com.etiennelawlor.loop.otto.events.LikeEvent;
+import com.etiennelawlor.loop.otto.events.WatchLaterEvent;
 import com.squareup.okhttp.ResponseBody;
 
 import java.io.IOException;
@@ -318,6 +318,7 @@ public class VideoDetailsFragment extends BaseFragment implements RelatedVideosA
                         switch (code) {
                             case 204:
                                 // No Content
+                                BusProvider.get().post(new LikeEvent());
                                 break;
                             case 400:
                                 // If the video is owned by the authenticated user
@@ -423,6 +424,7 @@ public class VideoDetailsFragment extends BaseFragment implements RelatedVideosA
                         switch (code) {
                             case 204:
                                 // No Content
+                                BusProvider.get().post(new LikeEvent());
                                 break;
                             case 403:
                                 // If the authenticated user is not allowed to like videos
@@ -525,6 +527,7 @@ public class VideoDetailsFragment extends BaseFragment implements RelatedVideosA
                         switch (code) {
                             case 204:
                                 // No Content
+                                BusProvider.get().post(new WatchLaterEvent());
                                 break;
 //                            case 400:
 //                                // If the video is owned by the authenticated user
@@ -630,6 +633,7 @@ public class VideoDetailsFragment extends BaseFragment implements RelatedVideosA
                         switch (code) {
                             case 204:
                                 // No Content
+                                BusProvider.get().post(new WatchLaterEvent());
                                 break;
 //                            case 403:
 //                                // If the authenticated user is not allowed to like videos
@@ -889,7 +893,7 @@ public class VideoDetailsFragment extends BaseFragment implements RelatedVideosA
 
                     Call addVideoToWatchLaterCall  = mVimeoService.addVideoToWatchLater(String.valueOf(mVideoId));
                     mCalls.add(addVideoToWatchLaterCall);
-                    addVideoToWatchLaterCall.enqueue(mLikeVideoCallback);
+                    addVideoToWatchLaterCall.enqueue(mAddVideoToWatchLaterCallback);
                 }
                 return true;
             case R.id.share:

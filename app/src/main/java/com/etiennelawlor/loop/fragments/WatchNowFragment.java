@@ -67,13 +67,12 @@ public class WatchNowFragment extends BaseFragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        BusProvider.get().register(this);
-
         if (getArguments() != null) {
 //            mQuery = getArguments().getString("query");
         }
 
         setHasOptionsMenu(true);
+        BusProvider.get().register(this);
     }
 
     @Override
@@ -112,6 +111,14 @@ public class WatchNowFragment extends BaseFragment {
     public void onDestroyView() {
         super.onDestroyView();
         ButterKnife.unbind(this);
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+
+        // Unregister Otto Bus
+        BusProvider.get().unregister(this);
     }
     // endregion
 

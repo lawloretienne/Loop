@@ -1,4 +1,4 @@
-package com.etiennelawlor.loop.network.models;
+package com.etiennelawlor.loop.network.models.response;
 
 import android.os.Parcel;
 import android.os.Parcelable;
@@ -9,11 +9,9 @@ import com.google.gson.annotations.SerializedName;
 /**
  * Created by etiennelawlor on 5/23/15.
  */
-public class Picture implements Parcelable {
+public class Size implements Parcelable {
 
     // region Member Variables
-    @SerializedName("type")
-    private String type;
     @SerializedName("width")
     private Integer width;
     @SerializedName("height")
@@ -23,13 +21,6 @@ public class Picture implements Parcelable {
     // endregion
 
     // region Getters
-    public String getType() {
-        if (TextUtils.isEmpty(type))
-            return "";
-        else
-            return type;
-    }
-
     public Integer getWidth() {
         if(width == null)
             return -1;
@@ -54,11 +45,6 @@ public class Picture implements Parcelable {
 
     // region Setters
 
-
-    public void setType(String type) {
-        this.type = type;
-    }
-
     public void setWidth(Integer width) {
         this.width = width;
     }
@@ -80,30 +66,28 @@ public class Picture implements Parcelable {
 
     @Override
     public void writeToParcel(Parcel dest, int flags) {
-        dest.writeString(getType());
         dest.writeInt(getWidth());
         dest.writeInt(getHeight());
         dest.writeString(getLink());
     }
     // endregion
 
-    public static final Creator<Picture> CREATOR = new Creator<Picture>() {
+    public static final Parcelable.Creator<Size> CREATOR = new Parcelable.Creator<Size>() {
 
         @Override
-        public Picture createFromParcel(Parcel source) {
-            Picture picture = new Picture();
+        public Size createFromParcel(Parcel source) {
+            Size size = new Size();
 
-            picture.setType(source.readString());
-            picture.setWidth(source.readInt());
-            picture.setHeight(source.readInt());
-            picture.setLink(source.readString());
+            size.setWidth(source.readInt());
+            size.setHeight(source.readInt());
+            size.setLink(source.readString());
 
-            return picture;
+            return size;
         }
 
         @Override
-        public Picture[] newArray(int size) {
-            return new Picture[size];
+        public Size[] newArray(int size) {
+            return new Size[size];
         }
     };
 }

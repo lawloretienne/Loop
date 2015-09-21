@@ -19,9 +19,9 @@ import com.etiennelawlor.loop.adapters.CategoriesAdapter;
 import com.etiennelawlor.loop.helper.PreferencesHelper;
 import com.etiennelawlor.loop.network.ServiceGenerator;
 import com.etiennelawlor.loop.network.VimeoService;
-import com.etiennelawlor.loop.network.models.AccessToken;
-import com.etiennelawlor.loop.network.models.CategoriesCollection;
-import com.etiennelawlor.loop.network.models.Category;
+import com.etiennelawlor.loop.models.AccessToken;
+import com.etiennelawlor.loop.network.models.response.CategoriesCollection;
+import com.etiennelawlor.loop.network.models.response.Category;
 import com.etiennelawlor.loop.otto.BusProvider;
 import com.etiennelawlor.loop.ui.GridSpacesItemDecoration;
 import com.etiennelawlor.loop.ui.LoadingImageView;
@@ -170,8 +170,6 @@ public class ExploreFragment extends BaseFragment implements CategoriesAdapter.O
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        BusProvider.get().register(this);
-
         if (getArguments() != null) {
 //            mQuery = getArguments().getString("query");
         }
@@ -183,6 +181,7 @@ public class ExploreFragment extends BaseFragment implements CategoriesAdapter.O
                 token);
 
         setHasOptionsMenu(true);
+        BusProvider.get().register(this);
     }
 
     @Override
@@ -228,6 +227,14 @@ public class ExploreFragment extends BaseFragment implements CategoriesAdapter.O
 
 //        mVideosRecyclerView.removeOnScrollListener(mRecyclerViewOnScrollListener);
         ButterKnife.unbind(this);
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+
+        // Unregister Otto Bus
+        BusProvider.get().unregister(this);
     }
     // endregion
 

@@ -11,12 +11,12 @@ import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 import com.etiennelawlor.loop.R;
-import com.etiennelawlor.loop.network.models.Pictures;
-import com.etiennelawlor.loop.network.models.Size;
-import com.etiennelawlor.loop.network.models.Stats;
-import com.etiennelawlor.loop.network.models.Tag;
-import com.etiennelawlor.loop.network.models.User;
-import com.etiennelawlor.loop.network.models.Video;
+import com.etiennelawlor.loop.network.models.response.Pictures;
+import com.etiennelawlor.loop.network.models.response.Size;
+import com.etiennelawlor.loop.network.models.response.Stats;
+import com.etiennelawlor.loop.network.models.response.Tag;
+import com.etiennelawlor.loop.network.models.response.User;
+import com.etiennelawlor.loop.network.models.response.Video;
 import com.etiennelawlor.loop.ui.LoadingImageView;
 import com.etiennelawlor.loop.utilities.LoopUtility;
 

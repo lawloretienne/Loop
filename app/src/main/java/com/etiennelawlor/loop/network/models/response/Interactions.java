@@ -1,4 +1,4 @@
-package com.etiennelawlor.loop.network.models;
+package com.etiennelawlor.loop.network.models.response;
 
 import android.os.Parcel;
 import android.os.Parcelable;

@@ -26,9 +26,9 @@ import com.etiennelawlor.loop.adapters.VideosAdapter;
 import com.etiennelawlor.loop.helper.PreferencesHelper;
 import com.etiennelawlor.loop.network.ServiceGenerator;
 import com.etiennelawlor.loop.network.VimeoService;
-import com.etiennelawlor.loop.network.models.AccessToken;
-import com.etiennelawlor.loop.network.models.Video;
-import com.etiennelawlor.loop.network.models.VideosCollection;
+import com.etiennelawlor.loop.models.AccessToken;
+import com.etiennelawlor.loop.network.models.response.Video;
+import com.etiennelawlor.loop.network.models.response.VideosCollection;
 import com.etiennelawlor.loop.otto.BusProvider;
 import com.etiennelawlor.loop.ui.LoadingImageView;
 import com.squareup.okhttp.ResponseBody;
@@ -296,8 +296,6 @@ public class VideosFragment extends BaseFragment implements VideosAdapter.OnItem
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        BusProvider.get().register(this);
-
         if (getArguments() != null) {
             mQuery = getArguments().getString("query");
         }
@@ -309,6 +307,7 @@ public class VideosFragment extends BaseFragment implements VideosAdapter.OnItem
                 token);
 
         setHasOptionsMenu(true);
+        BusProvider.get().register(this);
     }
 
     @Override
@@ -359,6 +358,14 @@ public class VideosFragment extends BaseFragment implements VideosAdapter.OnItem
         mVideosRecyclerView.removeOnScrollListener(mRecyclerViewOnScrollListener);
         mCurrentPage = 1;
         ButterKnife.unbind(this);
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+
+        // Unregister Otto Bus
+        BusProvider.get().unregister(this);
     }
     // endregion
 

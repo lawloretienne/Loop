@@ -4,7 +4,7 @@ import android.text.TextUtils;
 import android.util.Base64;
 
 import com.etiennelawlor.loop.LoopApplication;
-import com.etiennelawlor.loop.network.models.AccessToken;
+import com.etiennelawlor.loop.models.AccessToken;
 import com.squareup.okhttp.Cache;
 import com.squareup.okhttp.Interceptor;
 import com.squareup.okhttp.OkHttpClient;

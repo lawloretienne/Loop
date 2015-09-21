@@ -1,6 +1,6 @@
 package com.etiennelawlor.loop.network;
 
-import com.etiennelawlor.loop.network.models.VideoConfig;
+import com.etiennelawlor.loop.network.models.response.VideoConfig;
 
 import retrofit.Call;
 import retrofit.http.GET;

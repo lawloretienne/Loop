@@ -3,8 +3,8 @@ package com.etiennelawlor.loop.helper;
 import android.content.Context;
 import android.content.SharedPreferences;
 
-import com.etiennelawlor.loop.network.models.AccessToken;
-import com.etiennelawlor.loop.network.models.AuthorizedUser;
+import com.etiennelawlor.loop.models.AccessToken;
+import com.etiennelawlor.loop.network.models.response.AuthorizedUser;
 import com.google.gson.Gson;
 
 /**

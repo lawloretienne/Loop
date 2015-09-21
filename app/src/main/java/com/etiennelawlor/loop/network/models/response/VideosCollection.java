@@ -1,4 +1,4 @@
-package com.etiennelawlor.loop.network.models;
+package com.etiennelawlor.loop.network.models.response;
 
 import com.google.gson.annotations.SerializedName;
 

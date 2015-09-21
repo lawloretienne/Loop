@@ -13,9 +13,9 @@ import com.etiennelawlor.loop.R;
 import com.etiennelawlor.loop.helper.PreferencesHelper;
 import com.etiennelawlor.loop.network.ServiceGenerator;
 import com.etiennelawlor.loop.network.VimeoService;
-import com.etiennelawlor.loop.network.models.AccessToken;
-import com.etiennelawlor.loop.network.models.AuthorizedUser;
-import com.etiennelawlor.loop.network.models.OAuthResponse;
+import com.etiennelawlor.loop.models.AccessToken;
+import com.etiennelawlor.loop.network.models.response.AuthorizedUser;
+import com.etiennelawlor.loop.network.models.response.OAuthResponse;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;

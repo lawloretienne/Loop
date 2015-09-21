@@ -1,4 +1,4 @@
-package com.etiennelawlor.loop.network.models;
+package com.etiennelawlor.loop.network.models.response;
 
 import android.os.Parcel;
 import android.os.Parcelable;
@@ -9,7 +9,7 @@ import com.google.gson.annotations.SerializedName;
 /**
  * Created by etiennelawlor on 5/23/15.
  */
-public class Tag implements Parcelable {
+public class Tags implements Parcelable {
 
     // region Member Variables
     @SerializedName("uri")
@@ -87,11 +87,11 @@ public class Tag implements Parcelable {
     }
     // endregion
 
-    public static final Creator<Tag> CREATOR = new Creator<Tag>() {
+    public static final Creator<Tags> CREATOR = new Creator<Tags>() {
 
         @Override
-        public Tag createFromParcel(Parcel source) {
-            Tag tags = new Tag();
+        public Tags createFromParcel(Parcel source) {
+            Tags tags = new Tags();
 
             tags.setUri(source.readString());
             tags.setName(source.readString());
@@ -102,8 +102,8 @@ public class Tag implements Parcelable {
         }
 
         @Override
-        public Tag[] newArray(int size) {
-            return new Tag[size];
+        public Tags[] newArray(int size) {
+            return new Tags[size];
         }
     };
 }

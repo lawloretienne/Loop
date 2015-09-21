@@ -1,4 +1,4 @@
-package com.etiennelawlor.loop.network.models;
+package com.etiennelawlor.loop.network.models.response;
 
 import android.os.Parcel;
 import android.os.Parcelable;
@@ -6,12 +6,10 @@ import android.text.TextUtils;
 
 import com.google.gson.annotations.SerializedName;
 
-import java.util.List;
-
 /**
  * Created by etiennelawlor on 5/23/15.
  */
-public class AuthorizedUser implements Parcelable {
+public class User implements Parcelable {
 
     // region Member Variables
     @SerializedName("uri")
@@ -29,7 +27,7 @@ public class AuthorizedUser implements Parcelable {
     @SerializedName("account")
     private String account;
     @SerializedName("pictures")
-    private List<Picture> pictures;
+    private Pictures pictures;
     // endregion
 
     // region Getters
@@ -82,7 +80,7 @@ public class AuthorizedUser implements Parcelable {
             return account;
     }
 
-    public List<Picture> getPictures() {
+    public Pictures getPictures() {
         return pictures;
     }
     // endregion
@@ -116,7 +114,7 @@ public class AuthorizedUser implements Parcelable {
         this.account = account;
     }
 
-    public void setPictures(List<Picture> pictures) {
+    public void setPictures(Pictures pictures) {
         this.pictures = pictures;
     }
 
@@ -137,15 +135,15 @@ public class AuthorizedUser implements Parcelable {
         dest.writeString(getBio());
         dest.writeString(getCreatedTime());
         dest.writeString(getAccount());
-        dest.writeTypedList(getPictures());
+        dest.writeParcelable(getPictures(), flags);
     }
     // endregion
 
-    public static final Creator<AuthorizedUser> CREATOR = new Creator<AuthorizedUser>() {
+    public static final Parcelable.Creator<User> CREATOR = new Parcelable.Creator<User>() {
 
         @Override
-        public AuthorizedUser createFromParcel(Parcel source) {
-            AuthorizedUser user = new AuthorizedUser();
+        public User createFromParcel(Parcel source) {
+            User user = new User();
 
             user.setUri(source.readString());
             user.setName(source.readString());
@@ -154,14 +152,14 @@ public class AuthorizedUser implements Parcelable {
             user.setBio(source.readString());
             user.setCreatedTime(source.readString());
             user.setAccount(source.readString());
-            user.setPictures(source.createTypedArrayList(Picture.CREATOR));
+            user.setPictures((Pictures) source.readParcelable(Pictures.class.getClassLoader()));
 
             return user;
         }
 
         @Override
-        public AuthorizedUser[] newArray(int size) {
-            return new AuthorizedUser[size];
+        public User[] newArray(int size) {
+            return new User[size];
         }
     };
 }

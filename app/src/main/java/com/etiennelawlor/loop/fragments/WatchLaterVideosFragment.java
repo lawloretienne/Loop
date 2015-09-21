@@ -30,12 +30,14 @@ import com.etiennelawlor.loop.adapters.VideosAdapter;
 import com.etiennelawlor.loop.helper.PreferencesHelper;
 import com.etiennelawlor.loop.network.ServiceGenerator;
 import com.etiennelawlor.loop.network.VimeoService;
-import com.etiennelawlor.loop.network.models.AccessToken;
-import com.etiennelawlor.loop.network.models.Video;
-import com.etiennelawlor.loop.network.models.VideosCollection;
+import com.etiennelawlor.loop.models.AccessToken;
+import com.etiennelawlor.loop.network.models.response.Video;
+import com.etiennelawlor.loop.network.models.response.VideosCollection;
 import com.etiennelawlor.loop.otto.BusProvider;
+import com.etiennelawlor.loop.otto.events.WatchLaterEvent;
 import com.etiennelawlor.loop.ui.LoadingImageView;
 import com.squareup.okhttp.ResponseBody;
+import com.squareup.otto.Subscribe;
 
 import java.io.IOException;
 import java.net.SocketTimeoutException;
@@ -86,6 +88,7 @@ public class WatchLaterVideosFragment extends BaseFragment implements VideosAdap
     private String mQuery;
     private LinearLayoutManager mLayoutManager;
     private VimeoService mVimeoService;
+    private WatchLaterEvent mWatchLaterEvent;
     // endregion
 
     // region Listeners
@@ -302,8 +305,6 @@ public class WatchLaterVideosFragment extends BaseFragment implements VideosAdap
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        BusProvider.get().register(this);
-
         if (getArguments() != null) {
             mQuery = getArguments().getString("query");
         }
@@ -315,6 +316,7 @@ public class WatchLaterVideosFragment extends BaseFragment implements VideosAdap
                 token);
 
         setHasOptionsMenu(true);
+        BusProvider.get().register(this);
     }
 
     @Override
@@ -358,11 +360,29 @@ public class WatchLaterVideosFragment extends BaseFragment implements VideosAdap
     }
 
     @Override
+    public void onResume() {
+        super.onResume();
+
+        if(mWatchLaterEvent != null){
+            refreshAdapter();
+            mWatchLaterEvent = null;
+        }
+    }
+
+    @Override
     public void onDestroyView() {
         super.onDestroyView();
 
         mVideosRecyclerView.removeOnScrollListener(mRecyclerViewOnScrollListener);
         ButterKnife.unbind(this);
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+
+        // Unregister Otto Bus
+        BusProvider.get().unregister(this);
     }
     // endregion
 
@@ -416,6 +436,20 @@ public class WatchLaterVideosFragment extends BaseFragment implements VideosAdap
 //                startActivity(intent);
         }
 
+    }
+    // endregion
+
+    // region Otto Methods
+    @Subscribe
+    public void onWatchLaterEvent(WatchLaterEvent event) {
+        Timber.d("onWatchLaterEvent");
+
+        if (isResumed()) {
+            refreshAdapter();
+            mWatchLaterEvent = null;
+        } else {
+            mWatchLaterEvent = event;
+        }
     }
     // endregion
 
@@ -495,6 +529,22 @@ public class WatchLaterVideosFragment extends BaseFragment implements VideosAdap
             }
         });
         sortOrderBuilder.show();
+    }
+
+    private void refreshAdapter(){
+        mVideosAdapter.clear();
+
+        mLoadingImageView.setVisibility(View.VISIBLE);
+
+        mCurrentPage = 1;
+
+        Call findWatchLaterVideosCall = mVimeoService.findWatchLaterVideos(mQuery,
+                mSortByValue,
+                mSortOrderValue,
+                mCurrentPage,
+                PAGE_SIZE);
+        mCalls.add(findWatchLaterVideosCall);
+        findWatchLaterVideosCall.enqueue(mFindVideosFirstFetchCallback);
     }
     // endregion
 }
