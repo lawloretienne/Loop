@@ -16,6 +16,10 @@
         android:theme="@style/Theme.Loop"
         android:name=".LoopApplication">
 
+        <meta-data
+            android:name="io.fabric.ApiKey"
+            android:value="aa004967e6b696df6325fd2544cf384330005de1" />
+
         <!-- Activities -->
         <activity
             android:name=".activities.LauncherActivity"
@@ -57,6 +61,7 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".activities.MainActivity"/>
         </activity>
+
     </application>
 
 </manifest>

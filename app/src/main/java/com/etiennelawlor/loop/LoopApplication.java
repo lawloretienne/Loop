@@ -4,9 +4,11 @@ import android.app.Application;
 import android.content.Context;
 import android.util.Log;
 
+import com.crashlytics.android.Crashlytics;
 import com.squareup.leakcanary.LeakCanary;
 import com.squareup.leakcanary.RefWatcher;
 
+import io.fabric.sdk.android.Fabric;
 import java.io.File;
 
 import timber.log.Timber;
@@ -31,15 +33,7 @@ public class LoopApplication extends Application {
     public void onCreate() {
         super.onCreate();
 
-//        if (!Fabric.isInitialized()) {
-//            final Fabric fabric = new Fabric.Builder(this)
-//                    .kits(new Crashlytics())
-//                    .debuggable(true)
-//                    .build();
-//
-//            Fabric.with(fabric);
-//        }
-
+        initializeFabric();
 
         mRefWatcher = LeakCanary.install(this);
 
@@ -66,6 +60,17 @@ public class LoopApplication extends Application {
         LoopApplication application = (LoopApplication) context.getApplicationContext();
         return application.mRefWatcher;
     }
+
+    private void initializeFabric(){
+        if (!Fabric.isInitialized()) {
+            final Fabric fabric = new Fabric.Builder(this)
+                    .kits(new Crashlytics())
+                    .debuggable(true)
+                    .build();
+
+            Fabric.with(fabric);
+        }
+    }
     // endregion
 
     // region Inner Classes
@@ -87,6 +92,16 @@ public class LoopApplication extends Application {
 //                    FakeCrashLibrary.logWarning(t);
 //                }
 //            }
+
+            Crashlytics.log(priority, tag, message);
+
+            if (t != null) {
+                if (priority == Log.ERROR) {
+                    Crashlytics.logException(t);
+                } else if (priority == Log.INFO) {
+                    Crashlytics.log(message);
+                }
+            }
         }
     }
 
