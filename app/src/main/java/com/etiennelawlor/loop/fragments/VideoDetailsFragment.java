@@ -25,6 +25,8 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 
 import com.bumptech.glide.Glide;
+import com.crashlytics.android.answers.Answers;
+import com.crashlytics.android.answers.CustomEvent;
 import com.etiennelawlor.loop.R;
 import com.etiennelawlor.loop.activities.VideoDetailsActivity;
 import com.etiennelawlor.loop.activities.VideoPlayerActivity;
@@ -92,7 +94,6 @@ public class VideoDetailsFragment extends BaseFragment implements RelatedVideosA
     // region Listeners
     @OnClick(R.id.play_fab)
     public void onPlayFABClicked(final View v) {
-        Timber.d("onPlayFABClicked");
         if(mVideoId != -1L){
             Intent intent = new Intent(getActivity(), VideoPlayerActivity.class);
 
@@ -100,6 +101,9 @@ public class VideoDetailsFragment extends BaseFragment implements RelatedVideosA
             bundle.putLong("video_id", mVideoId);
             intent.putExtras(bundle);
             startActivity(intent);
+
+            // Crashlytics Test Crash
+            // throw new RuntimeException("This is a crash");
         }
     }
 
@@ -319,6 +323,14 @@ public class VideoDetailsFragment extends BaseFragment implements RelatedVideosA
                             case 204:
                                 // No Content
                                 BusProvider.get().post(new LikeEvent());
+
+                                Answers.getInstance().logCustom(new CustomEvent("ACTION_LIKE_VIDEO")
+                                                .putCustomAttribute("name", mVideo.getName())
+                                                .putCustomAttribute("duration", mVideo.getDuration())
+                                                .putCustomAttribute("video_id", mVideoId)
+
+                                );
+
                                 break;
                             case 400:
                                 // If the video is owned by the authenticated user
@@ -425,6 +437,13 @@ public class VideoDetailsFragment extends BaseFragment implements RelatedVideosA
                             case 204:
                                 // No Content
                                 BusProvider.get().post(new LikeEvent());
+
+                                Answers.getInstance().logCustom(new CustomEvent("ACTION_UNLIKE_VIDEO")
+                                                .putCustomAttribute("name", mVideo.getName())
+                                                .putCustomAttribute("duration", mVideo.getDuration())
+                                                .putCustomAttribute("video_id", mVideoId)
+
+                                );
                                 break;
                             case 403:
                                 // If the authenticated user is not allowed to like videos
@@ -866,6 +885,7 @@ public class VideoDetailsFragment extends BaseFragment implements RelatedVideosA
                     mCalls.add(likeVideoCall);
                     likeVideoCall.enqueue(mLikeVideoCallback);
                 }
+
                 return true;
             case R.id.watch_later:
                 if(mWatchLaterOn){
