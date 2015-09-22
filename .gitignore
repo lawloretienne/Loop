@@ -51,6 +51,9 @@ com_crashlytics_export_strings.xml
 # Fabric
 fabric.properties
 
+# xml files
+defaults.xml
+
 # [Maven] ========================
 target/
 pom.xml.tag

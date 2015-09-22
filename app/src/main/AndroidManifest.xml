@@ -18,7 +18,7 @@
 
         <meta-data
             android:name="io.fabric.ApiKey"
-            android:value="aa004967e6b696df6325fd2544cf384330005de1" />
+            android:value="@string/fabric_api_key" />
 
         <!-- Activities -->
         <activity
