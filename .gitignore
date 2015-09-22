@@ -64,6 +64,7 @@ release.properties
 
 
 # [Gradle-Android] ========================
+gradle.properties
 
 # Ignore Gradle GUI config
 gradle-app.setting

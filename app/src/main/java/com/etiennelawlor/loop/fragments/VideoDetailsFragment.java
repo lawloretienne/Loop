@@ -324,6 +324,9 @@ public class VideoDetailsFragment extends BaseFragment implements RelatedVideosA
                                 // No Content
                                 BusProvider.get().post(new LikeEvent());
 
+                                Timber.d("mLikeVideoCallback() : duration - " + mVideo.getDuration());
+                                Timber.d("mLikeVideoCallback() : mVideoId - " + mVideoId);
+
                                 Answers.getInstance().logCustom(new CustomEvent("ACTION_LIKE_VIDEO")
                                                 .putCustomAttribute("name", mVideo.getName())
                                                 .putCustomAttribute("duration", mVideo.getDuration())
