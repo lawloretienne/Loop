@@ -25,7 +25,8 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 
 import com.bumptech.glide.Glide;
-import com.etiennelawlor.loop.Constants;
+import com.etiennelawlor.loop.EventMapKeys;
+import com.etiennelawlor.loop.EventNames;
 import com.etiennelawlor.loop.R;
 import com.etiennelawlor.loop.activities.VideoDetailsActivity;
 import com.etiennelawlor.loop.activities.VideoPlayerActivity;
@@ -330,11 +331,11 @@ public class VideoDetailsFragment extends BaseFragment implements RelatedVideosA
                                 Timber.d("mLikeVideoCallback() : mVideoId - " + mVideoId);
 
                                 HashMap<String, Object> map = new HashMap<>();
-                                map.put(Constants.NAME, mVideo.getName());
-                                map.put(Constants.DURATION, mVideo.getDuration());
-                                map.put(Constants.VIDEO_ID, mVideoId);
+                                map.put(EventMapKeys.NAME, mVideo.getName());
+                                map.put(EventMapKeys.DURATION, mVideo.getDuration());
+                                map.put(EventMapKeys.VIDEO_ID, mVideoId);
 
-                                Event event = new Event(Constants.VIDEO_LIKED, map);
+                                Event event = new Event(EventNames.VIDEO_LIKED, map);
                                 EventLogger.logEvent(event);
 
                                 break;
@@ -445,11 +446,11 @@ public class VideoDetailsFragment extends BaseFragment implements RelatedVideosA
                                 BusProvider.get().post(new VideoLikedEvent());
 
                                 HashMap<String, Object> map = new HashMap<>();
-                                map.put(Constants.NAME, mVideo.getName());
-                                map.put(Constants.DURATION, mVideo.getDuration());
-                                map.put(Constants.VIDEO_ID, mVideoId);
+                                map.put(EventMapKeys.NAME, mVideo.getName());
+                                map.put(EventMapKeys.DURATION, mVideo.getDuration());
+                                map.put(EventMapKeys.VIDEO_ID, mVideoId);
 
-                                Event event = new Event(Constants.VIDEO_DISLIKED, map);
+                                Event event = new Event(EventNames.VIDEO_DISLIKED, map);
                                 EventLogger.logEvent(event);
 
                                 break;
