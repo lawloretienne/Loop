@@ -5,6 +5,7 @@ import android.content.Context;
 import android.util.Log;
 
 import com.crashlytics.android.Crashlytics;
+import com.flurry.android.FlurryAgent;
 import com.squareup.leakcanary.LeakCanary;
 import com.squareup.leakcanary.RefWatcher;
 
@@ -34,14 +35,9 @@ public class LoopApplication extends Application {
         super.onCreate();
 
         initializeFabric();
-
-        mRefWatcher = LeakCanary.install(this);
-
-        if (BuildConfig.DEBUG) {
-            Timber.plant(new Timber.DebugTree());
-        } else {
-            Timber.plant(new CrashReportingTree());
-        }
+        initializeLeakCanary();
+        initializeTimber();
+        initializeFlurry();
 
         sCurrentApplication = this;
 
@@ -70,6 +66,24 @@ public class LoopApplication extends Application {
 
             Fabric.with(fabric);
         }
+    }
+
+    private void initializeLeakCanary(){
+        mRefWatcher = LeakCanary.install(this);
+    }
+
+    private void initializeTimber(){
+        if (BuildConfig.DEBUG) {
+            Timber.plant(new Timber.DebugTree());
+        } else {
+            Timber.plant(new CrashReportingTree());
+        }
+    }
+
+    private void initializeFlurry(){
+        FlurryAgent.setLogEnabled(false);
+
+        FlurryAgent.init(this, getString(R.string.flurry_api_key));
     }
     // endregion
 

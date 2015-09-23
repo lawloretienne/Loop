@@ -27,10 +27,13 @@ import android.widget.ImageView;
 import com.bumptech.glide.Glide;
 import com.crashlytics.android.answers.Answers;
 import com.crashlytics.android.answers.CustomEvent;
+import com.etiennelawlor.loop.Constants;
 import com.etiennelawlor.loop.R;
 import com.etiennelawlor.loop.activities.VideoDetailsActivity;
 import com.etiennelawlor.loop.activities.VideoPlayerActivity;
 import com.etiennelawlor.loop.adapters.RelatedVideosAdapter;
+import com.etiennelawlor.loop.analytics.Event;
+import com.etiennelawlor.loop.analytics.EventLogger;
 import com.etiennelawlor.loop.helper.PreferencesHelper;
 import com.etiennelawlor.loop.network.ServiceGenerator;
 import com.etiennelawlor.loop.network.VimeoService;
@@ -50,7 +53,9 @@ import com.squareup.okhttp.ResponseBody;
 import java.io.IOException;
 import java.net.SocketTimeoutException;
 import java.net.UnknownHostException;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
@@ -327,12 +332,13 @@ public class VideoDetailsFragment extends BaseFragment implements RelatedVideosA
                                 Timber.d("mLikeVideoCallback() : duration - " + mVideo.getDuration());
                                 Timber.d("mLikeVideoCallback() : mVideoId - " + mVideoId);
 
-                                Answers.getInstance().logCustom(new CustomEvent("ACTION_LIKE_VIDEO")
-                                                .putCustomAttribute("name", mVideo.getName())
-                                                .putCustomAttribute("duration", mVideo.getDuration())
-                                                .putCustomAttribute("video_id", mVideoId)
+                                HashMap<String, Object> map = new HashMap<>();
+                                map.put(Constants.NAME, mVideo.getName());
+                                map.put(Constants.DURATION, mVideo.getDuration());
+                                map.put(Constants.VIDEO_ID, mVideoId);
 
-                                );
+                                Event event = new Event(Constants.VIDEO_LIKED, map);
+                                EventLogger.logEvent(event);
 
                                 break;
                             case 400:
@@ -441,12 +447,14 @@ public class VideoDetailsFragment extends BaseFragment implements RelatedVideosA
                                 // No Content
                                 BusProvider.get().post(new LikeEvent());
 
-                                Answers.getInstance().logCustom(new CustomEvent("ACTION_UNLIKE_VIDEO")
-                                                .putCustomAttribute("name", mVideo.getName())
-                                                .putCustomAttribute("duration", mVideo.getDuration())
-                                                .putCustomAttribute("video_id", mVideoId)
+                                HashMap<String, Object> map = new HashMap<>();
+                                map.put(Constants.NAME, mVideo.getName());
+                                map.put(Constants.DURATION, mVideo.getDuration());
+                                map.put(Constants.VIDEO_ID, mVideoId);
 
-                                );
+                                Event event = new Event(Constants.VIDEO_DISLIKED, map);
+                                EventLogger.logEvent(event);
+
                                 break;
                             case 403:
                                 // If the authenticated user is not allowed to like videos
@@ -921,7 +929,7 @@ public class VideoDetailsFragment extends BaseFragment implements RelatedVideosA
                 return true;
             case R.id.share:
                 if (mVideo != null) {
-//                    Event.fire(ProductShareEvent.start(mProduct.getId()));
+//                    EventLogger.fire(ProductShareEvent.start(mProduct.getId()));
 
                     Intent sendIntent = new Intent(Intent.ACTION_SEND);
                     sendIntent.setType("text/plain");
@@ -951,7 +959,7 @@ public class VideoDetailsFragment extends BaseFragment implements RelatedVideosA
             case VIDEO_SHARE_REQUEST_CODE:
                 if (resultCode == Activity.RESULT_OK) {
                     if (mVideo != null) {
-//                        Event.fire(ProductShareEvent.submit(mProduct.getId()));
+//                        EventLogger.fire(ProductShareEvent.submit(mProduct.getId()));
                     }
                 } else if (resultCode == Activity.RESULT_CANCELED) {
                 }
