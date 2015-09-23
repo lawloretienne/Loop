@@ -34,8 +34,7 @@ import com.etiennelawlor.loop.models.AccessToken;
 import com.etiennelawlor.loop.network.models.response.Video;
 import com.etiennelawlor.loop.network.models.response.VideosCollection;
 import com.etiennelawlor.loop.otto.BusProvider;
-import com.etiennelawlor.loop.otto.events.LikeEvent;
-import com.etiennelawlor.loop.otto.events.WatchLaterEvent;
+import com.etiennelawlor.loop.otto.events.VideoLikedEvent;
 import com.etiennelawlor.loop.ui.LoadingImageView;
 import com.squareup.okhttp.ResponseBody;
 import com.squareup.otto.Subscribe;
@@ -89,7 +88,7 @@ public class LikedVideosFragment extends BaseFragment implements VideosAdapter.O
     private String mQuery;
     private LinearLayoutManager mLayoutManager;
     private VimeoService mVimeoService;
-    private LikeEvent mLikeEvent;
+    private VideoLikedEvent mVideoLikedEvent;
     // endregion
 
     // region Listeners
@@ -364,9 +363,9 @@ public class LikedVideosFragment extends BaseFragment implements VideosAdapter.O
     public void onResume() {
         super.onResume();
 
-        if(mLikeEvent != null){
+        if(mVideoLikedEvent != null){
             refreshAdapter();
-            mLikeEvent = null;
+            mVideoLikedEvent = null;
         }
     }
 
@@ -443,14 +442,14 @@ public class LikedVideosFragment extends BaseFragment implements VideosAdapter.O
 
     // region Otto Methods
     @Subscribe
-    public void onLikeEvent(LikeEvent event) {
-        Timber.d("onLikeEvent");
+    public void onVideoLikedEvent(VideoLikedEvent event) {
+        Timber.d("onVideoLikedEvent");
 
         if (isResumed()) {
             refreshAdapter();
-            mLikeEvent = null;
+            mVideoLikedEvent = null;
         } else {
-            mLikeEvent = event;
+            mVideoLikedEvent = event;
         }
     }
     // endregion

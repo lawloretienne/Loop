@@ -25,8 +25,6 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 
 import com.bumptech.glide.Glide;
-import com.crashlytics.android.answers.Answers;
-import com.crashlytics.android.answers.CustomEvent;
 import com.etiennelawlor.loop.Constants;
 import com.etiennelawlor.loop.R;
 import com.etiennelawlor.loop.activities.VideoDetailsActivity;
@@ -46,7 +44,7 @@ import com.etiennelawlor.loop.network.models.response.Size;
 import com.etiennelawlor.loop.network.models.response.Video;
 import com.etiennelawlor.loop.network.models.response.VideosCollection;
 import com.etiennelawlor.loop.otto.BusProvider;
-import com.etiennelawlor.loop.otto.events.LikeEvent;
+import com.etiennelawlor.loop.otto.events.VideoLikedEvent;
 import com.etiennelawlor.loop.otto.events.WatchLaterEvent;
 import com.squareup.okhttp.ResponseBody;
 
@@ -55,7 +53,6 @@ import java.net.SocketTimeoutException;
 import java.net.UnknownHostException;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
@@ -327,7 +324,7 @@ public class VideoDetailsFragment extends BaseFragment implements RelatedVideosA
                         switch (code) {
                             case 204:
                                 // No Content
-                                BusProvider.get().post(new LikeEvent());
+                                BusProvider.get().post(new VideoLikedEvent());
 
                                 Timber.d("mLikeVideoCallback() : duration - " + mVideo.getDuration());
                                 Timber.d("mLikeVideoCallback() : mVideoId - " + mVideoId);
@@ -445,7 +442,7 @@ public class VideoDetailsFragment extends BaseFragment implements RelatedVideosA
                         switch (code) {
                             case 204:
                                 // No Content
-                                BusProvider.get().post(new LikeEvent());
+                                BusProvider.get().post(new VideoLikedEvent());
 
                                 HashMap<String, Object> map = new HashMap<>();
                                 map.put(Constants.NAME, mVideo.getName());
