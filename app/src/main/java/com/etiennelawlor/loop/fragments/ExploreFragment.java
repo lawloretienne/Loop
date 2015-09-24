@@ -1,14 +1,19 @@
 package com.etiennelawlor.loop.fragments;
 
+import android.app.SearchManager;
+import android.content.Context;
 import android.os.Bundle;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.SearchView;
 import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
@@ -237,6 +242,21 @@ public class ExploreFragment extends BaseFragment implements CategoriesAdapter.O
         BusProvider.get().unregister(this);
     }
     // endregion
+
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        super.onCreateOptionsMenu(menu, inflater);
+
+        inflater.inflate(R.menu.explore_menu, menu);
+
+        // Get the SearchView and set the searchable configuration
+        SearchManager searchManager = (SearchManager) getActivity().getSystemService(Context.SEARCH_SERVICE);
+        SearchView searchView = (SearchView) menu.findItem(R.id.action_search).getActionView();
+
+        // Assumes current activity is the searchable activity
+        searchView.setSearchableInfo(searchManager.getSearchableInfo(getActivity().getComponentName()));
+        searchView.setQueryRefinementEnabled(true);
+    }
 
 //    @Override
 //    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {

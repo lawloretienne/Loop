@@ -49,13 +49,12 @@ public class PlaceholderFragment extends BaseFragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        BusProvider.get().register(this);
-
         if(getArguments() != null){
 //            mQuery = getArguments().getString("query");
         }
 
         setHasOptionsMenu(true);
+        BusProvider.get().register(this);
     }
 
     @Override

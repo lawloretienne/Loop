@@ -373,7 +373,7 @@ public class VideosFragment extends BaseFragment implements VideosAdapter.OnItem
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         super.onCreateOptionsMenu(menu, inflater);
 
-        inflater.inflate(R.menu.main_menu, menu);
+        inflater.inflate(R.menu.videos_menu, menu);
     }
 
     @Override
