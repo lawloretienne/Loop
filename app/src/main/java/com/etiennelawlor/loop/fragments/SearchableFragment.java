@@ -360,6 +360,7 @@ public class SearchableFragment extends BaseFragment implements VideosAdapter.On
                     CustomSearchRecentSuggestionsProvider.AUTHORITY, CustomSearchRecentSuggestionsProvider.MODE);
             suggestions.saveRecentQuery(mQuery, null);
 
+
 //            performSearch(query);
         }
 
@@ -442,6 +443,11 @@ public class SearchableFragment extends BaseFragment implements VideosAdapter.On
         // Assumes current activity is the searchable activity
         searchView.setSearchableInfo(searchManager.getSearchableInfo(getActivity().getComponentName()));
         searchView.setQueryRefinementEnabled(true);
+
+//        searchView.onActionViewExpanded();
+        searchView.setIconified(false);
+        searchView.setQuery(mQuery, false);
+        searchView.clearFocus();
     }
 
     @Override

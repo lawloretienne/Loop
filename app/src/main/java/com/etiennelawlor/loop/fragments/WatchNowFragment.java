@@ -138,6 +138,7 @@ public class WatchNowFragment extends BaseFragment {
         // Assumes current activity is the searchable activity
         searchView.setSearchableInfo(searchManager.getSearchableInfo(getActivity().getComponentName()));
         searchView.setQueryRefinementEnabled(true);
+        searchView.setIconifiedByDefault(true);
     }
 
     @Override
