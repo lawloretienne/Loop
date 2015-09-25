@@ -128,7 +128,7 @@ public class LoginActivity extends AppCompatActivity {
                     Timber.e("failure() : cause.toString() -"+cause.toString());
                 }
 
-                if(TextUtils.isEmpty(message)){
+                if(!TextUtils.isEmpty(message)){
                     Timber.e("failure() : message - " + message);
                 }
 

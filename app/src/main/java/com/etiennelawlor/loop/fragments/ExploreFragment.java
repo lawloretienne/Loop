@@ -127,7 +127,7 @@ public class ExploreFragment extends BaseFragment implements CategoriesAdapter.O
                     Timber.e("failure() : cause.toString() -" + cause.toString());
                 }
 
-                if (TextUtils.isEmpty(message)) {
+                if (!TextUtils.isEmpty(message)) {
                     Timber.e("failure() : message - " + message);
                 }
 

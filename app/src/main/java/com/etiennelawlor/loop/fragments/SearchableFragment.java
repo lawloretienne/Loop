@@ -7,6 +7,7 @@ import android.content.Intent;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.provider.SearchRecentSuggestions;
+import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.ActivityOptionsCompat;
 import android.support.v4.graphics.drawable.DrawableCompat;
@@ -129,6 +130,15 @@ public class SearchableFragment extends BaseFragment implements VideosAdapter.On
         mCalls.add(findVideosCall);
         findVideosCall.enqueue(mFindVideosFirstFetchCallback);
     }
+
+    private View.OnClickListener mReloadOnClickListener = new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            mCurrentPage -= 1;
+            mVideosAdapter.addLoading();
+            loadMoreItems();
+        }
+    };
     // endregion
 
     // region Callbacks
@@ -194,11 +204,11 @@ public class SearchableFragment extends BaseFragment implements VideosAdapter.On
                 String message = t.getMessage();
 
                 if (cause != null) {
-                    Timber.e("failure() : cause.toString() -" + cause.toString());
+                    Timber.e("onFailure() : cause.toString() -" + cause.toString());
                 }
 
-                if (TextUtils.isEmpty(message)) {
-                    Timber.e("failure() : message - " + message);
+                if (!TextUtils.isEmpty(message)) {
+                    Timber.e("onFailure() : message - " + message);
                 }
 
                 t.printStackTrace();
@@ -236,7 +246,12 @@ public class SearchableFragment extends BaseFragment implements VideosAdapter.On
                         List<Video> videos = videosCollection.getVideos();
                         if (videos != null) {
                             mVideosAdapter.addAll(videos);
-                            mVideosAdapter.addLoading();
+
+                            if(videos.size() >= PAGE_SIZE){
+                                mVideosAdapter.addLoading();
+                            } else {
+                                mIsLastPage = true;
+                            }
                         }
                     }
                 } else {
@@ -265,28 +280,42 @@ public class SearchableFragment extends BaseFragment implements VideosAdapter.On
         @Override
         public void onFailure(Throwable t) {
             Timber.d("onFailure()");
-
+//            mIsLoading = false;
+            mVideosAdapter.removeLoading();
 
             if (t != null) {
                 Throwable cause = t.getCause();
                 String message = t.getMessage();
 
                 if (cause != null) {
-                    Timber.e("failure() : cause.toString() -" + cause.toString());
+                    Timber.e("onFailure() : cause.toString() -" + cause.toString());
                 }
 
-                if (TextUtils.isEmpty(message)) {
-                    Timber.e("failure() : message - " + message);
+                if (!TextUtils.isEmpty(message)) {
+                    Timber.e("onFailure() : message - " + message);
                 }
 
                 t.printStackTrace();
 
-                if (t instanceof SocketTimeoutException || t instanceof UnknownHostException) {
+                if (t instanceof SocketTimeoutException) {
+                    Snackbar.make(getActivity().findViewById(android.R.id.content),
+                            String.format("message - %s", message),
+                            Snackbar.LENGTH_INDEFINITE)
+                            .setAction("Reload", mReloadOnClickListener)
+//                                .setActionTextColor(Color.RED)
+                            .show();
+                } else if (t instanceof UnknownHostException) {
                     Timber.e("Timeout occurred");
-                    mIsLoading = false;
-                    mVideosAdapter.removeLoading();
 
-                    Timber.e("Display error message in place of load more");
+                    Snackbar.make(getActivity().findViewById(android.R.id.content),
+                            "Can't load data. Check your network connection.",
+                            Snackbar.LENGTH_INDEFINITE)
+                            .setAction("Reload", mReloadOnClickListener)
+//                                .setActionTextColor(Color.RED)
+                            .show();
+
+//                    mIsLoading = false;
+//                    mProgressBar.setVisibility(View.GONE);
 
 //                    mErrorTextView.setText("Can't load data.\nCheck your network connection.");
 //                    mErrorLinearLayout.setVisibility(View.VISIBLE);
@@ -294,7 +323,7 @@ public class SearchableFragment extends BaseFragment implements VideosAdapter.On
                     if(message.equals("Canceled")){
                         Timber.e("onFailure() : Canceled");
                     } else {
-                        mIsLoading = false;
+//                        mIsLoading = false;
                         mVideosAdapter.removeLoading();
                     }
                 }

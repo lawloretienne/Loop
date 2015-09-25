@@ -112,7 +112,7 @@ public class VideoPlayerFragment extends BaseFragment {
                     Timber.e("onFailure() : cause.toString() -" + cause.toString());
                 }
 
-                if (TextUtils.isEmpty(message)) {
+                if (!TextUtils.isEmpty(message)) {
                     Timber.e("onFailure() : message - " + message);
                 }
 

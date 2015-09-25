@@ -3,6 +3,7 @@ package com.etiennelawlor.loop.fragments;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.ActivityOptionsCompat;
 import android.support.v4.util.Pair;
@@ -121,6 +122,14 @@ public class VideosFragment extends BaseFragment implements VideosAdapter.OnItem
         findVideosCall.enqueue(mFindVideosFirstFetchCallback);
     }
 
+    private View.OnClickListener mReloadOnClickListener = new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            mCurrentPage -= 1;
+            mVideosAdapter.addLoading();
+            loadMoreItems();
+        }
+    };
     // endregion
 
     // region Callbacks
@@ -134,14 +143,14 @@ public class VideosFragment extends BaseFragment implements VideosAdapter.OnItem
 
             if (response != null) {
 
-                if(response.isSuccess()){
+                if (response.isSuccess()) {
                     VideosCollection videosCollection = response.body();
                     if (videosCollection != null) {
                         List<Video> videos = videosCollection.getVideos();
                         if (videos != null) {
                             mVideosAdapter.addAll(videos);
 
-                            if(videos.size() >= PAGE_SIZE){
+                            if (videos.size() >= PAGE_SIZE) {
                                 mVideosAdapter.addLoading();
                             } else {
                                 mIsLastPage = true;
@@ -172,7 +181,7 @@ public class VideosFragment extends BaseFragment implements VideosAdapter.OnItem
 
         @Override
         public void onFailure(Throwable t) {
-            Timber.d("onFailure() : mQuery - "+mQuery);
+            Timber.d("onFailure() : mQuery - " + mQuery);
 
             if (t != null) {
                 Throwable cause = t.getCause();
@@ -182,7 +191,7 @@ public class VideosFragment extends BaseFragment implements VideosAdapter.OnItem
                     Timber.e("onFailure() : cause.toString() -" + cause.toString());
                 }
 
-                if (TextUtils.isEmpty(message)) {
+                if (!TextUtils.isEmpty(message)) {
                     Timber.e("onFailure() : message - " + message);
                 }
 
@@ -197,8 +206,8 @@ public class VideosFragment extends BaseFragment implements VideosAdapter.OnItem
 
                     mErrorTextView.setText("Can't load data.\nCheck your network connection.");
                     mErrorLinearLayout.setVisibility(View.VISIBLE);
-                } else if(t instanceof IOException){
-                    if(message.equals("Canceled")){
+                } else if (t instanceof IOException) {
+                    if (message.equals("Canceled")) {
                         Timber.e("onFailure() : Canceled");
                     } else {
                         mIsLoading = false;
@@ -219,13 +228,18 @@ public class VideosFragment extends BaseFragment implements VideosAdapter.OnItem
 
             if (response != null) {
 
-                if(response.isSuccess()){
+                if (response.isSuccess()) {
                     VideosCollection videosCollection = response.body();
                     if (videosCollection != null) {
                         List<Video> videos = videosCollection.getVideos();
                         if (videos != null) {
                             mVideosAdapter.addAll(videos);
-                            mVideosAdapter.addLoading();
+
+                            if(videos.size() >= PAGE_SIZE){
+                                mVideosAdapter.addLoading();
+                            } else {
+                                mIsLastPage = true;
+                            }
                         }
                     }
                 } else {
@@ -237,9 +251,18 @@ public class VideosFragment extends BaseFragment implements VideosAdapter.OnItem
                         Timber.d("onResponse() : message - " + message);
                         Timber.d("onResponse() : code - " + code);
 
+                        Snackbar.make(getActivity().findViewById(android.R.id.content),
+                                String.format("message - %s : code - %d", message, code),
+                                Snackbar.LENGTH_INDEFINITE)
+//                                .setAction("Undo", mOnClickListener)
+//                                .setActionTextColor(Color.RED)
+                                .show();
+
                         switch (code) {
                             case 500:
                                 Timber.e("Display error message in place of load more");
+
+
 //                                mErrorTextView.setText("Can't load data.\nCheck your network connection.");
 //                                mErrorLinearLayout.setVisibility(View.VISIBLE);
                                 break;
@@ -254,7 +277,7 @@ public class VideosFragment extends BaseFragment implements VideosAdapter.OnItem
         @Override
         public void onFailure(Throwable t) {
             Timber.d("onFailure()");
-            mIsLoading = false;
+//            mIsLoading = false;
             mVideosAdapter.removeLoading();
 
             if (t != null) {
@@ -265,8 +288,32 @@ public class VideosFragment extends BaseFragment implements VideosAdapter.OnItem
                     Timber.e("onFailure() : cause.toString() -" + cause.toString());
                 }
 
-                if (TextUtils.isEmpty(message)) {
+                if (!TextUtils.isEmpty(message)) {
                     Timber.e("onFailure() : message - " + message);
+                }
+
+                if (t instanceof SocketTimeoutException) {
+                    Snackbar.make(getActivity().findViewById(android.R.id.content),
+                            String.format("message - %s", message),
+                            Snackbar.LENGTH_INDEFINITE)
+                            .setAction("Reload", mReloadOnClickListener)
+//                                .setActionTextColor(Color.RED)
+                            .show();
+                } else if (t instanceof UnknownHostException) {
+                    Timber.e("Timeout occurred");
+
+                    Snackbar.make(getActivity().findViewById(android.R.id.content),
+                            "Can't load data. Check your network connection.",
+                            Snackbar.LENGTH_INDEFINITE)
+                            .setAction("Reload", mReloadOnClickListener)
+//                                .setActionTextColor(Color.RED)
+                            .show();
+
+//                    mIsLoading = false;
+//                    mProgressBar.setVisibility(View.GONE);
+
+//                    mErrorTextView.setText("Can't load data.\nCheck your network connection.");
+//                    mErrorLinearLayout.setVisibility(View.VISIBLE);
                 }
 
                 t.printStackTrace();
@@ -345,8 +392,8 @@ public class VideosFragment extends BaseFragment implements VideosAdapter.OnItem
                 mSortOrderValue,
                 mCurrentPage,
                 PAGE_SIZE);
-        Timber.d("mCalls.add() : mQuery - "+mQuery);
-        Timber.d("onViewCreated() : mCalls.add() : mCurrentPage - "+mCurrentPage);
+        Timber.d("mCalls.add() : mQuery - " + mQuery);
+        Timber.d("onViewCreated() : mCalls.add() : mCurrentPage - " + mCurrentPage);
 
         mCalls.add(findVideosCall);
         findVideosCall.enqueue(mFindVideosFirstFetchCallback);
@@ -436,8 +483,8 @@ public class VideosFragment extends BaseFragment implements VideosAdapter.OnItem
                 mSortOrderValue,
                 mCurrentPage,
                 PAGE_SIZE);
-        Timber.d("mCalls.add() : mQuery - "+mQuery);
-        Timber.d("loadMoreItems() : mCalls.add() : mCurrentPage - "+mCurrentPage);
+        Timber.d("mCalls.add() : mQuery - " + mQuery);
+        Timber.d("loadMoreItems() : mCalls.add() : mCurrentPage - " + mCurrentPage);
 
         mCalls.add(findVideosCall);
         findVideosCall.enqueue(mFindVideosNextFetchCallback);

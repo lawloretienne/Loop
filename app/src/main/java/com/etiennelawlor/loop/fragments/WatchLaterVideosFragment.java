@@ -6,6 +6,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
+import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.ActivityOptionsCompat;
 import android.support.v4.graphics.drawable.DrawableCompat;
@@ -49,6 +50,7 @@ import java.util.List;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
+import butterknife.OnClick;
 import jp.wasabeef.recyclerview.animators.SlideInUpAnimator;
 import retrofit.Call;
 import retrofit.Callback;
@@ -113,6 +115,29 @@ public class WatchLaterVideosFragment extends BaseFragment implements VideosAdap
                     loadMoreItems();
                 }
             }
+        }
+    };
+
+    @OnClick(R.id.reload_btn)
+    public void onReloadButtonClicked() {
+        mErrorLinearLayout.setVisibility(View.GONE);
+        mLoadingImageView.setVisibility(View.VISIBLE);
+
+        Call findWatchLaterVideosCall = mVimeoService.findWatchLaterVideos(mQuery,
+                mSortByValue,
+                mSortOrderValue,
+                mCurrentPage,
+                PAGE_SIZE);
+        mCalls.add(findWatchLaterVideosCall);
+        findWatchLaterVideosCall.enqueue(mFindVideosFirstFetchCallback);
+    }
+
+    private View.OnClickListener mReloadOnClickListener = new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            mCurrentPage -= 1;
+            mVideosAdapter.addLoading();
+            loadMoreItems();
         }
     };
     // endregion
@@ -183,7 +208,7 @@ public class WatchLaterVideosFragment extends BaseFragment implements VideosAdap
                     Timber.e("failure() : cause.toString() -" + cause.toString());
                 }
 
-                if (TextUtils.isEmpty(message)) {
+                if (!TextUtils.isEmpty(message)) {
                     Timber.e("failure() : message - " + message);
                 }
 
@@ -222,7 +247,12 @@ public class WatchLaterVideosFragment extends BaseFragment implements VideosAdap
                         List<Video> videos = videosCollection.getVideos();
                         if (videos != null) {
                             mVideosAdapter.addAll(videos);
-                            mVideosAdapter.addLoading();
+
+                            if(videos.size() >= PAGE_SIZE){
+                                mVideosAdapter.addLoading();
+                            } else {
+                                mIsLastPage = true;
+                            }
                         }
                     }
                 } else {
@@ -253,6 +283,7 @@ public class WatchLaterVideosFragment extends BaseFragment implements VideosAdap
         public void onFailure(Throwable t) {
             Timber.d("onFailure()");
 
+            mVideosAdapter.removeLoading();
 
             if (t != null) {
                 Throwable cause = t.getCause();
@@ -262,18 +293,31 @@ public class WatchLaterVideosFragment extends BaseFragment implements VideosAdap
                     Timber.e("failure() : cause.toString() -" + cause.toString());
                 }
 
-                if (TextUtils.isEmpty(message)) {
+                if (!TextUtils.isEmpty(message)) {
                     Timber.e("failure() : message - " + message);
                 }
 
                 t.printStackTrace();
 
-                if (t instanceof SocketTimeoutException || t instanceof UnknownHostException) {
+                if (t instanceof SocketTimeoutException) {
+                    Snackbar.make(getActivity().findViewById(android.R.id.content),
+                            String.format("message - %s", message),
+                            Snackbar.LENGTH_INDEFINITE)
+                            .setAction("Reload", mReloadOnClickListener)
+//                                .setActionTextColor(Color.RED)
+                            .show();
+                } else if (t instanceof UnknownHostException) {
                     Timber.e("Timeout occurred");
-                    mIsLoading = false;
-                    mVideosAdapter.removeLoading();
 
-                    Timber.e("Display error message in place of load more");
+                    Snackbar.make(getActivity().findViewById(android.R.id.content),
+                            "Can't load data. Check your network connection.",
+                            Snackbar.LENGTH_INDEFINITE)
+                            .setAction("Reload", mReloadOnClickListener)
+//                                .setActionTextColor(Color.RED)
+                            .show();
+
+//                    mIsLoading = false;
+//                    mProgressBar.setVisibility(View.GONE);
 
 //                    mErrorTextView.setText("Can't load data.\nCheck your network connection.");
 //                    mErrorLinearLayout.setVisibility(View.VISIBLE);
@@ -281,7 +325,7 @@ public class WatchLaterVideosFragment extends BaseFragment implements VideosAdap
                     if(message.equals("Canceled")){
                         Timber.e("onFailure() : Canceled");
                     } else {
-                        mIsLoading = false;
+//                        mIsLoading = false;
                         mVideosAdapter.removeLoading();
                     }
                 }

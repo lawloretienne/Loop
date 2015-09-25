@@ -5,6 +5,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.ActivityOptionsCompat;
 import android.support.v4.content.ContextCompat;
@@ -97,7 +98,7 @@ public class VideoDetailsFragment extends BaseFragment implements RelatedVideosA
     // region Listeners
     @OnClick(R.id.play_fab)
     public void onPlayFABClicked(final View v) {
-        if(mVideoId != -1L){
+        if (mVideoId != -1L) {
             Intent intent = new Intent(getActivity(), VideoPlayerActivity.class);
 
             Bundle bundle = new Bundle();
@@ -130,6 +131,15 @@ public class VideoDetailsFragment extends BaseFragment implements RelatedVideosA
             }
         }
     };
+
+    private View.OnClickListener mReloadOnClickListener = new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            mCurrentPage -= 1;
+            mRelatedVideosAdapter.addLoading();
+            loadMoreItems();
+        }
+    };
     // endregion
 
     // region Callbacks
@@ -138,15 +148,15 @@ public class VideoDetailsFragment extends BaseFragment implements RelatedVideosA
         @Override
         public void onResponse(Response<VideosCollection> response) {
 
-            if(response != null){
-                if(response.isSuccess()){
+            if (response != null) {
+                if (response.isSuccess()) {
                     VideosCollection videosCollection = response.body();
                     if (videosCollection != null) {
                         List<Video> videos = videosCollection.getVideos();
                         if (videos != null) {
                             mRelatedVideosAdapter.addAll(videos);
 
-                            if(videos.size() >= PAGE_SIZE){
+                            if (videos.size() >= PAGE_SIZE) {
                                 mRelatedVideosAdapter.addLoading();
                             } else {
                                 mIsLastPage = true;
@@ -161,6 +171,14 @@ public class VideoDetailsFragment extends BaseFragment implements RelatedVideosA
                         int code = rawResponse.code();
                         Timber.d("onResponse() : message - " + message);
                         Timber.d("onResponse() : code - " + code);
+
+                        Snackbar.make(getActivity().findViewById(android.R.id.content),
+                                String.format("message - %s : code - %d", message, code),
+                                Snackbar.LENGTH_INDEFINITE)
+//                                .setAction("Undo", mOnClickListener)
+//                                .setActionTextColor(Color.RED)
+                                .show();
+
 
                         switch (code) {
                             case 500:
@@ -187,9 +205,17 @@ public class VideoDetailsFragment extends BaseFragment implements RelatedVideosA
                     Timber.e("failure() : cause.toString() -" + cause.toString());
                 }
 
-                if (TextUtils.isEmpty(message)) {
+                if (!TextUtils.isEmpty(message)) {
                     Timber.e("failure() : message - " + message);
                 }
+
+                Snackbar.make(getActivity().findViewById(android.R.id.content),
+                        String.format("message - %s", message),
+                        Snackbar.LENGTH_INDEFINITE)
+//                                .setAction("Undo", mOnClickListener)
+//                                .setActionTextColor(Color.RED)
+                        .show();
+
 
                 t.printStackTrace();
 
@@ -200,8 +226,8 @@ public class VideoDetailsFragment extends BaseFragment implements RelatedVideosA
 
 //                    mErrorTextView.setText("Can't load data.\nCheck your network connection.");
 //                    mErrorLinearLayout.setVisibility(View.VISIBLE);
-                } else if(t instanceof IOException){
-                    if(message.equals("Canceled")){
+                } else if (t instanceof IOException) {
+                    if (message.equals("Canceled")) {
                         Timber.e("onFailure() : Canceled");
                     } else {
 //                        mIsLoading = false;
@@ -219,17 +245,28 @@ public class VideoDetailsFragment extends BaseFragment implements RelatedVideosA
             mRelatedVideosAdapter.removeLoading();
             mIsLoading = false;
 
-            if(response != null){
-                if(response.isSuccess()){
+            Timber.d("onResponse()");
+            if (response != null) {
+                if (response.isSuccess()) {
+                    Timber.d("onResponse() : Success");
+
                     VideosCollection videosCollection = response.body();
                     if (videosCollection != null) {
                         List<Video> videos = videosCollection.getVideos();
                         if (videos != null) {
+                            Timber.d("onResponse() : Success : videos.size() - "+videos.size());
                             mRelatedVideosAdapter.addAll(videos);
-                            mRelatedVideosAdapter.addLoading();
+
+                            if(videos.size() >= PAGE_SIZE){
+                                mRelatedVideosAdapter.addLoading();
+                            } else {
+                                mIsLastPage = true;
+                            }
                         }
                     }
                 } else {
+                    Timber.d("onResponse() : Failure");
+
                     ResponseBody responseBody = response.errorBody();
                     com.squareup.okhttp.Response rawResponse = response.raw();
                     if (rawResponse != null) {
@@ -237,6 +274,14 @@ public class VideoDetailsFragment extends BaseFragment implements RelatedVideosA
                         int code = rawResponse.code();
                         Timber.d("onResponse() : message - " + message);
                         Timber.d("onResponse() : code - " + code);
+
+                        Snackbar.make(getActivity().findViewById(android.R.id.content),
+                                String.format("message - %s : code - %d", message, code),
+                                Snackbar.LENGTH_INDEFINITE)
+//                                .setAction("Undo", mOnClickListener)
+//                                .setActionTextColor(Color.RED)
+                                .show();
+
 
                         switch (code) {
                             case 500:
@@ -256,7 +301,7 @@ public class VideoDetailsFragment extends BaseFragment implements RelatedVideosA
             Timber.d("onFailure()");
 
             mRelatedVideosAdapter.removeLoading();
-            mIsLoading = false;
+//            mIsLoading = false;
 
             if (t != null) {
                 Throwable cause = t.getCause();
@@ -266,21 +311,37 @@ public class VideoDetailsFragment extends BaseFragment implements RelatedVideosA
                     Timber.e("failure() : cause.toString() -" + cause.toString());
                 }
 
-                if (TextUtils.isEmpty(message)) {
+                if (!TextUtils.isEmpty(message)) {
                     Timber.e("failure() : message - " + message);
                 }
 
+
                 t.printStackTrace();
 
-                if (t instanceof SocketTimeoutException || t instanceof UnknownHostException) {
+                if (t instanceof SocketTimeoutException) {
+                    Snackbar.make(getActivity().findViewById(android.R.id.content),
+                            String.format("message - %s", message),
+                            Snackbar.LENGTH_INDEFINITE)
+                            .setAction("Reload", mReloadOnClickListener)
+//                                .setActionTextColor(Color.RED)
+                            .show();
+                } else if (t instanceof UnknownHostException) {
                     Timber.e("Timeout occurred");
+
+                    Snackbar.make(getActivity().findViewById(android.R.id.content),
+                            "Can't load data. Check your network connection.",
+                            Snackbar.LENGTH_INDEFINITE)
+                            .setAction("Reload", mReloadOnClickListener)
+//                                .setActionTextColor(Color.RED)
+                            .show();
+
 //                    mIsLoading = false;
 //                    mProgressBar.setVisibility(View.GONE);
 
 //                    mErrorTextView.setText("Can't load data.\nCheck your network connection.");
 //                    mErrorLinearLayout.setVisibility(View.VISIBLE);
-                } else if(t instanceof IOException){
-                    if(message.equals("Canceled")){
+                } else if (t instanceof IOException) {
+                    if (message.equals("Canceled")) {
                         Timber.e("onFailure() : Canceled");
                     } else {
 //                        mIsLoading = false;
@@ -298,8 +359,8 @@ public class VideoDetailsFragment extends BaseFragment implements RelatedVideosA
 //            mRelatedVideosAdapter.removeLoading();
 //            mIsLoading = false;
 
-            if(response != null){
-                if(response.isSuccess()){
+            if (response != null) {
+                if (response.isSuccess()) {
                     Timber.d("callbackResponse");
 
 //                    Response callbackResponse = response.body();
@@ -384,7 +445,7 @@ public class VideoDetailsFragment extends BaseFragment implements RelatedVideosA
                     Timber.e("failure() : cause.toString() -" + cause.toString());
                 }
 
-                if (TextUtils.isEmpty(message)) {
+                if (!TextUtils.isEmpty(message)) {
                     Timber.e("failure() : message - " + message);
                 }
 
@@ -397,8 +458,8 @@ public class VideoDetailsFragment extends BaseFragment implements RelatedVideosA
 
 //                    mErrorTextView.setText("Can't load data.\nCheck your network connection.");
 //                    mErrorLinearLayout.setVisibility(View.VISIBLE);
-                } else if(t instanceof IOException){
-                    if(message.equals("Canceled")){
+                } else if (t instanceof IOException) {
+                    if (message.equals("Canceled")) {
                         Timber.e("onFailure() : Canceled");
                     } else {
 //                        mIsLoading = false;
@@ -416,8 +477,8 @@ public class VideoDetailsFragment extends BaseFragment implements RelatedVideosA
 //            mRelatedVideosAdapter.removeLoading();
 //            mIsLoading = false;
 
-            if(response != null){
-                if(response.isSuccess()){
+            if (response != null) {
+                if (response.isSuccess()) {
                     Timber.d("callbackResponse");
 
 //                    Response callbackResponse = response.body();
@@ -496,7 +557,7 @@ public class VideoDetailsFragment extends BaseFragment implements RelatedVideosA
                     Timber.e("failure() : cause.toString() -" + cause.toString());
                 }
 
-                if (TextUtils.isEmpty(message)) {
+                if (!TextUtils.isEmpty(message)) {
                     Timber.e("failure() : message - " + message);
                 }
 
@@ -509,8 +570,8 @@ public class VideoDetailsFragment extends BaseFragment implements RelatedVideosA
 
 //                    mErrorTextView.setText("Can't load data.\nCheck your network connection.");
 //                    mErrorLinearLayout.setVisibility(View.VISIBLE);
-                } else if(t instanceof IOException){
-                    if(message.equals("Canceled")){
+                } else if (t instanceof IOException) {
+                    if (message.equals("Canceled")) {
                         Timber.e("onFailure() : Canceled");
                     } else {
 //                        mIsLoading = false;
@@ -528,8 +589,8 @@ public class VideoDetailsFragment extends BaseFragment implements RelatedVideosA
 //            mRelatedVideosAdapter.removeLoading();
 //            mIsLoading = false;
 
-            if(response != null){
-                if(response.isSuccess()){
+            if (response != null) {
+                if (response.isSuccess()) {
                     Timber.d("callbackResponse");
 
 //                    Response callbackResponse = response.body();
@@ -602,7 +663,7 @@ public class VideoDetailsFragment extends BaseFragment implements RelatedVideosA
                     Timber.e("failure() : cause.toString() -" + cause.toString());
                 }
 
-                if (TextUtils.isEmpty(message)) {
+                if (!TextUtils.isEmpty(message)) {
                     Timber.e("failure() : message - " + message);
                 }
 
@@ -615,8 +676,8 @@ public class VideoDetailsFragment extends BaseFragment implements RelatedVideosA
 
 //                    mErrorTextView.setText("Can't load data.\nCheck your network connection.");
 //                    mErrorLinearLayout.setVisibility(View.VISIBLE);
-                } else if(t instanceof IOException){
-                    if(message.equals("Canceled")){
+                } else if (t instanceof IOException) {
+                    if (message.equals("Canceled")) {
                         Timber.e("onFailure() : Canceled");
                     } else {
 //                        mIsLoading = false;
@@ -634,8 +695,8 @@ public class VideoDetailsFragment extends BaseFragment implements RelatedVideosA
 //            mRelatedVideosAdapter.removeLoading();
 //            mIsLoading = false;
 
-            if(response != null){
-                if(response.isSuccess()){
+            if (response != null) {
+                if (response.isSuccess()) {
                     Timber.d("callbackResponse");
 
 //                    Response callbackResponse = response.body();
@@ -705,7 +766,7 @@ public class VideoDetailsFragment extends BaseFragment implements RelatedVideosA
                     Timber.e("failure() : cause.toString() -" + cause.toString());
                 }
 
-                if (TextUtils.isEmpty(message)) {
+                if (!TextUtils.isEmpty(message)) {
                     Timber.e("failure() : message - " + message);
                 }
 
@@ -718,8 +779,8 @@ public class VideoDetailsFragment extends BaseFragment implements RelatedVideosA
 
 //                    mErrorTextView.setText("Can't load data.\nCheck your network connection.");
 //                    mErrorLinearLayout.setVisibility(View.VISIBLE);
-                } else if(t instanceof IOException){
-                    if(message.equals("Canceled")){
+                } else if (t instanceof IOException) {
+                    if (message.equals("Canceled")) {
                         Timber.e("onFailure() : Canceled");
                     } else {
 //                        mIsLoading = false;
@@ -778,6 +839,7 @@ public class VideoDetailsFragment extends BaseFragment implements RelatedVideosA
 
         return rootView;
     }
+
     @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
@@ -834,24 +896,24 @@ public class VideoDetailsFragment extends BaseFragment implements RelatedVideosA
     public void onPrepareOptionsMenu(Menu menu) {
         super.onPrepareOptionsMenu(menu);
 
-        if(mVideo != null){
+        if (mVideo != null) {
             Metadata metadata = mVideo.getMetadata();
-            if(metadata != null){
+            if (metadata != null) {
                 Interactions interactions = metadata.getInteractions();
-                if(interactions != null){
+                if (interactions != null) {
                     Interaction likeInteraction = interactions.getLike();
                     Interaction watchLaterInteraction = interactions.getWatchlater();
 
-                    if(likeInteraction != null){
-                        if(likeInteraction.getAdded()){
+                    if (likeInteraction != null) {
+                        if (likeInteraction.getAdded()) {
                             mLikeOn = true;
                             MenuItem likeMenuItem = menu.findItem(R.id.like);
                             likeMenuItem.setIcon(ContextCompat.getDrawable(getActivity(), R.drawable.ic_menu_like_on));
                         }
                     }
 
-                    if(watchLaterInteraction != null){
-                        if(watchLaterInteraction.getAdded()){
+                    if (watchLaterInteraction != null) {
+                        if (watchLaterInteraction.getAdded()) {
                             mWatchLaterOn = true;
                             MenuItem watchLaterMenuItem = menu.findItem(R.id.watch_later);
                             watchLaterMenuItem.setIcon(ContextCompat.getDrawable(getActivity(), R.drawable.ic_menu_watch_later_on));
@@ -867,7 +929,7 @@ public class VideoDetailsFragment extends BaseFragment implements RelatedVideosA
     public boolean onOptionsItemSelected(final MenuItem item) {
         switch (item.getItemId()) {
             case R.id.like:
-                if(mLikeOn){
+                if (mLikeOn) {
                     AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(getActivity(), R.style.DialogTheme);
                     alertDialogBuilder.setMessage("Are you sure you want to unlike this video?");
                     alertDialogBuilder.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
@@ -875,7 +937,7 @@ public class VideoDetailsFragment extends BaseFragment implements RelatedVideosA
                             mLikeOn = false;
                             item.setIcon(ContextCompat.getDrawable(getActivity(), R.drawable.ic_menu_like_off));
 
-                            Call unlikeVideoCall  = mVimeoService.unlikeVideo(String.valueOf(mVideoId));
+                            Call unlikeVideoCall = mVimeoService.unlikeVideo(String.valueOf(mVideoId));
                             mCalls.add(unlikeVideoCall);
                             unlikeVideoCall.enqueue(mUnlikeVideoCallback);
                         }
@@ -890,14 +952,14 @@ public class VideoDetailsFragment extends BaseFragment implements RelatedVideosA
                     mLikeOn = true;
                     item.setIcon(ContextCompat.getDrawable(getActivity(), R.drawable.ic_menu_like_on));
 
-                    Call likeVideoCall  = mVimeoService.likeVideo(String.valueOf(mVideoId));
+                    Call likeVideoCall = mVimeoService.likeVideo(String.valueOf(mVideoId));
                     mCalls.add(likeVideoCall);
                     likeVideoCall.enqueue(mLikeVideoCallback);
                 }
 
                 return true;
             case R.id.watch_later:
-                if(mWatchLaterOn){
+                if (mWatchLaterOn) {
                     AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(getActivity(), R.style.DialogTheme);
                     alertDialogBuilder.setMessage("Are you sure you want to remove this video from your Watch Later collection?");
                     alertDialogBuilder.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
@@ -905,7 +967,7 @@ public class VideoDetailsFragment extends BaseFragment implements RelatedVideosA
                             mWatchLaterOn = false;
                             item.setIcon(ContextCompat.getDrawable(getActivity(), R.drawable.ic_menu_watch_later_off));
 
-                            Call removeVideoFromWatchLaterCall  = mVimeoService.removeVideoFromWatchLater(String.valueOf(mVideoId));
+                            Call removeVideoFromWatchLaterCall = mVimeoService.removeVideoFromWatchLater(String.valueOf(mVideoId));
                             mCalls.add(removeVideoFromWatchLaterCall);
                             removeVideoFromWatchLaterCall.enqueue(mRemoveVideoFromWatchLaterCallback);
                         }
@@ -920,7 +982,7 @@ public class VideoDetailsFragment extends BaseFragment implements RelatedVideosA
                     mWatchLaterOn = true;
                     item.setIcon(ContextCompat.getDrawable(getActivity(), R.drawable.ic_menu_watch_later_on));
 
-                    Call addVideoToWatchLaterCall  = mVimeoService.addVideoToWatchLater(String.valueOf(mVideoId));
+                    Call addVideoToWatchLaterCall = mVimeoService.addVideoToWatchLater(String.valueOf(mVideoId));
                     mCalls.add(addVideoToWatchLaterCall);
                     addVideoToWatchLaterCall.enqueue(mAddVideoToWatchLaterCallback);
                 }
@@ -992,7 +1054,7 @@ public class VideoDetailsFragment extends BaseFragment implements RelatedVideosA
 
 //            ActivityCompat.startActivity(getActivity(), intent, options.toBundle());
 
-        startActivity(intent);
+            startActivity(intent);
         }
     }
     // endregion
