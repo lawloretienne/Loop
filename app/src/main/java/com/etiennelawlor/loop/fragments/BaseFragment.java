@@ -1,5 +1,6 @@
 package com.etiennelawlor.loop.fragments;
 
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.NetworkOnMainThreadException;
 import android.support.annotation.Nullable;
@@ -59,12 +60,14 @@ public abstract class BaseFragment extends Fragment {
         for(Call call : mCalls){
             Timber.d("onDestroyView() : call.cancel() - "+call.toString());
 
-            try {
-                call.cancel();
-            } catch (NetworkOnMainThreadException e){
-                Timber.d("onDestroyView() : NetworkOnMainThreadException thrown");
-                e.printStackTrace();
-            }
+//            try {
+//                call.cancel();
+//            } catch (NetworkOnMainThreadException e){
+//                Timber.d("onDestroyView() : NetworkOnMainThreadException thrown");
+//                e.printStackTrace();
+//            }
+
+            new CancelTask().execute(call);
         }
 
         mCalls.clear();
@@ -76,5 +79,17 @@ public abstract class BaseFragment extends Fragment {
 
         RefWatcher refWatcher = LoopApplication.getRefWatcher(getActivity());
         refWatcher.watch(this);
+    }
+
+    private class CancelTask extends AsyncTask<Call, Void, Void >{
+        @Override
+        protected Void doInBackground(Call... params) {
+            Timber.d("doInBackground() : call.cancel()");
+
+            Call call = params[0];
+            call.cancel();
+
+            return null;
+        }
     }
 }

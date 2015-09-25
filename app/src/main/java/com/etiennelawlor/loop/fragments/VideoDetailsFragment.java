@@ -202,20 +202,21 @@ public class VideoDetailsFragment extends BaseFragment implements RelatedVideosA
                 String message = t.getMessage();
 
                 if (cause != null) {
-                    Timber.e("failure() : cause.toString() -" + cause.toString());
+                    Timber.e("onFailure() : cause.toString() -" + cause.toString());
                 }
 
                 if (!TextUtils.isEmpty(message)) {
-                    Timber.e("failure() : message - " + message);
+                    Timber.e("onFailure() : message - " + message);
                 }
 
-                Snackbar.make(getActivity().findViewById(android.R.id.content),
-                        String.format("message - %s", message),
-                        Snackbar.LENGTH_INDEFINITE)
+                if(isAdded() && isResumed()){
+                    Snackbar.make(getActivity().findViewById(android.R.id.content),
+                            String.format("message - %s", message),
+                            Snackbar.LENGTH_INDEFINITE)
 //                                .setAction("Undo", mOnClickListener)
 //                                .setActionTextColor(Color.RED)
-                        .show();
-
+                            .show();
+                }
 
                 t.printStackTrace();
 
@@ -254,7 +255,7 @@ public class VideoDetailsFragment extends BaseFragment implements RelatedVideosA
                     if (videosCollection != null) {
                         List<Video> videos = videosCollection.getVideos();
                         if (videos != null) {
-                            Timber.d("onResponse() : Success : videos.size() - "+videos.size());
+                            Timber.d("onResponse() : Success : videos.size() - " + videos.size());
                             mRelatedVideosAdapter.addAll(videos);
 
                             if(videos.size() >= PAGE_SIZE){
