@@ -4,5 +4,11 @@
     android:hint="@string/search_hint"
     android:voiceSearchMode="showVoiceSearchButton|launchRecognizer"
     android:searchSuggestAuthority="com.lawloretienne.loop.providers.CustomSearchRecentSuggestionsProvider"
-    android:searchSuggestSelection=" ? ">
+    android:searchSuggestSelection=" ? "
+    android:includeInGlobalSearch="true"
+    android:searchSettingsDescription="Videos"
+    android:queryAfterZeroResults="false"
+    android:searchSuggestThreshold="2"
+    android:voicePromptText="This is the voice prompt"
+    >
 </searchable>

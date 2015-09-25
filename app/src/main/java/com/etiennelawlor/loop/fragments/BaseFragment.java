@@ -9,6 +9,7 @@ import android.view.View;
 
 import com.etiennelawlor.loop.LoopApplication;
 import com.squareup.leakcanary.RefWatcher;
+import com.squareup.okhttp.OkHttpClient;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -57,7 +58,7 @@ public abstract class BaseFragment extends Fragment {
 
         Timber.d("onDestroyView() : mCalls.size() - " + mCalls.size());
 
-        for(Call call : mCalls){
+        for(final Call call : mCalls){
             Timber.d("onDestroyView() : call.cancel() - "+call.toString());
 
 //            try {
@@ -68,6 +69,14 @@ public abstract class BaseFragment extends Fragment {
 //            }
 
             new CancelTask().execute(call);
+
+//            OkHttpClient client = new OkHttpClient();
+//            client.getDispatcher().getExecutorService().execute(new Runnable() {
+//                @Override
+//                public void run() {
+//                    call.cancel();
+//                }
+//            });
         }
 
         mCalls.clear();
