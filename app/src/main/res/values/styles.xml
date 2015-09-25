@@ -20,4 +20,13 @@
         <!--<item name="colorControlHighlight">#3fff</item>-->
     <!--</style>-->
 
+    <style name="HashtagView">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:paddingLeft">16dp</item>
+        <item name="android:paddingRight">16dp</item>
+        <item name="android:paddingTop">16dp</item>
+        <item name="tagTextSize">16dp</item>
+    </style>
+
 </resources>

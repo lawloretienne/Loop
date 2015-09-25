@@ -4,7 +4,9 @@
     <color name="primary">@color/teal_500</color>
     <color name="primary_dark">@color/teal_600</color>
     <!--<color name="accent">@color/teal_800</color>-->
-    <color name="accent">#f04155</color>
+    <!--<color name="accent">#f04155</color>-->
+    <color name="accent">#F36777</color>
+
     <color name="control_normal">@color/teal_800</color>
     <color name="control_highlight">@color/teal_700</color>
     <color name="control_activated">@color/teal_500</color>
@@ -18,6 +20,8 @@
     <color name="debug_blue">#0000ff</color>
 
     <color name="vimeo_blue">#00c8ff</color>
+
+    <color name="white_alpha">#8FFF</color>
 
     <color name="transparent_black_five">#0D000000</color>
     <color name="transparent_black_ten">#1A000000</color>

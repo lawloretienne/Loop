@@ -990,9 +990,9 @@ public class VideoDetailsFragment extends BaseFragment implements RelatedVideosA
                     p1);
 
 
-            ActivityCompat.startActivity(getActivity(), intent, options.toBundle());
+//            ActivityCompat.startActivity(getActivity(), intent, options.toBundle());
 
-//        startActivity(intent);
+        startActivity(intent);
         }
     }
     // endregion

@@ -237,8 +237,9 @@ public class LikedVideosFragment extends BaseFragment implements VideosAdapter.O
 
                         switch (code) {
                             case 500:
-                                mErrorTextView.setText("Can't load data.\nCheck your network connection.");
-                                mErrorLinearLayout.setVisibility(View.VISIBLE);
+                                Timber.e("Display error message in place of load more");
+//                                mErrorTextView.setText("Can't load data.\nCheck your network connection.");
+//                                mErrorLinearLayout.setVisibility(View.VISIBLE);
                                 break;
                             default:
                                 break;
@@ -272,8 +273,10 @@ public class LikedVideosFragment extends BaseFragment implements VideosAdapter.O
                     mIsLoading = false;
                     mVideosAdapter.removeLoading();
 
-                    mErrorTextView.setText("Can't load data.\nCheck your network connection.");
-                    mErrorLinearLayout.setVisibility(View.VISIBLE);
+                    Timber.e("Display error message in place of load more");
+
+//                    mErrorTextView.setText("Can't load data.\nCheck your network connection.");
+//                    mErrorLinearLayout.setVisibility(View.VISIBLE);
                 } else if(t instanceof IOException){
                     if(message.equals("Canceled")){
                         Timber.e("onFailure() : Canceled");

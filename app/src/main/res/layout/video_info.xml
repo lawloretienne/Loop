@@ -22,7 +22,6 @@
             android:layout_height="wrap_content"
             android:layout_alignParentLeft="true"
             android:layout_marginRight="72dp"
-            android:layout_toLeftOf="@+id/action_iv"
             android:ellipsize="end"
             android:maxLines="2"
             android:textColor="@color/grey_700"
@@ -30,6 +29,8 @@
             android:transitionName="titleTransition"
             app:textFont="RobotoCondensed_Bold"
             tools:text="Product Title" />
+
+        <!--android:layout_toLeftOf="@+id/action_iv"-->
 
         <com.etiennelawlor.loop.ui.CustomFontTextView
             android:id="@+id/view_count_tv"
@@ -71,15 +72,17 @@
             app:textFont="Roboto_Regular"
             tools:text="Description" />
 
-        <com.etiennelawlor.loop.ui.CustomFontTextView
-            android:id="@+id/tags_tv"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
-            android:textColor="@color/grey_600"
-            android:textSize="14sp"
-            app:textFont="Roboto_MediumItalic"
-            tools:text="Tags" />
+        <com.greenfrvr.hashtagview.HashtagView
+            android:id="@+id/htv"
+            android:visibility="gone"
+            style="@style/HashtagView"
+            app:tagBackground="@drawable/item_bg"
+            app:tagForeground="@drawable/flat_button_light"
+            app:tagPaddingBottom="@dimen/padding_vertical"
+            app:tagPaddingLeft="@dimen/padding_horizontal"
+            app:tagPaddingRight="@dimen/padding_horizontal"
+            app:tagPaddingTop="@dimen/padding_vertical"
+            app:tagTextColor="@android:color/white"/>
 
     </LinearLayout>
 
@@ -113,13 +116,12 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:ellipsize="end"
-                android:maxLines="5"
+                android:maxLines="1"
                 android:textColor="@color/grey_700"
                 android:textSize="18sp"
                 android:transitionName="subtitleTransition"
                 app:textFont="Roboto_Medium"
                 tools:text="Video Subtitle" />
-
 
             <com.etiennelawlor.loop.ui.CustomFontTextView
                 android:id="@+id/upload_date_tv"

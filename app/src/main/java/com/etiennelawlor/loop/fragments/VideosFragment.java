@@ -239,8 +239,9 @@ public class VideosFragment extends BaseFragment implements VideosAdapter.OnItem
 
                         switch (code) {
                             case 500:
-                                mErrorTextView.setText("Can't load data.\nCheck your network connection.");
-                                mErrorLinearLayout.setVisibility(View.VISIBLE);
+                                Timber.e("Display error message in place of load more");
+//                                mErrorTextView.setText("Can't load data.\nCheck your network connection.");
+//                                mErrorLinearLayout.setVisibility(View.VISIBLE);
                                 break;
                             default:
                                 break;
@@ -416,9 +417,9 @@ public class VideosFragment extends BaseFragment implements VideosAdapter.OnItem
 //                        p1, p2, p3);
 
 
-            ActivityCompat.startActivity(getActivity(), intent, options.toBundle());
+//            ActivityCompat.startActivity(getActivity(), intent, options.toBundle());
 
-//            startActivity(intent);
+            startActivity(intent);
         }
 
     }

@@ -1,5 +1,9 @@
 package com.etiennelawlor.loop.adapters;
 
+import android.app.SearchManager;
+import android.content.Intent;
+import android.graphics.Typeface;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
@@ -10,7 +14,9 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
+import com.etiennelawlor.loop.LoopApplication;
 import com.etiennelawlor.loop.R;
+import com.etiennelawlor.loop.activities.SearchableActivity;
 import com.etiennelawlor.loop.network.models.response.Pictures;
 import com.etiennelawlor.loop.network.models.response.Size;
 import com.etiennelawlor.loop.network.models.response.Stats;
@@ -19,6 +25,8 @@ import com.etiennelawlor.loop.network.models.response.User;
 import com.etiennelawlor.loop.network.models.response.Video;
 import com.etiennelawlor.loop.ui.LoadingImageView;
 import com.etiennelawlor.loop.utilities.LoopUtility;
+import com.etiennelawlor.loop.utilities.Transformers;
+import com.greenfrvr.hashtagview.HashtagView;
 
 import java.text.NumberFormat;
 import java.text.ParseException;
@@ -51,6 +59,7 @@ public class RelatedVideosAdapter extends RecyclerView.Adapter<RecyclerView.View
     private List<Video> mVideos;
     private OnItemClickListener mOnItemClickListener;
     private boolean mIsLoadingFooterAdded = false;
+    private Typeface mBoldFont;
     // endregion
 
     // region Listeners
@@ -66,6 +75,8 @@ public class RelatedVideosAdapter extends RecyclerView.Adapter<RecyclerView.View
     public RelatedVideosAdapter(Video video) {
         mVideo = video;
         mVideos = new ArrayList<>();
+
+        mBoldFont = Typeface.createFromAsset(LoopApplication.get().getApplicationContext().getAssets(), "fonts/Roboto-Bold.ttf");
     }
     // endregion
 
@@ -235,7 +246,7 @@ public class RelatedVideosAdapter extends RecyclerView.Adapter<RecyclerView.View
             setUpDescription(holder.mDescriptionTextView, mVideo);
             setUpViewCount(holder.mViewCountTextView, mVideo);
             setUpUploadedDate2(holder.mUploadDateTextView, mVideo);
-            setUpTags(holder.mTagsTextView, mVideo);
+            setUpTags(holder.mHashtagView, mVideo);
         }
     }
 
@@ -404,6 +415,9 @@ public class RelatedVideosAdapter extends RecyclerView.Adapter<RecyclerView.View
             } else {
                 tv.setText(String.format("%s view", formattedViewCount));
             }
+            tv.setVisibility(View.VISIBLE);
+        } else {
+            tv.setVisibility(View.GONE);
         }
     }
 
@@ -432,26 +446,50 @@ public class RelatedVideosAdapter extends RecyclerView.Adapter<RecyclerView.View
         }
     }
 
-    private void setUpTags(TextView tv, Video video) {
+    private void setUpTags(final HashtagView htv, Video video) {
         List<Tag> tags = video.getTags();
         if (tags != null && tags.size() > 0) {
-            String tagString = "";
+            ArrayList<String> canonicalTags = new ArrayList<>();
+            Timber.d("setUpTags() : tags.size() - " + tags.size());
+
             for (Tag tag : tags) {
-                tagString += String.format("#%s ", tag.getCanonical());
+                String canonicalTag = tag.getCanonical();
+                if(canonicalTag.length() < 9) {
+                    Timber.d("setUpTags() : canonicalTag - " + canonicalTag);
+                    canonicalTags.add(canonicalTag);
+                }
             }
 
-            if (!TextUtils.isEmpty(tagString)) {
-                tv.setText(tagString);
-                tv.setVisibility(View.VISIBLE);
+            Timber.d("setUpTags() : canonicalTags.size() - " + canonicalTags.size());
+
+            if(canonicalTags.size() > 0){
+                htv.setData(canonicalTags, Transformers.HASH);
+                htv.setTypeface(mBoldFont);
+                htv.setOnTagClickListener(new HashtagView.TagsClickListener() {
+                    @Override
+                    public void onItemClicked(Object item) {
+                        String tag = (String) item;
+                        Timber.d("setUpTags() : tag - " + tag);
+
+                        Intent intent = new Intent(htv.getContext(), SearchableActivity.class);
+                        intent.setAction(Intent.ACTION_SEARCH);
+                        intent.putExtra(SearchManager.QUERY, tag);
+                        htv.getContext().startActivity(intent);
+
+                    }
+                });
+                htv.setVisibility(View.VISIBLE);
             } else {
-                tv.setVisibility(View.GONE);
+                htv.setVisibility(View.GONE);
             }
         }
     }
 
+
     private void setUpDescription(TextView tv, Video video) {
         String description = video.getDescription();
         if (!TextUtils.isEmpty(description)) {
+//            description = description.replaceAll("[\\t\\n\\r]+", "\n");
             tv.setText(description.trim());
             tv.setVisibility(View.VISIBLE);
         } else {
@@ -504,8 +542,8 @@ public class RelatedVideosAdapter extends RecyclerView.Adapter<RecyclerView.View
         TextView mViewCountTextView;
         @Bind(R.id.upload_date_tv)
         TextView mUploadDateTextView;
-        @Bind(R.id.tags_tv)
-        TextView mTagsTextView;
+        @Bind(R.id.htv)
+        HashtagView mHashtagView;
         @Bind(R.id.description_tv)
         TextView mDescriptionTextView;
         @Bind(R.id.additional_info_ll)

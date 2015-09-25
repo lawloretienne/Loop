@@ -61,6 +61,12 @@ public class LoopUtility {
             if (relativeTime.toString().equals("0 minutes ago")
                     || relativeTime.toString().equals("in 0 minutes")) {
                 relativeDate = "Just now";
+            } else if(relativeTime.toString().contains("hr. ")){
+                if(relativeTime.toString().equals("1 hr. ago")){
+                    relativeDate = "1 hour ago";
+                } else {
+                    relativeDate = relativeTime.toString().replace("hr. ", "hours ");
+                }
             } else {
                 relativeDate = relativeTime.toString();
             }
@@ -70,7 +76,9 @@ public class LoopUtility {
             relativeDate = "2 weeks ago";
         } else if (days >= 21 && days < 28) {
             relativeDate = "3 weeks ago";
-        } else if ((days / 30) >= 1 && (days / 30) < 12) {
+        } else if ((days / 30) == 1) {
+            relativeDate = "1 month ago";
+        } else if ((days / 30) >= 2 && (days / 30) < 12) {
             relativeDate = String.format("%d months ago", (days / 30));
         } else if ((days / 365) > 1) {
             relativeDate = String.format("%d years ago", (days / 365));

@@ -49,6 +49,7 @@ import java.util.List;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
+import butterknife.OnClick;
 import jp.wasabeef.recyclerview.animators.SlideInUpAnimator;
 import retrofit.Call;
 import retrofit.Callback;
@@ -114,6 +115,20 @@ public class SearchableFragment extends BaseFragment implements VideosAdapter.On
             }
         }
     };
+
+    @OnClick(R.id.reload_btn)
+    public void onReloadButtonClicked() {
+        mErrorLinearLayout.setVisibility(View.GONE);
+        mLoadingImageView.setVisibility(View.VISIBLE);
+
+        Call findVideosCall = mVimeoService.findVideos(mQuery,
+                mSortByValue,
+                mSortOrderValue,
+                mCurrentPage,
+                PAGE_SIZE);
+        mCalls.add(findVideosCall);
+        findVideosCall.enqueue(mFindVideosFirstFetchCallback);
+    }
     // endregion
 
     // region Callbacks
@@ -235,8 +250,9 @@ public class SearchableFragment extends BaseFragment implements VideosAdapter.On
 
                         switch (code) {
                             case 500:
-                                mErrorTextView.setText("Can't load data.\nCheck your network connection.");
-                                mErrorLinearLayout.setVisibility(View.VISIBLE);
+                                Timber.e("Display error message in place of load more");
+//                                mErrorTextView.setText("Can't load data.\nCheck your network connection.");
+//                                mErrorLinearLayout.setVisibility(View.VISIBLE);
                                 break;
                             default:
                                 break;
@@ -270,8 +286,10 @@ public class SearchableFragment extends BaseFragment implements VideosAdapter.On
                     mIsLoading = false;
                     mVideosAdapter.removeLoading();
 
-                    mErrorTextView.setText("Can't load data.\nCheck your network connection.");
-                    mErrorLinearLayout.setVisibility(View.VISIBLE);
+                    Timber.e("Display error message in place of load more");
+
+//                    mErrorTextView.setText("Can't load data.\nCheck your network connection.");
+//                    mErrorLinearLayout.setVisibility(View.VISIBLE);
                 } else if(t instanceof IOException){
                     if(message.equals("Canceled")){
                         Timber.e("onFailure() : Canceled");
@@ -435,9 +453,9 @@ public class SearchableFragment extends BaseFragment implements VideosAdapter.On
             ActivityOptionsCompat options = ActivityOptionsCompat.makeSceneTransitionAnimation(getActivity(),
                     p1);
 
-            ActivityCompat.startActivity(getActivity(), intent, options.toBundle());
+//            ActivityCompat.startActivity(getActivity(), intent, options.toBundle());
 
-//                startActivity(intent);
+                startActivity(intent);
         }
 
     }
