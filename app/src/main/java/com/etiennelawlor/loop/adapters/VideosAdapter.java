@@ -228,6 +228,7 @@ public class VideosAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
     }
 
     private void setUpVideoThumbnail(ImageView iv, Video video) {
+        boolean isPictureSet = false;
         Pictures pictures = video.getPictures();
         if (pictures != null) {
             List<Size> sizes = pictures.getSizes();
@@ -241,9 +242,14 @@ public class VideosAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
 //                                .placeholder(R.drawable.ic_placeholder)
 //                                .error(R.drawable.ic_error)
                                 .into(iv);
+                        isPictureSet = true;
                     }
                 }
             }
+        }
+
+        if(!isPictureSet){
+            iv.setImageBitmap(null);
         }
     }
 

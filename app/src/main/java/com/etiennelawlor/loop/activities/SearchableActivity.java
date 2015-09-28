@@ -7,6 +7,7 @@ import android.view.MenuItem;
 
 import com.etiennelawlor.loop.R;
 import com.etiennelawlor.loop.fragments.SearchableFragment;
+import com.google.android.gms.actions.SearchIntents;
 
 import butterknife.ButterKnife;
 
@@ -21,13 +22,14 @@ public class SearchableActivity extends AppCompatActivity {
         setContentView(R.layout.activity_searchable);
         ButterKnife.bind(this);
 
-        if (Intent.ACTION_SEARCH.equals(getIntent().getAction())) {
+
+        if (Intent.ACTION_SEARCH.equals(getIntent().getAction())
+                ||  SearchIntents.ACTION_SEARCH.equals(getIntent().getAction())) {
             getSupportFragmentManager()
                     .beginTransaction()
                     .add(android.R.id.content, SearchableFragment.newInstance(getIntent().getExtras()), "")
                     .commit();
         }
-
     }
 
     @Override

@@ -4,15 +4,9 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <item
-        android:id="@+id/sort_by"
-        android:title="Sort by"
+        android:id="@+id/sort"
+        android:title="Sort"
         app:showAsAction="never"
-        android:orderInCategory="1"/>
-
-    <item
-        android:id="@+id/sort_order"
-        android:title="Sort order"
-        app:showAsAction="never"
-        android:orderInCategory="2"/>
+        android:orderInCategory="0"/>
 
 </menu>

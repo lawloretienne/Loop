@@ -4,7 +4,6 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.Snackbar;
-import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.ActivityOptionsCompat;
 import android.support.v4.util.Pair;
 import android.support.v7.app.AlertDialog;
@@ -17,8 +16,10 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.LinearLayout;
+import android.widget.Spinner;
 import android.widget.TextView;
 
 import com.etiennelawlor.loop.R;
@@ -427,11 +428,8 @@ public class VideosFragment extends BaseFragment implements VideosAdapter.OnItem
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
-            case R.id.sort_by:
-                showSortByDialog();
-                break;
-            case R.id.sort_order:
-                showSortOrderDialog();
+            case R.id.sort:
+                showSortDialog();
                 break;
             default:
                 // do nothing
@@ -490,47 +488,33 @@ public class VideosFragment extends BaseFragment implements VideosAdapter.OnItem
         findVideosCall.enqueue(mFindVideosNextFetchCallback);
     }
 
-    private void showSortByDialog() {
-        AlertDialog.Builder sortByBuilder = new AlertDialog.Builder(getActivity(), R.style.DialogTheme);
-        sortByBuilder.setTitle("Sort by");
-        sortByBuilder.setSingleChoiceItems(R.array.videos_sort_by_keys, mSelectedSortByKey, new DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface dialog, int whichButton) {
-                mSelectedSortByKey = whichButton;
+    private void showSortDialog() {
+        LayoutInflater li = LayoutInflater.from(getActivity());
+        View promptsView = li.inflate(R.layout.sort_dialog, null);
+        final Spinner sortBySpinner = (Spinner) promptsView.findViewById(R.id.sort_by_s);
+        final Spinner sortOrderSpinner = (Spinner) promptsView.findViewById(R.id.sort_order_s);
+
+        String[] mSortByKeysArray = getResources().getStringArray(R.array.videos_sort_by_keys);
+        ArrayAdapter<String> sortByAdapter = new ArrayAdapter<String>(getActivity(), android.R.layout.simple_spinner_dropdown_item, mSortByKeysArray);
+        sortBySpinner.setAdapter(sortByAdapter);
+
+        String[] mSortOrderKeysArray = getResources().getStringArray(R.array.videos_sort_order_keys);
+        ArrayAdapter<String> sortOrderAdapter = new ArrayAdapter<String>(getActivity(), android.R.layout.simple_spinner_dropdown_item, mSortOrderKeysArray);
+        sortOrderSpinner.setAdapter(sortOrderAdapter);
+
+        sortBySpinner.setSelection(mSelectedSortByKey);
+        sortOrderSpinner.setSelection(mSelectedSortOrderKey);
+
+        AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(getActivity(), R.style.DialogTheme);
+        alertDialogBuilder.setView(promptsView);
+        alertDialogBuilder.setPositiveButton(getString(android.R.string.ok), new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                mSelectedSortByKey = sortBySpinner.getSelectedItemPosition();
+                mSelectedSortOrderKey = sortOrderSpinner.getSelectedItemPosition();
 
                 String[] sortByValues = getResources().getStringArray(R.array.videos_sort_by_values);
                 mSortByValue = sortByValues[mSelectedSortByKey];
-
-                mVideosAdapter.clear();
-
-                mLoadingImageView.setVisibility(View.VISIBLE);
-
-
-                mCurrentPage = 1;
-
-                Call findVideosCall = mVimeoService.findVideos(mQuery,
-                        mSortByValue,
-                        mSortOrderValue,
-                        mCurrentPage,
-                        PAGE_SIZE);
-                mCalls.add(findVideosCall);
-                findVideosCall.enqueue(mFindVideosFirstFetchCallback);
-
-                dialog.dismiss();
-            }
-        });
-        sortByBuilder.show();
-    }
-
-    public String getQuery() {
-        return mQuery;
-    }
-
-    private void showSortOrderDialog() {
-        AlertDialog.Builder sortOrderBuilder = new AlertDialog.Builder(getActivity(), R.style.DialogTheme);
-        sortOrderBuilder.setTitle("Sort order");
-        sortOrderBuilder.setSingleChoiceItems(R.array.videos_sort_order_keys, mSelectedSortOrderKey, new DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface dialog, int whichButton) {
-                mSelectedSortOrderKey = whichButton;
 
                 String[] sortOrderValues = getResources().getStringArray(R.array.videos_sort_order_values);
                 mSortOrderValue = sortOrderValues[mSelectedSortOrderKey];
@@ -550,10 +534,20 @@ public class VideosFragment extends BaseFragment implements VideosAdapter.OnItem
                 findVideosCall.enqueue(mFindVideosFirstFetchCallback);
 
                 dialog.dismiss();
-
             }
         });
-        sortOrderBuilder.show();
+        alertDialogBuilder.setNegativeButton(getString(android.R.string.cancel), new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.dismiss();
+            }
+        });
+
+        alertDialogBuilder.show();
+    }
+
+    public String getQuery() {
+        return mQuery;
     }
     // endregion
 }
