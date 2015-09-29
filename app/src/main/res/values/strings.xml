@@ -41,4 +41,7 @@
     <string name="share_this_video">Share this video with</string>
     <string name="search_hint">Search Loop</string>
 
+    <string name="content_desc">Content Description</string>
+
+
 </resources>

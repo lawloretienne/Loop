@@ -18,6 +18,7 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.FrameLayout;
 
 import com.etiennelawlor.loop.R;
 import com.etiennelawlor.loop.otto.BusProvider;
@@ -43,6 +44,12 @@ public class WatchNowFragment extends BaseFragment {
     TabLayout mTabLayout;
     @Bind(R.id.toolbar)
     Toolbar mToolbar;
+//    @Bind(R.id.search_view_widget)
+//    SearchViewWidget3 mSearchViewWidget;
+
+
+//    @Bind(R.id.cardView_fl)
+//    FrameLayout mCardViewFrameLayout;
     // endregion
 
     // region Callbacks
@@ -108,6 +115,82 @@ public class WatchNowFragment extends BaseFragment {
         mTabLayout.setupWithViewPager(mViewPager);
         mTabLayout.setTabMode(TabLayout.MODE_SCROLLABLE);
 
+//        mSearchViewWidget.setOnQueryTextListener(new SearchViewWidget3.OnQueryTextListener() {
+//
+//            @Override
+//            public boolean onQueryTextSubmit(String query) {
+//                Intent intent = new Intent(mSearchViewWidget.getContext(), SearchableActivity.class);
+//                intent.setAction(Intent.ACTION_SEARCH);
+//                intent.putExtra(SearchManager.QUERY, query);
+//                mSearchViewWidget.getContext().startActivity(intent);
+//
+//                return false;
+//            }
+//
+//            @Override
+//            public boolean onQueryTextChange(String newText) {
+//                return false;
+//            }
+//        });
+//
+//        mSearchViewWidget.setOnSearchViewListener(new SearchViewWidget3.SearchViewListener() {
+//
+//            @Override
+//            public void onSearchViewShown() {
+//            }
+//
+//            @Override
+//            public void onSearchViewClosed() {
+//            }
+//        });
+//
+//        List<SearchViewItem> mSuggestionsList = new ArrayList<>();
+//        mSuggestionsList.add(new SearchViewItem(R.drawable.ic_search_black_24dp, "Wi-Fi"));
+//        mSuggestionsList.add(new SearchViewItem(R.drawable.ic_search_black_24dp, "Bluetooth"));
+//        mSuggestionsList.add(new SearchViewItem(R.drawable.ic_search_black_24dp, "GPS"));
+//        mSuggestionsList.add(new SearchViewItem(R.drawable.ic_search_black_24dp, "Ad-Hoc"));
+//        mSuggestionsList.add(new SearchViewItem(R.drawable.ic_search_black_24dp, "Google"));
+//        mSuggestionsList.add(new SearchViewItem(R.drawable.ic_search_black_24dp, "Android"));
+//        mSuggestionsList.add(new SearchViewItem(R.drawable.ic_search_black_24dp, "Piconet"));
+//        mSuggestionsList.add(new SearchViewItem(R.drawable.ic_search_black_24dp, "Scatternet"));
+//
+//        List<SearchViewItem> mResultsList = new ArrayList<>();
+//        // choose true for Light Theme, false for Dark Theme.
+//        SearchViewAdapter mSearchViewAdapter = new SearchViewAdapter(getActivity(), mResultsList, mSuggestionsList, true);
+//        mSearchViewAdapter.setOnItemClickListener(new SearchViewAdapter.OnItemClickListener() {
+//            @Override
+//            public void onItemClick(View view, int position) {
+//                TextView mText = (TextView) view.findViewById(R.id.textView_result);
+//                CharSequence text = "Hello toast!";
+////                int duration = Toast.LENGTH_SHORT;
+////                Toast toast = Toast.makeText(getApplicationContext(), text, duration);
+////                toast.show();
+//
+//            }
+//        });
+//        mSearchViewWidget.setAdapter(mSearchViewAdapter);
+//
+//        mSearchViewWidget.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                Timber.d("onClick()");
+//            }
+//        });
+//
+//        mSearchViewWidget.setOnTouchListener(new View.OnTouchListener() {
+//            @Override
+//            public boolean onTouch(View v, MotionEvent event) {
+//                Timber.d("onTouch()");
+//                return false;
+//            }
+//        });
+
+//        mCardViewFrameLayout.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//
+//            }
+//        });
     }
 
     @Override
@@ -145,6 +228,21 @@ public class WatchNowFragment extends BaseFragment {
     public boolean onOptionsItemSelected(MenuItem item) {
         return super.onOptionsItemSelected(item);
     }
+
+//    @Override
+//    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+//        if (requestCode == SearchViewWidget2.REQUEST_VOICE && resultCode == Activity.RESULT_OK) {
+//            ArrayList<String> matches = data.getStringArrayListExtra(RecognizerIntent.EXTRA_RESULTS);
+//            if (matches != null && matches.size() > 0) {
+//                String searchWrd = matches.get(0);
+//                if (!TextUtils.isEmpty(searchWrd)) {
+////                    mSearchViewWidget.setQuery(searchWrd, false);
+//                }
+//            }
+//            return;
+//        }
+//        super.onActivityResult(requestCode, resultCode, data);
+//    }
 
     // region Helper Methods
     private void setupViewPager(ViewPager viewPager) {

@@ -43,6 +43,7 @@ import com.etiennelawlor.loop.network.models.response.VideosCollection;
 import com.etiennelawlor.loop.otto.BusProvider;
 import com.etiennelawlor.loop.otto.events.VideoLikedEvent;
 import com.etiennelawlor.loop.ui.LoadingImageView;
+import com.etiennelawlor.loop.ui.SearchViewWidget;
 import com.squareup.okhttp.ResponseBody;
 import com.squareup.otto.Subscribe;
 
@@ -84,6 +85,8 @@ public class LikedVideosFragment extends BaseFragment implements VideosAdapter.O
     TextView mErrorTextView;
     @Bind(R.id.toolbar)
     Toolbar mToolbar;
+//    @Bind(R.id.search_view_widget)
+//    SearchViewWidget mSearchViewWidget;
 
     private boolean mIsLastPage = false;
     private int mCurrentPage = 1;
@@ -445,13 +448,16 @@ public class LikedVideosFragment extends BaseFragment implements VideosAdapter.O
 
         inflater.inflate(R.menu.main_menu, menu);
 
-        // Get the SearchView and set the searchable configuration
-        SearchManager searchManager = (SearchManager) getActivity().getSystemService(Context.SEARCH_SERVICE);
-        SearchView searchView = (SearchView) menu.findItem(R.id.action_search).getActionView();
+        MenuItem item = menu.findItem(R.id.action_search);
+//        mSearchViewWidget.setMenuItem(item);
 
-        // Assumes current activity is the searchable activity
-        searchView.setSearchableInfo(searchManager.getSearchableInfo(getActivity().getComponentName()));
-        searchView.setQueryRefinementEnabled(true);
+//        // Get the SearchView and set the searchable configuration
+//        SearchManager searchManager = (SearchManager) getActivity().getSystemService(Context.SEARCH_SERVICE);
+//        SearchView searchView = (SearchView) menu.findItem(R.id.action_search).getActionView();
+//
+//        // Assumes current activity is the searchable activity
+//        searchView.setSearchableInfo(searchManager.getSearchableInfo(getActivity().getComponentName()));
+//        searchView.setQueryRefinementEnabled(true);
     }
 
     @Override
@@ -466,6 +472,16 @@ public class LikedVideosFragment extends BaseFragment implements VideosAdapter.O
         }
         return super.onOptionsItemSelected(item);
     }
+
+//    @Override
+//    public void onBackPressed() {
+//        if (mSearchViewWidget.isSearchOpen()) {
+//            mSearchViewWidget.closeSearch();
+//        } else {
+//            getActivity().onBackPressed();
+////            super.onBackPressed();
+//        }
+//    }
 
     // region VideosAdapter.OnItemClickListener Methods
     @Override

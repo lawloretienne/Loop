@@ -1,14 +1,12 @@
 package com.etiennelawlor.loop.fragments;
 
 import android.app.SearchManager;
-import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.provider.SearchRecentSuggestions;
 import android.support.design.widget.Snackbar;
-import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.ActivityOptionsCompat;
 import android.support.v4.graphics.drawable.DrawableCompat;
 import android.support.v4.util.Pair;
@@ -17,7 +15,6 @@ import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.support.v7.widget.SearchView;
 import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
@@ -83,6 +80,8 @@ public class SearchableFragment extends BaseFragment implements VideosAdapter.On
     TextView mErrorTextView;
     @Bind(R.id.toolbar)
     Toolbar mToolbar;
+//    @Bind(R.id.search_view_widget)
+//    SearchViewWidget2 mSearchViewWidget;
 
     private boolean mIsLastPage = false;
     private int mCurrentPage = 1;
@@ -119,6 +118,15 @@ public class SearchableFragment extends BaseFragment implements VideosAdapter.On
         }
     };
 
+    private View.OnClickListener mReloadOnClickListener = new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            mCurrentPage -= 1;
+            mVideosAdapter.addLoading();
+            loadMoreItems();
+        }
+    };
+
     @OnClick(R.id.reload_btn)
     public void onReloadButtonClicked() {
         mErrorLinearLayout.setVisibility(View.GONE);
@@ -133,14 +141,11 @@ public class SearchableFragment extends BaseFragment implements VideosAdapter.On
         findVideosCall.enqueue(mFindVideosFirstFetchCallback);
     }
 
-    private View.OnClickListener mReloadOnClickListener = new View.OnClickListener() {
-        @Override
-        public void onClick(View v) {
-            mCurrentPage -= 1;
-            mVideosAdapter.addLoading();
-            loadMoreItems();
-        }
-    };
+    @OnClick(R.id.fab)
+    @SuppressWarnings("UnusedDeclaration")
+    public void onSortFABClicked() {
+        showSortDialog();
+    }
     // endregion
 
     // region Callbacks
@@ -362,7 +367,6 @@ public class SearchableFragment extends BaseFragment implements VideosAdapter.On
                     CustomSearchRecentSuggestionsProvider.AUTHORITY, CustomSearchRecentSuggestionsProvider.MODE);
             suggestions.saveRecentQuery(mQuery, null);
 
-
 //            performSearch(query);
         }
 
@@ -394,6 +398,63 @@ public class SearchableFragment extends BaseFragment implements VideosAdapter.On
         final ActionBar ab = ((AppCompatActivity) getActivity()).getSupportActionBar();
         ab.setDisplayHomeAsUpEnabled(true);
         ab.setTitle("");
+
+//        mSearchViewWidget.setQuery(mQuery, false);
+//
+//        mSearchViewWidget.setOnQueryTextListener(new SearchViewWidget2.OnQueryTextListener() {
+//
+//            @Override
+//            public boolean onQueryTextSubmit(String query) {
+//                Intent intent = new Intent(mSearchViewWidget.getContext(), SearchableActivity.class);
+//                intent.setAction(Intent.ACTION_SEARCH);
+//                intent.putExtra(SearchManager.QUERY, query);
+//                mSearchViewWidget.getContext().startActivity(intent);
+//
+//                return false;
+//            }
+//
+//            @Override
+//            public boolean onQueryTextChange(String newText) {
+//                return false;
+//            }
+//        });
+//
+//        mSearchViewWidget.setOnSearchViewListener(new SearchViewWidget2.SearchViewListener() {
+//
+//            @Override
+//            public void onSearchViewShown() {
+//            }
+//
+//            @Override
+//            public void onSearchViewClosed() {
+//            }
+//        });
+//
+//        List<SearchViewItem> mSuggestionsList = new ArrayList<>();
+//        mSuggestionsList.add(new SearchViewItem(R.drawable.ic_search_black_24dp, "Wi-Fi"));
+//        mSuggestionsList.add(new SearchViewItem(R.drawable.ic_search_black_24dp, "Bluetooth"));
+//        mSuggestionsList.add(new SearchViewItem(R.drawable.ic_search_black_24dp, "GPS"));
+//        mSuggestionsList.add(new SearchViewItem(R.drawable.ic_search_black_24dp, "Ad-Hoc"));
+//        mSuggestionsList.add(new SearchViewItem(R.drawable.ic_search_black_24dp, "Google"));
+//        mSuggestionsList.add(new SearchViewItem(R.drawable.ic_search_black_24dp, "Android"));
+//        mSuggestionsList.add(new SearchViewItem(R.drawable.ic_search_black_24dp, "Piconet"));
+//        mSuggestionsList.add(new SearchViewItem(R.drawable.ic_search_black_24dp, "Scatternet"));
+//
+//        List<SearchViewItem> mResultsList = new ArrayList<>();
+//        // choose true for Light Theme, false for Dark Theme.
+//        SearchViewAdapter mSearchViewAdapter = new SearchViewAdapter(getActivity(), mResultsList, mSuggestionsList, true);
+//        mSearchViewAdapter.setOnItemClickListener(new SearchViewAdapter.OnItemClickListener() {
+//            @Override
+//            public void onItemClick(View view, int position) {
+//                TextView mText = (TextView) view.findViewById(R.id.textView_result);
+//                CharSequence text = "Hello toast!";
+////                int duration = Toast.LENGTH_SHORT;
+////                Toast toast = Toast.makeText(getApplicationContext(), text, duration);
+////                toast.show();
+//
+//            }
+//        });
+//        mSearchViewWidget.setAdapter(mSearchViewAdapter);
 
         mLayoutManager = new LinearLayoutManager(getActivity());
         mVideosRecyclerView.setLayoutManager(mLayoutManager);
@@ -436,28 +497,25 @@ public class SearchableFragment extends BaseFragment implements VideosAdapter.On
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         super.onCreateOptionsMenu(menu, inflater);
 
-        inflater.inflate(R.menu.main_menu, menu);
+//        inflater.inflate(R.menu.searchable_menu, menu);
 
         // Get the SearchView and set the searchable configuration
-        SearchManager searchManager = (SearchManager) getActivity().getSystemService(Context.SEARCH_SERVICE);
-        SearchView searchView = (SearchView) menu.findItem(R.id.action_search).getActionView();
+//        SearchManager searchManager = (SearchManager) getActivity().getSystemService(Context.SEARCH_SERVICE);
+//        SearchView searchView = (SearchView) menu.findItem(R.id.action_search).getActionView();
 
         // Assumes current activity is the searchable activity
-        searchView.setSearchableInfo(searchManager.getSearchableInfo(getActivity().getComponentName()));
-        searchView.setQueryRefinementEnabled(true);
+//        searchView.setSearchableInfo(searchManager.getSearchableInfo(getActivity().getComponentName()));
+//        searchView.setQueryRefinementEnabled(true);
 
 //        searchView.onActionViewExpanded();
-        searchView.setIconified(false);
-        searchView.setQuery(mQuery, false);
-        searchView.clearFocus();
+//        searchView.setIconified(false);
+//        searchView.setQuery(mQuery, false);
+//        searchView.clearFocus();
     }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
-            case R.id.sort:
-                showSortDialog();
-                break;
             default:
                 // do nothing
                 break;

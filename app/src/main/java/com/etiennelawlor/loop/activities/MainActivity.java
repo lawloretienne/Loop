@@ -3,6 +3,7 @@ package com.etiennelawlor.loop.activities;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.NavigationView;
+import android.support.v4.app.Fragment;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.AppCompatActivity;
@@ -175,6 +176,14 @@ public class MainActivity extends AppCompatActivity {
         mTitle = title;
         if (getSupportActionBar() != null) {
             getSupportActionBar().setTitle(mTitle);
+        }
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        Fragment fragment = getSupportFragmentManager().findFragmentById(R.id.content_fl);
+        if (fragment != null) {
+            fragment.onActivityResult(requestCode, resultCode, data);
         }
     }
 
