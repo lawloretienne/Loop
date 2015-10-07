@@ -29,6 +29,7 @@ import android.widget.Spinner;
 import android.widget.TextView;
 
 import com.etiennelawlor.loop.R;
+import com.etiennelawlor.loop.activities.SearchableActivity;
 import com.etiennelawlor.loop.activities.VideoDetailsActivity;
 import com.etiennelawlor.loop.adapters.VideosAdapter;
 import com.etiennelawlor.loop.helper.PreferencesHelper;
@@ -38,10 +39,13 @@ import com.etiennelawlor.loop.network.VimeoService;
 import com.etiennelawlor.loop.network.models.response.Video;
 import com.etiennelawlor.loop.network.models.response.VideosCollection;
 import com.etiennelawlor.loop.otto.BusProvider;
+import com.etiennelawlor.loop.otto.events.FilterClickedEvent;
+import com.etiennelawlor.loop.otto.events.SearchPerformedEvent;
 import com.etiennelawlor.loop.providers.CustomSearchRecentSuggestionsProvider;
 import com.etiennelawlor.loop.ui.LoadingImageView;
 import com.etiennelawlor.loop.ui.MaterialSearchView;
 import com.squareup.okhttp.ResponseBody;
+import com.squareup.otto.Subscribe;
 
 import java.io.IOException;
 import java.net.SocketTimeoutException;
@@ -89,7 +93,7 @@ public class SearchableFragment extends BaseFragment implements VideosAdapter.On
     private int mSelectedSortByKey = 0;
     private int mSelectedSortOrderKey = 1;
     private boolean mIsLoading = false;
-    private String mSortByValue = "date";
+    private String mSortByValue = "relevant";
     private String mSortOrderValue = "desc";
     private VideosAdapter mVideosAdapter;
     private String mQuery;
@@ -142,11 +146,11 @@ public class SearchableFragment extends BaseFragment implements VideosAdapter.On
         findVideosCall.enqueue(mFindVideosFirstFetchCallback);
     }
 
-    @OnClick(R.id.fab)
-    @SuppressWarnings("UnusedDeclaration")
-    public void onSortFABClicked() {
-        showSortDialog();
-    }
+//    @OnClick(R.id.fab)
+//    @SuppressWarnings("UnusedDeclaration")
+//    public void onSortFABClicked() {
+//        showSortDialog();
+//    }
     // endregion
 
     // region Callbacks
@@ -556,6 +560,24 @@ public class SearchableFragment extends BaseFragment implements VideosAdapter.On
         }
 
     }
+    // endregion
+
+    // region Otto Methods
+    @Subscribe
+    public void onFilterClickedEvent(FilterClickedEvent event) {
+        showSortDialog();
+    }
+
+//    @Subscribe
+//    public void onSearchPerformedEvent(SearchPerformedEvent event) {
+//        String query = event.getQuery();
+//        if(!TextUtils.isEmpty(query)){
+//            Intent intent = new Intent(getContext(), SearchableActivity.class);
+//            intent.setAction(Intent.ACTION_SEARCH);
+//            intent.putExtra(SearchManager.QUERY, query);
+//            getContext().startActivity(intent);
+//        }
+//    }
     // endregion
 
     // region Helper Methods

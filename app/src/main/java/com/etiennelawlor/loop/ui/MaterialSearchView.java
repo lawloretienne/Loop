@@ -22,6 +22,8 @@ import com.etiennelawlor.loop.R;
 import com.etiennelawlor.loop.activities.SearchableActivity;
 import com.etiennelawlor.loop.adapters.SuggestionsAdapter;
 import com.etiennelawlor.loop.otto.BusProvider;
+import com.etiennelawlor.loop.otto.events.FilterClickedEvent;
+import com.etiennelawlor.loop.otto.events.SearchPerformedEvent;
 import com.etiennelawlor.loop.otto.events.UpNavigationClickedEvent;
 import com.etiennelawlor.loop.utilities.LoopUtility;
 
@@ -52,6 +54,8 @@ public class MaterialSearchView extends FrameLayout implements SuggestionsAdapte
     ImageView mMicrophoneImageView;
     @Bind(R.id.clear_iv)
     ImageView mClearImageView;
+    @Bind(R.id.filter_iv)
+    ImageView mFilterImageView;
     @Bind(R.id.cv)
     CardView mCardView;
 //    @Bind(R.id.user_avatar_riv)
@@ -92,6 +96,11 @@ public class MaterialSearchView extends FrameLayout implements SuggestionsAdapte
 
     }
 
+    @OnClick(R.id.filter_iv)
+    public void filterImageViewClicked(){
+        BusProvider.get().post(new FilterClickedEvent());
+    }
+
     @OnClick(R.id.up_navigation_iv)
     public void upNavigationImageViewClicked(){
         if(mAreSearchSuggestionsVisible){
@@ -129,6 +138,7 @@ public class MaterialSearchView extends FrameLayout implements SuggestionsAdapte
             mClearImageView.setVisibility(View.GONE);
             mMicrophoneImageView.setVisibility(View.VISIBLE);
         }
+        mFilterImageView.setVisibility(View.GONE);
     }
 
     @OnClick(R.id.search_et)
@@ -189,10 +199,7 @@ public class MaterialSearchView extends FrameLayout implements SuggestionsAdapte
 
         hideSearchSuggestions();
 
-        Intent intent = new Intent(getContext(), SearchableActivity.class);
-        intent.setAction(Intent.ACTION_SEARCH);
-        intent.putExtra(SearchManager.QUERY, suggestion);
-        getContext().startActivity(intent);
+        BusProvider.get().post(new SearchPerformedEvent(suggestion));
 
 //        setQuery("");
     }
@@ -229,10 +236,7 @@ public class MaterialSearchView extends FrameLayout implements SuggestionsAdapte
                 if(actionId == EditorInfo.IME_ACTION_SEARCH){
                     hideSearchSuggestions();
 
-                    Intent intent = new Intent(getContext(), SearchableActivity.class);
-                    intent.setAction(Intent.ACTION_SEARCH);
-                    intent.putExtra(SearchManager.QUERY, getQuery());
-                    getContext().startActivity(intent);
+                    BusProvider.get().post(new SearchPerformedEvent(getQuery()));
 
 //                    setQuery("");
                     return true;
@@ -321,6 +325,7 @@ public class MaterialSearchView extends FrameLayout implements SuggestionsAdapte
 
     public void setQuery(String query){
         mSearchEditText.setText(query);
+        mFilterImageView.setVisibility(View.VISIBLE);
     }
 
     public String getQuery(){

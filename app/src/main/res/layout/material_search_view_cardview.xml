@@ -107,6 +107,18 @@
 
                 </FrameLayout>
 
+                <ImageView
+                    android:id="@+id/filter_iv"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical"
+                    android:background="@drawable/ripple"
+                    android:layout_marginLeft="16dp"
+                    android:contentDescription="@string/content_desc"
+                    android:src="@drawable/ic_filter_list_black_24dp"
+                    android:tint="@color/grey_700"
+                    android:visibility="gone" />
+
             </LinearLayout>
 
             <View

@@ -1,11 +1,14 @@
 package com.etiennelawlor.loop.fragments;
 
+import android.app.SearchManager;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -14,7 +17,11 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.etiennelawlor.loop.R;
+import com.etiennelawlor.loop.activities.SearchableActivity;
 import com.etiennelawlor.loop.otto.BusProvider;
+import com.etiennelawlor.loop.otto.events.FilterClickedEvent;
+import com.etiennelawlor.loop.otto.events.SearchPerformedEvent;
+import com.squareup.otto.Subscribe;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -137,6 +144,19 @@ public class WatchNowFragment extends BaseFragment {
     public boolean onOptionsItemSelected(MenuItem item) {
         return super.onOptionsItemSelected(item);
     }
+
+    // region Otto Methods
+    @Subscribe
+    public void onSearchPerformedEvent(SearchPerformedEvent event) {
+        String query = event.getQuery();
+        if(!TextUtils.isEmpty(query)){
+            Intent intent = new Intent(getContext(), SearchableActivity.class);
+            intent.setAction(Intent.ACTION_SEARCH);
+            intent.putExtra(SearchManager.QUERY, query);
+            getContext().startActivity(intent);
+        }
+    }
+    // endregion
 
 //    @Override
 //    public void onActivityResult(int requestCode, int resultCode, Intent data) {

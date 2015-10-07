@@ -23,6 +23,8 @@ import com.etiennelawlor.loop.network.models.response.Stats;
 import com.etiennelawlor.loop.network.models.response.Tag;
 import com.etiennelawlor.loop.network.models.response.User;
 import com.etiennelawlor.loop.network.models.response.Video;
+import com.etiennelawlor.loop.otto.BusProvider;
+import com.etiennelawlor.loop.otto.events.SearchPerformedEvent;
 import com.etiennelawlor.loop.ui.LoadingImageView;
 import com.etiennelawlor.loop.utilities.LoopUtility;
 import com.etiennelawlor.loop.utilities.Transformers;
@@ -471,11 +473,7 @@ public class RelatedVideosAdapter extends RecyclerView.Adapter<RecyclerView.View
                         String tag = (String) item;
                         Timber.d("setUpTags() : tag - " + tag);
 
-                        Intent intent = new Intent(htv.getContext(), SearchableActivity.class);
-                        intent.setAction(Intent.ACTION_SEARCH);
-                        intent.putExtra(SearchManager.QUERY, tag);
-                        htv.getContext().startActivity(intent);
-
+                        BusProvider.get().post(new SearchPerformedEvent(tag));
                     }
                 });
                 htv.setVisibility(View.VISIBLE);
