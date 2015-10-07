@@ -2,6 +2,7 @@ package com.etiennelawlor.loop.activities;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.v4.app.Fragment;
 import android.support.v4.view.GravityCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.view.MenuItem;
@@ -32,7 +33,7 @@ public class SearchableActivity extends AppCompatActivity {
                 ||  SearchIntents.ACTION_SEARCH.equals(getIntent().getAction())) {
             getSupportFragmentManager()
                     .beginTransaction()
-                    .add(android.R.id.content, SearchableFragment.newInstance(getIntent().getExtras()), "")
+                    .add(R.id.content_fl, SearchableFragment.newInstance(getIntent().getExtras()), "")
                     .commit();
         }
 
@@ -56,6 +57,14 @@ public class SearchableActivity extends AppCompatActivity {
                 return true;
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        Fragment fragment = getSupportFragmentManager().findFragmentById(R.id.content_fl);
+        if (fragment != null) {
+            fragment.onActivityResult(requestCode, resultCode, data);
+        }
     }
 
     // region Otto Methods

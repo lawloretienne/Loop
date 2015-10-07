@@ -1,9 +1,13 @@
 package com.etiennelawlor.loop.ui;
 
-import android.app.SearchManager;
+import android.app.Activity;
 import android.content.Context;
+import android.content.ContextWrapper;
 import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.content.pm.ResolveInfo;
 import android.content.res.TypedArray;
+import android.speech.RecognizerIntent;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
@@ -19,7 +23,6 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.etiennelawlor.loop.R;
-import com.etiennelawlor.loop.activities.SearchableActivity;
 import com.etiennelawlor.loop.adapters.SuggestionsAdapter;
 import com.etiennelawlor.loop.otto.BusProvider;
 import com.etiennelawlor.loop.otto.events.FilterClickedEvent;
@@ -35,13 +38,16 @@ import butterknife.ButterKnife;
 import butterknife.OnClick;
 import butterknife.OnFocusChange;
 import butterknife.OnTextChanged;
-import de.hdodenhof.circleimageview.CircleImageView;
 import timber.log.Timber;
 
 /**
  * Created by etiennelawlor on 10/6/15.
  */
 public class MaterialSearchView extends FrameLayout implements SuggestionsAdapter.OnItemClickListener, SuggestionsAdapter.OnSearchSuggestionCompleteClickListener {
+
+    // region Constants
+    public static final int REQUEST_VOICE = 9999;
+    // endregion
 
     // region Member Variables
     private boolean mAreSearchSuggestionsVisible;
@@ -93,7 +99,12 @@ public class MaterialSearchView extends FrameLayout implements SuggestionsAdapte
 
     @OnClick(R.id.microphone_iv)
     public void microphoneImageViewClicked(){
+        Intent intent = new Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH);
+        intent.putExtra(RecognizerIntent.EXTRA_PROMPT, "Speak now");
+        intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL, RecognizerIntent.LANGUAGE_MODEL_WEB_SEARCH);
+        intent.putExtra(RecognizerIntent.EXTRA_MAX_RESULTS, 1);
 
+        ((Activity)((ContextWrapper)mMicrophoneImageView.getContext()).getBaseContext()).startActivityForResult(intent, REQUEST_VOICE);
     }
 
     @OnClick(R.id.filter_iv)
@@ -233,7 +244,7 @@ public class MaterialSearchView extends FrameLayout implements SuggestionsAdapte
             @Override
             public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
 
-                if(actionId == EditorInfo.IME_ACTION_SEARCH){
+                if (actionId == EditorInfo.IME_ACTION_SEARCH) {
                     hideSearchSuggestions();
 
                     BusProvider.get().post(new SearchPerformedEvent(getQuery()));
@@ -321,6 +332,13 @@ public class MaterialSearchView extends FrameLayout implements SuggestionsAdapte
 
         mAreSearchSuggestionsVisible = false;
         mSearchEditText.clearFocus();
+    }
+
+    private boolean isVoiceAvailable() {
+        PackageManager pm = getContext().getPackageManager();
+        List<ResolveInfo> activities = pm.queryIntentActivities(
+                new Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH), 0);
+        return (activities.size() != 0);
     }
 
     public void setQuery(String query){

@@ -1,8 +1,10 @@
 package com.etiennelawlor.loop.fragments;
 
+import android.app.Activity;
 import android.app.SearchManager;
 import android.content.Intent;
 import android.os.Bundle;
+import android.speech.RecognizerIntent;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -21,6 +23,7 @@ import com.etiennelawlor.loop.activities.SearchableActivity;
 import com.etiennelawlor.loop.otto.BusProvider;
 import com.etiennelawlor.loop.otto.events.FilterClickedEvent;
 import com.etiennelawlor.loop.otto.events.SearchPerformedEvent;
+import com.etiennelawlor.loop.ui.MaterialSearchView;
 import com.squareup.otto.Subscribe;
 
 import java.util.ArrayList;
@@ -43,6 +46,8 @@ public class WatchNowFragment extends BaseFragment {
     ViewPager mViewPager;
     @Bind(R.id.tabs)
     TabLayout mTabLayout;
+    @Bind(R.id.material_sv)
+    MaterialSearchView mMaterialSearchView;
     // endregion
 
     // region Callbacks
@@ -150,28 +155,26 @@ public class WatchNowFragment extends BaseFragment {
     public void onSearchPerformedEvent(SearchPerformedEvent event) {
         String query = event.getQuery();
         if(!TextUtils.isEmpty(query)){
-            Intent intent = new Intent(getContext(), SearchableActivity.class);
-            intent.setAction(Intent.ACTION_SEARCH);
-            intent.putExtra(SearchManager.QUERY, query);
-            getContext().startActivity(intent);
+            launchSearchActivity(query);
         }
     }
     // endregion
 
-//    @Override
-//    public void onActivityResult(int requestCode, int resultCode, Intent data) {
-//        if (requestCode == SearchViewWidget2.REQUEST_VOICE && resultCode == Activity.RESULT_OK) {
-//            ArrayList<String> matches = data.getStringArrayListExtra(RecognizerIntent.EXTRA_RESULTS);
-//            if (matches != null && matches.size() > 0) {
-//                String searchWrd = matches.get(0);
-//                if (!TextUtils.isEmpty(searchWrd)) {
-////                    mSearchViewWidget.setQuery(searchWrd, false);
-//                }
-//            }
-//            return;
-//        }
-//        super.onActivityResult(requestCode, resultCode, data);
-//    }
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (requestCode == MaterialSearchView.REQUEST_VOICE && resultCode == Activity.RESULT_OK) {
+            ArrayList<String> matches = data.getStringArrayListExtra(RecognizerIntent.EXTRA_RESULTS);
+            if (matches != null && matches.size() > 0) {
+                String searchWrd = matches.get(0);
+                if (!TextUtils.isEmpty(searchWrd)) {
+//                    mMaterialSearchView.setQuery(searchWrd);
+                    launchSearchActivity(searchWrd);
+                }
+            }
+            return;
+        }
+        super.onActivityResult(requestCode, resultCode, data);
+    }
 
     // region Helper Methods
     private void setupViewPager(ViewPager viewPager) {
@@ -194,6 +197,13 @@ public class WatchNowFragment extends BaseFragment {
         bundle.putString("query", query);
 
         return VideosFragment.newInstance(bundle);
+    }
+
+    private void launchSearchActivity(String query){
+        Intent intent = new Intent(getContext(), SearchableActivity.class);
+        intent.setAction(Intent.ACTION_SEARCH);
+        intent.putExtra(SearchManager.QUERY, query);
+        getContext().startActivity(intent);
     }
     // endregion
 

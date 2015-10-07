@@ -25,7 +25,6 @@ import com.etiennelawlor.loop.network.models.response.AuthorizedUser;
 import com.etiennelawlor.loop.network.models.response.Picture;
 import com.etiennelawlor.loop.otto.BusProvider;
 import com.etiennelawlor.loop.otto.events.UpNavigationClickedEvent;
-import com.etiennelawlor.loop.otto.events.VideoLikedEvent;
 import com.etiennelawlor.loop.utilities.LoopUtility;
 import com.squareup.otto.Subscribe;
 

@@ -1,11 +1,13 @@
 package com.etiennelawlor.loop.fragments;
 
+import android.app.Activity;
 import android.app.SearchManager;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.provider.SearchRecentSuggestions;
+import android.speech.RecognizerIntent;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityOptionsCompat;
 import android.support.v4.graphics.drawable.DrawableCompat;
@@ -50,6 +52,7 @@ import com.squareup.otto.Subscribe;
 import java.io.IOException;
 import java.net.SocketTimeoutException;
 import java.net.UnknownHostException;
+import java.util.ArrayList;
 import java.util.List;
 
 import butterknife.Bind;
@@ -532,6 +535,22 @@ public class SearchableFragment extends BaseFragment implements VideosAdapter.On
         return super.onOptionsItemSelected(item);
     }
 
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (requestCode == MaterialSearchView.REQUEST_VOICE && resultCode == Activity.RESULT_OK) {
+            ArrayList<String> matches = data.getStringArrayListExtra(RecognizerIntent.EXTRA_RESULTS);
+            if (matches != null && matches.size() > 0) {
+                String searchWrd = matches.get(0);
+                if (!TextUtils.isEmpty(searchWrd)) {
+//                    mMaterialSearchView.setQuery(searchWrd);
+                    launchSearchActivity(searchWrd);
+                }
+            }
+            return;
+        }
+        super.onActivityResult(requestCode, resultCode, data);
+    }
+
     // region VideosAdapter.OnItemClickListener Methods
     @Override
     public void onItemClick(int position, View view) {
@@ -567,17 +586,6 @@ public class SearchableFragment extends BaseFragment implements VideosAdapter.On
     public void onFilterClickedEvent(FilterClickedEvent event) {
         showSortDialog();
     }
-
-//    @Subscribe
-//    public void onSearchPerformedEvent(SearchPerformedEvent event) {
-//        String query = event.getQuery();
-//        if(!TextUtils.isEmpty(query)){
-//            Intent intent = new Intent(getContext(), SearchableActivity.class);
-//            intent.setAction(Intent.ACTION_SEARCH);
-//            intent.putExtra(SearchManager.QUERY, query);
-//            getContext().startActivity(intent);
-//        }
-//    }
     // endregion
 
     // region Helper Methods
@@ -651,6 +659,13 @@ public class SearchableFragment extends BaseFragment implements VideosAdapter.On
         });
 
         alertDialogBuilder.show();
+    }
+
+    private void launchSearchActivity(String query){
+        Intent intent = new Intent(getContext(), SearchableActivity.class);
+        intent.setAction(Intent.ACTION_SEARCH);
+        intent.putExtra(SearchManager.QUERY, query);
+        getContext().startActivity(intent);
     }
     // endregion
 }
