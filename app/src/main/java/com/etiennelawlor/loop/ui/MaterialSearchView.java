@@ -8,8 +8,10 @@ import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
 import android.util.AttributeSet;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.inputmethod.EditorInfo;
 import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
@@ -191,6 +193,8 @@ public class MaterialSearchView extends FrameLayout implements SuggestionsAdapte
         intent.setAction(Intent.ACTION_SEARCH);
         intent.putExtra(SearchManager.QUERY, suggestion);
         getContext().startActivity(intent);
+
+//        setQuery("");
     }
     // endregion
 
@@ -213,6 +217,30 @@ public class MaterialSearchView extends FrameLayout implements SuggestionsAdapte
         }
 
         setUpDefaultUpNavIcon();
+
+        setUpListeners();
+    }
+
+    private void setUpListeners(){
+        mSearchEditText.setOnEditorActionListener(new TextView.OnEditorActionListener() {
+            @Override
+            public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
+
+                if(actionId == EditorInfo.IME_ACTION_SEARCH){
+                    hideSearchSuggestions();
+
+                    Intent intent = new Intent(getContext(), SearchableActivity.class);
+                    intent.setAction(Intent.ACTION_SEARCH);
+                    intent.putExtra(SearchManager.QUERY, getQuery());
+                    getContext().startActivity(intent);
+
+//                    setQuery("");
+                    return true;
+                } else {
+                    return false;
+                }
+            }
+        });
     }
 
     private void setUpDefaultUpNavIcon(){
