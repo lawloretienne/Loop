@@ -53,16 +53,4 @@
         <!--<attr name="android:scaleType" />-->
     <!--</declare-styleable>-->
 
-    <declare-styleable name="SearchViewWidget">
-        <attr name="search_style" format="enum">
-            <enum name="classic" value="0" />
-            <enum name="color" value="1" />
-        </attr>
-        <attr name="search_theme" format="enum">
-            <enum name="light" value="0" />
-            <enum name="dark" value="1" />
-        </attr>
-        <attr name="search_divider" format="boolean" />
-    </declare-styleable>
-
 </resources>

@@ -11,7 +11,9 @@ import android.net.Uri;
 import android.text.format.DateUtils;
 import android.util.DisplayMetrics;
 import android.view.Display;
+import android.view.View;
 import android.view.WindowManager;
+import android.view.inputmethod.InputMethodManager;
 
 import com.etiennelawlor.loop.R;
 
@@ -150,6 +152,25 @@ public class LoopUtility {
             isLandscape =  true;
         }
         return isLandscape;
+    }
+
+    public static void hideKeyboard(Context context, View view) {
+        if (context != null) {
+            InputMethodManager inputMethodManager = (InputMethodManager) context.getApplicationContext().getSystemService(Context.INPUT_METHOD_SERVICE);
+            if (inputMethodManager != null) {
+                if (view != null) {
+                    inputMethodManager.hideSoftInputFromWindow(view.getWindowToken(), 0);
+                }
+            }
+        }
+    }
+
+    public static void showKeyboard(Context context, View view) {
+        view.requestFocus();
+        InputMethodManager inputMethodManager = (InputMethodManager) context.getSystemService(Context.INPUT_METHOD_SERVICE);
+        if (inputMethodManager != null) {
+            inputMethodManager.showSoftInput(view, InputMethodManager.SHOW_IMPLICIT);
+        }
     }
     // endregion
 }

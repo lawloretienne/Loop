@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:background="?android:attr/selectableItemBackground"
+    android:layout_width="match_parent"
+    android:layout_height="56dp"
+    android:padding="16dp">
+
+    <ImageView
+        android:id="@+id/search_suggest_type_iv"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:src="@drawable/ic_history"
+        android:tint="@color/grey_400"
+        android:layout_centerVertical="true"/>
+
+    <com.etiennelawlor.loop.ui.CustomFontTextView
+        android:id="@+id/suggestion_tv"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_toLeftOf="@+id/search_suggest_complete_iv"
+        android:layout_alignParentLeft="true"
+        android:textColor="@color/grey_700"
+        android:textSize="14sp"
+        android:layout_marginLeft="56dp"
+        app:textFont="Roboto_Regular"
+        tools:text="Suggestion"
+        android:layout_centerVertical="true"/>
+
+    <ImageView
+        android:id="@+id/search_suggest_complete_iv"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentRight="true"
+        android:src="@drawable/ic_search_suggest_complete"
+        android:tint="@color/grey_400"
+        android:background="@drawable/ripple"
+        android:layout_centerVertical="true"/>
+
+</RelativeLayout>

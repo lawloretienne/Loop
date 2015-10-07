@@ -120,6 +120,15 @@ public class WatchLaterVideosFragment extends BaseFragment implements VideosAdap
         }
     };
 
+    private View.OnClickListener mReloadOnClickListener = new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            mCurrentPage -= 1;
+            mVideosAdapter.addLoading();
+            loadMoreItems();
+        }
+    };
+
     @OnClick(R.id.reload_btn)
     public void onReloadButtonClicked() {
         mErrorLinearLayout.setVisibility(View.GONE);
@@ -133,15 +142,6 @@ public class WatchLaterVideosFragment extends BaseFragment implements VideosAdap
         mCalls.add(findWatchLaterVideosCall);
         findWatchLaterVideosCall.enqueue(mFindVideosFirstFetchCallback);
     }
-
-    private View.OnClickListener mReloadOnClickListener = new View.OnClickListener() {
-        @Override
-        public void onClick(View v) {
-            mCurrentPage -= 1;
-            mVideosAdapter.addLoading();
-            loadMoreItems();
-        }
-    };
     // endregion
 
     // region Callbacks
@@ -446,12 +446,12 @@ public class WatchLaterVideosFragment extends BaseFragment implements VideosAdap
         inflater.inflate(R.menu.main_menu, menu);
 
         // Get the SearchView and set the searchable configuration
-        SearchManager searchManager = (SearchManager) getActivity().getSystemService(Context.SEARCH_SERVICE);
-        SearchView searchView = (SearchView) menu.findItem(R.id.action_search).getActionView();
-
-        // Assumes current activity is the searchable activity
-        searchView.setSearchableInfo(searchManager.getSearchableInfo(getActivity().getComponentName()));
-        searchView.setQueryRefinementEnabled(true);
+//        SearchManager searchManager = (SearchManager) getActivity().getSystemService(Context.SEARCH_SERVICE);
+//        SearchView searchView = (SearchView) menu.findItem(R.id.action_search).getActionView();
+//
+//        // Assumes current activity is the searchable activity
+//        searchView.setSearchableInfo(searchManager.getSearchableInfo(getActivity().getComponentName()));
+//        searchView.setQueryRefinementEnabled(true);
     }
 
     @Override

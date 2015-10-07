@@ -80,8 +80,6 @@ public class SearchableFragment extends BaseFragment implements VideosAdapter.On
     TextView mErrorTextView;
     @Bind(R.id.toolbar)
     Toolbar mToolbar;
-//    @Bind(R.id.search_view_widget)
-//    SearchViewWidget2 mSearchViewWidget;
 
     private boolean mIsLastPage = false;
     private int mCurrentPage = 1;

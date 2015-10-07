@@ -454,7 +454,7 @@ public class RelatedVideosAdapter extends RecyclerView.Adapter<RecyclerView.View
 
             for (Tag tag : tags) {
                 String canonicalTag = tag.getCanonical();
-                if(canonicalTag.length() < 9) {
+                if(canonicalTag.length() > 0) {
                     Timber.d("setUpTags() : canonicalTag - " + canonicalTag);
                     canonicalTags.add(canonicalTag);
                 }

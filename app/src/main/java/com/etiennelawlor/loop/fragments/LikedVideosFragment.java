@@ -43,7 +43,6 @@ import com.etiennelawlor.loop.network.models.response.VideosCollection;
 import com.etiennelawlor.loop.otto.BusProvider;
 import com.etiennelawlor.loop.otto.events.VideoLikedEvent;
 import com.etiennelawlor.loop.ui.LoadingImageView;
-import com.etiennelawlor.loop.ui.SearchViewWidget;
 import com.squareup.okhttp.ResponseBody;
 import com.squareup.otto.Subscribe;
 

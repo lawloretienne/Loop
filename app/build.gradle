@@ -63,7 +63,6 @@ dependencies {
 
     compile 'com.github.greenfrvr:hashtag-view:1.1.1'
 
-
     compile 'com.nineoldandroids:library:2.4.0'
 
     compile('com.crashlytics.sdk.android:crashlytics:2.5.2@aar') {

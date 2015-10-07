@@ -14,4 +14,8 @@
 
     <!--app:popupTheme="@style/ThemeOverlay.AppCompat.Light"-->
 
+    <!--<com.etiennelawlor.loop.ui.MaterialSearchView-->
+        <!--android:layout_width="wrap_content"-->
+        <!--android:layout_height="wrap_content" />-->
+
 </android.support.design.widget.AppBarLayout>
