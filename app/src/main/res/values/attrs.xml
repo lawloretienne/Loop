@@ -40,6 +40,13 @@
         </attr>
     </declare-styleable>
 
+    <declare-styleable name="MaterialSearchView">
+        <attr name="default_up_nav_icon" format="enum">
+            <enum name="menu" value="0" />
+            <enum name="back" value="1" />
+        </attr>
+    </declare-styleable>
+
     <!--<declare-styleable name="ScrimInsetsView">-->
         <!--<attr name="insetForeground" format="reference|color" />-->
     <!--</declare-styleable>-->

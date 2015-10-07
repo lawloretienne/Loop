@@ -40,6 +40,7 @@ import com.etiennelawlor.loop.network.models.response.VideosCollection;
 import com.etiennelawlor.loop.otto.BusProvider;
 import com.etiennelawlor.loop.providers.CustomSearchRecentSuggestionsProvider;
 import com.etiennelawlor.loop.ui.LoadingImageView;
+import com.etiennelawlor.loop.ui.MaterialSearchView;
 import com.squareup.okhttp.ResponseBody;
 
 import java.io.IOException;
@@ -78,8 +79,10 @@ public class SearchableFragment extends BaseFragment implements VideosAdapter.On
     LinearLayout mErrorLinearLayout;
     @Bind(R.id.error_tv)
     TextView mErrorTextView;
-    @Bind(R.id.toolbar)
-    Toolbar mToolbar;
+    @Bind(R.id.material_sv)
+    MaterialSearchView mMaterialSearchView;
+//    @Bind(R.id.toolbar)
+//    Toolbar mToolbar;
 
     private boolean mIsLastPage = false;
     private int mCurrentPage = 1;
@@ -391,11 +394,15 @@ public class SearchableFragment extends BaseFragment implements VideosAdapter.On
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        ((AppCompatActivity) getActivity()).setSupportActionBar(mToolbar);
+//        ((AppCompatActivity) getActivity()).setSupportActionBar(mToolbar);
+//
+//        final ActionBar ab = ((AppCompatActivity) getActivity()).getSupportActionBar();
+//        ab.setDisplayHomeAsUpEnabled(true);
+//        ab.setTitle("");
 
-        final ActionBar ab = ((AppCompatActivity) getActivity()).getSupportActionBar();
-        ab.setDisplayHomeAsUpEnabled(true);
-        ab.setTitle("");
+
+        mMaterialSearchView.setQuery(mQuery);
+
 
 //        mSearchViewWidget.setQuery(mQuery, false);
 //

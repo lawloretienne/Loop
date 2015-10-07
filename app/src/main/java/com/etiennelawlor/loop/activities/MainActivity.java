@@ -23,7 +23,11 @@ import com.etiennelawlor.loop.fragments.WatchNowFragment;
 import com.etiennelawlor.loop.helper.PreferencesHelper;
 import com.etiennelawlor.loop.network.models.response.AuthorizedUser;
 import com.etiennelawlor.loop.network.models.response.Picture;
+import com.etiennelawlor.loop.otto.BusProvider;
+import com.etiennelawlor.loop.otto.events.UpNavigationClickedEvent;
+import com.etiennelawlor.loop.otto.events.VideoLikedEvent;
 import com.etiennelawlor.loop.utilities.LoopUtility;
+import com.squareup.otto.Subscribe;
 
 import java.util.List;
 
@@ -144,11 +148,19 @@ public class MainActivity extends AppCompatActivity {
                 .beginTransaction()
                 .replace(R.id.content_fl, WatchNowFragment.newInstance(), "")
                 .commit();
+
+        BusProvider.get().register(this);
     }
 
     @Override
     protected void onResume() {
         super.onResume();
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        BusProvider.get().unregister(this);
     }
     // endregion
 
@@ -186,6 +198,19 @@ public class MainActivity extends AppCompatActivity {
             fragment.onActivityResult(requestCode, resultCode, data);
         }
     }
+
+    // region Otto Methods
+    @Subscribe
+    public void onUpNavigationClickedEvent(UpNavigationClickedEvent event) {
+        Timber.d("onUpNavigationClickedEvent");
+
+        UpNavigationClickedEvent.Type type = event.getType();
+
+        if(type == UpNavigationClickedEvent.Type.MENU)
+            mDrawerLayout.openDrawer(GravityCompat.START);
+
+    }
+    // endregion
 
     // region Helper Methods
     private void setUpAvatar(){

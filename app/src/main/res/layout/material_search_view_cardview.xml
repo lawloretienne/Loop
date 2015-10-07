@@ -31,25 +31,36 @@
                 <FrameLayout
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginRight="32dp">
+                    android:layout_marginRight="16dp">
 
-                    <de.hdodenhof.circleimageview.CircleImageView
-                        android:id="@+id/user_avatar_riv"
-                        android:layout_width="32dp"
-                        android:layout_height="32dp"
-                        android:background="@drawable/disabled_avatar_bg"
-                        android:src="@drawable/ic_loop" />
+                    <!--<de.hdodenhof.circleimageview.CircleImageView-->
+                        <!--android:id="@+id/user_avatar_riv"-->
+                        <!--android:layout_width="24dp"-->
+                        <!--android:layout_height="24dp"-->
+                        <!--android:background="@drawable/disabled_avatar_bg"-->
+                        <!--android:padding="0dp"-->
+                        <!--android:src="@drawable/ic_loop" />-->
 
                     <ImageView
-                        android:id="@+id/back_iv"
+                        android:id="@+id/up_navigation_iv"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_gravity="center_vertical"
                         android:background="@drawable/ripple"
                         android:contentDescription="@string/content_desc"
-                        android:src="@drawable/ic_arrow_back_black_24dp"
-                        android:tint="@color/grey_700"
-                        android:visibility="gone" />
+                        android:src="@drawable/ic_menu_black_24dp"
+                        android:tint="@color/grey_700" />
+
+                    <!--<ImageView-->
+                        <!--android:id="@+id/back_iv"-->
+                        <!--android:layout_width="wrap_content"-->
+                        <!--android:layout_height="wrap_content"-->
+                        <!--android:layout_gravity="center_vertical"-->
+                        <!--android:background="@drawable/ripple"-->
+                        <!--android:contentDescription="@string/content_desc"-->
+                        <!--android:src="@drawable/ic_arrow_back_black_24dp"-->
+                        <!--android:tint="@color/grey_700"-->
+                        <!--android:visibility="gone" />-->
 
                 </FrameLayout>
 
@@ -61,6 +72,8 @@
                     android:background="@null"
                     android:gravity="center_vertical"
                     android:hint="Search Loop"
+                    android:inputType="text"
+                    android:imeOptions="actionSearch"
                     android:singleLine="true"
                     android:textColor="@color/grey_700"
                     android:textColorHint="@color/grey_500"

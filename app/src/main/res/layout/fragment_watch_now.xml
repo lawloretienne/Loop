@@ -10,7 +10,7 @@
         android:layout_height="wrap_content"
         android:orientation="vertical">
 
-        <include layout="@layout/toolbar_with_tabs"/>
+        <include layout="@layout/appbarlayout_with_tablayout"/>
 
         <android.support.v4.view.ViewPager
             android:id="@+id/viewpager"
@@ -21,6 +21,7 @@
 
     <com.etiennelawlor.loop.ui.MaterialSearchView
         android:layout_width="match_parent"
-        android:layout_height="match_parent"/>
+        android:layout_height="match_parent"
+        app:default_up_nav_icon="menu"/>
 
 </FrameLayout>

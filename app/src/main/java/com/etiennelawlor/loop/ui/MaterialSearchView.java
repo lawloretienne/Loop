@@ -1,7 +1,10 @@
 package com.etiennelawlor.loop.ui;
 
+import android.app.SearchManager;
 import android.content.Context;
+import android.content.Intent;
 import android.content.res.TypedArray;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
 import android.util.AttributeSet;
@@ -14,7 +17,10 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.etiennelawlor.loop.R;
+import com.etiennelawlor.loop.activities.SearchableActivity;
 import com.etiennelawlor.loop.adapters.SuggestionsAdapter;
+import com.etiennelawlor.loop.otto.BusProvider;
+import com.etiennelawlor.loop.otto.events.UpNavigationClickedEvent;
 import com.etiennelawlor.loop.utilities.LoopUtility;
 
 import java.util.ArrayList;
@@ -36,6 +42,7 @@ public class MaterialSearchView extends FrameLayout implements SuggestionsAdapte
     // region Member Variables
     private boolean mAreSearchSuggestionsVisible;
     private DividerItemDecoration mDividerItemDecoration;
+    private Integer mDefaultUpNavIcon;
 
     @Bind(R.id.search_et)
     EditText mSearchEditText;
@@ -45,10 +52,13 @@ public class MaterialSearchView extends FrameLayout implements SuggestionsAdapte
     ImageView mClearImageView;
     @Bind(R.id.cv)
     CardView mCardView;
-    @Bind(R.id.user_avatar_riv)
-    CircleImageView mUserAvatarCircleImageView;
-    @Bind(R.id.back_iv)
-    ImageView mBackImageView;
+//    @Bind(R.id.user_avatar_riv)
+//    CircleImageView mUserAvatarCircleImageView;
+//    @Bind(R.id.back_iv)
+//    ImageView mBackImageView;
+    @Bind(R.id.up_navigation_iv)
+    ImageView mUpNavigationImageView;
+
     @Bind(R.id.custom_search_view_ll)
     LinearLayout mCustomSearchViewLinearLayout;
     @Bind(R.id.divider_v)
@@ -60,13 +70,13 @@ public class MaterialSearchView extends FrameLayout implements SuggestionsAdapte
     // endregion
 
     // region Listeners
-    @OnClick(R.id.custom_search_view_ll)
-    public void searchViewLinearLayoutClicked(){
-//        if(!mAreSearchSuggestionsVisible){
-//            showSearchSuggestions();
-//        }
-        mSearchEditText.requestFocus();
-    }
+//    @OnClick(R.id.custom_search_view_ll)
+//    public void searchViewLinearLayoutClicked(){
+////        if(!mAreSearchSuggestionsVisible){
+////            showSearchSuggestions();
+////        }
+//        mSearchEditText.requestFocus();
+//    }
 
     @OnClick(R.id.bg_cover_fl)
     public void backgroundCoverFrameLayoutClicked(){
@@ -80,10 +90,26 @@ public class MaterialSearchView extends FrameLayout implements SuggestionsAdapte
 
     }
 
-    @OnClick(R.id.back_iv)
-    public void backImageViewClicked(){
+    @OnClick(R.id.up_navigation_iv)
+    public void upNavigationImageViewClicked(){
         if(mAreSearchSuggestionsVisible){
             hideSearchSuggestions();
+        } else {
+            Timber.d("Do something else");
+
+            UpNavigationClickedEvent.Type type = null;
+            switch (mDefaultUpNavIcon){
+                case 0:
+                    type = UpNavigationClickedEvent.Type.MENU;
+                    break;
+                case 1:
+                    type = UpNavigationClickedEvent.Type.BACK;
+                    break;
+                default:
+                    break;
+            }
+
+            BusProvider.get().post(new UpNavigationClickedEvent(type));
         }
     }
 
@@ -105,14 +131,12 @@ public class MaterialSearchView extends FrameLayout implements SuggestionsAdapte
 
     @OnClick(R.id.search_et)
     public void searchEditTextClicked(){
-        if(!mAreSearchSuggestionsVisible){
-            showSearchSuggestions();
-        }
+        mSearchEditText.requestFocus();
     }
 
     @OnFocusChange(R.id.search_et)
     public void onSearchEditTextFocusChanged(boolean focused) {
-        Timber.d("onSearchEditTextFocusChanged() : focused - "+focused);
+        Timber.d("onSearchEditTextFocusChanged() : focused - " + focused);
 
         if(focused){
             if(!mAreSearchSuggestionsVisible){
@@ -156,6 +180,17 @@ public class MaterialSearchView extends FrameLayout implements SuggestionsAdapte
     public void onItemClick(int position, View view) {
 //        Timber.d("");
         Timber.d("SuggestionsAdapter : onItemClick()");
+
+        TextView suggestionTextView = (TextView) view.findViewById(R.id.suggestion_tv);
+        String suggestion = suggestionTextView.getText().toString();
+//        Timber.d("SuggestionsAdapter : onItemClick() : suggestionTextView.getText() - "+suggestionTextView.getText());
+
+        hideSearchSuggestions();
+
+        Intent intent = new Intent(getContext(), SearchableActivity.class);
+        intent.setAction(Intent.ACTION_SEARCH);
+        intent.putExtra(SearchManager.QUERY, suggestion);
+        getContext().startActivity(intent);
     }
     // endregion
 
@@ -168,17 +203,28 @@ public class MaterialSearchView extends FrameLayout implements SuggestionsAdapte
         LayoutInflater.from(getContext()).inflate((R.layout.material_search_view), this, true);
         ButterKnife.bind(this);
 
-
         if (attrs != null) {
-            TypedArray a = getContext().getTheme().obtainStyledAttributes(attrs, R.styleable.CustomFontTextView, 0, 0);
+            TypedArray a = getContext().getTheme().obtainStyledAttributes(attrs, R.styleable.MaterialSearchView, 0, 0);
             try {
-//                Integer position = a.getInteger(R.styleable.CustomFontTextView_textFont, 10);
-//                setTypeface(TypefaceUtil.getTypeface(Typefaces.from(position)));
+                mDefaultUpNavIcon = a.getInteger(R.styleable.MaterialSearchView_default_up_nav_icon, 1);
             } finally {
                 a.recycle();
             }
-        } else {
-//            setTypeface(TypefaceUtil.getTypeface(Typefaces.ROBOTO_REGULAR));
+        }
+
+        setUpDefaultUpNavIcon();
+    }
+
+    private void setUpDefaultUpNavIcon(){
+        switch (mDefaultUpNavIcon){
+            case 0:
+                mUpNavigationImageView.setImageDrawable(ContextCompat.getDrawable(getContext(), R.drawable.ic_menu_black_24dp));
+                break;
+            case 1:
+                mUpNavigationImageView.setImageDrawable(ContextCompat.getDrawable(getContext(), R.drawable.ic_arrow_back_black_24dp));
+                break;
+            default:
+                break;
         }
     }
 
@@ -193,9 +239,9 @@ public class MaterialSearchView extends FrameLayout implements SuggestionsAdapte
         suggestions.add("Bodyboarding");
         suggestions.add("Surfing");
         suggestions.add("Wind");
-//                suggestions.add("Snowboarding");
-//                suggestions.add("Skiing");
-//                suggestions.add("Skateboarding");
+        suggestions.add("Snowboarding");
+        suggestions.add("Skiing");
+        suggestions.add("Skateboarding");
 //                suggestions.add("BMX");
 //                suggestions.add("Motocross");
 
@@ -211,11 +257,18 @@ public class MaterialSearchView extends FrameLayout implements SuggestionsAdapte
         mRecyclerView.addItemDecoration(mDividerItemDecoration);
         mRecyclerView.setAdapter(suggestionsAdapter);
 
-        mRecyclerView.setVisibility(View.VISIBLE);
-        mDividerView.setVisibility(View.VISIBLE);
+        if(suggestionsAdapter.getItemCount() > 0){
+            mRecyclerView.setVisibility(View.VISIBLE);
+            mDividerView.setVisibility(View.VISIBLE);
+        } else {
+            mRecyclerView.setVisibility(View.GONE);
+            mDividerView.setVisibility(View.GONE);
+        }
 
-        mUserAvatarCircleImageView.setVisibility(View.GONE);
-        mBackImageView.setVisibility(View.VISIBLE);
+//        mUserAvatarCircleImageView.setVisibility(View.GONE);
+//        mBackImageView.setVisibility(View.VISIBLE);
+
+        mUpNavigationImageView.setImageDrawable(ContextCompat.getDrawable(getContext(), R.drawable.ic_arrow_back_black_24dp));
 
         mAreSearchSuggestionsVisible = true;
     }
@@ -224,14 +277,26 @@ public class MaterialSearchView extends FrameLayout implements SuggestionsAdapte
         mDividerView.setVisibility(View.GONE);
         mBackgroundCoverFrameLayout.setVisibility(View.GONE);
 
-        mBackImageView.setVisibility(View.GONE);
-        mUserAvatarCircleImageView.setVisibility(View.VISIBLE);
+//        mBackImageView.setVisibility(View.GONE);
+//        mUserAvatarCircleImageView.setVisibility(View.VISIBLE);
+
+//        mUpNavigationImageView.setImageDrawable(ContextCompat.getDrawable(getContext(), R.drawable.ic_menu_black_24dp));
+
+        setUpDefaultUpNavIcon();
 
         mRecyclerView.setVisibility(View.GONE);
         mRecyclerView.removeItemDecoration(mDividerItemDecoration);
 
         mAreSearchSuggestionsVisible = false;
         mSearchEditText.clearFocus();
+    }
+
+    public void setQuery(String query){
+        mSearchEditText.setText(query);
+    }
+
+    public String getQuery(){
+        return mSearchEditText.getText().toString();
     }
     // endregion
 }

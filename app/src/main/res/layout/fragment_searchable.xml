@@ -4,14 +4,16 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/main_content"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:background="?colorPrimary">
 
-    <include layout="@layout/toolbar_without_tabs" />
+    <!--<include layout="@layout/appbarlayout" />-->
 
     <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:background="@color/grey_200"
+        android:layout_marginTop="64dp"
         app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
         <include layout="@layout/videos_section" />
@@ -42,5 +44,11 @@
         app:fab_shadow="true"
         app:layout_behavior="com.etiennelawlor.loop.ui.ScrollAwareFABBehavior"
         app:pressedTranslationZ="12dp" />
+
+    <com.etiennelawlor.loop.ui.MaterialSearchView
+        android:id="@+id/material_sv"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        app:default_up_nav_icon="back"/>
 
 </android.support.design.widget.CoordinatorLayout>

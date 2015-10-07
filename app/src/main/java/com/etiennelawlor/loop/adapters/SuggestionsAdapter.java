@@ -174,9 +174,6 @@ public class SuggestionsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
         }
     }
 
-
-
-
     private void setUpSuggestion(TextView tv, String suggestion){
         if(!TextUtils.isEmpty(suggestion)){
             tv.setText(suggestion);
