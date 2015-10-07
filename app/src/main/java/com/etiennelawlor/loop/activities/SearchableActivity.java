@@ -65,7 +65,8 @@ public class SearchableActivity extends AppCompatActivity {
         UpNavigationClickedEvent.Type type = event.getType();
 
         if(type == UpNavigationClickedEvent.Type.BACK)
-            onBackPressed();
+            finish();
+//            onBackPressed();
     }
     // endregion
 }
