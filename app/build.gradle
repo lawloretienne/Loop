@@ -65,6 +65,8 @@ dependencies {
 
     compile 'com.nineoldandroids:library:2.4.0'
 
+    compile 'com.github.lawloretienne:trestle:0.0.3'
+
     compile('com.crashlytics.sdk.android:crashlytics:2.5.2@aar') {
         transitive = true;
     }

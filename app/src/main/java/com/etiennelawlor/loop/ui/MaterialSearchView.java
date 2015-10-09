@@ -164,8 +164,10 @@ public class MaterialSearchView extends FrameLayout implements
             mMicrophoneImageView.setVisibility(View.VISIBLE);
         }
 
-        if(mIsSearchEditTextFocused)
+        if(mIsSearchEditTextFocused) {
+            mSuggestionsAdapter.setCurrentQuery(text.toString());
             BusProvider.get().post(new ShowSearchSuggestionsEvent(text.toString()));
+        }
 
         mFilterImageView.setVisibility(View.GONE);
     }

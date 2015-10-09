@@ -1,5 +1,7 @@
 package com.etiennelawlor.loop.adapters;
 
+import android.graphics.Typeface;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
@@ -11,6 +13,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
+import com.etiennelawlor.loop.LoopApplication;
 import com.etiennelawlor.loop.R;
 import com.etiennelawlor.loop.network.models.response.Pictures;
 import com.etiennelawlor.loop.network.models.response.Size;
@@ -19,6 +22,8 @@ import com.etiennelawlor.loop.network.models.response.User;
 import com.etiennelawlor.loop.network.models.response.Video;
 import com.etiennelawlor.loop.ui.LoadingImageView;
 import com.etiennelawlor.loop.utilities.LoopUtility;
+import com.etiennelawlor.trestle.library.Span;
+import com.etiennelawlor.trestle.library.Trestle;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -44,9 +49,11 @@ public class SuggestionsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
 
     // region Member Variables
     private List<String> mSuggestions;
+    private Typeface mBlackFont;
     private OnItemClickListener mOnItemClickListener;
     private OnItemLongClickListener mOnItemLongClickListener;
     private OnSearchSuggestionCompleteClickListener mOnSearchSuggestionCompleteClickListener;
+    private String mCurrentQuery = "";
     // endregion
 
     // region Listeners
@@ -69,6 +76,7 @@ public class SuggestionsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
     // region Constructors
     public SuggestionsAdapter() {
         mSuggestions = new ArrayList<>();
+        mBlackFont = Typeface.createFromAsset(LoopApplication.get().getAssets(), "fonts/Roboto-Black.ttf");
     }
     // endregion
 
@@ -182,10 +190,10 @@ public class SuggestionsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
                 }
             });
 
-            holder.mSuggestionCompleteImageView.setOnClickListener(new View.OnClickListener(){
+            holder.mSuggestionCompleteImageView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    if(mOnSearchSuggestionCompleteClickListener != null){
+                    if (mOnSearchSuggestionCompleteClickListener != null) {
                         mOnSearchSuggestionCompleteClickListener.onSearchSuggestionCompleteClickListener(position, holder.mSuggestionTextView);
                     }
                 }
@@ -195,8 +203,23 @@ public class SuggestionsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
 
     private void setUpSuggestion(TextView tv, String suggestion){
         if(!TextUtils.isEmpty(suggestion)){
-            tv.setText(suggestion);
+            if(!TextUtils.isEmpty(mCurrentQuery)){
+                CharSequence formattedSuggestion = Trestle.getFormattedText(
+                        new Span.Builder(suggestion)
+                                .regex(mCurrentQuery)
+                                .foregroundColor(ContextCompat.getColor(tv.getContext(), R.color.primary)) // Pass resolved color instead of resource id
+                                .typeface(mBlackFont)
+                                .build());
+
+                tv.setText(formattedSuggestion);
+            } else {
+                tv.setText(suggestion);
+            }
         }
+    }
+
+    public void setCurrentQuery(String query){
+        mCurrentQuery = query;
     }
     // endregion
 
