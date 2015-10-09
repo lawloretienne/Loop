@@ -107,6 +107,8 @@ public class MaterialSearchView extends FrameLayout implements
     @OnClick(R.id.microphone_iv)
     public void microphoneImageViewClicked(){
         if(isVoiceAvailable()){
+            hideSearchSuggestions();
+
             Intent intent = new Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH);
             intent.putExtra(RecognizerIntent.EXTRA_PROMPT, "Speak now");
             intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL, RecognizerIntent.LANGUAGE_MODEL_WEB_SEARCH);
