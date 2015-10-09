@@ -152,6 +152,7 @@ public class MaterialSearchView extends FrameLayout implements
     @OnClick(R.id.clear_iv)
     public void clearImageViewClicked(){
         mSearchEditText.setText("");
+        mSuggestionsAdapter.setCurrentQuery("");
     }
 
     @OnTextChanged(R.id.search_et)
