@@ -26,19 +26,38 @@
                     android:layout_height="match_parent"/>
             </FrameLayout>
 
-            <TextView
-                android:id="@+id/title_tv"
+            <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:orientation="vertical"
                 android:layout_centerInParent="true"
-                android:gravity="center"
-                android:text="Comedy"
-                android:textColor="@android:color/white"
-                android:textSize="16sp"
-                android:shadowDy="1"
-                android:shadowDx="1"
-                android:shadowRadius="1"
-                android:shadowColor="@color/transparent_black_ninty_five"/>
+                android:layout_marginLeft="32dp"
+                android:layout_marginRight="32dp">
+
+                <View android:layout_width="match_parent"
+                    android:layout_height="2dp"
+                    android:background="@color/transparent_white_fifty"/>
+
+                <TextView
+                    android:id="@+id/title_tv"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:text="Comedy"
+                    android:textColor="@android:color/white"
+                    android:textSize="16sp"
+                    android:layout_marginTop="8dp"
+                    android:layout_marginBottom="8dp"
+                    android:shadowDy="1"
+                    android:shadowDx="1"
+                    android:shadowRadius="1"
+                    android:shadowColor="@color/transparent_black_ninty_five"/>
+
+                <View android:layout_width="match_parent"
+                    android:layout_height="2dp"
+                    android:background="@color/transparent_white_fifty"/>
+
+            </LinearLayout>
 
         </RelativeLayout>
 
