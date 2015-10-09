@@ -12,6 +12,7 @@ import android.speech.RecognizerIntent;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.CardView;
+import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.AttributeSet;
 import android.view.KeyEvent;
@@ -41,6 +42,7 @@ import butterknife.ButterKnife;
 import butterknife.OnClick;
 import butterknife.OnFocusChange;
 import butterknife.OnTextChanged;
+import jp.wasabeef.recyclerview.animators.SlideInUpAnimator;
 import timber.log.Timber;
 
 /**
@@ -78,8 +80,6 @@ public class MaterialSearchView extends FrameLayout implements
 //    ImageView mBackImageView;
     @Bind(R.id.up_navigation_iv)
     ImageView mUpNavigationImageView;
-    @Bind(R.id.custom_search_view_ll)
-    LinearLayout mCustomSearchViewLinearLayout;
     @Bind(R.id.divider_v)
     View mDividerView;
     @Bind(R.id.bg_cover_fl)
@@ -89,14 +89,6 @@ public class MaterialSearchView extends FrameLayout implements
     // endregion
 
     // region Listeners
-//    @OnClick(R.id.custom_search_view_ll)
-//    public void searchViewLinearLayoutClicked(){
-////        if(!mAreSearchSuggestionsVisible){
-////            showSearchSuggestions();
-////        }
-//        mSearchEditText.requestFocus();
-//    }
-
     @OnClick(R.id.bg_cover_fl)
     public void backgroundCoverFrameLayoutClicked(){
         if(mAreSearchSuggestionsVisible){
@@ -128,8 +120,6 @@ public class MaterialSearchView extends FrameLayout implements
         if(mAreSearchSuggestionsVisible){
             hideSearchSuggestions();
         } else {
-            Timber.d("Do something else");
-
             UpNavigationClickedEvent.Type type = null;
             switch (mDefaultUpNavIcon){
                 case 0:
@@ -177,7 +167,6 @@ public class MaterialSearchView extends FrameLayout implements
 
     @OnFocusChange(R.id.search_et)
     public void onSearchEditTextFocusChanged(boolean focused) {
-        Timber.d("onSearchEditTextFocusChanged() : focused - " + focused);
         mIsSearchEditTextFocused = focused;
 
         if(mIsSearchEditTextFocused){
@@ -210,7 +199,6 @@ public class MaterialSearchView extends FrameLayout implements
 
     @Override
     public boolean dispatchKeyEventPreIme(KeyEvent event) {
-        Timber.d("");
         if(event != null){
             int keyCode = event.getKeyCode();
             if(keyCode == KeyEvent.KEYCODE_BACK){
@@ -226,18 +214,11 @@ public class MaterialSearchView extends FrameLayout implements
     // region SuggestionsAdapter.OnItemClickListener Methods
     @Override
     public void onItemClick(int position, View view) {
-//        Timber.d("");
-        Timber.d("SuggestionsAdapter : onItemClick()");
-
         TextView suggestionTextView = (TextView) view.findViewById(R.id.suggestion_tv);
         String suggestion = suggestionTextView.getText().toString();
-//        Timber.d("SuggestionsAdapter : onItemClick() : suggestionTextView.getText() - "+suggestionTextView.getText());
 
         hideSearchSuggestions();
-
         BusProvider.get().post(new SearchPerformedEvent(suggestion));
-
-//        setQuery("");
     }
     // endregion
 
@@ -247,7 +228,6 @@ public class MaterialSearchView extends FrameLayout implements
     public void onItemLongClick(int position, View view) {
         TextView suggestionTextView = (TextView) view.findViewById(R.id.suggestion_tv);
         final String suggestion = suggestionTextView.getText().toString();
-        Timber.d("SuggestionsAdapter : onItemLongClick() : suggestion -  "+suggestion);
 
         AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(getContext(), R.style.DialogTheme);
         alertDialogBuilder.setMessage("Remove from search history?");
@@ -309,10 +289,7 @@ public class MaterialSearchView extends FrameLayout implements
 
                 if (actionId == EditorInfo.IME_ACTION_SEARCH) {
                     hideSearchSuggestions();
-
                     BusProvider.get().post(new SearchPerformedEvent(getQuery()));
-
-//                    setQuery("");
                     return true;
                 } else {
                     return false;
@@ -335,33 +312,19 @@ public class MaterialSearchView extends FrameLayout implements
     }
 
     private void showSearchSuggestions(){
-        Timber.d("showSearchSuggestions()");
-
         BusProvider.get().post(new ShowSearchSuggestionsEvent(getQuery()));
-
-
-//        List<String> suggestions = new ArrayList<String>();
-//        suggestions.add("Bodyboarding");
-//        suggestions.add("Surfing");
-//        suggestions.add("Wind");
-//        suggestions.add("Snowboarding");
-//        suggestions.add("Skiing");
-//        suggestions.add("Skateboarding");
-//
-////                suggestions.add("BMX");
-////                suggestions.add("Motocross");
-//
-//        mSuggestionsAdapter.addAll(suggestions);
 
         mSuggestionsAdapter.setOnItemClickListener(this);
         mSuggestionsAdapter.setOnItemLongClickListener(this);
         mSuggestionsAdapter.setOnSearchSuggestionCompleteClickListener(this);
 
-        LinearLayoutManager layoutManager = new LinearLayoutManager(getContext());
+        CustomLinearLayoutManager layoutManager = new CustomLinearLayoutManager(getContext());
+//        LinearLayoutManager layoutManager = new LinearLayoutManager(getContext());
         mRecyclerView.setLayoutManager(layoutManager);
 
         mDividerItemDecoration = new DividerItemDecoration(getResources().getDrawable(R.drawable.divider));
         mRecyclerView.addItemDecoration(mDividerItemDecoration);
+//        mRecyclerView.setItemAnimator(new SlideInUpAnimator());
         mRecyclerView.setAdapter(mSuggestionsAdapter);
 
         if(mSuggestionsAdapter.getItemCount() > 0){
@@ -373,7 +336,6 @@ public class MaterialSearchView extends FrameLayout implements
         }
 
         mBackgroundCoverFrameLayout.setVisibility(View.VISIBLE);
-
 
 //        mUserAvatarCircleImageView.setVisibility(View.GONE);
 //        mBackImageView.setVisibility(View.VISIBLE);
@@ -390,15 +352,13 @@ public class MaterialSearchView extends FrameLayout implements
 //        mBackImageView.setVisibility(View.GONE);
 //        mUserAvatarCircleImageView.setVisibility(View.VISIBLE);
 
-//        mUpNavigationImageView.setImageDrawable(ContextCompat.getDrawable(getContext(), R.drawable.ic_menu_black_24dp));
-
         setUpDefaultUpNavIcon();
 
         mRecyclerView.setVisibility(View.GONE);
         mRecyclerView.removeItemDecoration(mDividerItemDecoration);
 
-        mAreSearchSuggestionsVisible = false;
         mSearchEditText.clearFocus();
+        mAreSearchSuggestionsVisible = false;
     }
 
     private boolean isVoiceAvailable() {

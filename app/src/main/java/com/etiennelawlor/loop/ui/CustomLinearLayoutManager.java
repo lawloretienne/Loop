@@ -11,7 +11,7 @@ import android.view.View;
 import java.lang.reflect.Field;
 
 
-public class LinearLayoutManager extends android.support.v7.widget.LinearLayoutManager {
+public class CustomLinearLayoutManager extends android.support.v7.widget.LinearLayoutManager {
 
     private static boolean canMakeInsetsDirty = true;
     private static Field insetsDirtyField = null;
@@ -29,26 +29,26 @@ public class LinearLayoutManager extends android.support.v7.widget.LinearLayoutM
     private final Rect tmpRect = new Rect();
 
     @SuppressWarnings("UnusedDeclaration")
-    public LinearLayoutManager(Context context) {
+    public CustomLinearLayoutManager(Context context) {
         super(context);
         this.view = null;
     }
 
     @SuppressWarnings("UnusedDeclaration")
-    public LinearLayoutManager(Context context, int orientation, boolean reverseLayout) {
+    public CustomLinearLayoutManager(Context context, int orientation, boolean reverseLayout) {
         super(context, orientation, reverseLayout);
         this.view = null;
     }
 
     @SuppressWarnings("UnusedDeclaration")
-    public LinearLayoutManager(RecyclerView view) {
+    public CustomLinearLayoutManager(RecyclerView view) {
         super(view.getContext());
         this.view = view;
         this.overScrollMode = ViewCompat.getOverScrollMode(view);
     }
 
     @SuppressWarnings("UnusedDeclaration")
-    public LinearLayoutManager(RecyclerView view, int orientation, boolean reverseLayout) {
+    public CustomLinearLayoutManager(RecyclerView view, int orientation, boolean reverseLayout) {
         super(view.getContext(), orientation, reverseLayout);
         this.view = view;
         this.overScrollMode = ViewCompat.getOverScrollMode(view);
