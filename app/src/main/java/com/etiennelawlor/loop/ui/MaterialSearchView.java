@@ -272,7 +272,7 @@ public class MaterialSearchView extends FrameLayout implements
     // region SuggestionsAdapter.OnSearchSuggestionCompleteClickListener Methods
     @Override
     public void onSearchSuggestionCompleteClickListener(int position, TextView textView) {
-        mSearchEditText.setText(textView.getText());
+        mSearchEditText.setText(textView.getText().toString());
         int textLength = mSearchEditText.getText().length();
         mSearchEditText.setSelection(textLength, textLength);
     }
@@ -420,6 +420,7 @@ public class MaterialSearchView extends FrameLayout implements
 
     public void setQuery(String query){
         mSearchEditText.setText(query);
+        mSuggestionsAdapter.setCurrentQuery(query);
         mFilterImageView.setVisibility(View.VISIBLE);
     }
 

@@ -15,6 +15,7 @@ import android.widget.VideoView;
 
 import com.etiennelawlor.loop.R;
 import com.etiennelawlor.loop.helper.PreferencesHelper;
+import com.etiennelawlor.loop.models.VideoSavedState;
 import com.etiennelawlor.loop.network.ServiceGenerator;
 import com.etiennelawlor.loop.network.VimeoPlayerService;
 import com.etiennelawlor.loop.models.AccessToken;
@@ -23,6 +24,7 @@ import com.etiennelawlor.loop.network.models.response.H264;
 import com.etiennelawlor.loop.network.models.response.HLS;
 import com.etiennelawlor.loop.network.models.response.Request;
 import com.etiennelawlor.loop.network.models.response.VP6;
+import com.etiennelawlor.loop.network.models.response.Video;
 import com.etiennelawlor.loop.network.models.response.VideoConfig;
 import com.etiennelawlor.loop.network.models.response.VideoFormat;
 import com.etiennelawlor.loop.otto.BusProvider;
@@ -53,6 +55,7 @@ public class VideoPlayerFragment extends BaseFragment {
     private String mVideoUrl;
     private MediaController mMediaController;
     private VimeoPlayerService mVimeoPlayerService;
+    private VideoSavedState mVideoSavedState;
 
     @Bind(R.id.vv)
     VideoView mVideoView;
@@ -75,7 +78,8 @@ public class VideoPlayerFragment extends BaseFragment {
 
                         if (!TextUtils.isEmpty(mVideoUrl)) {
                             Timber.d("playVideo()");
-                            playVideo(mVideoUrl);
+
+                            playVideo(mVideoUrl, 0);
                         }
                     }
                 } else {
@@ -161,6 +165,8 @@ public class VideoPlayerFragment extends BaseFragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        // retain this fragment
+        setRetainInstance(true);
 
         BusProvider.get().register(this);
 
@@ -197,9 +203,16 @@ public class VideoPlayerFragment extends BaseFragment {
 
         setUpSystemUiControls();
 
-        Call getVideoConfigCall = mVimeoPlayerService.getVideoConfig(mVideoId);
-        mCalls.add(getVideoConfigCall);
-        getVideoConfigCall.enqueue(mGetVideoConfigCallback);
+        VideoSavedState videoSavedState = getVideoSavedState();
+        if(videoSavedState != null && !TextUtils.isEmpty(videoSavedState.getVideoUrl())){
+            String videoUrl = videoSavedState.getVideoUrl();
+            int currentPosition = videoSavedState.getCurrentPosition();
+            playVideo(videoUrl, currentPosition);
+        } else {
+            Call getVideoConfigCall = mVimeoPlayerService.getVideoConfig(mVideoId);
+            mCalls.add(getVideoConfigCall);
+            getVideoConfigCall.enqueue(mGetVideoConfigCallback);
+        }
     }
 
     @Override
@@ -213,6 +226,14 @@ public class VideoPlayerFragment extends BaseFragment {
     @Override
     public void onPause() {
         super.onPause();
+
+        if(!TextUtils.isEmpty(mVideoUrl)){
+            VideoSavedState videoSavedState = new VideoSavedState();
+            videoSavedState.setVideoUrl(mVideoUrl);
+            videoSavedState.setCurrentPosition(mVideoView.getCurrentPosition());
+            setVideoSavedState(videoSavedState);
+        }
+
         if (mVideoView.isPlaying())
             mVideoView.suspend();
     }
@@ -397,10 +418,11 @@ public class VideoPlayerFragment extends BaseFragment {
         return videoUrl;
     }
 
-    private void playVideo(String videoUrl) {
+    private void playVideo(String videoUrl, int currentPosition) {
         mVideoView.setVideoPath(videoUrl);
 
         mVideoView.requestFocus();
+        mVideoView.seekTo(currentPosition);
 
         mVideoView.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
             @Override
@@ -411,6 +433,14 @@ public class VideoPlayerFragment extends BaseFragment {
 //                mVideoView.requestFocus();
             }
         });
+    }
+
+    public void setVideoSavedState(VideoSavedState videoSavedState) {
+        mVideoSavedState = videoSavedState;
+    }
+
+    public VideoSavedState getVideoSavedState() {
+        return mVideoSavedState;
     }
     // endregion
 }

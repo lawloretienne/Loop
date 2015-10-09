@@ -1,6 +1,7 @@
 package com.etiennelawlor.loop.activities;
 
 import android.os.Bundle;
+import android.support.v4.app.Fragment;
 import android.support.v7.app.AppCompatActivity;
 import android.view.MenuItem;
 
@@ -21,13 +22,22 @@ public class VideoPlayerActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_video_details);
+        setContentView(R.layout.activity_video_player);
         ButterKnife.bind(this);
 
-        getSupportFragmentManager()
-                .beginTransaction()
-                .add(android.R.id.content, VideoPlayerFragment.newInstance(getIntent().getExtras()), "")
-                .commit();
+        Fragment fragment = getSupportFragmentManager().findFragmentById(R.id.content_fl);
+        if(fragment == null){
+            fragment = VideoPlayerFragment.newInstance(getIntent().getExtras());
+            getSupportFragmentManager()
+                    .beginTransaction()
+                    .add(R.id.content_fl, fragment, "")
+                    .commit();
+        } else {
+            getSupportFragmentManager()
+                    .beginTransaction()
+                    .attach(fragment)
+                    .commit();
+        }
     }
 
     @Override

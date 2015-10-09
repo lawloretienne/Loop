@@ -55,7 +55,6 @@
         <activity
             android:name=".activities.VideoPlayerActivity"
             android:label="@string/app_name"
-            android:screenOrientation="landscape"
             android:theme="@style/Theme.Loop.VideoPlayerActivity">
         </activity>
         <activity
