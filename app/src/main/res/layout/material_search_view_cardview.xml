@@ -8,134 +8,126 @@
     android:layout_margin="8dp"
     android:theme="@style/Theme.Loop">
 
-    <FrameLayout
-        android:id="@+id/custom_search_view_fl"
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:foreground="?android:attr/selectableItemBackground">
+        android:orientation="vertical">
 
         <LinearLayout
+            android:id="@+id/custom_search_view_ll"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical">
+            android:layout_height="48dp"
+            android:gravity="center_vertical"
+            android:orientation="horizontal"
+            android:paddingLeft="16dp"
+            android:paddingRight="16dp">
 
-            <LinearLayout
-                android:id="@+id/custom_search_view_ll"
-                android:layout_width="match_parent"
-                android:layout_height="48dp"
-                android:gravity="center_vertical"
-                android:orientation="horizontal"
-                android:paddingLeft="16dp"
-                android:paddingRight="16dp">
+            <FrameLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginRight="16dp">
 
-                <FrameLayout
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginRight="16dp">
-
-                    <!--<de.hdodenhof.circleimageview.CircleImageView-->
-                        <!--android:id="@+id/user_avatar_riv"-->
-                        <!--android:layout_width="24dp"-->
-                        <!--android:layout_height="24dp"-->
-                        <!--android:background="@drawable/disabled_avatar_bg"-->
-                        <!--android:padding="0dp"-->
-                        <!--android:src="@drawable/ic_loop" />-->
-
-                    <ImageView
-                        android:id="@+id/up_navigation_iv"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_gravity="center_vertical"
-                        android:background="@drawable/ripple"
-                        android:contentDescription="@string/content_desc"
-                        android:src="@drawable/ic_menu_black_24dp"
-                        android:tint="@color/grey_700" />
-
-                    <!--<ImageView-->
-                        <!--android:id="@+id/back_iv"-->
-                        <!--android:layout_width="wrap_content"-->
-                        <!--android:layout_height="wrap_content"-->
-                        <!--android:layout_gravity="center_vertical"-->
-                        <!--android:background="@drawable/ripple"-->
-                        <!--android:contentDescription="@string/content_desc"-->
-                        <!--android:src="@drawable/ic_arrow_back_black_24dp"-->
-                        <!--android:tint="@color/grey_700"-->
-                        <!--android:visibility="gone" />-->
-
-                </FrameLayout>
-
-                <EditText
-                    android:id="@+id/search_et"
-                    android:layout_width="0dp"
-                    android:layout_height="match_parent"
-                    android:layout_weight="1"
-                    android:background="@null"
-                    android:gravity="center_vertical"
-                    android:hint="Search Loop"
-                    android:inputType="text"
-                    android:imeOptions="actionSearch"
-                    android:singleLine="true"
-                    android:textColor="@color/grey_700"
-                    android:textColorHint="@color/grey_500"
-                    android:textSize="@dimen/text_medium" />
-
-                <FrameLayout
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginLeft="16dp">
-
-                    <ImageView
-                        android:id="@+id/microphone_iv"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_gravity="center_vertical"
-                        android:background="@drawable/ripple"
-                        android:contentDescription="@string/content_desc"
-                        android:src="@drawable/ic_mic_black_24dp"
-                        android:tint="@color/grey_700" />
-
-                    <ImageView
-                        android:id="@+id/clear_iv"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_gravity="center_vertical"
-                        android:background="@drawable/ripple"
-                        android:contentDescription="@string/content_desc"
-                        android:src="@drawable/ic_clear_black_24dp"
-                        android:tint="@color/grey_700"
-                        android:visibility="gone" />
-
-                </FrameLayout>
+                <!--<de.hdodenhof.circleimageview.CircleImageView-->
+                <!--android:id="@+id/user_avatar_riv"-->
+                <!--android:layout_width="24dp"-->
+                <!--android:layout_height="24dp"-->
+                <!--android:background="@drawable/disabled_avatar_bg"-->
+                <!--android:padding="0dp"-->
+                <!--android:src="@drawable/ic_loop" />-->
 
                 <ImageView
-                    android:id="@+id/filter_iv"
+                    android:id="@+id/up_navigation_iv"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center_vertical"
                     android:background="@drawable/ripple"
-                    android:layout_marginLeft="16dp"
                     android:contentDescription="@string/content_desc"
-                    android:src="@drawable/ic_filter_list_black_24dp"
+                    android:src="@drawable/ic_menu_black_24dp"
+                    android:tint="@color/grey_700" />
+
+                <!--<ImageView-->
+                <!--android:id="@+id/back_iv"-->
+                <!--android:layout_width="wrap_content"-->
+                <!--android:layout_height="wrap_content"-->
+                <!--android:layout_gravity="center_vertical"-->
+                <!--android:background="@drawable/ripple"-->
+                <!--android:contentDescription="@string/content_desc"-->
+                <!--android:src="@drawable/ic_arrow_back_black_24dp"-->
+                <!--android:tint="@color/grey_700"-->
+                <!--android:visibility="gone" />-->
+
+            </FrameLayout>
+
+            <EditText
+                android:id="@+id/search_et"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:background="@null"
+                android:gravity="center_vertical"
+                android:hint="Search Loop"
+                android:imeOptions="actionSearch"
+                android:inputType="text"
+                android:singleLine="true"
+                android:textColor="@color/grey_700"
+                android:textColorHint="@color/grey_500"
+                android:textSize="@dimen/text_medium" />
+
+            <FrameLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="16dp">
+
+                <ImageView
+                    android:id="@+id/microphone_iv"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical"
+                    android:background="@drawable/ripple"
+                    android:contentDescription="@string/content_desc"
+                    android:src="@drawable/ic_mic_black_24dp"
+                    android:tint="@color/grey_700" />
+
+                <ImageView
+                    android:id="@+id/clear_iv"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical"
+                    android:background="@drawable/ripple"
+                    android:contentDescription="@string/content_desc"
+                    android:src="@drawable/ic_clear_black_24dp"
                     android:tint="@color/grey_700"
                     android:visibility="gone" />
 
-            </LinearLayout>
+            </FrameLayout>
 
-            <View
-                android:id="@+id/divider_v"
-                android:layout_width="match_parent"
-                android:layout_height="1dp"
-                android:background="@color/grey_300"
-                android:visibility="gone" />
-
-            <android.support.v7.widget.RecyclerView
-                android:id="@+id/rv"
-                android:layout_width="match_parent"
+            <ImageView
+                android:id="@+id/filter_iv"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:layout_marginLeft="16dp"
+                android:background="@drawable/ripple"
+                android:contentDescription="@string/content_desc"
+                android:src="@drawable/ic_filter_list_black_24dp"
+                android:tint="@color/grey_700"
                 android:visibility="gone" />
 
         </LinearLayout>
 
-    </FrameLayout>
+        <View
+            android:id="@+id/divider_v"
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="@color/grey_300"
+            android:visibility="gone" />
+
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/rv"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:visibility="gone" />
+
+    </LinearLayout>
 
 </android.support.v7.widget.CardView>

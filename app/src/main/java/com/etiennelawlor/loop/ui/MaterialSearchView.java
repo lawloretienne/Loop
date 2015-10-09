@@ -3,14 +3,17 @@ package com.etiennelawlor.loop.ui;
 import android.app.Activity;
 import android.content.Context;
 import android.content.ContextWrapper;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
 import android.content.res.TypedArray;
 import android.speech.RecognizerIntent;
 import android.support.v4.content.ContextCompat;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
+import android.text.TextUtils;
 import android.util.AttributeSet;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
@@ -25,10 +28,14 @@ import android.widget.TextView;
 import com.etiennelawlor.loop.R;
 import com.etiennelawlor.loop.adapters.SuggestionsAdapter;
 import com.etiennelawlor.loop.otto.BusProvider;
+import com.etiennelawlor.loop.otto.events.BackPressedEvent;
 import com.etiennelawlor.loop.otto.events.FilterClickedEvent;
 import com.etiennelawlor.loop.otto.events.SearchPerformedEvent;
+import com.etiennelawlor.loop.otto.events.ShowSearchSuggestionsEvent;
 import com.etiennelawlor.loop.otto.events.UpNavigationClickedEvent;
+import com.etiennelawlor.loop.realm.RealmUtility;
 import com.etiennelawlor.loop.utilities.LoopUtility;
+import com.squareup.otto.Subscribe;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -38,12 +45,16 @@ import butterknife.ButterKnife;
 import butterknife.OnClick;
 import butterknife.OnFocusChange;
 import butterknife.OnTextChanged;
+import retrofit.Call;
 import timber.log.Timber;
 
 /**
  * Created by etiennelawlor on 10/6/15.
  */
-public class MaterialSearchView extends FrameLayout implements SuggestionsAdapter.OnItemClickListener, SuggestionsAdapter.OnSearchSuggestionCompleteClickListener {
+public class MaterialSearchView extends FrameLayout implements
+        SuggestionsAdapter.OnItemClickListener,
+        SuggestionsAdapter.OnItemLongClickListener,
+        SuggestionsAdapter.OnSearchSuggestionCompleteClickListener {
 
     // region Constants
     public static final int REQUEST_VOICE = 9999;
@@ -53,6 +64,8 @@ public class MaterialSearchView extends FrameLayout implements SuggestionsAdapte
     private boolean mAreSearchSuggestionsVisible;
     private DividerItemDecoration mDividerItemDecoration;
     private Integer mDefaultUpNavIcon;
+    private SuggestionsAdapter mSuggestionsAdapter = new SuggestionsAdapter();
+    private boolean mIsSearchEditTextFocused = false;
 
     @Bind(R.id.search_et)
     EditText mSearchEditText;
@@ -70,7 +83,6 @@ public class MaterialSearchView extends FrameLayout implements SuggestionsAdapte
 //    ImageView mBackImageView;
     @Bind(R.id.up_navigation_iv)
     ImageView mUpNavigationImageView;
-
     @Bind(R.id.custom_search_view_ll)
     LinearLayout mCustomSearchViewLinearLayout;
     @Bind(R.id.divider_v)
@@ -99,12 +111,14 @@ public class MaterialSearchView extends FrameLayout implements SuggestionsAdapte
 
     @OnClick(R.id.microphone_iv)
     public void microphoneImageViewClicked(){
-        Intent intent = new Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH);
-        intent.putExtra(RecognizerIntent.EXTRA_PROMPT, "Speak now");
-        intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL, RecognizerIntent.LANGUAGE_MODEL_WEB_SEARCH);
-        intent.putExtra(RecognizerIntent.EXTRA_MAX_RESULTS, 1);
+        if(isVoiceAvailable()){
+            Intent intent = new Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH);
+            intent.putExtra(RecognizerIntent.EXTRA_PROMPT, "Speak now");
+            intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL, RecognizerIntent.LANGUAGE_MODEL_WEB_SEARCH);
+            intent.putExtra(RecognizerIntent.EXTRA_MAX_RESULTS, 1);
 
-        ((Activity)((ContextWrapper)mMicrophoneImageView.getContext()).getBaseContext()).startActivityForResult(intent, REQUEST_VOICE);
+            ((Activity)((ContextWrapper)mMicrophoneImageView.getContext()).getBaseContext()).startActivityForResult(intent, REQUEST_VOICE);
+        }
     }
 
     @OnClick(R.id.filter_iv)
@@ -149,6 +163,10 @@ public class MaterialSearchView extends FrameLayout implements SuggestionsAdapte
             mClearImageView.setVisibility(View.GONE);
             mMicrophoneImageView.setVisibility(View.VISIBLE);
         }
+
+        if(mIsSearchEditTextFocused)
+            BusProvider.get().post(new ShowSearchSuggestionsEvent(text.toString()));
+
         mFilterImageView.setVisibility(View.GONE);
     }
 
@@ -160,8 +178,9 @@ public class MaterialSearchView extends FrameLayout implements SuggestionsAdapte
     @OnFocusChange(R.id.search_et)
     public void onSearchEditTextFocusChanged(boolean focused) {
         Timber.d("onSearchEditTextFocusChanged() : focused - " + focused);
+        mIsSearchEditTextFocused = focused;
 
-        if(focused){
+        if(mIsSearchEditTextFocused){
             if(!mAreSearchSuggestionsVisible){
                 showSearchSuggestions();
             }
@@ -189,14 +208,17 @@ public class MaterialSearchView extends FrameLayout implements SuggestionsAdapte
     }
     // endregion
 
-    // region SuggestionsAdapter.OnSearchSuggestionCompleteClickListener Methods
     @Override
-    public void onSearchSuggestionCompleteClickListener(int position, TextView textView) {
-        mSearchEditText.setText(textView.getText());
-        int textLength = mSearchEditText.getText().length();
-        mSearchEditText.setSelection(textLength, textLength);
+    protected void onAttachedToWindow() {
+        super.onAttachedToWindow();
+        BusProvider.get().register(this);
     }
-    // endregion
+
+    @Override
+    protected void onDetachedFromWindow() {
+        super.onDetachedFromWindow();
+        BusProvider.get().unregister(this);
+    }
 
     // region SuggestionsAdapter.OnItemClickListener Methods
     @Override
@@ -213,6 +235,55 @@ public class MaterialSearchView extends FrameLayout implements SuggestionsAdapte
         BusProvider.get().post(new SearchPerformedEvent(suggestion));
 
 //        setQuery("");
+    }
+    // endregion
+
+    // region SuggestionsAdapter.OnItemLongClickListener Methods
+
+    @Override
+    public void onItemLongClick(int position, View view) {
+        TextView suggestionTextView = (TextView) view.findViewById(R.id.suggestion_tv);
+        final String suggestion = suggestionTextView.getText().toString();
+        Timber.d("SuggestionsAdapter : onItemLongClick() : suggestion -  "+suggestion);
+
+        AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(getContext(), R.style.DialogTheme);
+        alertDialogBuilder.setMessage("Remove from search history?");
+        alertDialogBuilder.setPositiveButton(getContext().getString(android.R.string.ok), new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                RealmUtility.deleteQuery(suggestion);
+                BusProvider.get().post(new ShowSearchSuggestionsEvent(getQuery()));
+                dialog.dismiss();
+            }
+        });
+        alertDialogBuilder.setNegativeButton(getContext().getString(android.R.string.cancel), new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.dismiss();
+            }
+        });
+
+        alertDialogBuilder.show();
+    }
+    // endregion
+
+    // region SuggestionsAdapter.OnSearchSuggestionCompleteClickListener Methods
+    @Override
+    public void onSearchSuggestionCompleteClickListener(int position, TextView textView) {
+        mSearchEditText.setText(textView.getText());
+        int textLength = mSearchEditText.getText().length();
+        mSearchEditText.setSelection(textLength, textLength);
+    }
+    // endregion
+
+    // region Otto Methods
+    @Subscribe
+    public void onBackPressedEvent(BackPressedEvent event) {
+//        String query = event.getQuery();
+//        if (!TextUtils.isEmpty(query)) {
+//            launchSearchActivity(query);
+//        }
+        hideSearchSuggestions();
     }
     // endregion
 
@@ -272,41 +343,45 @@ public class MaterialSearchView extends FrameLayout implements SuggestionsAdapte
     }
 
     private void showSearchSuggestions(){
-        Timber.d("mCardView : onClick()");
+        Timber.d("showSearchSuggestions()");
 
-        mBackgroundCoverFrameLayout.setVisibility(View.VISIBLE);
+        BusProvider.get().post(new ShowSearchSuggestionsEvent(getQuery()));
 
-        SuggestionsAdapter suggestionsAdapter = new SuggestionsAdapter();
 
-        List<String> suggestions = new ArrayList<String>();
-        suggestions.add("Bodyboarding");
-        suggestions.add("Surfing");
-        suggestions.add("Wind");
-        suggestions.add("Snowboarding");
-        suggestions.add("Skiing");
-        suggestions.add("Skateboarding");
-//                suggestions.add("BMX");
-//                suggestions.add("Motocross");
+//        List<String> suggestions = new ArrayList<String>();
+//        suggestions.add("Bodyboarding");
+//        suggestions.add("Surfing");
+//        suggestions.add("Wind");
+//        suggestions.add("Snowboarding");
+//        suggestions.add("Skiing");
+//        suggestions.add("Skateboarding");
+//
+////                suggestions.add("BMX");
+////                suggestions.add("Motocross");
+//
+//        mSuggestionsAdapter.addAll(suggestions);
 
-        suggestionsAdapter.addAll(suggestions);
-
-        suggestionsAdapter.setOnItemClickListener(this);
-        suggestionsAdapter.setOnSearchSuggestionCompleteClickListener(this);
+        mSuggestionsAdapter.setOnItemClickListener(this);
+        mSuggestionsAdapter.setOnItemLongClickListener(this);
+        mSuggestionsAdapter.setOnSearchSuggestionCompleteClickListener(this);
 
         LinearLayoutManager layoutManager = new LinearLayoutManager(getContext());
         mRecyclerView.setLayoutManager(layoutManager);
 
         mDividerItemDecoration = new DividerItemDecoration(getResources().getDrawable(R.drawable.divider));
         mRecyclerView.addItemDecoration(mDividerItemDecoration);
-        mRecyclerView.setAdapter(suggestionsAdapter);
+        mRecyclerView.setAdapter(mSuggestionsAdapter);
 
-        if(suggestionsAdapter.getItemCount() > 0){
+        if(mSuggestionsAdapter.getItemCount() > 0){
             mRecyclerView.setVisibility(View.VISIBLE);
             mDividerView.setVisibility(View.VISIBLE);
         } else {
             mRecyclerView.setVisibility(View.GONE);
             mDividerView.setVisibility(View.GONE);
         }
+
+        mBackgroundCoverFrameLayout.setVisibility(View.VISIBLE);
+
 
 //        mUserAvatarCircleImageView.setVisibility(View.GONE);
 //        mBackImageView.setVisibility(View.VISIBLE);
@@ -348,6 +423,21 @@ public class MaterialSearchView extends FrameLayout implements SuggestionsAdapte
 
     public String getQuery(){
         return mSearchEditText.getText().toString();
+    }
+
+    public void addSuggestions(List<String> suggestions){
+        mSuggestionsAdapter.clear();
+        mSuggestionsAdapter.addAll(suggestions);
+
+        if(mSuggestionsAdapter.getItemCount() > 0){
+            mRecyclerView.setVisibility(View.VISIBLE);
+            mDividerView.setVisibility(View.VISIBLE);
+        } else {
+            mRecyclerView.setVisibility(View.GONE);
+            mDividerView.setVisibility(View.GONE);
+        }
+
+        mBackgroundCoverFrameLayout.setVisibility(View.VISIBLE);
     }
     // endregion
 }

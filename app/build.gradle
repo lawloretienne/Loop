@@ -44,7 +44,7 @@ dependencies {
 
     compile 'de.hdodenhof:circleimageview:1.3.0'
 
-    compile 'io.realm:realm-android:0.82.1'
+    compile 'io.realm:realm-android:0.82.2'
 
     compile 'com.netflix.rxjava:rxjava-android:0.20.7'
 
@@ -61,7 +61,7 @@ dependencies {
 
     compile 'jp.wasabeef:recyclerview-animators:1.3.0'
 
-    compile 'com.github.greenfrvr:hashtag-view:1.1.1'
+    compile 'com.github.greenfrvr:hashtag-view:1.2.0'
 
     compile 'com.nineoldandroids:library:2.4.0'
 

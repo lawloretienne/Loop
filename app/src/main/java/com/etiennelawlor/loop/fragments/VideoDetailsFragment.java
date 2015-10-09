@@ -1,6 +1,7 @@
 package com.etiennelawlor.loop.fragments;
 
 import android.app.Activity;
+import android.app.SearchManager;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.Uri;
@@ -29,6 +30,7 @@ import com.bumptech.glide.Glide;
 import com.etiennelawlor.loop.EventMapKeys;
 import com.etiennelawlor.loop.EventNames;
 import com.etiennelawlor.loop.R;
+import com.etiennelawlor.loop.activities.SearchableActivity;
 import com.etiennelawlor.loop.activities.VideoDetailsActivity;
 import com.etiennelawlor.loop.activities.VideoPlayerActivity;
 import com.etiennelawlor.loop.adapters.RelatedVideosAdapter;
@@ -46,9 +48,11 @@ import com.etiennelawlor.loop.network.models.response.Size;
 import com.etiennelawlor.loop.network.models.response.Video;
 import com.etiennelawlor.loop.network.models.response.VideosCollection;
 import com.etiennelawlor.loop.otto.BusProvider;
+import com.etiennelawlor.loop.otto.events.SearchPerformedEvent;
 import com.etiennelawlor.loop.otto.events.VideoLikedEvent;
 import com.etiennelawlor.loop.otto.events.WatchLaterEvent;
 import com.squareup.okhttp.ResponseBody;
+import com.squareup.otto.Subscribe;
 
 import java.io.IOException;
 import java.net.SocketTimeoutException;
@@ -817,8 +821,6 @@ public class VideoDetailsFragment extends BaseFragment implements RelatedVideosA
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        BusProvider.get().register(this);
-
         if (getArguments() != null) {
             mVideo = (Video) getArguments().get("video");
         }
@@ -877,6 +879,18 @@ public class VideoDetailsFragment extends BaseFragment implements RelatedVideosA
             }
         }
 
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        BusProvider.get().register(this);
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        BusProvider.get().unregister(this);
     }
 
     @Override
@@ -1060,6 +1074,16 @@ public class VideoDetailsFragment extends BaseFragment implements RelatedVideosA
     }
     // endregion
 
+    // region Otto Methods
+    @Subscribe
+    public void onSearchPerformedEvent(SearchPerformedEvent event) {
+        String query = event.getQuery();
+        if (!TextUtils.isEmpty(query)) {
+            launchSearchActivity(query);
+        }
+    }
+    // endregion
+
     // region Helper Methods
 
     private void setUpVideoThumbnail() {
@@ -1090,6 +1114,13 @@ public class VideoDetailsFragment extends BaseFragment implements RelatedVideosA
         Call findRelatedVideosCall = mVimeoService.findRelatedVideos(mVideoId, mCurrentPage, PAGE_SIZE);
         mCalls.add(findRelatedVideosCall);
         findRelatedVideosCall.enqueue(mGetRelatedVideosNextFetchCallback);
+    }
+
+    private void launchSearchActivity(String query){
+        Intent intent = new Intent(getContext(), SearchableActivity.class);
+        intent.setAction(Intent.ACTION_SEARCH);
+        intent.putExtra(SearchManager.QUERY, query);
+        getContext().startActivity(intent);
     }
 
 //    private String formatViewCount(int viewCount) {

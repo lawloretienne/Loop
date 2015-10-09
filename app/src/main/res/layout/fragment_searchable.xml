@@ -13,7 +13,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:background="@color/grey_200"
-        android:layout_marginTop="64dp"
+        android:layout_marginTop="@dimen/msv_margin"
         app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
         <include layout="@layout/videos_section" />

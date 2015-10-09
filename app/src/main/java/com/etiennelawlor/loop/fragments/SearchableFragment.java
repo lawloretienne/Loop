@@ -6,18 +6,14 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
-import android.provider.SearchRecentSuggestions;
 import android.speech.RecognizerIntent;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityOptionsCompat;
 import android.support.v4.graphics.drawable.DrawableCompat;
 import android.support.v4.util.Pair;
-import android.support.v7.app.ActionBar;
 import android.support.v7.app.AlertDialog;
-import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -43,7 +39,8 @@ import com.etiennelawlor.loop.network.models.response.VideosCollection;
 import com.etiennelawlor.loop.otto.BusProvider;
 import com.etiennelawlor.loop.otto.events.FilterClickedEvent;
 import com.etiennelawlor.loop.otto.events.SearchPerformedEvent;
-import com.etiennelawlor.loop.providers.CustomSearchRecentSuggestionsProvider;
+import com.etiennelawlor.loop.otto.events.ShowSearchSuggestionsEvent;
+import com.etiennelawlor.loop.realm.RealmUtility;
 import com.etiennelawlor.loop.ui.LoadingImageView;
 import com.etiennelawlor.loop.ui.MaterialSearchView;
 import com.squareup.okhttp.ResponseBody;
@@ -371,9 +368,11 @@ public class SearchableFragment extends BaseFragment implements VideosAdapter.On
 
         if(getArguments() != null){
             mQuery = getArguments().getString(SearchManager.QUERY);
-            SearchRecentSuggestions suggestions = new SearchRecentSuggestions(getActivity(),
-                    CustomSearchRecentSuggestionsProvider.AUTHORITY, CustomSearchRecentSuggestionsProvider.MODE);
-            suggestions.saveRecentQuery(mQuery, null);
+//            SearchRecentSuggestions suggestions = new SearchRecentSuggestions(getActivity(),
+//                    CustomSearchRecentSuggestionsProvider.AUTHORITY, CustomSearchRecentSuggestionsProvider.MODE);
+//            suggestions.saveRecentQuery(mQuery, null);
+
+            RealmUtility.saveQuery(mQuery);
 
 //            performSearch(query);
         }
@@ -385,7 +384,6 @@ public class SearchableFragment extends BaseFragment implements VideosAdapter.On
                 token);
 
         setHasOptionsMenu(true);
-        BusProvider.get().register(this);
     }
 
     @Override
@@ -489,19 +487,23 @@ public class SearchableFragment extends BaseFragment implements VideosAdapter.On
     }
 
     @Override
+    public void onResume() {
+        super.onResume();
+        BusProvider.get().register(this);
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        BusProvider.get().unregister(this);
+    }
+
+    @Override
     public void onDestroyView() {
         super.onDestroyView();
 
         mVideosRecyclerView.removeOnScrollListener(mRecyclerViewOnScrollListener);
         ButterKnife.unbind(this);
-    }
-
-    @Override
-    public void onDestroy() {
-        super.onDestroy();
-
-        // Unregister Otto Bus
-        BusProvider.get().unregister(this);
     }
     // endregion
 
@@ -586,6 +588,21 @@ public class SearchableFragment extends BaseFragment implements VideosAdapter.On
     public void onFilterClickedEvent(FilterClickedEvent event) {
         showSortDialog();
     }
+
+    @Subscribe
+    public void onSearchPerformedEvent(SearchPerformedEvent event) {
+        String query = event.getQuery();
+        if (!TextUtils.isEmpty(query)) {
+            launchSearchActivity(query);
+        }
+    }
+
+    @Subscribe
+    public void onShowSearchSuggestionsEvent(ShowSearchSuggestionsEvent event) {
+        String query = event.getQuery();
+
+        mMaterialSearchView.addSuggestions(RealmUtility.getSuggestions(query));
+    }
     // endregion
 
     // region Helper Methods
@@ -666,6 +683,7 @@ public class SearchableFragment extends BaseFragment implements VideosAdapter.On
         intent.setAction(Intent.ACTION_SEARCH);
         intent.putExtra(SearchManager.QUERY, query);
         getContext().startActivity(intent);
+        getActivity().overridePendingTransition(0, 0);
     }
     // endregion
 }

@@ -467,7 +467,7 @@ public class RelatedVideosAdapter extends RecyclerView.Adapter<RecyclerView.View
             if(canonicalTags.size() > 0){
                 htv.setData(canonicalTags, Transformers.HASH);
                 htv.setTypeface(mBoldFont);
-                htv.setOnTagClickListener(new HashtagView.TagsClickListener() {
+                htv.addOnTagClickListener(new HashtagView.TagsClickListener() {
                     @Override
                     public void onItemClicked(Object item) {
                         String tag = (String) item;

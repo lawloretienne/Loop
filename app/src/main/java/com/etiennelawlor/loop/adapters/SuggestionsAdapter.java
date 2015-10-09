@@ -45,6 +45,7 @@ public class SuggestionsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
     // region Member Variables
     private List<String> mSuggestions;
     private OnItemClickListener mOnItemClickListener;
+    private OnItemLongClickListener mOnItemLongClickListener;
     private OnSearchSuggestionCompleteClickListener mOnSearchSuggestionCompleteClickListener;
     // endregion
 
@@ -54,6 +55,10 @@ public class SuggestionsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
     // region Interfaces
     public interface OnItemClickListener {
         void onItemClick(int position, View view);
+    }
+
+    public interface OnItemLongClickListener {
+        void onItemLongClick(int position, View view);
     }
 
     public interface OnSearchSuggestionCompleteClickListener {
@@ -137,6 +142,10 @@ public class SuggestionsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
         this.mOnItemClickListener = onItemClickListener;
     }
 
+    public void setOnItemLongClickListener(OnItemLongClickListener onItemLongClickListener) {
+        this.mOnItemLongClickListener = onItemLongClickListener;
+    }
+
     public void setOnSearchSuggestionCompleteClickListener(OnSearchSuggestionCompleteClickListener onSearchSuggestionCompleteClickListener) {
         this.mOnSearchSuggestionCompleteClickListener = onSearchSuggestionCompleteClickListener;
     }
@@ -160,6 +169,16 @@ public class SuggestionsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
                     if (mOnItemClickListener != null) {
                         mOnItemClickListener.onItemClick(position, holder.itemView);
                     }
+                }
+            });
+
+            holder.itemView.setOnLongClickListener(new View.OnLongClickListener() {
+                @Override
+                public boolean onLongClick(View v) {
+                    if (mOnItemLongClickListener != null) {
+                        mOnItemLongClickListener.onItemLongClick(position, holder.itemView);
+                    }
+                    return true;
                 }
             });
 

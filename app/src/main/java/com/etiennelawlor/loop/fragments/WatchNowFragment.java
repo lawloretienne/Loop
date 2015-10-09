@@ -21,8 +21,9 @@ import android.view.ViewGroup;
 import com.etiennelawlor.loop.R;
 import com.etiennelawlor.loop.activities.SearchableActivity;
 import com.etiennelawlor.loop.otto.BusProvider;
-import com.etiennelawlor.loop.otto.events.FilterClickedEvent;
 import com.etiennelawlor.loop.otto.events.SearchPerformedEvent;
+import com.etiennelawlor.loop.otto.events.ShowSearchSuggestionsEvent;
+import com.etiennelawlor.loop.realm.RealmUtility;
 import com.etiennelawlor.loop.ui.MaterialSearchView;
 import com.squareup.otto.Subscribe;
 
@@ -80,7 +81,6 @@ public class WatchNowFragment extends BaseFragment {
         }
 
         setHasOptionsMenu(true);
-        BusProvider.get().register(this);
     }
 
     @Override
@@ -115,17 +115,21 @@ public class WatchNowFragment extends BaseFragment {
     }
 
     @Override
-    public void onDestroyView() {
-        super.onDestroyView();
-        ButterKnife.unbind(this);
+    public void onResume() {
+        super.onResume();
+        BusProvider.get().register(this);
     }
 
     @Override
-    public void onDestroy() {
-        super.onDestroy();
-
-        // Unregister Otto Bus
+    public void onPause() {
+        super.onPause();
         BusProvider.get().unregister(this);
+    }
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        ButterKnife.unbind(this);
     }
     // endregion
 
@@ -154,9 +158,16 @@ public class WatchNowFragment extends BaseFragment {
     @Subscribe
     public void onSearchPerformedEvent(SearchPerformedEvent event) {
         String query = event.getQuery();
-        if(!TextUtils.isEmpty(query)){
+        if (!TextUtils.isEmpty(query)) {
             launchSearchActivity(query);
         }
+    }
+
+    @Subscribe
+    public void onShowSearchSuggestionsEvent(ShowSearchSuggestionsEvent event) {
+        String query = event.getQuery();
+
+        mMaterialSearchView.addSuggestions(RealmUtility.getSuggestions(query));
     }
     // endregion
 
@@ -199,7 +210,7 @@ public class WatchNowFragment extends BaseFragment {
         return VideosFragment.newInstance(bundle);
     }
 
-    private void launchSearchActivity(String query){
+    private void launchSearchActivity(String query) {
         Intent intent = new Intent(getContext(), SearchableActivity.class);
         intent.setAction(Intent.ACTION_SEARCH);
         intent.putExtra(SearchManager.QUERY, query);
