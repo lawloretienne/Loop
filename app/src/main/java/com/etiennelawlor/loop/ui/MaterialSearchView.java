@@ -13,7 +13,6 @@ import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
-import android.text.TextUtils;
 import android.util.AttributeSet;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
@@ -28,16 +27,13 @@ import android.widget.TextView;
 import com.etiennelawlor.loop.R;
 import com.etiennelawlor.loop.adapters.SuggestionsAdapter;
 import com.etiennelawlor.loop.otto.BusProvider;
-import com.etiennelawlor.loop.otto.events.BackPressedEvent;
 import com.etiennelawlor.loop.otto.events.FilterClickedEvent;
 import com.etiennelawlor.loop.otto.events.SearchPerformedEvent;
 import com.etiennelawlor.loop.otto.events.ShowSearchSuggestionsEvent;
 import com.etiennelawlor.loop.otto.events.UpNavigationClickedEvent;
 import com.etiennelawlor.loop.realm.RealmUtility;
 import com.etiennelawlor.loop.utilities.LoopUtility;
-import com.squareup.otto.Subscribe;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import butterknife.Bind;
@@ -45,7 +41,6 @@ import butterknife.ButterKnife;
 import butterknife.OnClick;
 import butterknife.OnFocusChange;
 import butterknife.OnTextChanged;
-import retrofit.Call;
 import timber.log.Timber;
 
 /**
@@ -212,15 +207,18 @@ public class MaterialSearchView extends FrameLayout implements
     // endregion
 
     @Override
-    protected void onAttachedToWindow() {
-        super.onAttachedToWindow();
-        BusProvider.get().register(this);
-    }
+    public boolean dispatchKeyEventPreIme(KeyEvent event) {
+        Timber.d("");
+        if(event != null){
+            int keyCode = event.getKeyCode();
+            if(keyCode == KeyEvent.KEYCODE_BACK){
+                if(mAreSearchSuggestionsVisible){
+                    hideSearchSuggestions();
+                }
+            }
+        }
 
-    @Override
-    protected void onDetachedFromWindow() {
-        super.onDetachedFromWindow();
-        BusProvider.get().unregister(this);
+        return true;
     }
 
     // region SuggestionsAdapter.OnItemClickListener Methods
@@ -276,17 +274,6 @@ public class MaterialSearchView extends FrameLayout implements
         mSearchEditText.setText(textView.getText().toString());
         int textLength = mSearchEditText.getText().length();
         mSearchEditText.setSelection(textLength, textLength);
-    }
-    // endregion
-
-    // region Otto Methods
-    @Subscribe
-    public void onBackPressedEvent(BackPressedEvent event) {
-//        String query = event.getQuery();
-//        if (!TextUtils.isEmpty(query)) {
-//            launchSearchActivity(query);
-//        }
-        hideSearchSuggestions();
     }
     // endregion
 

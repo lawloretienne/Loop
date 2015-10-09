@@ -24,8 +24,6 @@ import com.etiennelawlor.loop.helper.PreferencesHelper;
 import com.etiennelawlor.loop.network.models.response.AuthorizedUser;
 import com.etiennelawlor.loop.network.models.response.Picture;
 import com.etiennelawlor.loop.otto.BusProvider;
-import com.etiennelawlor.loop.otto.events.BackPressedEvent;
-import com.etiennelawlor.loop.otto.events.SearchPerformedEvent;
 import com.etiennelawlor.loop.otto.events.UpNavigationClickedEvent;
 import com.etiennelawlor.loop.utilities.LoopUtility;
 import com.squareup.otto.Subscribe;
@@ -177,8 +175,6 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     public void onBackPressed() {
-        BusProvider.get().post(new BackPressedEvent());
-
         if (mDrawerLayout.isDrawerOpen(Gravity.LEFT)) {
             mDrawerLayout.closeDrawer(Gravity.LEFT);
         } else {
