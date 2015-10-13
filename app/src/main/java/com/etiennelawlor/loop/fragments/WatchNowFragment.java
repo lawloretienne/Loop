@@ -208,6 +208,7 @@ public class WatchNowFragment extends BaseFragment {
         bundle.putString("query", query);
 
         return VideosFragment.newInstance(bundle);
+//        return PlaceholderFragment.newInstance();
     }
 
     private void launchSearchActivity(String query) {

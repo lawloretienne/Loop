@@ -23,6 +23,7 @@
         android:id="@+id/material_sv"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        app:default_up_nav_icon="menu"/>
+        app:defaultUpNavIcon="menu"
+        app:hintText="Search Loop"/>
 
 </FrameLayout>

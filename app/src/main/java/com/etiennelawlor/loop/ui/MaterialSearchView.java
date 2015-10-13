@@ -61,6 +61,7 @@ public class MaterialSearchView extends FrameLayout implements
     private boolean mAreSearchSuggestionsVisible;
     private DividerItemDecoration mDividerItemDecoration;
     private Integer mDefaultUpNavIcon;
+    private String mHintText;
     private SuggestionsAdapter mSuggestionsAdapter = new SuggestionsAdapter();
     private boolean mIsSearchEditTextFocused = false;
 
@@ -271,13 +272,15 @@ public class MaterialSearchView extends FrameLayout implements
         if (attrs != null) {
             TypedArray a = getContext().getTheme().obtainStyledAttributes(attrs, R.styleable.MaterialSearchView, 0, 0);
             try {
-                mDefaultUpNavIcon = a.getInteger(R.styleable.MaterialSearchView_default_up_nav_icon, 1);
+                mDefaultUpNavIcon = a.getInteger(R.styleable.MaterialSearchView_defaultUpNavIcon, 1);
+                mHintText = a.getString(R.styleable.MaterialSearchView_hintText);
             } finally {
                 a.recycle();
             }
         }
 
         setUpDefaultUpNavIcon();
+        setUpHintText();
 
         setUpListeners();
     }
@@ -309,6 +312,10 @@ public class MaterialSearchView extends FrameLayout implements
             default:
                 break;
         }
+    }
+
+    private void setUpHintText(){
+        mSearchEditText.setHint(mHintText);
     }
 
     private void showSearchSuggestions(){
