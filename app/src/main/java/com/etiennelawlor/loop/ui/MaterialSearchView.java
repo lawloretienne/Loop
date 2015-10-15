@@ -436,11 +436,13 @@ public class MaterialSearchView extends FrameLayout implements
 
     public void enableFilter() {
         mFilterImageView.setOnClickListener(mFilterImageViewOnClickListener);
+        mFilterImageView.setBackgroundDrawable(getResources().getDrawable(R.drawable.ripple));
         mFilterImageView.setColorFilter(ContextCompat.getColor(getContext(), R.color.grey_700));
     }
 
     public void disableFilter() {
         mFilterImageView.setOnClickListener(null);
+        mFilterImageView.setBackgroundDrawable(null);
         mFilterImageView.setColorFilter(ContextCompat.getColor(getContext(), R.color.grey_300));
     }
     // endregion

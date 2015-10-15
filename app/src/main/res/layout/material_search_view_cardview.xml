@@ -92,7 +92,7 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_vertical"
                 android:layout_marginLeft="16dp"
-                android:background="@drawable/ripple"
+                android:background="@null"
                 android:contentDescription="@string/content_desc"
                 android:src="@drawable/ic_filter_list_black_24dp"
                 android:tint="@color/grey_300"
