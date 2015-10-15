@@ -3,14 +3,13 @@ package com.etiennelawlor.loop.activities;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.support.v4.view.GravityCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.view.MenuItem;
 
 import com.etiennelawlor.loop.R;
 import com.etiennelawlor.loop.fragments.SearchableFragment;
 import com.etiennelawlor.loop.otto.BusProvider;
-import com.etiennelawlor.loop.otto.events.UpNavigationClickedEvent;
+import com.etiennelawlor.loop.otto.events.LeftDrawableClickedEvent;
 import com.google.android.gms.actions.SearchIntents;
 import com.squareup.otto.Subscribe;
 
@@ -69,11 +68,11 @@ public class SearchableActivity extends AppCompatActivity {
 
     // region Otto Methods
     @Subscribe
-    public void onUpNavigationClickedEvent(UpNavigationClickedEvent event) {
-        Timber.d("onUpNavigationClickedEvent");
-        UpNavigationClickedEvent.Type type = event.getType();
+    public void onLeftDrawableClickedEvent(LeftDrawableClickedEvent event) {
+        Timber.d("onLeftDrawableClickedEvent");
+        LeftDrawableClickedEvent.Type type = event.getType();
 
-        if(type == UpNavigationClickedEvent.Type.BACK)
+        if(type == LeftDrawableClickedEvent.Type.BACK)
             finish();
 //            onBackPressed();
     }

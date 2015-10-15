@@ -23,7 +23,11 @@
         android:id="@+id/material_sv"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        app:defaultUpNavIcon="menu"
+        app:leftDrawableType="avatar"
+        app:layout_marginLeft="8dp"
+        app:layout_marginRight="8dp"
+        app:layout_marginBottom="8dp"
+        app:layout_marginTop="8dp"
         app:hintText="Search Loop"/>
 
 </FrameLayout>

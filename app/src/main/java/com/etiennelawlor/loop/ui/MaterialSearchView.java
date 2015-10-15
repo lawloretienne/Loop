@@ -12,8 +12,8 @@ import android.speech.RecognizerIntent;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.CardView;
-import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.text.TextUtils;
 import android.util.AttributeSet;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
@@ -22,7 +22,6 @@ import android.view.inputmethod.EditorInfo;
 import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.etiennelawlor.loop.R;
@@ -31,7 +30,7 @@ import com.etiennelawlor.loop.otto.BusProvider;
 import com.etiennelawlor.loop.otto.events.FilterClickedEvent;
 import com.etiennelawlor.loop.otto.events.SearchPerformedEvent;
 import com.etiennelawlor.loop.otto.events.ShowSearchSuggestionsEvent;
-import com.etiennelawlor.loop.otto.events.UpNavigationClickedEvent;
+import com.etiennelawlor.loop.otto.events.LeftDrawableClickedEvent;
 import com.etiennelawlor.loop.realm.RealmUtility;
 import com.etiennelawlor.loop.utilities.LoopUtility;
 
@@ -42,8 +41,7 @@ import butterknife.ButterKnife;
 import butterknife.OnClick;
 import butterknife.OnFocusChange;
 import butterknife.OnTextChanged;
-import jp.wasabeef.recyclerview.animators.SlideInUpAnimator;
-import timber.log.Timber;
+import de.hdodenhof.circleimageview.CircleImageView;
 
 /**
  * Created by etiennelawlor on 10/6/15.
@@ -60,8 +58,12 @@ public class MaterialSearchView extends FrameLayout implements
     // region Member Variables
     private boolean mAreSearchSuggestionsVisible;
     private DividerItemDecoration mDividerItemDecoration;
-    private Integer mDefaultUpNavIcon;
+    private Integer mLeftDrawableType;
     private String mHintText;
+    private int mMarginTop;
+    private int mMarginBottom;
+    private int mMarginLeft;
+    private int mMarginRight;
     private SuggestionsAdapter mSuggestionsAdapter = new SuggestionsAdapter();
     private boolean mIsSearchEditTextFocused = false;
 
@@ -75,12 +77,10 @@ public class MaterialSearchView extends FrameLayout implements
     ImageView mFilterImageView;
     @Bind(R.id.cv)
     CardView mCardView;
-//    @Bind(R.id.user_avatar_riv)
-//    CircleImageView mUserAvatarCircleImageView;
-//    @Bind(R.id.back_iv)
-//    ImageView mBackImageView;
-    @Bind(R.id.up_navigation_iv)
-    ImageView mUpNavigationImageView;
+    @Bind(R.id.left_drawable_iv)
+    ImageView mLeftDrawableImageView;
+    @Bind(R.id.left_drawable_riv)
+    CircleImageView mLeftDrawableRoundedImageView;
     @Bind(R.id.divider_v)
     View mDividerView;
     @Bind(R.id.bg_cover_fl)
@@ -111,36 +111,33 @@ public class MaterialSearchView extends FrameLayout implements
         }
     }
 
-    @OnClick(R.id.filter_iv)
-    public void filterImageViewClicked(){
-        BusProvider.get().post(new FilterClickedEvent());
-    }
-
-    @OnClick(R.id.up_navigation_iv)
-    public void upNavigationImageViewClicked(){
+    @OnClick(R.id.left_drawable_iv)
+    public void leftDrawableImageViewClicked(){
         if(mAreSearchSuggestionsVisible){
             hideSearchSuggestions();
         } else {
-            UpNavigationClickedEvent.Type type = null;
-            switch (mDefaultUpNavIcon){
+            LeftDrawableClickedEvent.Type type = null;
+            switch (mLeftDrawableType){
                 case 0:
-                    type = UpNavigationClickedEvent.Type.MENU;
+                    type = LeftDrawableClickedEvent.Type.MENU;
                     break;
                 case 1:
-                    type = UpNavigationClickedEvent.Type.BACK;
+                    type = LeftDrawableClickedEvent.Type.BACK;
                     break;
+                case 2:
+                    type = LeftDrawableClickedEvent.Type.SEARCH;
+                    mSearchEditText.requestFocus();
                 default:
                     break;
             }
 
-            BusProvider.get().post(new UpNavigationClickedEvent(type));
+            BusProvider.get().post(new LeftDrawableClickedEvent(type));
         }
     }
 
     @OnClick(R.id.clear_iv)
     public void clearImageViewClicked(){
-        mSearchEditText.setText("");
-        mSuggestionsAdapter.setCurrentQuery("");
+        setQuery("");
     }
 
     @OnTextChanged(R.id.search_et)
@@ -179,6 +176,13 @@ public class MaterialSearchView extends FrameLayout implements
             LoopUtility.hideKeyboard(getContext(), mSearchEditText);
         }
     }
+
+    private OnClickListener mFilterImageViewOnClickListener = new OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            BusProvider.get().post(new FilterClickedEvent());
+        }
+    };
     // endregion
 
     // region Constructors
@@ -272,17 +276,33 @@ public class MaterialSearchView extends FrameLayout implements
         if (attrs != null) {
             TypedArray a = getContext().getTheme().obtainStyledAttributes(attrs, R.styleable.MaterialSearchView, 0, 0);
             try {
-                mDefaultUpNavIcon = a.getInteger(R.styleable.MaterialSearchView_defaultUpNavIcon, 1);
+                mLeftDrawableType = a.getInteger(R.styleable.MaterialSearchView_leftDrawableType, 1);
                 mHintText = a.getString(R.styleable.MaterialSearchView_hintText);
+                mMarginTop = a.getDimensionPixelSize(R.styleable.MaterialSearchView_layout_marginTop, 0);
+                mMarginBottom = a.getDimensionPixelSize(R.styleable.MaterialSearchView_layout_marginBottom, 0);
+                mMarginLeft = a.getDimensionPixelSize(R.styleable.MaterialSearchView_layout_marginLeft, 0);
+                mMarginRight = a.getDimensionPixelSize(R.styleable.MaterialSearchView_layout_marginRight, 0);
+
             } finally {
                 a.recycle();
             }
         }
 
-        setUpDefaultUpNavIcon();
+        setUpLeftDrawable(false);
+        setUpCardView();
         setUpHintText();
-
         setUpListeners();
+    }
+
+    private void setUpCardView(){
+        LayoutParams params = new LayoutParams(
+                mCardView.getLayoutParams());
+        params.topMargin = mMarginTop;
+        params.bottomMargin = mMarginBottom;
+        params.leftMargin = mMarginLeft;
+        params.rightMargin = mMarginRight;
+
+        mCardView.setLayoutParams(params);
     }
 
     private void setUpListeners(){
@@ -301,16 +321,35 @@ public class MaterialSearchView extends FrameLayout implements
         });
     }
 
-    private void setUpDefaultUpNavIcon(){
-        switch (mDefaultUpNavIcon){
-            case 0:
-                mUpNavigationImageView.setImageDrawable(ContextCompat.getDrawable(getContext(), R.drawable.ic_menu_black_24dp));
-                break;
-            case 1:
-                mUpNavigationImageView.setImageDrawable(ContextCompat.getDrawable(getContext(), R.drawable.ic_arrow_back_black_24dp));
-                break;
-            default:
-                break;
+    private void setUpLeftDrawable(boolean showingSearchSuggestions){
+        if(showingSearchSuggestions){
+            mLeftDrawableImageView.setImageDrawable(ContextCompat.getDrawable(getContext(), R.drawable.ic_arrow_back_black_24dp));
+            mLeftDrawableRoundedImageView.setVisibility(View.GONE);
+            mLeftDrawableImageView.setVisibility(View.VISIBLE);
+        } else {
+            switch (mLeftDrawableType){
+                case 0:
+                    mLeftDrawableImageView.setImageDrawable(ContextCompat.getDrawable(getContext(), R.drawable.ic_menu_black_24dp));
+                    break;
+                case 1:
+                    mLeftDrawableImageView.setImageDrawable(ContextCompat.getDrawable(getContext(), R.drawable.ic_arrow_back_black_24dp));
+                    break;
+                case 2:
+                    mLeftDrawableImageView.setImageDrawable(ContextCompat.getDrawable(getContext(), R.drawable.ic_search_black_24dp));
+                    break;
+                case 3:
+                    break;
+                default:
+                    break;
+            }
+
+            if(mLeftDrawableType == 3){
+                mLeftDrawableImageView.setVisibility(View.GONE);
+                mLeftDrawableRoundedImageView.setVisibility(View.VISIBLE);
+            } else {
+                mLeftDrawableRoundedImageView.setVisibility(View.GONE);
+                mLeftDrawableImageView.setVisibility(View.VISIBLE);
+            }
         }
     }
 
@@ -344,10 +383,7 @@ public class MaterialSearchView extends FrameLayout implements
 
         mBackgroundCoverFrameLayout.setVisibility(View.VISIBLE);
 
-//        mUserAvatarCircleImageView.setVisibility(View.GONE);
-//        mBackImageView.setVisibility(View.VISIBLE);
-
-        mUpNavigationImageView.setImageDrawable(ContextCompat.getDrawable(getContext(), R.drawable.ic_arrow_back_black_24dp));
+        setUpLeftDrawable(true);
 
         mAreSearchSuggestionsVisible = true;
     }
@@ -356,10 +392,7 @@ public class MaterialSearchView extends FrameLayout implements
         mDividerView.setVisibility(View.GONE);
         mBackgroundCoverFrameLayout.setVisibility(View.GONE);
 
-//        mBackImageView.setVisibility(View.GONE);
-//        mUserAvatarCircleImageView.setVisibility(View.VISIBLE);
-
-        setUpDefaultUpNavIcon();
+        setUpLeftDrawable(false);
 
         mRecyclerView.setVisibility(View.GONE);
         mRecyclerView.removeItemDecoration(mDividerItemDecoration);
@@ -378,7 +411,8 @@ public class MaterialSearchView extends FrameLayout implements
     public void setQuery(String query){
         mSearchEditText.setText(query);
         mSuggestionsAdapter.setCurrentQuery(query);
-        mFilterImageView.setVisibility(View.VISIBLE);
+        if(!TextUtils.isEmpty(query))
+            mFilterImageView.setVisibility(View.VISIBLE);
     }
 
     public String getQuery(){
@@ -398,6 +432,16 @@ public class MaterialSearchView extends FrameLayout implements
         }
 
         mBackgroundCoverFrameLayout.setVisibility(View.VISIBLE);
+    }
+
+    public void enableFilter(){
+        mFilterImageView.setOnClickListener(mFilterImageViewOnClickListener);
+        mFilterImageView.setColorFilter(ContextCompat.getColor(getContext(), R.color.grey_700));
+    }
+
+    public void disableFilter(){
+        mFilterImageView.setOnClickListener(null);
+        mFilterImageView.setColorFilter(ContextCompat.getColor(getContext(), R.color.grey_300));
     }
     // endregion
 }

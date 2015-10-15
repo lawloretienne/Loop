@@ -176,6 +176,8 @@ public class SearchableFragment extends BaseFragment implements VideosAdapter.On
                             }
                         }
                     }
+
+                    mMaterialSearchView.enableFilter();
                 } else {
                     ResponseBody responseBody = response.errorBody();
                     com.squareup.okhttp.Response rawResponse = response.raw();
@@ -405,9 +407,7 @@ public class SearchableFragment extends BaseFragment implements VideosAdapter.On
 //        ab.setDisplayHomeAsUpEnabled(true);
 //        ab.setTitle("");
 
-
-        mMaterialSearchView.setQuery(mQuery);
-
+        setupSearchView();
 
 //        mSearchViewWidget.setQuery(mQuery, false);
 //
@@ -490,6 +490,8 @@ public class SearchableFragment extends BaseFragment implements VideosAdapter.On
     public void onResume() {
         super.onResume();
         BusProvider.get().register(this);
+
+        setupSearchView();
     }
 
     @Override
@@ -684,6 +686,10 @@ public class SearchableFragment extends BaseFragment implements VideosAdapter.On
         intent.putExtra(SearchManager.QUERY, query);
         getContext().startActivity(intent);
         getActivity().overridePendingTransition(0, 0);
+    }
+
+    private void setupSearchView(){
+        mMaterialSearchView.setQuery(mQuery);
     }
     // endregion
 }

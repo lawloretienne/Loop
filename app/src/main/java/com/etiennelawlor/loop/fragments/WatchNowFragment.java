@@ -159,6 +159,7 @@ public class WatchNowFragment extends BaseFragment {
     public void onSearchPerformedEvent(SearchPerformedEvent event) {
         String query = event.getQuery();
         if (!TextUtils.isEmpty(query)) {
+            mMaterialSearchView.setQuery("");
             launchSearchActivity(query);
         }
     }
@@ -179,6 +180,7 @@ public class WatchNowFragment extends BaseFragment {
                 String searchWrd = matches.get(0);
                 if (!TextUtils.isEmpty(searchWrd)) {
 //                    mMaterialSearchView.setQuery(searchWrd);
+                    mMaterialSearchView.setQuery("");
                     launchSearchActivity(searchWrd);
                 }
             }

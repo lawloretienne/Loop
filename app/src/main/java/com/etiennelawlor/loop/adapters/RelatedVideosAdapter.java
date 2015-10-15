@@ -51,9 +51,9 @@ import timber.log.Timber;
 public class RelatedVideosAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
     // region Constants
-    public static final int ITEM = 0;
-    public static final int LOADING = 1;
-    public static final int HEADER = 2;
+    public static final int HEADER = 0;
+    public static final int ITEM = 1;
+    public static final int LOADING = 2;
     // endregion
 
     // region Member Variables
@@ -85,12 +85,12 @@ public class RelatedVideosAdapter extends RecyclerView.Adapter<RecyclerView.View
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         switch (viewType) {
+            case HEADER:
+                return createHeaderViewHolder(parent);
             case ITEM:
                 return createVideoViewHolder(parent);
             case LOADING:
                 return createLoadingViewHolder(parent);
-            case HEADER:
-                return createHeaderViewHolder(parent);
             default:
                 Timber.e("[ERR] type is not supported!!! type is %d", viewType);
                 return null;
@@ -100,14 +100,14 @@ public class RelatedVideosAdapter extends RecyclerView.Adapter<RecyclerView.View
     @Override
     public void onBindViewHolder(RecyclerView.ViewHolder viewHolder, int position) {
         switch (getItemViewType(position)) {
+            case HEADER:
+                bindHeaderViewHolder(viewHolder);
+                break;
             case ITEM:
                 bindVideoViewHolder(viewHolder, position);
                 break;
             case LOADING:
                 bindLoadingViewHolder(viewHolder);
-                break;
-            case HEADER:
-                bindHeaderViewHolder(viewHolder);
                 break;
             default:
                 break;
@@ -121,19 +121,16 @@ public class RelatedVideosAdapter extends RecyclerView.Adapter<RecyclerView.View
 
     @Override
     public int getItemViewType(int position) {
-//        Timber.d("getItemViewType() : position - "+position);
-//        Timber.d("getItemViewType() : mVideos.size() - "+mVideos.size());
-
         if(position == 0)
             return HEADER;
         else
-            return (position == mVideos.size()-1 && mIsLoadingFooterAdded) ? LOADING : ITEM;
+            return (position == getItemCount()-1 && mIsLoadingFooterAdded) ? LOADING : ITEM;
     }
 
     // region Helper Methods
     private void add(Video item) {
         mVideos.add(item);
-        notifyItemInserted(mVideos.size()-1);
+        notifyItemInserted(getItemCount()-1);
     }
 
     public void addAll(List<Video> videos) {
@@ -165,48 +162,67 @@ public class RelatedVideosAdapter extends RecyclerView.Adapter<RecyclerView.View
     }
 
     public void addLoading(){
-        mIsLoadingFooterAdded = true;
-        add(new Video());
+        if(!mIsLoadingFooterAdded){
+            mIsLoadingFooterAdded = true;
+            add(new Video());
+        }
     }
 
     public void removeLoading() {
-        mIsLoadingFooterAdded = false;
+        if(mIsLoadingFooterAdded){
+            mIsLoadingFooterAdded = false;
 
-        int position = mVideos.size() - 1;
-        Video item = getItem(position);
+            int itemCount = getItemCount();
+            if(itemCount > 0){
+                int position = itemCount - 1;
+                Video item = getItem(position);
 
-        if (item != null) {
-            mVideos.remove(position);
-            notifyItemRemoved(position);
+                if (item != null) {
+                    mVideos.remove(position);
+                    notifyItemRemoved(position);
+                }
+            }
         }
     }
 
     public Video getItem(int position) {
-        return mVideos.get(position);
+        if(position>=0)
+            return mVideos.get(position);
+        else
+            return null;
     }
 
     public void setOnItemClickListener(OnItemClickListener onItemClickListener) {
         this.mOnItemClickListener = onItemClickListener;
     }
 
-
     private RecyclerView.ViewHolder createHeaderViewHolder(ViewGroup parent){
         View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.video_info, parent, false);
-
         return new HeaderViewHolder(v);
     }
 
     private RecyclerView.ViewHolder createVideoViewHolder(ViewGroup parent) {
-        // create a new view
         View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.video_row, parent, false);
-
         return new VideoViewHolder(v);
     }
 
     private RecyclerView.ViewHolder createLoadingViewHolder(ViewGroup parent) {
         View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.load_more, parent, false);
-
         return new MoreViewHolder(v);
+    }
+
+    private void bindHeaderViewHolder(RecyclerView.ViewHolder viewHolder) {
+        HeaderViewHolder holder = (HeaderViewHolder) viewHolder;
+
+        if(mVideo != null){
+            setUpTitle(holder.mTitleTextView, mVideo);
+            setUpSubtitle(holder.mSubtitleTextView, mVideo);
+            setUpUserImage(holder.mUserImageView, mVideo);
+            setUpDescription(holder.mDescriptionTextView, mVideo);
+            setUpViewCount(holder.mViewCountTextView, mVideo);
+            setUpUploadedDate2(holder.mUploadDateTextView, mVideo);
+            setUpTags(holder.mHashtagView, mVideo);
+        }
     }
 
     private void bindVideoViewHolder(RecyclerView.ViewHolder viewHolder, final int position) {
@@ -236,20 +252,6 @@ public class RelatedVideosAdapter extends RecyclerView.Adapter<RecyclerView.View
         MoreViewHolder holder = (MoreViewHolder) viewHolder;
 
         holder.mLoadingImageView.setMaskOrientation(LoadingImageView.MaskOrientation.LeftToRight);
-    }
-
-    private void bindHeaderViewHolder(RecyclerView.ViewHolder viewHolder) {
-        HeaderViewHolder holder = (HeaderViewHolder) viewHolder;
-
-        if(mVideo != null){
-            setUpTitle(holder.mTitleTextView, mVideo);
-            setUpSubtitle(holder.mSubtitleTextView, mVideo);
-            setUpUserImage(holder.mUserImageView, mVideo);
-            setUpDescription(holder.mDescriptionTextView, mVideo);
-            setUpViewCount(holder.mViewCountTextView, mVideo);
-            setUpUploadedDate2(holder.mUploadDateTextView, mVideo);
-            setUpTags(holder.mHashtagView, mVideo);
-        }
     }
 
     private void setUpTitle(TextView tv, Video video) {
@@ -499,6 +501,30 @@ public class RelatedVideosAdapter extends RecyclerView.Adapter<RecyclerView.View
 
     // region Inner Classes
 
+    public static class HeaderViewHolder extends RecyclerView.ViewHolder {
+        @Bind(R.id.title_tv)
+        TextView mTitleTextView;
+        @Bind(R.id.subtitle_tv)
+        TextView mSubtitleTextView;
+        @Bind(R.id.user_iv)
+        CircleImageView mUserImageView;
+        @Bind(R.id.view_count_tv)
+        TextView mViewCountTextView;
+        @Bind(R.id.upload_date_tv)
+        TextView mUploadDateTextView;
+        @Bind(R.id.htv)
+        HashtagView mHashtagView;
+        @Bind(R.id.description_tv)
+        TextView mDescriptionTextView;
+        @Bind(R.id.additional_info_ll)
+        LinearLayout mAdditionalInfoLinearLayout;
+
+        HeaderViewHolder(View view) {
+            super(view);
+            ButterKnife.bind(this, view);
+        }
+    }
+
     public static class VideoViewHolder extends RecyclerView.ViewHolder {
         @Bind(R.id.video_thumbnail_iv)
         ImageView mVideoThumbnailImageView;
@@ -524,30 +550,6 @@ public class RelatedVideosAdapter extends RecyclerView.Adapter<RecyclerView.View
         LoadingImageView mLoadingImageView;
 
         MoreViewHolder(View view) {
-            super(view);
-            ButterKnife.bind(this, view);
-        }
-    }
-
-    public static class HeaderViewHolder extends RecyclerView.ViewHolder {
-        @Bind(R.id.title_tv)
-        TextView mTitleTextView;
-        @Bind(R.id.subtitle_tv)
-        TextView mSubtitleTextView;
-        @Bind(R.id.user_iv)
-        CircleImageView mUserImageView;
-        @Bind(R.id.view_count_tv)
-        TextView mViewCountTextView;
-        @Bind(R.id.upload_date_tv)
-        TextView mUploadDateTextView;
-        @Bind(R.id.htv)
-        HashtagView mHashtagView;
-        @Bind(R.id.description_tv)
-        TextView mDescriptionTextView;
-        @Bind(R.id.additional_info_ll)
-        LinearLayout mAdditionalInfoLinearLayout;
-
-        HeaderViewHolder(View view) {
             super(view);
             ButterKnife.bind(this, view);
         }

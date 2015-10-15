@@ -24,7 +24,7 @@ import com.etiennelawlor.loop.helper.PreferencesHelper;
 import com.etiennelawlor.loop.network.models.response.AuthorizedUser;
 import com.etiennelawlor.loop.network.models.response.Picture;
 import com.etiennelawlor.loop.otto.BusProvider;
-import com.etiennelawlor.loop.otto.events.UpNavigationClickedEvent;
+import com.etiennelawlor.loop.otto.events.LeftDrawableClickedEvent;
 import com.etiennelawlor.loop.utilities.LoopUtility;
 import com.squareup.otto.Subscribe;
 
@@ -200,12 +200,12 @@ public class MainActivity extends AppCompatActivity {
 
     // region Otto Methods
     @Subscribe
-    public void onUpNavigationClickedEvent(UpNavigationClickedEvent event) {
-        Timber.d("onUpNavigationClickedEvent");
+    public void onLeftDrawableClickedEvent(LeftDrawableClickedEvent event) {
+        Timber.d("onLeftDrawableClickedEvent");
 
-        UpNavigationClickedEvent.Type type = event.getType();
+        LeftDrawableClickedEvent.Type type = event.getType();
 
-        if(type == UpNavigationClickedEvent.Type.MENU)
+        if(type == LeftDrawableClickedEvent.Type.MENU)
             mDrawerLayout.openDrawer(GravityCompat.START);
 
     }

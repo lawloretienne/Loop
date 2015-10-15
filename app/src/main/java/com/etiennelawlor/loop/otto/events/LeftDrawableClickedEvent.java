@@ -3,11 +3,11 @@ package com.etiennelawlor.loop.otto.events;
 /**
  * Created by etiennelawlor on 9/20/15.
  */
-public class UpNavigationClickedEvent {
+public class LeftDrawableClickedEvent {
 
     private Type mType;
 
-    public UpNavigationClickedEvent(Type type){
+    public LeftDrawableClickedEvent(Type type){
         mType = type;
     }
 
@@ -21,6 +21,7 @@ public class UpNavigationClickedEvent {
 
     public enum Type {
         BACK,
-        MENU
+        MENU,
+        SEARCH
     }
 }

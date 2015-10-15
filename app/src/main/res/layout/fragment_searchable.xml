@@ -49,7 +49,11 @@
         android:id="@+id/material_sv"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        app:defaultUpNavIcon="back"
+        app:leftDrawableType="back"
+        app:layout_marginLeft="8dp"
+        app:layout_marginRight="8dp"
+        app:layout_marginBottom="8dp"
+        app:layout_marginTop="8dp"
         app:hintText="Search Loop"/>
 
 </android.support.design.widget.CoordinatorLayout>

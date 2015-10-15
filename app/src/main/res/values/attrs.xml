@@ -41,11 +41,17 @@
     </declare-styleable>
 
     <declare-styleable name="MaterialSearchView">
-        <attr name="defaultUpNavIcon" format="enum">
+        <attr name="leftDrawableType" format="enum">
             <enum name="menu" value="0" />
             <enum name="back" value="1" />
+            <enum name="search" value="2" />
+            <enum name="avatar" value="3" />
         </attr>
         <attr name="hintText" format="string" />
+        <attr name="layout_marginTop" format="dimension"/>
+        <attr name="layout_marginBottom" format="dimension"/>
+        <attr name="layout_marginLeft" format="dimension"/>
+        <attr name="layout_marginRight" format="dimension"/>
     </declare-styleable>
 
     <!--<declare-styleable name="ScrimInsetsView">-->
