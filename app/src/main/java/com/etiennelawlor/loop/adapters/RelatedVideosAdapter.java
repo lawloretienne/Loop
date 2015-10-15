@@ -148,6 +148,7 @@ public class RelatedVideosAdapter extends RecyclerView.Adapter<RecyclerView.View
     }
 
     public void clear() {
+        mIsLoadingFooterAdded = false;
         while (getItemCount() > 0) {
             remove(getItem(0));
         }

@@ -127,6 +127,7 @@ public class VideosAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
     }
 
     public void clear() {
+        mIsLoadingFooterAdded = false;
         while (getItemCount() > 0) {
             remove(getItem(0));
         }

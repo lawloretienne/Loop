@@ -129,7 +129,9 @@ public class VideoDetailsFragment extends BaseFragment implements RelatedVideosA
             int firstVisibleItemPosition = mLayoutManager.findFirstVisibleItemPosition();
 
             if (!mIsLoading && !mIsLastPage) {
-                if ((visibleItemCount + firstVisibleItemPosition) >= totalItemCount) {
+                if ((visibleItemCount + firstVisibleItemPosition) >= totalItemCount
+                        && firstVisibleItemPosition >= 0
+                        && totalItemCount >= PAGE_SIZE) {
                     loadMoreItems();
                 }
             }

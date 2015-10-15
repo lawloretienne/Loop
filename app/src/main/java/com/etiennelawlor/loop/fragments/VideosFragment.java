@@ -102,7 +102,9 @@ public class VideosFragment extends BaseFragment implements VideosAdapter.OnItem
             int firstVisibleItemPosition = mLayoutManager.findFirstVisibleItemPosition();
 
             if (!mIsLoading && !mIsLastPage) {
-                if ((visibleItemCount + firstVisibleItemPosition) >= totalItemCount) {
+                if ((visibleItemCount + firstVisibleItemPosition) >= totalItemCount
+                        && firstVisibleItemPosition >= 0
+                        && totalItemCount >= PAGE_SIZE) {
                     loadMoreItems();
                 }
             }
