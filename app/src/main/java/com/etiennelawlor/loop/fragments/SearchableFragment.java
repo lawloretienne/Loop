@@ -137,6 +137,8 @@ public class SearchableFragment extends BaseFragment implements VideosAdapter.On
         mErrorLinearLayout.setVisibility(View.GONE);
         mLoadingImageView.setVisibility(View.VISIBLE);
 
+        mMaterialSearchView.disableFilter();
+
         Call findVideosCall = mVimeoService.findVideos(mQuery,
                 mSortByValue,
                 mSortOrderValue,
@@ -658,6 +660,8 @@ public class SearchableFragment extends BaseFragment implements VideosAdapter.On
                 mLoadingImageView.setVisibility(View.VISIBLE);
 
                 mCurrentPage = 1;
+
+                mMaterialSearchView.disableFilter();
 
                 Call findVideosCall = mVimeoService.findVideos(mQuery,
                         mSortByValue,
