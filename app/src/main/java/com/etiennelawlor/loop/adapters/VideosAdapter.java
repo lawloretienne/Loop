@@ -38,9 +38,9 @@ import timber.log.Timber;
 public class VideosAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
     // region Constants
-    public static final int ITEM = 0;
-    public static final int LOADING = 1;
-    public static final int HEADER = 2;
+    public static final int HEADER = 0;
+    public static final int ITEM = 1;
+    public static final int LOADING = 2;
     // endregion
 
     // region Member Variables
@@ -67,12 +67,12 @@ public class VideosAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         switch (viewType) {
+            case HEADER:
+                return null;
             case ITEM:
                 return createVideoViewHolder(parent);
             case LOADING:
                 return createLoadingViewHolder(parent);
-            case HEADER:
-                return null;
             default:
                 Timber.e("[ERR] type is not supported!!! type is %d", viewType);
                 return null;
@@ -82,12 +82,13 @@ public class VideosAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
     @Override
     public void onBindViewHolder(RecyclerView.ViewHolder viewHolder, int position) {
         switch (getItemViewType(position)) {
+            case HEADER:
+                break;
             case ITEM:
                 bindVideoViewHolder(viewHolder, position);
                 break;
             case LOADING:
                 bindLoadingViewHolder(viewHolder);
-            case HEADER:
             default:
                 break;
         }
@@ -100,9 +101,6 @@ public class VideosAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
 
     @Override
     public int getItemViewType(int position) {
-//        Timber.d("getItemViewType() : position - "+position);
-//        Timber.d("getItemViewType() : mVideos.size() - "+mVideos.size());
-
         return (position == mVideos.size()-1 && mIsLoadingFooterAdded) ? LOADING : ITEM;
     }
 
@@ -161,7 +159,6 @@ public class VideosAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
     public void setOnItemClickListener(OnItemClickListener onItemClickListener) {
         this.mOnItemClickListener = onItemClickListener;
     }
-
 
     private RecyclerView.ViewHolder createHeaderViewHolder(ViewGroup parent){
         View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.video_info, parent, false);
@@ -339,6 +336,13 @@ public class VideosAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
 
     // region Inner Classes
 
+    public static class HeaderViewHolder extends RecyclerView.ViewHolder {
+        HeaderViewHolder(View view) {
+            super(view);
+            ButterKnife.bind(this, view);
+        }
+    }
+
     public static class VideoViewHolder extends RecyclerView.ViewHolder {
         @Bind(R.id.video_thumbnail_iv)
         ImageView mVideoThumbnailImageView;
@@ -364,16 +368,6 @@ public class VideosAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
         LoadingImageView mLoadingImageView;
 
         MoreViewHolder(View view) {
-            super(view);
-            ButterKnife.bind(this, view);
-        }
-    }
-
-    public static class HeaderViewHolder extends RecyclerView.ViewHolder {
-//        @Bind(R.id.loading_iv)
-//        LoadingImageView mLoadingImageView;
-
-        HeaderViewHolder(View view) {
             super(view);
             ButterKnife.bind(this, view);
         }

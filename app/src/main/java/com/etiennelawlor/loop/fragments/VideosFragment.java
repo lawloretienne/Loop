@@ -378,8 +378,6 @@ public class VideosFragment extends BaseFragment implements VideosAdapter.OnItem
 
         mLayoutManager = new LinearLayoutManager(getActivity());
         mVideosRecyclerView.setLayoutManager(mLayoutManager);
-//        mVideosAdapter = new VideosAdapter(getActivity());
-//        mVideosAdapter.setOnItemClickListener(this);
 
         mVideosAdapter = new VideosAdapter();
         mVideosAdapter.setOnItemClickListener(this);
