@@ -52,7 +52,11 @@ public class MaterialSearchView extends FrameLayout implements
         SuggestionsAdapter.OnSearchSuggestionCompleteClickListener {
 
     // region Constants
-    public static final int REQUEST_VOICE = 9999;
+    public static final int REQUEST_VOICE = 1001;
+    public static final int MENU = 0;
+    public static final int BACK = 1;
+    public static final int SEARCH = 2;
+    public static final int AVATAR = 3;
     // endregion
 
     // region Member Variables
@@ -328,22 +332,22 @@ public class MaterialSearchView extends FrameLayout implements
             mLeftDrawableImageView.setVisibility(View.VISIBLE);
         } else {
             switch (mLeftDrawableType) {
-                case 0:
+                case MENU:
                     mLeftDrawableImageView.setImageDrawable(ContextCompat.getDrawable(getContext(), R.drawable.ic_menu_black_24dp));
                     break;
-                case 1:
+                case BACK:
                     mLeftDrawableImageView.setImageDrawable(ContextCompat.getDrawable(getContext(), R.drawable.ic_arrow_back_black_24dp));
                     break;
-                case 2:
+                case SEARCH:
                     mLeftDrawableImageView.setImageDrawable(ContextCompat.getDrawable(getContext(), R.drawable.ic_search_black_24dp));
                     break;
-                case 3:
+                case AVATAR:
                     break;
                 default:
                     break;
             }
 
-            if (mLeftDrawableType == 3) {
+            if (mLeftDrawableType == AVATAR) {
                 mLeftDrawableImageView.setVisibility(View.GONE);
                 mLeftDrawableRoundedImageView.setVisibility(View.VISIBLE);
             } else {
@@ -351,6 +355,10 @@ public class MaterialSearchView extends FrameLayout implements
                 mLeftDrawableImageView.setVisibility(View.VISIBLE);
             }
         }
+    }
+
+    public void setLeftDrawableType(int type){
+        mLeftDrawableType = type;
     }
 
     private void setUpHintText() {
@@ -419,6 +427,10 @@ public class MaterialSearchView extends FrameLayout implements
         return mSearchEditText.getText().toString();
     }
 
+    public void setHint(String hint){
+        mSearchEditText.setHint(hint);
+    }
+
     public void addSuggestions(List<String> suggestions) {
         mSuggestionsAdapter.clear();
         mSuggestionsAdapter.addAll(suggestions);
@@ -445,5 +457,11 @@ public class MaterialSearchView extends FrameLayout implements
         mFilterImageView.setBackgroundDrawable(null);
         mFilterImageView.setColorFilter(ContextCompat.getColor(getContext(), R.color.grey_300));
     }
+
+//    public void setAvatar(Retailer retailer){
+////        mLeftDrawableRoundedImageView.bind(retailer);
+//        mLeftDrawableImageView.setVisibility(View.GONE);
+//        mLeftDrawableRoundedImageView.setVisibility(View.VISIBLE);
+//    }
     // endregion
 }
