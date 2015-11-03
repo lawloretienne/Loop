@@ -5,7 +5,7 @@ package com.etiennelawlor.loop.models;
  */
 public class VideoSavedState {
 
-    // region Member Variables
+    // region Fields
     private String mVideoUrl;
     private int mCurrentPosition;
     // endregion

@@ -7,7 +7,7 @@ import com.google.gson.annotations.SerializedName;
  */
 public class H264 {
 
-    // region Member Variables
+    // region Fields
     @SerializedName("sd")
     private VideoFormat sd;
     @SerializedName("hd")

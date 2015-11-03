@@ -13,7 +13,7 @@ import java.util.List;
  */
 public class Pictures implements Parcelable {
 
-    // region Member Variables
+    // region Fields
     @SerializedName("uri")
     private String uri;
     @SerializedName("active")
@@ -24,17 +24,11 @@ public class Pictures implements Parcelable {
 
     // region Getters
     public String getUri() {
-        if (TextUtils.isEmpty(uri))
-            return "";
-        else
-            return uri;
+        return TextUtils.isEmpty(uri) ? "" : uri;
     }
 
     public Boolean getActive() {
-        if(active == null)
-            return false;
-        else
-            return active;
+        return active == null ? false : active;
     }
 
     public List<Size> getSizes() {

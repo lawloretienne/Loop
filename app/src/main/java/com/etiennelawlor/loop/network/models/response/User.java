@@ -11,7 +11,7 @@ import com.google.gson.annotations.SerializedName;
  */
 public class User implements Parcelable {
 
-    // region Member Variables
+    // region Fields
     @SerializedName("uri")
     private String uri;
     @SerializedName("name")
@@ -32,52 +32,31 @@ public class User implements Parcelable {
 
     // region Getters
     public String getUri() {
-        if (TextUtils.isEmpty(uri))
-            return "";
-        else
-            return uri;
+        return TextUtils.isEmpty(uri) ? "" : uri;
     }
 
     public String getName() {
-        if (TextUtils.isEmpty(name))
-            return "";
-        else
-            return name;
+        return TextUtils.isEmpty(name) ? "" : name;
     }
 
     public String getLink() {
-        if (TextUtils.isEmpty(link))
-            return "";
-        else
-            return link;
+        return TextUtils.isEmpty(link) ? "" : link;
     }
 
     public String getLocation() {
-        if (TextUtils.isEmpty(location))
-            return "";
-        else
-            return location;
+        return TextUtils.isEmpty(location) ? "" : location;
     }
 
     public String getBio() {
-        if (TextUtils.isEmpty(bio))
-            return "";
-        else
-            return bio;
+        return TextUtils.isEmpty(bio) ? "" : bio;
     }
 
     public String getCreatedTime() {
-        if (TextUtils.isEmpty(createdTime))
-            return "";
-        else
-            return createdTime;
+        return TextUtils.isEmpty(createdTime) ? "" : createdTime;
     }
 
     public String getAccount() {
-        if (TextUtils.isEmpty(account))
-            return "";
-        else
-            return account;
+        return TextUtils.isEmpty(account) ? "" : account;
     }
 
     public Pictures getPictures() {
@@ -117,7 +96,6 @@ public class User implements Parcelable {
     public void setPictures(Pictures pictures) {
         this.pictures = pictures;
     }
-
     // endregion
 
     // region Parcelable Methods

@@ -9,7 +9,7 @@ import java.util.List;
  */
 public class VideosCollection {
 
-    // region Member Variables
+    // region Fields
     @SerializedName("total")
     private Integer total;
     @SerializedName("page")
@@ -24,24 +24,15 @@ public class VideosCollection {
 
     // region Getters
     public Integer getTotal() {
-        if(total == null)
-            return -1;
-        else
-            return total;
+        return total == null ? -1 : total;
     }
 
     public Integer getPage() {
-        if(page == null)
-            return -1;
-        else
-            return page;
+        return page == null ? -1 : page;
     }
 
     public Integer getPerPage() {
-        if(total == null)
-            return -1;
-        else
-            return total;
+        return total == null ? -1 : total;
     }
 
     public Paging getPaging() {
@@ -54,7 +45,6 @@ public class VideosCollection {
     // endregion
 
     // region Setters
-
     public void setTotal(Integer total) {
         this.total = total;
     }
@@ -74,6 +64,5 @@ public class VideosCollection {
     public void setVideos(List<Video> videos) {
         this.videos = videos;
     }
-
     // endregion
 }

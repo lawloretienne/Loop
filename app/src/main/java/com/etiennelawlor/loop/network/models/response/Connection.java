@@ -14,7 +14,7 @@ import java.util.List;
  */
 public class Connection implements Parcelable {
 
-    // region Member Variables
+    // region Fields
     @SerializedName("uri")
     private String uri;
     @SerializedName("options")
@@ -25,10 +25,7 @@ public class Connection implements Parcelable {
 
     // region Getters
     public String getUri() {
-        if (TextUtils.isEmpty(uri))
-            return "";
-        else
-            return uri;
+        return TextUtils.isEmpty(uri) ? "" : uri;
     }
 
     public List<String> getOptions() {
@@ -36,10 +33,7 @@ public class Connection implements Parcelable {
     }
 
     public Integer getTotal() {
-        if(total == null)
-            return -1;
-        else
-            return total;
+        return total == null ? -1 : total;
     }
     // endregion
 

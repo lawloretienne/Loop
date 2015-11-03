@@ -3,7 +3,7 @@ package com.etiennelawlor.loop.realm;
 import android.text.TextUtils;
 
 import com.etiennelawlor.loop.LoopApplication;
-import com.etiennelawlor.loop.realm.objects.Suggestion;
+import com.etiennelawlor.loop.realm.objects.RealmSuggestion;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -25,14 +25,14 @@ public class RealmUtility {
         try {
             mRealm = Realm.getInstance(LoopApplication.get().getApplicationContext());
 
-            Suggestion suggestion = new Suggestion();
-            suggestion.setToken(query);
-            suggestion.setTimestamp(new Date());
+            RealmSuggestion realmSuggestion = new RealmSuggestion();
+            realmSuggestion.setToken(query);
+            realmSuggestion.setTimestamp(new Date());
             mRealm.beginTransaction();
             // This will create a new one in Realm
             // realm.copyToRealm(obj);
             // This will update a existing one with the same id or create a new one instead
-            mRealm.copyToRealmOrUpdate(suggestion);
+            mRealm.copyToRealmOrUpdate(realmSuggestion);
 
 
             mRealm.commitTransaction();
@@ -53,13 +53,13 @@ public class RealmUtility {
 
             mRealm.beginTransaction();
 
-            Suggestion suggestion
-                    = mRealm.where(Suggestion.class)
+            RealmSuggestion realmSuggestion
+                    = mRealm.where(RealmSuggestion.class)
                     .equalTo("token", query)
                     .findFirst();
 
-            if(suggestion != null){
-                suggestion.removeFromRealm();
+            if(realmSuggestion != null){
+                realmSuggestion.removeFromRealm();
             }
 
             mRealm.commitTransaction();
@@ -79,8 +79,8 @@ public class RealmUtility {
         try {
             mRealm = Realm.getInstance(LoopApplication.get().getApplicationContext());
 
-            RealmResults<Suggestion> realmResults
-                    = mRealm.where(Suggestion.class)
+            RealmResults<RealmSuggestion> realmResults
+                    = mRealm.where(RealmSuggestion.class)
                     .contains("token", query)
                     .findAll();
 
@@ -89,9 +89,9 @@ public class RealmUtility {
             if (realmResults != null) {
                 int size = (realmResults.size() > 5) ? 5 : realmResults.size();
                 for (int i = 0; i < size; i++) {
-                    Suggestion suggestion = realmResults.get(i);
-                    if (suggestion != null) {
-                        String token = suggestion.getToken();
+                    RealmSuggestion realmSuggestion = realmResults.get(i);
+                    if (realmSuggestion != null) {
+                        String token = realmSuggestion.getToken();
                         if (!TextUtils.isEmpty(token)) {
                             suggestions.add(token);
                         }

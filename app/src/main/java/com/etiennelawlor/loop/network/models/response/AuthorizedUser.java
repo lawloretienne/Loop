@@ -13,7 +13,7 @@ import java.util.List;
  */
 public class AuthorizedUser implements Parcelable {
 
-    // region Member Variables
+    // region Fields
     @SerializedName("uri")
     private String uri;
     @SerializedName("name")
@@ -34,57 +34,37 @@ public class AuthorizedUser implements Parcelable {
 
     // region Getters
     public String getUri() {
-        if (TextUtils.isEmpty(uri))
-            return "";
-        else
-            return uri;
+        return TextUtils.isEmpty(uri) ? "" : uri;
     }
 
     public String getName() {
-        if (TextUtils.isEmpty(name))
-            return "";
-        else
-            return name;
+        return TextUtils.isEmpty(name) ? "" : name;
     }
 
     public String getLink() {
-        if (TextUtils.isEmpty(link))
-            return "";
-        else
-            return link;
+        return TextUtils.isEmpty(link) ? "" : link;
     }
 
     public String getLocation() {
-        if (TextUtils.isEmpty(location))
-            return "";
-        else
-            return location;
+        return TextUtils.isEmpty(location) ? "" : location;
     }
 
     public String getBio() {
-        if (TextUtils.isEmpty(bio))
-            return "";
-        else
-            return bio;
+        return TextUtils.isEmpty(bio) ? "" : bio;
     }
 
     public String getCreatedTime() {
-        if (TextUtils.isEmpty(createdTime))
-            return "";
-        else
-            return createdTime;
+        return TextUtils.isEmpty(createdTime) ? "" : createdTime;
     }
 
     public String getAccount() {
-        if (TextUtils.isEmpty(account))
-            return "";
-        else
-            return account;
+        return TextUtils.isEmpty(account) ? "" : account;
     }
 
     public List<Picture> getPictures() {
         return pictures;
     }
+
     // endregion
 
     // region Setters

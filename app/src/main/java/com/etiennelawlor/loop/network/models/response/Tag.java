@@ -11,7 +11,7 @@ import com.google.gson.annotations.SerializedName;
  */
 public class Tag implements Parcelable {
 
-    // region Member Variables
+    // region Fields
     @SerializedName("uri")
     private String uri;
     @SerializedName("name")
@@ -24,33 +24,20 @@ public class Tag implements Parcelable {
 
     // region Getters
     public String getUri() {
-        if (TextUtils.isEmpty(uri))
-            return "";
-        else
-            return uri;
+        return TextUtils.isEmpty(uri) ? "" : uri;
     }
 
     public String getName() {
-        if (TextUtils.isEmpty(name))
-            return "";
-        else
-            return name;
+        return TextUtils.isEmpty(name) ? "" : name;
     }
 
     public String getTag() {
-        if (TextUtils.isEmpty(tag))
-            return "";
-        else
-            return tag;
+        return TextUtils.isEmpty(tag) ? "" : tag;
     }
 
     public String getCanonical() {
-        if (TextUtils.isEmpty(canonical))
-            return "";
-        else
-            return canonical;
+        return TextUtils.isEmpty(canonical) ? "" : canonical;
     }
-
     // endregion
 
     // region Setters
@@ -69,7 +56,6 @@ public class Tag implements Parcelable {
     public void setCanonical(String canonical) {
         this.canonical = canonical;
     }
-
     // endregion
 
     // region Parcelable Methods

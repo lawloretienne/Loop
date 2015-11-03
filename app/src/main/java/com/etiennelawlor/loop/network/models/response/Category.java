@@ -10,7 +10,8 @@ import com.google.gson.annotations.SerializedName;
  * Created by etiennelawlor on 5/23/15.
  */
 public class Category implements Parcelable {
-    // region Member Variables
+
+    // region Fields
     @SerializedName("uri")
     private String uri;
     @SerializedName("name")
@@ -27,31 +28,19 @@ public class Category implements Parcelable {
 
     // region Getters
     public String getUri() {
-        if (TextUtils.isEmpty(uri))
-            return "";
-        else
-            return uri;
+        return TextUtils.isEmpty(uri) ? "" : uri;
     }
 
     public String getName() {
-        if (TextUtils.isEmpty(name))
-            return "";
-        else
-            return name;
+        return TextUtils.isEmpty(name) ? "" : name;
     }
 
     public String getLink() {
-        if (TextUtils.isEmpty(link))
-            return "";
-        else
-            return link;
+        return TextUtils.isEmpty(link) ? "" : link;
     }
 
     public Boolean getTopLevel() {
-        if(topLevel == null)
-            return false;
-        else
-            return topLevel;
+        return topLevel == null ? false : topLevel;
     }
 
 //    public Pictures getPictures() {

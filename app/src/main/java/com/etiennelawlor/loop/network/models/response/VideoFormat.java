@@ -9,7 +9,7 @@ import com.google.gson.annotations.SerializedName;
  */
 public class VideoFormat {
 
-    // region Member Variables
+    // region Fields
     @SerializedName("url")
     private String url;
     @SerializedName("width")
@@ -20,24 +20,15 @@ public class VideoFormat {
 
     // region Getters
     public String getUrl() {
-        if (TextUtils.isEmpty(url))
-            return "";
-        else
-            return url;
+        return TextUtils.isEmpty(url) ? "" : url;
     }
 
     public Integer getWidth() {
-        if(width == null)
-            return -1;
-        else
-            return width;
+        return width == null ? -1 : width;
     }
 
     public Integer getHeight() {
-        if(height == null)
-            return -1;
-        else
-            return height;
+        return height == null ? -1 : height;
     }
     // endregion
 

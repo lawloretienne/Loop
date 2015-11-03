@@ -11,7 +11,7 @@ import com.google.gson.annotations.SerializedName;
  */
 public class Interaction implements Parcelable {
 
-    // region Member Variables
+    // region Fields
     @SerializedName("added")
     private Boolean added;
     @SerializedName("added_time")
@@ -22,24 +22,15 @@ public class Interaction implements Parcelable {
 
     // region Getters
     public Boolean getAdded() {
-        if(added == null)
-            return false;
-        else
-            return added;
+        return added == null ? false : added;
     }
 
     public String getAddedTime() {
-        if (TextUtils.isEmpty(addedTime))
-            return "";
-        else
-            return addedTime;
+        return TextUtils.isEmpty(addedTime) ? "" : addedTime;
     }
 
     public String getUri() {
-        if (TextUtils.isEmpty(uri))
-            return "";
-        else
-            return uri;
+        return TextUtils.isEmpty(uri) ? "" : uri;
     }
     // endregion
 

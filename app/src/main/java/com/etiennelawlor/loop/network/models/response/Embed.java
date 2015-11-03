@@ -11,17 +11,14 @@ import com.google.gson.annotations.SerializedName;
  */
 public class Embed implements Parcelable {
 
-    // region Member Variables
+    // region Fields
     @SerializedName("html")
     private String html;
     // endregion
 
     // region Getters
     public String getHtml() {
-        if (TextUtils.isEmpty(html))
-            return "";
-        else
-            return html;
+        return TextUtils.isEmpty(html) ? "" : html;
     }
     // endregion
 

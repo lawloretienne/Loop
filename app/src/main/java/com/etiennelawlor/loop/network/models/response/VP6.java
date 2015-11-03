@@ -7,7 +7,7 @@ import com.google.gson.annotations.SerializedName;
  */
 public class VP6 {
 
-    // region Member Variables
+    // region Fields
     @SerializedName("sd")
     private VideoFormat sd;
     @SerializedName("hd")

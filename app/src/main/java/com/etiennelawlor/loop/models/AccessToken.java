@@ -5,7 +5,7 @@ package com.etiennelawlor.loop.models;
  */
 public class AccessToken {
 
-    // region Member Variables
+    // region Fields
     private String tokenType;
     private String accessToken;
     // endregion

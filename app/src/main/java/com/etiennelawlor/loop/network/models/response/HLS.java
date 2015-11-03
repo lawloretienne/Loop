@@ -1,5 +1,7 @@
 package com.etiennelawlor.loop.network.models.response;
 
+import android.text.TextUtils;
+
 import com.google.gson.annotations.SerializedName;
 
 /**
@@ -7,7 +9,7 @@ import com.google.gson.annotations.SerializedName;
  */
 public class HLS {
 
-    // region Member Variables
+    // region Fields
     @SerializedName("origin")
     private String origin;
     @SerializedName("cdn")
@@ -18,15 +20,15 @@ public class HLS {
 
     // region Getters
     public String getOrigin() {
-        return origin;
+        return TextUtils.isEmpty(origin) ? "" : origin;
     }
 
     public String getCdn() {
-        return cdn;
+        return TextUtils.isEmpty(cdn) ? "" : cdn;
     }
 
     public String getAll() {
-        return all;
+        return TextUtils.isEmpty(all) ? "" : all;
     }
     // endregion
 

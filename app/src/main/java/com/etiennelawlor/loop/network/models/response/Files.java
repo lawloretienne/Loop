@@ -7,7 +7,7 @@ import com.google.gson.annotations.SerializedName;
  */
 public class Files {
 
-    // region Member Variables
+    // region Fields
     @SerializedName("h264")
     private H264 h264;
     @SerializedName("hls")

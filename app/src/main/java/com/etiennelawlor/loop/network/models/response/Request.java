@@ -7,7 +7,7 @@ import com.google.gson.annotations.SerializedName;
  */
 public class Request {
 
-    // region Member Variables
+    // region Fields
     @SerializedName("files")
     private Files files;
     // endregion

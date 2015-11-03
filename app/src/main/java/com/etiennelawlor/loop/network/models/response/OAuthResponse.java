@@ -10,7 +10,7 @@ import com.google.gson.annotations.SerializedName;
 
 public final class OAuthResponse {
 
-    //region Variables
+    // region Fields
     @SerializedName("access_token")
     private String accessToken;
     @SerializedName("token_type")
@@ -19,35 +19,26 @@ public final class OAuthResponse {
     private String scope;
     @SerializedName("user")
     private AuthorizedUser user;
-    //endregion
+    // endregion
 
-    //region Getters
+    // region Getters
     public String getAccessToken() {
-        if (TextUtils.isEmpty(accessToken))
-            return "";
-        else
-            return accessToken;
+        return TextUtils.isEmpty(accessToken) ? "" : accessToken;
     }
 
     public String getTokenType() {
-        if (TextUtils.isEmpty(tokenType))
-            return "";
-        else
-            return tokenType;
+        return TextUtils.isEmpty(tokenType) ? "" : tokenType;
     }
 
     public String getScope() {
-        if (TextUtils.isEmpty(scope))
-            return "";
-        else
-            return scope;
+        return TextUtils.isEmpty(scope) ? "" : scope;
     }
 
     public AuthorizedUser getUser() {
         return user;
     }
 
-    //endregion
+    // endregion
 
     // region Setters
     public void setAccessToken(String accessToken) {

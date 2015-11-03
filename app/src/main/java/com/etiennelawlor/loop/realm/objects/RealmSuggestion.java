@@ -8,7 +8,7 @@ import io.realm.annotations.PrimaryKey;
 /**
  * Created by etiennelawlor on 10/7/15.
  */
-public class Suggestion extends RealmObject {
+public class RealmSuggestion extends RealmObject {
 
     @PrimaryKey
     private String token;

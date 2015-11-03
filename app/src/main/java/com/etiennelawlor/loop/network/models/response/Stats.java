@@ -10,17 +10,14 @@ import com.google.gson.annotations.SerializedName;
  */
 public class Stats implements Parcelable {
 
-    // region Member Variables
+    // region Fields
     @SerializedName("plays")
     private Integer plays;
     // endregion
 
     // region Getters
     public Integer getPlays() {
-        if(plays == null)
-            return -1;
-        else
-            return plays;
+        return plays == null ? -1 : plays;
     }
     // endregion
 

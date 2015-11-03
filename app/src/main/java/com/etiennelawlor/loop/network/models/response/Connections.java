@@ -10,7 +10,7 @@ import com.google.gson.annotations.SerializedName;
  */
 public class Connections implements Parcelable {
 
-    // region Member Variables
+    // region Fields
     @SerializedName("comments")
     private Connection comments;
 //    @SerializedName("credits")

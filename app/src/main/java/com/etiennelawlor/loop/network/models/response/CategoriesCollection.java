@@ -232,7 +232,7 @@ import java.util.List;
  */
 public class CategoriesCollection {
 
-    // region Member Variables
+    // region Fields
     @SerializedName("total")
     private Integer total;
     @SerializedName("page")
@@ -247,24 +247,15 @@ public class CategoriesCollection {
 
     // region Getters
     public Integer getTotal() {
-        if(total == null)
-            return -1;
-        else
-            return total;
+        return total == null ? -1 : total;
     }
 
     public Integer getPage() {
-        if(page == null)
-            return -1;
-        else
-            return page;
+        return page == null ? -1 : page;
     }
 
     public Integer getPerPage() {
-        if(total == null)
-            return -1;
-        else
-            return total;
+        return total == null ? -1 : total;
     }
 
     public Paging getPaging() {
@@ -277,7 +268,6 @@ public class CategoriesCollection {
     // endregion
 
     // region Setters
-
     public void setTotal(Integer total) {
         this.total = total;
     }
@@ -297,6 +287,5 @@ public class CategoriesCollection {
     public void setCategories(List<Category> categories) {
         this.categories = categories;
     }
-
     // endregion
 }

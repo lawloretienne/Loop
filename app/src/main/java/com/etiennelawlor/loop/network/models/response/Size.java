@@ -11,7 +11,7 @@ import com.google.gson.annotations.SerializedName;
  */
 public class Size implements Parcelable {
 
-    // region Member Variables
+    // region Fields
     @SerializedName("width")
     private Integer width;
     @SerializedName("height")
@@ -22,29 +22,19 @@ public class Size implements Parcelable {
 
     // region Getters
     public Integer getWidth() {
-        if(width == null)
-            return -1;
-        else
-            return width;
+        return width == null ? -1 : width;
     }
 
     public Integer getHeight() {
-        if(height == null)
-            return -1;
-        else
-            return height;
+        return height == null ? -1 : height;
     }
 
     public String getLink() {
-        if (TextUtils.isEmpty(link))
-            return "";
-        else
-            return link;
+        return TextUtils.isEmpty(link) ? "" : link;
     }
     // endregion
 
     // region Setters
-
     public void setWidth(Integer width) {
         this.width = width;
     }

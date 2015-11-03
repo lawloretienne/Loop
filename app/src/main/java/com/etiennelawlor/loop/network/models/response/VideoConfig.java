@@ -7,7 +7,7 @@ import com.google.gson.annotations.SerializedName;
  */
 public class VideoConfig {
 
-    // region Member Variables
+    // region Fields
     @SerializedName("request")
     private Request request;
     // endregion
@@ -19,10 +19,8 @@ public class VideoConfig {
     // endregion
 
     // region Setters
-
     public void setRequest(Request request) {
         this.request = request;
     }
-
     // endregion
 }

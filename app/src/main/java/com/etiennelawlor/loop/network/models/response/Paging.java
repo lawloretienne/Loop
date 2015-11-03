@@ -8,7 +8,8 @@ import com.google.gson.annotations.SerializedName;
  * Created by etiennelawlor on 5/23/15.
  */
 public class Paging {
-    // region Member Variables
+
+    // region Fields
     @SerializedName("next")
     private String next;
     @SerializedName("previous")
@@ -21,31 +22,19 @@ public class Paging {
 
     // region Getters
     public String getNext() {
-        if (TextUtils.isEmpty(next))
-            return "";
-        else
-            return next;
+        return TextUtils.isEmpty(next) ? "" : next;
     }
 
     public String getPrevious() {
-        if (TextUtils.isEmpty(previous))
-            return "";
-        else
-            return previous;
+        return TextUtils.isEmpty(previous) ? "" : previous;
     }
 
     public String getFirst() {
-        if (TextUtils.isEmpty(first))
-            return "";
-        else
-            return first;
+        return TextUtils.isEmpty(first) ? "" : first;
     }
 
     public String getLast() {
-        if (TextUtils.isEmpty(last))
-            return "";
-        else
-            return last;
+        return TextUtils.isEmpty(last) ? "" : last;
     }
     // endregion
 

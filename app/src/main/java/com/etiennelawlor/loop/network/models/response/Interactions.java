@@ -10,7 +10,7 @@ import com.google.gson.annotations.SerializedName;
  */
 public class Interactions implements Parcelable {
 
-    // region Member Variables
+    // region Fields
     @SerializedName("watchlater")
     private Interaction watchlater;
     @SerializedName("like")

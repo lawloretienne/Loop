@@ -13,7 +13,8 @@ import java.util.List;
  * Created by etiennelawlor on 5/23/15.
  */
 public class Video implements Parcelable {
-    // region Member Variables
+
+    // region Fields
     @SerializedName("uri")
     private String uri;
     @SerializedName("name")
@@ -60,59 +61,35 @@ public class Video implements Parcelable {
 
     // region Getters
     public String getUri() {
-        if (TextUtils.isEmpty(uri))
-            return "";
-        else
-            return uri;
+        return TextUtils.isEmpty(uri) ? "" : uri;
     }
 
     public String getName() {
-        if (TextUtils.isEmpty(name))
-            return "";
-        else
-            return name;
+        return TextUtils.isEmpty(name) ? "" : name;
     }
 
     public String getDescription() {
-        if (TextUtils.isEmpty(description))
-            return "";
-        else
-            return description;
+        return TextUtils.isEmpty(description) ? "" : description;
     }
 
     public String getLink() {
-        if (TextUtils.isEmpty(link))
-            return "";
-        else
-            return link;
+        return TextUtils.isEmpty(link) ? "" : link;
     }
 
     public Integer getDuration() {
-        if(duration == null)
-            return -1;
-        else
-            return duration;
+        return duration == null ? -1 : duration;
     }
 
     public Integer getWidth() {
-        if(width == null)
-            return -1;
-        else
-            return width;
+        return width == null ? -1 : width;
     }
 
     public String getLanguage() {
-        if (TextUtils.isEmpty(language))
-            return "";
-        else
-            return language;
+        return TextUtils.isEmpty(language) ? "" : language;
     }
 
     public Integer getHeight() {
-        if(height == null)
-            return -1;
-        else
-            return height;
+        return height == null ? -1 : height;
     }
 
     public Embed getEmbed() {
@@ -120,17 +97,11 @@ public class Video implements Parcelable {
     }
 
     public String getCreatedTime() {
-        if (TextUtils.isEmpty(createdTime))
-            return "";
-        else
-            return createdTime;
+        return TextUtils.isEmpty(createdTime) ? "" : createdTime;
     }
 
     public String getModifiedTime() {
-        if (TextUtils.isEmpty(modifiedTime))
-            return "";
-        else
-            return modifiedTime;
+        return TextUtils.isEmpty(modifiedTime) ? "" : modifiedTime;
     }
 
     public List<String> getContentRating() {
@@ -166,7 +137,7 @@ public class Video implements Parcelable {
 //    }
 
     public String getStatus() {
-        return status;
+        return TextUtils.isEmpty(status) ? "" : status;
     }
 
 //    public Object getEmbedPresets() {
@@ -176,7 +147,6 @@ public class Video implements Parcelable {
     // endregion
 
     // region Setters
-
     public void setUri(String uri) {
         this.uri = uri;
     }
@@ -260,7 +230,6 @@ public class Video implements Parcelable {
 //    public void setEmbedPresets(Object embedPresets) {
 //        this.embedPresets = embedPresets;
 //    }
-
     // endregion
 
     // region Parcelable Methods
