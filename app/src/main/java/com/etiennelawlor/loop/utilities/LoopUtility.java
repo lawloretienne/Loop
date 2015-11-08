@@ -8,8 +8,6 @@ import android.content.pm.PackageManager;
 import android.content.res.Configuration;
 import android.graphics.Point;
 import android.net.Uri;
-import android.text.TextUtils;
-import android.text.format.DateUtils;
 import android.util.DisplayMetrics;
 import android.view.Display;
 import android.view.View;
@@ -17,12 +15,6 @@ import android.view.WindowManager;
 import android.view.inputmethod.InputMethodManager;
 
 import com.etiennelawlor.loop.R;
-
-import java.util.Calendar;
-import java.util.Date;
-import java.util.concurrent.TimeUnit;
-
-import timber.log.Timber;
 
 /**
  * Created by etiennelawlor on 5/23/15.

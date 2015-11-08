@@ -17,7 +17,6 @@ import com.etiennelawlor.loop.models.AccessToken;
 import com.etiennelawlor.loop.network.models.response.AuthorizedUser;
 import com.etiennelawlor.loop.network.models.response.OAuthResponse;
 import com.etiennelawlor.loop.utilities.LogUtility;
-import com.etiennelawlor.loop.utilities.LoopUtility;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;

@@ -3,7 +3,6 @@ package com.etiennelawlor.loop.fragments;
 import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.os.Handler;
-import android.support.design.widget.Snackbar;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -25,14 +24,11 @@ import com.etiennelawlor.loop.network.models.response.H264;
 import com.etiennelawlor.loop.network.models.response.HLS;
 import com.etiennelawlor.loop.network.models.response.Request;
 import com.etiennelawlor.loop.network.models.response.VP6;
-import com.etiennelawlor.loop.network.models.response.Video;
 import com.etiennelawlor.loop.network.models.response.VideoConfig;
 import com.etiennelawlor.loop.network.models.response.VideoFormat;
 import com.etiennelawlor.loop.otto.BusProvider;
 import com.etiennelawlor.loop.ui.LoadingImageView;
 import com.etiennelawlor.loop.utilities.LogUtility;
-import com.etiennelawlor.loop.utilities.LoopUtility;
-import com.squareup.okhttp.ResponseBody;
 
 import java.io.IOException;
 import java.net.SocketTimeoutException;
@@ -124,18 +120,19 @@ public class VideoPlayerFragment extends BaseFragment {
     // endregion
 
     // region Constructors
+    public VideoPlayerFragment() {
+    }
+    // endregion
+
+    // region Factory Methods
     public static VideoPlayerFragment newInstance() {
-        VideoPlayerFragment fragment = new VideoPlayerFragment();
-        return fragment;
+        return new VideoPlayerFragment();
     }
 
     public static VideoPlayerFragment newInstance(Bundle extras) {
         VideoPlayerFragment fragment = new VideoPlayerFragment();
         fragment.setArguments(extras);
         return fragment;
-    }
-
-    public VideoPlayerFragment() {
     }
     // endregion
 

@@ -18,7 +18,6 @@ import com.etiennelawlor.loop.network.models.response.User;
 import com.etiennelawlor.loop.network.models.response.Video;
 import com.etiennelawlor.loop.ui.LoadingImageView;
 import com.etiennelawlor.loop.utilities.DateUtility;
-import com.etiennelawlor.loop.utilities.LoopUtility;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;

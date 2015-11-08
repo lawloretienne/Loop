@@ -1,9 +1,6 @@
 package com.etiennelawlor.loop.adapters;
 
-import android.app.SearchManager;
-import android.content.Intent;
 import android.graphics.Typeface;
-import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
@@ -16,7 +13,6 @@ import android.widget.TextView;
 import com.bumptech.glide.Glide;
 import com.etiennelawlor.loop.LoopApplication;
 import com.etiennelawlor.loop.R;
-import com.etiennelawlor.loop.activities.SearchableActivity;
 import com.etiennelawlor.loop.network.models.response.Pictures;
 import com.etiennelawlor.loop.network.models.response.Size;
 import com.etiennelawlor.loop.network.models.response.Stats;
@@ -27,7 +23,6 @@ import com.etiennelawlor.loop.otto.BusProvider;
 import com.etiennelawlor.loop.otto.events.SearchPerformedEvent;
 import com.etiennelawlor.loop.ui.LoadingImageView;
 import com.etiennelawlor.loop.utilities.DateUtility;
-import com.etiennelawlor.loop.utilities.LoopUtility;
 import com.etiennelawlor.loop.utilities.Transformers;
 import com.greenfrvr.hashtagview.HashtagView;
 

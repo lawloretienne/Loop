@@ -10,7 +10,6 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.SearchView;
 import android.support.v7.widget.Toolbar;
-import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -32,7 +31,6 @@ import com.etiennelawlor.loop.ui.GridSpacesItemDecoration;
 import com.etiennelawlor.loop.ui.LoadingImageView;
 import com.etiennelawlor.loop.utilities.LogUtility;
 import com.etiennelawlor.loop.utilities.LoopUtility;
-import com.squareup.okhttp.ResponseBody;
 
 import java.io.IOException;
 import java.net.SocketTimeoutException;
@@ -72,7 +70,6 @@ public class ExploreFragment extends BaseFragment implements CategoriesAdapter.O
 
     private boolean mIsLoading = false;
     private CategoriesAdapter mCategoriesAdapter;
-    private LinearLayoutManager mLayoutManager;
     private VimeoService mVimeoService;
     // endregion
 
@@ -141,18 +138,19 @@ public class ExploreFragment extends BaseFragment implements CategoriesAdapter.O
     // endregion
 
     // region Constructors
+    public ExploreFragment() {
+    }
+    // endregion
+
+    // region Factory Methods
     public static ExploreFragment newInstance() {
-        ExploreFragment fragment = new ExploreFragment();
-        return fragment;
+        return new ExploreFragment();
     }
 
     public static ExploreFragment newInstance(Bundle extras) {
         ExploreFragment fragment = new ExploreFragment();
         fragment.setArguments(extras);
         return fragment;
-    }
-
-    public ExploreFragment() {
     }
     // endregion
 
@@ -192,14 +190,16 @@ public class ExploreFragment extends BaseFragment implements CategoriesAdapter.O
         ((AppCompatActivity) getActivity()).setSupportActionBar(mToolbar);
 
         final ActionBar ab = ((AppCompatActivity) getActivity()).getSupportActionBar();
-        ab.setHomeAsUpIndicator(R.drawable.ic_menu);
-        ab.setDisplayHomeAsUpEnabled(true);
-        ab.setTitle("Explore");
+        if(ab != null){
+            ab.setHomeAsUpIndicator(R.drawable.ic_menu);
+            ab.setDisplayHomeAsUpEnabled(true);
+            ab.setTitle("Explore");
+        }
 
 //        ((AppCompatActivity)getActivity()).getSupportActionBar().setTitle(mQuery);
 
-        mLayoutManager = new GridLayoutManager(getActivity(), 2);
-        mCategoriesRecyclerView.setLayoutManager(mLayoutManager);
+        LinearLayoutManager layoutManager = new GridLayoutManager(getActivity(), 2);
+        mCategoriesRecyclerView.setLayoutManager(layoutManager);
         mCategoriesRecyclerView.addItemDecoration(new GridSpacesItemDecoration(LoopUtility.dp2px(getActivity(), 8)));
 
         mCategoriesAdapter = new CategoriesAdapter();

@@ -2,14 +2,12 @@ package com.etiennelawlor.loop.fragments;
 
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.os.NetworkOnMainThreadException;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.view.View;
 
 import com.etiennelawlor.loop.LoopApplication;
 import com.squareup.leakcanary.RefWatcher;
-import com.squareup.okhttp.OkHttpClient;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -22,8 +20,11 @@ import timber.log.Timber;
  */
 public abstract class BaseFragment extends Fragment {
 
+    // region Member Variables
     protected List<Call> mCalls;
+    // endregion
 
+    // region Lifecycle Methods
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -89,6 +90,9 @@ public abstract class BaseFragment extends Fragment {
         RefWatcher refWatcher = LoopApplication.getRefWatcher(getActivity());
         refWatcher.watch(this);
     }
+    // region
+
+    // region Inner Classes
 
     private class CancelTask extends AsyncTask<Call, Void, Void >{
         @Override
@@ -101,4 +105,6 @@ public abstract class BaseFragment extends Fragment {
             return null;
         }
     }
+
+    // endregion
 }

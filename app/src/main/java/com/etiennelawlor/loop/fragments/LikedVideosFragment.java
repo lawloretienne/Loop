@@ -1,25 +1,20 @@
 package com.etiennelawlor.loop.fragments;
 
-import android.app.SearchManager;
-import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.design.widget.Snackbar;
-import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.ActivityOptionsCompat;
+import android.support.v4.content.ContextCompat;
 import android.support.v4.graphics.drawable.DrawableCompat;
 import android.support.v4.util.Pair;
-import android.support.v4.view.MenuItemCompat;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.support.v7.widget.SearchView;
 import android.support.v7.widget.Toolbar;
-import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -44,8 +39,6 @@ import com.etiennelawlor.loop.otto.BusProvider;
 import com.etiennelawlor.loop.otto.events.VideoLikedEvent;
 import com.etiennelawlor.loop.ui.LoadingImageView;
 import com.etiennelawlor.loop.utilities.LogUtility;
-import com.etiennelawlor.loop.utilities.LoopUtility;
-import com.squareup.okhttp.ResponseBody;
 import com.squareup.otto.Subscribe;
 
 import java.io.IOException;
@@ -193,8 +186,8 @@ public class LikedVideosFragment extends BaseFragment implements VideosAdapter.O
 
             if (mVideosAdapter.isEmpty()) {
                 mEmptyTextView.setText(getString(R.string.likes_empty_prompt));
-                Drawable drawable = getResources().getDrawable(R.drawable.ic_likes_large);
-                DrawableCompat.setTint(drawable, getResources().getColor(R.color.grey_500));
+                Drawable drawable = ContextCompat.getDrawable(getActivity(), R.drawable.ic_likes_large);
+                DrawableCompat.setTint(drawable, ContextCompat.getColor(getActivity(), R.color.grey_500));
                 mEmptyTextView.setCompoundDrawablesWithIntrinsicBounds(null, drawable, null, null);
                 mEmptyView.setVisibility(View.VISIBLE);
             }
@@ -279,7 +272,7 @@ public class LikedVideosFragment extends BaseFragment implements VideosAdapter.O
                     Timber.e("Timeout occurred");
                     showReloadSnackbar("Can't load data. Check your network connection.");
                 } else if(t instanceof IOException){
-                    if(message.equals("Canceled")){
+                    if(message.equals("Canceled")) {
                         Timber.e("onFailure() : Canceled");
                     }
                 }
@@ -289,18 +282,19 @@ public class LikedVideosFragment extends BaseFragment implements VideosAdapter.O
     // endregion
 
     // region Constructors
+    public LikedVideosFragment() {
+    }
+    // endregion
+
+    // region Factory Methods
     public static LikedVideosFragment newInstance() {
-        LikedVideosFragment fragment = new LikedVideosFragment();
-        return fragment;
+        return new LikedVideosFragment();
     }
 
     public static LikedVideosFragment newInstance(Bundle extras) {
         LikedVideosFragment fragment = new LikedVideosFragment();
         fragment.setArguments(extras);
         return fragment;
-    }
-
-    public LikedVideosFragment() {
     }
     // endregion
 
@@ -340,9 +334,11 @@ public class LikedVideosFragment extends BaseFragment implements VideosAdapter.O
         ((AppCompatActivity) getActivity()).setSupportActionBar(mToolbar);
 
         final ActionBar ab = ((AppCompatActivity) getActivity()).getSupportActionBar();
-        ab.setHomeAsUpIndicator(R.drawable.ic_menu);
-        ab.setDisplayHomeAsUpEnabled(true);
-        ab.setTitle("Likes");
+        if(ab != null){
+            ab.setHomeAsUpIndicator(R.drawable.ic_menu);
+            ab.setDisplayHomeAsUpEnabled(true);
+            ab.setTitle("Likes");
+        }
 
         mLayoutManager = new LinearLayoutManager(getActivity());
         mVideosRecyclerView.setLayoutManager(mLayoutManager);
@@ -443,7 +439,7 @@ public class LikedVideosFragment extends BaseFragment implements VideosAdapter.O
             bundle.putParcelable("video", video);
             intent.putExtras(bundle);
 
-            Pair<View, String> p1 = Pair.create((View) view.findViewById(R.id.video_thumbnail_iv), "videoTransition");
+            Pair<View, String> p1 = Pair.create(view.findViewById(R.id.video_thumbnail_iv), "videoTransition");
 //                Pair<View, String> p2 = Pair.create((View) view.findViewById(R.id.title_tv), "titleTransition");
 //                Pair<View, String> p3 = Pair.create((View) view.findViewById(R.id.subtitle_tv), "subtitleTransition");
 //        Pair<View, String> p4 = Pair.create((View)view.findViewById(R.id.uploaded_tv), "uploadedTransition");
@@ -499,11 +495,11 @@ public class LikedVideosFragment extends BaseFragment implements VideosAdapter.O
         final Spinner sortOrderSpinner = (Spinner) promptsView.findViewById(R.id.sort_order_s);
 
         String[] mSortByKeysArray = getResources().getStringArray(R.array.likes_sort_by_keys);
-        ArrayAdapter<String> sortByAdapter = new ArrayAdapter<String>(getActivity(), android.R.layout.simple_spinner_dropdown_item, mSortByKeysArray);
+        ArrayAdapter<String> sortByAdapter = new ArrayAdapter<>(getActivity(), android.R.layout.simple_spinner_dropdown_item, mSortByKeysArray);
         sortBySpinner.setAdapter(sortByAdapter);
 
         String[] mSortOrderKeysArray = getResources().getStringArray(R.array.likes_sort_order_keys);
-        ArrayAdapter<String> sortOrderAdapter = new ArrayAdapter<String>(getActivity(), android.R.layout.simple_spinner_dropdown_item, mSortOrderKeysArray);
+        ArrayAdapter<String> sortOrderAdapter = new ArrayAdapter<>(getActivity(), android.R.layout.simple_spinner_dropdown_item, mSortOrderKeysArray);
         sortOrderSpinner.setAdapter(sortOrderAdapter);
 
         sortBySpinner.setSelection(mSelectedSortByKey);

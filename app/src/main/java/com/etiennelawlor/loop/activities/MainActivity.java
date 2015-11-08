@@ -43,8 +43,6 @@ import timber.log.Timber;
  */
 public class MainActivity extends AppCompatActivity {
 
-    // region Member Variables
-    private CharSequence mTitle;
     @Bind(R.id.drawer_layout)
     DrawerLayout mDrawerLayout;
     @Bind(R.id.nav_view)
@@ -107,7 +105,7 @@ public class MainActivity extends AppCompatActivity {
                             try {
                                 startActivity(LoopUtility.getEmailIntent(MainActivity.this));
                             } catch (android.content.ActivityNotFoundException ex) {
-                                Toast.makeText(MainActivity.this, "There are no email clients installed", Toast.LENGTH_SHORT);
+                                Toast.makeText(MainActivity.this, "There are no email clients installed", Toast.LENGTH_SHORT).show();
                             }
                             break;
                         case "Logout":
@@ -190,9 +188,8 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     public void setTitle(CharSequence title) {
-        mTitle = title;
         if (getSupportActionBar() != null) {
-            getSupportActionBar().setTitle(mTitle);
+            getSupportActionBar().setTitle(title);
         }
     }
 

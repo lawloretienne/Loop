@@ -9,6 +9,7 @@ import android.os.Bundle;
 import android.speech.RecognizerIntent;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityOptionsCompat;
+import android.support.v4.content.ContextCompat;
 import android.support.v4.graphics.drawable.DrawableCompat;
 import android.support.v4.util.Pair;
 import android.support.v7.app.AlertDialog;
@@ -44,8 +45,6 @@ import com.etiennelawlor.loop.realm.RealmUtility;
 import com.etiennelawlor.loop.ui.LoadingImageView;
 import com.etiennelawlor.loop.ui.MaterialSearchView;
 import com.etiennelawlor.loop.utilities.LogUtility;
-import com.etiennelawlor.loop.utilities.LoopUtility;
-import com.squareup.okhttp.ResponseBody;
 import com.squareup.otto.Subscribe;
 
 import java.io.IOException;
@@ -203,8 +202,8 @@ public class SearchableFragment extends BaseFragment implements VideosAdapter.On
 
             if (mVideosAdapter.isEmpty()) {
                 mEmptyTextView.setText(getString(R.string.watch_later_empty_prompt));
-                Drawable drawable = getResources().getDrawable(R.drawable.ic_watch_later_large);
-                DrawableCompat.setTint(drawable, getResources().getColor(R.color.grey_500));
+                Drawable drawable = ContextCompat.getDrawable(getContext(), R.drawable.ic_watch_later_large);
+                DrawableCompat.setTint(drawable, ContextCompat.getColor(getActivity(), R.color.grey_500));
                 mEmptyTextView.setCompoundDrawablesWithIntrinsicBounds(null, drawable, null, null);
                 mEmptyView.setVisibility(View.VISIBLE);
             }
@@ -300,18 +299,19 @@ public class SearchableFragment extends BaseFragment implements VideosAdapter.On
     // endregion
 
     // region Constructors
+    public SearchableFragment() {
+    }
+    // endregion
+
+    // region Factory Methods
     public static SearchableFragment newInstance() {
-        SearchableFragment fragment = new SearchableFragment();
-        return fragment;
+        return new SearchableFragment();
     }
 
     public static SearchableFragment newInstance(Bundle extras) {
         SearchableFragment fragment = new SearchableFragment();
         fragment.setArguments(extras);
         return fragment;
-    }
-
-    public SearchableFragment() {
     }
     // endregion
 
@@ -519,7 +519,7 @@ public class SearchableFragment extends BaseFragment implements VideosAdapter.On
             bundle.putParcelable("video", video);
             intent.putExtras(bundle);
 
-            Pair<View, String> p1 = Pair.create((View) view.findViewById(R.id.video_thumbnail_iv), "videoTransition");
+            Pair<View, String> p1 = Pair.create(view.findViewById(R.id.video_thumbnail_iv), "videoTransition");
 //                Pair<View, String> p2 = Pair.create((View) view.findViewById(R.id.title_tv), "titleTransition");
 //                Pair<View, String> p3 = Pair.create((View) view.findViewById(R.id.subtitle_tv), "subtitleTransition");
 //        Pair<View, String> p4 = Pair.create((View)view.findViewById(R.id.uploaded_tv), "uploadedTransition");
@@ -582,11 +582,11 @@ public class SearchableFragment extends BaseFragment implements VideosAdapter.On
         final Spinner sortOrderSpinner = (Spinner) promptsView.findViewById(R.id.sort_order_s);
 
         String[] mSortByKeysArray = getResources().getStringArray(R.array.videos_sort_by_keys);
-        ArrayAdapter<String> sortByAdapter = new ArrayAdapter<String>(getActivity(), android.R.layout.simple_spinner_dropdown_item, mSortByKeysArray);
+        ArrayAdapter<String> sortByAdapter = new ArrayAdapter<>(getActivity(), android.R.layout.simple_spinner_dropdown_item, mSortByKeysArray);
         sortBySpinner.setAdapter(sortByAdapter);
 
         String[] mSortOrderKeysArray = getResources().getStringArray(R.array.videos_sort_order_keys);
-        ArrayAdapter<String> sortOrderAdapter = new ArrayAdapter<String>(getActivity(), android.R.layout.simple_spinner_dropdown_item, mSortOrderKeysArray);
+        ArrayAdapter<String> sortOrderAdapter = new ArrayAdapter<>(getActivity(), android.R.layout.simple_spinner_dropdown_item, mSortOrderKeysArray);
         sortOrderSpinner.setAdapter(sortOrderAdapter);
 
         sortBySpinner.setSelection(mSelectedSortByKey);

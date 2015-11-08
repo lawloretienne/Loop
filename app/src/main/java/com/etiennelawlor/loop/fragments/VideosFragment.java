@@ -9,7 +9,6 @@ import android.support.v4.util.Pair;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -34,8 +33,6 @@ import com.etiennelawlor.loop.network.models.response.VideosCollection;
 import com.etiennelawlor.loop.otto.BusProvider;
 import com.etiennelawlor.loop.ui.LoadingImageView;
 import com.etiennelawlor.loop.utilities.LogUtility;
-import com.etiennelawlor.loop.utilities.LoopUtility;
-import com.squareup.okhttp.ResponseBody;
 
 import java.io.IOException;
 import java.net.SocketException;
@@ -274,18 +271,19 @@ public class VideosFragment extends BaseFragment implements VideosAdapter.OnItem
     // endregion
 
     // region Constructors
+    public VideosFragment() {
+    }
+    // endregion
+
+    // region Factory Methods
     public static VideosFragment newInstance() {
-        VideosFragment fragment = new VideosFragment();
-        return fragment;
+        return new VideosFragment();
     }
 
     public static VideosFragment newInstance(Bundle extras) {
         VideosFragment fragment = new VideosFragment();
         fragment.setArguments(extras);
         return fragment;
-    }
-
-    public VideosFragment() {
     }
     // endregion
 
@@ -398,7 +396,7 @@ public class VideosFragment extends BaseFragment implements VideosAdapter.OnItem
             bundle.putParcelable("video", video);
             intent.putExtras(bundle);
 
-            Pair<View, String> p1 = Pair.create((View) view.findViewById(R.id.video_thumbnail_iv), "videoTransition");
+            Pair<View, String> p1 = Pair.create(view.findViewById(R.id.video_thumbnail_iv), "videoTransition");
 //                Pair<View, String> p2 = Pair.create((View) view.findViewById(R.id.title_tv), "titleTransition");
 //                Pair<View, String> p3 = Pair.create((View) view.findViewById(R.id.subtitle_tv), "subtitleTransition");
 //        Pair<View, String> p4 = Pair.create((View)view.findViewById(R.id.uploaded_tv), "uploadedTransition");
@@ -443,11 +441,11 @@ public class VideosFragment extends BaseFragment implements VideosAdapter.OnItem
         final Spinner sortOrderSpinner = (Spinner) promptsView.findViewById(R.id.sort_order_s);
 
         String[] mSortByKeysArray = getResources().getStringArray(R.array.videos_sort_by_keys);
-        ArrayAdapter<String> sortByAdapter = new ArrayAdapter<String>(getActivity(), android.R.layout.simple_spinner_dropdown_item, mSortByKeysArray);
+        ArrayAdapter<String> sortByAdapter = new ArrayAdapter<>(getActivity(), android.R.layout.simple_spinner_dropdown_item, mSortByKeysArray);
         sortBySpinner.setAdapter(sortByAdapter);
 
         String[] mSortOrderKeysArray = getResources().getStringArray(R.array.videos_sort_order_keys);
-        ArrayAdapter<String> sortOrderAdapter = new ArrayAdapter<String>(getActivity(), android.R.layout.simple_spinner_dropdown_item, mSortOrderKeysArray);
+        ArrayAdapter<String> sortOrderAdapter = new ArrayAdapter<>(getActivity(), android.R.layout.simple_spinner_dropdown_item, mSortOrderKeysArray);
         sortOrderSpinner.setAdapter(sortOrderAdapter);
 
         sortBySpinner.setSelection(mSelectedSortByKey);

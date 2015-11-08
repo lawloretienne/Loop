@@ -34,11 +34,9 @@ public class LoadingImageView extends ImageView {
     private int maskColor = Color.TRANSPARENT;
     private ClipDrawable clipDrawable;
     private Drawable maskDrawable;
-    private int maskHeight;
     private ObjectAnimator animator;
     private int gravity = Gravity.LEFT;
     private int orientaion = ClipDrawable.HORIZONTAL;
-    private int maskOrientation = MaskOrientation.LeftToRight;
     private float scaleX,scaleY;
     private boolean autoStart = true;
     private long animDuration = 800;
@@ -148,7 +146,7 @@ public class LoadingImageView extends ImageView {
     }
 
     private void setMaskHeight(int y) {
-        maskHeight = y;
+        int maskHeight = y;
         invalidate();
     }
 
@@ -230,6 +228,7 @@ public class LoadingImageView extends ImageView {
     }
 
     public int getMaskOrientation() {
+        int maskOrientation = MaskOrientation.LeftToRight;
         return maskOrientation;
     }
     // endregion

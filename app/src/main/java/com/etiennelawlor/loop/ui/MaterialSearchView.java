@@ -376,7 +376,7 @@ public class MaterialSearchView extends FrameLayout implements
 //        LinearLayoutManager layoutManager = new LinearLayoutManager(getContext());
         mRecyclerView.setLayoutManager(layoutManager);
 
-        mDividerItemDecoration = new DividerItemDecoration(getResources().getDrawable(R.drawable.divider));
+        mDividerItemDecoration = new DividerItemDecoration(ContextCompat.getDrawable(getContext(), R.drawable.divider));
         mRecyclerView.addItemDecoration(mDividerItemDecoration);
 //        mRecyclerView.setItemAnimator(new SlideInUpAnimator());
         mRecyclerView.setAdapter(mSuggestionsAdapter);
@@ -448,7 +448,7 @@ public class MaterialSearchView extends FrameLayout implements
 
     public void enableFilter() {
         mFilterImageView.setOnClickListener(mFilterImageViewOnClickListener);
-        mFilterImageView.setBackgroundDrawable(getResources().getDrawable(R.drawable.ripple));
+        mFilterImageView.setBackgroundDrawable(ContextCompat.getDrawable(getContext(), R.drawable.ripple));
         mFilterImageView.setColorFilter(ContextCompat.getColor(getContext(), R.color.grey_700));
     }
 

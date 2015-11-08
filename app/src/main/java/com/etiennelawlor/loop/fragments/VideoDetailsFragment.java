@@ -7,7 +7,6 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.design.widget.Snackbar;
-import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.ActivityOptionsCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.util.Pair;
@@ -52,8 +51,6 @@ import com.etiennelawlor.loop.otto.events.SearchPerformedEvent;
 import com.etiennelawlor.loop.otto.events.VideoLikedEvent;
 import com.etiennelawlor.loop.otto.events.WatchLaterEvent;
 import com.etiennelawlor.loop.utilities.LogUtility;
-import com.etiennelawlor.loop.utilities.LoopUtility;
-import com.squareup.okhttp.ResponseBody;
 import com.squareup.otto.Subscribe;
 
 import java.io.IOException;
@@ -627,6 +624,11 @@ public class VideoDetailsFragment extends BaseFragment implements RelatedVideosA
     // endregion
 
     // region Constructors
+    public VideoDetailsFragment() {
+    }
+    // endregion
+
+    // region Factory Methods
     public static VideoDetailsFragment newInstance(Bundle extras) {
         VideoDetailsFragment fragment = new VideoDetailsFragment();
         fragment.setArguments(extras);
@@ -638,9 +640,6 @@ public class VideoDetailsFragment extends BaseFragment implements RelatedVideosA
         Bundle args = new Bundle();
         fragment.setArguments(args);
         return fragment;
-    }
-
-    public VideoDetailsFragment() {
     }
     // endregion
 
@@ -883,7 +882,7 @@ public class VideoDetailsFragment extends BaseFragment implements RelatedVideosA
             bundle.putParcelable("video", video);
             intent.putExtras(bundle);
 
-            Pair<View, String> p1 = Pair.create((View) view.findViewById(R.id.video_thumbnail_iv), "videoTransition");
+            Pair<View, String> p1 = Pair.create(view.findViewById(R.id.video_thumbnail_iv), "videoTransition");
 //                Pair<View, String> p2 = Pair.create((View) view.findViewById(R.id.title_tv), "titleTransition");
 //                Pair<View, String> p3 = Pair.create((View) view.findViewById(R.id.subtitle_tv), "subtitleTransition");
 //        Pair<View, String> p4 = Pair.create((View)view.findViewById(R.id.uploaded_tv), "uploadedTransition");

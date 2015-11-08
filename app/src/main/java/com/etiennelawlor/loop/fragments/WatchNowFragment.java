@@ -55,18 +55,19 @@ public class WatchNowFragment extends BaseFragment {
     // endregion
 
     // region Constructors
+    public WatchNowFragment() {
+    }
+    // endregion
+
+    // region Factory Methods
     public static WatchNowFragment newInstance() {
-        WatchNowFragment fragment = new WatchNowFragment();
-        return fragment;
+        return new WatchNowFragment();
     }
 
     public static WatchNowFragment newInstance(Bundle extras) {
         WatchNowFragment fragment = new WatchNowFragment();
         fragment.setArguments(extras);
         return fragment;
-    }
-
-    public WatchNowFragment() {
     }
     // endregion
 

@@ -28,18 +28,19 @@ public class PlaceholderFragment extends BaseFragment {
     // endregion
 
     // region Constructors
+    public PlaceholderFragment() {
+    }
+    // endregion
+
+    // region Factory Methods
     public static PlaceholderFragment newInstance() {
-        PlaceholderFragment fragment = new PlaceholderFragment();
-        return fragment;
+        return new PlaceholderFragment();
     }
 
     public static PlaceholderFragment newInstance(Bundle extras) {
         PlaceholderFragment fragment = new PlaceholderFragment();
         fragment.setArguments(extras);
         return fragment;
-    }
-
-    public PlaceholderFragment() {
     }
     // endregion
 

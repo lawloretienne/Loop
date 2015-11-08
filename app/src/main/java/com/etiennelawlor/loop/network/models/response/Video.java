@@ -283,7 +283,7 @@ public class Video implements Parcelable {
             video.setCreatedTime(source.readString());
             video.setModifiedTime(source.readString());
 
-            List<String> contentRating = new ArrayList<String>();
+            List<String> contentRating = new ArrayList<>();
             source.readStringList(contentRating);
             video.setContentRating(contentRating);
 //            video.setLicense((Object) source.readParcelable(Object.class.getClassLoader()));

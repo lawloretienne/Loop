@@ -73,7 +73,7 @@ public class Connection implements Parcelable {
 
             connection.setUri(source.readString());
 
-            List<String> options = new ArrayList<String>();
+            List<String> options = new ArrayList<>();
             source.readStringList(options);
             connection.setOptions(options);
 

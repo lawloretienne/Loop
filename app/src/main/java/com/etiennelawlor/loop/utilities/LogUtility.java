@@ -3,7 +3,6 @@ package com.etiennelawlor.loop.utilities;
 import android.text.TextUtils;
 
 import com.squareup.okhttp.Response;
-import com.squareup.okhttp.ResponseBody;
 
 import timber.log.Timber;
 
