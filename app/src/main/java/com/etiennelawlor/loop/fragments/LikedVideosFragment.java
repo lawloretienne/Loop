@@ -202,8 +202,6 @@ public class LikedVideosFragment extends BaseFragment implements VideosAdapter.O
 
         @Override
         public void onFailure(Throwable t) {
-            Timber.d("onFailure()");
-
             if (t != null) {
                 String message = t.getMessage();
                 LogUtility.logFailure(t);
@@ -224,7 +222,6 @@ public class LikedVideosFragment extends BaseFragment implements VideosAdapter.O
                     }
                 }
             }
-
         }
     };
 
@@ -271,10 +268,7 @@ public class LikedVideosFragment extends BaseFragment implements VideosAdapter.O
 
         @Override
         public void onFailure(Throwable t) {
-            Timber.d("onFailure()");
-
             mVideosAdapter.removeLoading();
-
             if (t != null) {
                 String message = t.getMessage();
                 LogUtility.logFailure(t);
@@ -283,19 +277,10 @@ public class LikedVideosFragment extends BaseFragment implements VideosAdapter.O
                     showReloadSnackbar(String.format("message - %s", message));
                 } else if (t instanceof UnknownHostException) {
                     Timber.e("Timeout occurred");
-
                     showReloadSnackbar("Can't load data. Check your network connection.");
-//                    mIsLoading = false;
-//                    mProgressBar.setVisibility(View.GONE);
-
-//                    mErrorTextView.setText("Can't load data.\nCheck your network connection.");
-//                    mErrorLinearLayout.setVisibility(View.VISIBLE);
                 } else if(t instanceof IOException){
                     if(message.equals("Canceled")){
                         Timber.e("onFailure() : Canceled");
-                    } else {
-//                        mIsLoading = false;
-                        mVideosAdapter.removeLoading();
                     }
                 }
             }

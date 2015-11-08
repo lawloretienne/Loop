@@ -71,8 +71,6 @@ public class VideoPlayerFragment extends BaseFragment {
     private Callback<VideoConfig> mGetVideoConfigCallback = new Callback<VideoConfig>() {
         @Override
         public void onResponse(Response<VideoConfig> response, Retrofit retrofit) {
-            Timber.d("onResponse()");
-
             if (response != null) {
                 if(response.isSuccess()){
                     VideoConfig videoConfig = response.body();
@@ -108,29 +106,18 @@ public class VideoPlayerFragment extends BaseFragment {
 
         @Override
         public void onFailure(Throwable t) {
-            Timber.e("onFailure()");
-
             if (t != null) {
                 String message = t.getMessage();
                 LogUtility.logFailure(t);
 
                 if (t instanceof SocketTimeoutException || t instanceof UnknownHostException) {
                     Timber.e("Timeout occurred");
-//                    mIsLoading = false;
-//                    mProgressBar.setVisibility(View.GONE);
-
-//                    mErrorTextView.setText("Can't load data.\nCheck your network connection.");
-//                    mErrorLinearLayout.setVisibility(View.VISIBLE);
                 } else if(t instanceof IOException){
                     if(message.equals("Canceled")){
                         Timber.e("onFailure() : Canceled");
-                    } else {
-//                        mIsLoading = false;
-//                        mProgressBar.setVisibility(View.GONE);
                     }
                 }
             }
-
         }
     };
 

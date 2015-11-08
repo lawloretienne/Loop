@@ -212,8 +212,6 @@ public class SearchableFragment extends BaseFragment implements VideosAdapter.On
 
         @Override
         public void onFailure(Throwable t) {
-            Timber.e("onFailure()");
-
             if (t != null) {
                 String message = t.getMessage();
                 LogUtility.logFailure(t);
@@ -281,10 +279,7 @@ public class SearchableFragment extends BaseFragment implements VideosAdapter.On
 
         @Override
         public void onFailure(Throwable t) {
-            Timber.d("onFailure()");
-//            mIsLoading = false;
             mVideosAdapter.removeLoading();
-
             if (t != null) {
                 String message = t.getMessage();
                 LogUtility.logFailure(t);
@@ -294,17 +289,9 @@ public class SearchableFragment extends BaseFragment implements VideosAdapter.On
                 } else if (t instanceof UnknownHostException) {
                     Timber.e("Timeout occurred");
                     showReloadSnackbar("Can't load data. Check your network connection.");
-//                    mIsLoading = false;
-//                    mProgressBar.setVisibility(View.GONE);
-
-//                    mErrorTextView.setText("Can't load data.\nCheck your network connection.");
-//                    mErrorLinearLayout.setVisibility(View.VISIBLE);
                 } else if(t instanceof IOException){
                     if(message.equals("Canceled")){
                         Timber.e("onFailure() : Canceled");
-                    } else {
-//                        mIsLoading = false;
-                        mVideosAdapter.removeLoading();
                     }
                 }
             }

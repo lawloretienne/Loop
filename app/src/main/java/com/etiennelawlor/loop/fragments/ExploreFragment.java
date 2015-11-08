@@ -116,8 +116,6 @@ public class ExploreFragment extends BaseFragment implements CategoriesAdapter.O
 
         @Override
         public void onFailure(Throwable t) {
-            Timber.d("onFailure()");
-
             if (t != null) {
                 String message = t.getMessage();
                 LogUtility.logFailure(t);

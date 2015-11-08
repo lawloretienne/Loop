@@ -142,13 +142,9 @@ public class VideosFragment extends BaseFragment implements VideosAdapter.OnItem
     private Callback<VideosCollection> mFindVideosFirstFetchCallback = new Callback<VideosCollection>() {
         @Override
         public void onResponse(Response<VideosCollection> response, Retrofit retrofit) {
-            Timber.d("onResponse()");
             mLoadingImageView.setVisibility(View.GONE);
-
             mIsLoading = false;
-
             if (response != null) {
-
                 if (response.isSuccess()) {
                     VideosCollection videosCollection = response.body();
                     if (videosCollection != null) {
@@ -185,7 +181,6 @@ public class VideosFragment extends BaseFragment implements VideosAdapter.OnItem
         @Override
         public void onFailure(Throwable t) {
             Timber.d("onFailure() : mQuery - " + mQuery);
-
             if (t != null) {
                 String message = t.getMessage();
                 LogUtility.logFailure(t);
@@ -205,7 +200,6 @@ public class VideosFragment extends BaseFragment implements VideosAdapter.OnItem
                     } else {
                         mIsLoading = false;
                         mLoadingImageView.setVisibility(View.GONE);
-
                     }
                 }
             }
@@ -215,12 +209,9 @@ public class VideosFragment extends BaseFragment implements VideosAdapter.OnItem
     private Callback<VideosCollection> mFindVideosNextFetchCallback = new Callback<VideosCollection>() {
         @Override
         public void onResponse(Response<VideosCollection> response, Retrofit retrofit) {
-            Timber.d("onResponse()");
             mVideosAdapter.removeLoading();
             mIsLoading = false;
-
             if (response != null) {
-
                 if (response.isSuccess()) {
                     VideosCollection videosCollection = response.body();
                     if (videosCollection != null) {
@@ -266,10 +257,7 @@ public class VideosFragment extends BaseFragment implements VideosAdapter.OnItem
 
         @Override
         public void onFailure(Throwable t) {
-            Timber.d("onFailure()");
-//            mIsLoading = false;
             mVideosAdapter.removeLoading();
-
             if (t != null) {
                 String message = t.getMessage();
                 LogUtility.logFailure(t);
@@ -279,11 +267,6 @@ public class VideosFragment extends BaseFragment implements VideosAdapter.OnItem
                 } else if (t instanceof UnknownHostException) {
                     Timber.e("Timeout occurred");
                     showReloadSnackbar("Can't load data. Check your network connection.");
-//                    mIsLoading = false;
-//                    mProgressBar.setVisibility(View.GONE);
-
-//                    mErrorTextView.setText("Can't load data.\nCheck your network connection.");
-//                    mErrorLinearLayout.setVisibility(View.VISIBLE);
                 }
             }
         }

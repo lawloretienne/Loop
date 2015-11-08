@@ -202,8 +202,6 @@ public class VideoDetailsFragment extends BaseFragment implements RelatedVideosA
 
         @Override
         public void onFailure(Throwable t) {
-            Timber.d("onFailure()");
-
             if (t != null) {
                 String message = t.getMessage();
                 LogUtility.logFailure(t);
@@ -219,17 +217,9 @@ public class VideoDetailsFragment extends BaseFragment implements RelatedVideosA
 
                 if (t instanceof SocketTimeoutException || t instanceof UnknownHostException) {
                     Timber.e("Timeout occurred");
-//                    mIsLoading = false;
-//                    mProgressBar.setVisibility(View.GONE);
-
-//                    mErrorTextView.setText("Can't load data.\nCheck your network connection.");
-//                    mErrorLinearLayout.setVisibility(View.VISIBLE);
                 } else if (t instanceof IOException) {
                     if (message.equals("Canceled")) {
                         Timber.e("onFailure() : Canceled");
-                    } else {
-//                        mIsLoading = false;
-//                        mProgressBar.setVisibility(View.GONE);
                     }
                 }
             }
@@ -292,11 +282,7 @@ public class VideoDetailsFragment extends BaseFragment implements RelatedVideosA
 
         @Override
         public void onFailure(Throwable t) {
-            Timber.d("onFailure()");
-
             mRelatedVideosAdapter.removeLoading();
-//            mIsLoading = false;
-
             if (t != null) {
                 String message = t.getMessage();
                 LogUtility.logFailure(t);
@@ -306,17 +292,9 @@ public class VideoDetailsFragment extends BaseFragment implements RelatedVideosA
                 } else if (t instanceof UnknownHostException) {
                     Timber.e("Timeout occurred");
                     showReloadSnackbar("Can't load data. Check your network connection.");
-//                    mIsLoading = false;
-//                    mProgressBar.setVisibility(View.GONE);
-
-//                    mErrorTextView.setText("Can't load data.\nCheck your network connection.");
-//                    mErrorLinearLayout.setVisibility(View.VISIBLE);
                 } else if (t instanceof IOException) {
                     if (message.equals("Canceled")) {
                         Timber.e("onFailure() : Canceled");
-                    } else {
-//                        mIsLoading = false;
-//                        mProgressBar.setVisibility(View.GONE);
                     }
                 }
             }
@@ -326,9 +304,6 @@ public class VideoDetailsFragment extends BaseFragment implements RelatedVideosA
     private Callback<Object> mLikeVideoCallback = new Callback<Object>() {
         @Override
         public void onResponse(Response<Object> response, Retrofit retrofit) {
-            //            mRelatedVideosAdapter.removeLoading();
-//            mIsLoading = false;
-
             if (response != null) {
                 if (response.isSuccess()) {
                     Timber.d("callbackResponse");
@@ -400,28 +375,15 @@ public class VideoDetailsFragment extends BaseFragment implements RelatedVideosA
 
         @Override
         public void onFailure(Throwable t) {
-            Timber.d("onFailure()");
-
-//            mRelatedVideosAdapter.removeLoading();
-//            mIsLoading = false;
-
             if (t != null) {
                 String message = t.getMessage();
                 LogUtility.logFailure(t);
 
                 if (t instanceof SocketTimeoutException || t instanceof UnknownHostException) {
                     Timber.e("Timeout occurred");
-//                    mIsLoading = false;
-//                    mProgressBar.setVisibility(View.GONE);
-
-//                    mErrorTextView.setText("Can't load data.\nCheck your network connection.");
-//                    mErrorLinearLayout.setVisibility(View.VISIBLE);
                 } else if (t instanceof IOException) {
                     if (message.equals("Canceled")) {
                         Timber.e("onFailure() : Canceled");
-                    } else {
-//                        mIsLoading = false;
-//                        mProgressBar.setVisibility(View.GONE);
                     }
                 }
             }
@@ -431,10 +393,6 @@ public class VideoDetailsFragment extends BaseFragment implements RelatedVideosA
     private Callback<Object> mUnlikeVideoCallback = new Callback<Object>() {
         @Override
         public void onResponse(Response<Object> response, Retrofit retrofit) {
-
-//            mRelatedVideosAdapter.removeLoading();
-//            mIsLoading = false;
-
             if (response != null) {
                 if (response.isSuccess()) {
                     Timber.d("callbackResponse");
@@ -500,28 +458,15 @@ public class VideoDetailsFragment extends BaseFragment implements RelatedVideosA
 
         @Override
         public void onFailure(Throwable t) {
-            Timber.d("onFailure()");
-
-//            mRelatedVideosAdapter.removeLoading();
-//            mIsLoading = false;
-
             if (t != null) {
                 String message = t.getMessage();
                 LogUtility.logFailure(t);
 
                 if (t instanceof SocketTimeoutException || t instanceof UnknownHostException) {
                     Timber.e("Timeout occurred");
-//                    mIsLoading = false;
-//                    mProgressBar.setVisibility(View.GONE);
-
-//                    mErrorTextView.setText("Can't load data.\nCheck your network connection.");
-//                    mErrorLinearLayout.setVisibility(View.VISIBLE);
                 } else if (t instanceof IOException) {
                     if (message.equals("Canceled")) {
                         Timber.e("onFailure() : Canceled");
-                    } else {
-//                        mIsLoading = false;
-//                        mProgressBar.setVisibility(View.GONE);
                     }
                 }
             }
@@ -531,10 +476,6 @@ public class VideoDetailsFragment extends BaseFragment implements RelatedVideosA
     private Callback<Object> mAddVideoToWatchLaterCallback = new Callback<Object>() {
         @Override
         public void onResponse(Response<Object> response, Retrofit retrofit) {
-
-//            mRelatedVideosAdapter.removeLoading();
-//            mIsLoading = false;
-
             if (response != null) {
                 if (response.isSuccess()) {
                     Timber.d("callbackResponse");
@@ -594,28 +535,15 @@ public class VideoDetailsFragment extends BaseFragment implements RelatedVideosA
 
         @Override
         public void onFailure(Throwable t) {
-            Timber.d("onFailure()");
-
-//            mRelatedVideosAdapter.removeLoading();
-//            mIsLoading = false;
-
             if (t != null) {
                 String message = t.getMessage();
                 LogUtility.logFailure(t);
 
                 if (t instanceof SocketTimeoutException || t instanceof UnknownHostException) {
                     Timber.e("Timeout occurred");
-//                    mIsLoading = false;
-//                    mProgressBar.setVisibility(View.GONE);
-
-//                    mErrorTextView.setText("Can't load data.\nCheck your network connection.");
-//                    mErrorLinearLayout.setVisibility(View.VISIBLE);
                 } else if (t instanceof IOException) {
                     if (message.equals("Canceled")) {
                         Timber.e("onFailure() : Canceled");
-                    } else {
-//                        mIsLoading = false;
-//                        mProgressBar.setVisibility(View.GONE);
                     }
                 }
             }
@@ -625,10 +553,6 @@ public class VideoDetailsFragment extends BaseFragment implements RelatedVideosA
     private Callback<Object> mRemoveVideoFromWatchLaterCallback = new Callback<Object>() {
         @Override
         public void onResponse(Response<Object> response, Retrofit retrofit) {
-
-//            mRelatedVideosAdapter.removeLoading();
-//            mIsLoading = false;
-
             if (response != null) {
                 if (response.isSuccess()) {
                     Timber.d("callbackResponse");
@@ -685,28 +609,15 @@ public class VideoDetailsFragment extends BaseFragment implements RelatedVideosA
 
         @Override
         public void onFailure(Throwable t) {
-            Timber.d("onFailure()");
-
-//            mRelatedVideosAdapter.removeLoading();
-//            mIsLoading = false;
-
             if (t != null) {
                 String message = t.getMessage();
                 LogUtility.logFailure(t);
 
                 if (t instanceof SocketTimeoutException || t instanceof UnknownHostException) {
                     Timber.e("Timeout occurred");
-//                    mIsLoading = false;
-//                    mProgressBar.setVisibility(View.GONE);
-
-//                    mErrorTextView.setText("Can't load data.\nCheck your network connection.");
-//                    mErrorLinearLayout.setVisibility(View.VISIBLE);
                 } else if (t instanceof IOException) {
                     if (message.equals("Canceled")) {
                         Timber.e("onFailure() : Canceled");
-                    } else {
-//                        mIsLoading = false;
-//                        mProgressBar.setVisibility(View.GONE);
                     }
                 }
             }
