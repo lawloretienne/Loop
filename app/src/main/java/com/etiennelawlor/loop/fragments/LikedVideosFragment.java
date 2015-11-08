@@ -58,6 +58,7 @@ import jp.wasabeef.recyclerview.animators.SlideInUpAnimator;
 import retrofit.Call;
 import retrofit.Callback;
 import retrofit.Response;
+import retrofit.Retrofit;
 import timber.log.Timber;
 
 /**
@@ -150,7 +151,7 @@ public class LikedVideosFragment extends BaseFragment implements VideosAdapter.O
     // region Callbacks
     private Callback<VideosCollection> mFindVideosFirstFetchCallback = new Callback<VideosCollection>() {
         @Override
-        public void onResponse(Response<VideosCollection> response) {
+        public void onResponse(Response<VideosCollection> response, Retrofit retrofit) {
             Timber.d("onResponse()");
             mLoadingImageView.setVisibility(View.GONE);
             mIsLoading = false;
@@ -240,7 +241,7 @@ public class LikedVideosFragment extends BaseFragment implements VideosAdapter.O
 
     private Callback<VideosCollection> mFindVideosNextFetchCallback = new Callback<VideosCollection>() {
         @Override
-        public void onResponse(Response<VideosCollection> response) {
+        public void onResponse(Response<VideosCollection> response, Retrofit retrofit) {
             Timber.d("onResponse()");
             mVideosAdapter.removeLoading();
             mIsLoading = false;

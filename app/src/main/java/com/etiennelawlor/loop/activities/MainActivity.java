@@ -9,7 +9,9 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
 import android.view.Gravity;
+import android.view.LayoutInflater;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -47,10 +49,9 @@ public class MainActivity extends AppCompatActivity {
     DrawerLayout mDrawerLayout;
     @Bind(R.id.nav_view)
     NavigationView mNavigationView;
-    @Bind(R.id.user_avatar_riv)
-    CircleImageView mAvatarImageView;
-    @Bind(R.id.full_name_tv)
-    TextView mFullNameTextView;
+
+    private CircleImageView mAvatarImageView;
+    private TextView mFullNameTextView;
 
     private AuthorizedUser mAuthorizedUser;
     // endregion
@@ -136,6 +137,11 @@ public class MainActivity extends AppCompatActivity {
         }
 
         mAuthorizedUser = PreferencesHelper.getAuthorizedUser(this);
+
+        View header = LayoutInflater.from(this).inflate(R.layout.nav_header, null);
+        mAvatarImageView = (CircleImageView) header.findViewById(R.id.user_avatar_riv);
+        mFullNameTextView = (TextView) header.findViewById(R.id.full_name_tv);
+        mNavigationView.addHeaderView(header);
 
         setUpAvatar();
         setUpFullName();

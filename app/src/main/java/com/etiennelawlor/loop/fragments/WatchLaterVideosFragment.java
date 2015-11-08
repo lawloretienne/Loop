@@ -57,6 +57,7 @@ import jp.wasabeef.recyclerview.animators.SlideInUpAnimator;
 import retrofit.Call;
 import retrofit.Callback;
 import retrofit.Response;
+import retrofit.Retrofit;
 import timber.log.Timber;
 
 /**
@@ -147,7 +148,7 @@ public class WatchLaterVideosFragment extends BaseFragment implements VideosAdap
     // region Callbacks
     private Callback<VideosCollection> mFindVideosFirstFetchCallback = new Callback<VideosCollection>() {
         @Override
-        public void onResponse(Response<VideosCollection> response) {
+        public void onResponse(Response<VideosCollection> response, Retrofit retrofit) {
             Timber.d("onResponse()");
             mLoadingImageView.setVisibility(View.GONE);
             mIsLoading = false;
@@ -195,7 +196,6 @@ public class WatchLaterVideosFragment extends BaseFragment implements VideosAdap
                 mEmptyTextView.setCompoundDrawablesWithIntrinsicBounds(null, drawable, null, null);
                 mEmptyView.setVisibility(View.VISIBLE);
             }
-
         }
 
         @Override
@@ -237,7 +237,7 @@ public class WatchLaterVideosFragment extends BaseFragment implements VideosAdap
 
     private Callback<VideosCollection> mFindVideosNextFetchCallback = new Callback<VideosCollection>() {
         @Override
-        public void onResponse(Response<VideosCollection> response) {
+        public void onResponse(Response<VideosCollection> response, Retrofit retrofit) {
             Timber.d("onResponse()");
             mVideosAdapter.removeLoading();
             mIsLoading = false;

@@ -7,82 +7,86 @@
     android:background="@drawable/md_wallpaper5"
     android:paddingTop="40dp">
 
-    <!--android:background="@color/shopsavvy_green"-->
-
-    <FrameLayout
-        android:id="@+id/nav_drawer_fl"
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="56dp"
-        android:layout_alignParentBottom="true">
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:orientation="vertical">
 
-        <LinearLayout
-            android:id="@+id/user_info_ll"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
+        <de.hdodenhof.circleimageview.CircleImageView
+            android:id="@+id/user_avatar_riv"
+            android:layout_width="64dp"
+            android:layout_height="64dp"
             android:layout_marginBottom="8dp"
-            android:gravity="center_vertical"
-            android:orientation="vertical"
-            android:paddingLeft="16dp"
-            android:paddingRight="16dp">
+            android:layout_marginLeft="16dp"
+            android:layout_marginRight="16dp"
+            android:background="@drawable/avatar_bg"
+            android:elevation="8dp"
+            android:src="@drawable/ic_loop"
+            android:visibility="visible"
+            app:civ_border_color="@android:color/white"
+            app:civ_border_width="2dp" />
+
+        <FrameLayout
+            android:id="@+id/nav_drawer_fl"
+            android:layout_width="match_parent"
+            android:layout_height="56dp">
+
+            <LinearLayout
+                android:id="@+id/user_info_ll"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_marginBottom="8dp"
+                android:gravity="center_vertical"
+                android:orientation="vertical"
+                android:paddingLeft="16dp"
+                android:paddingRight="16dp">
+
+                <com.etiennelawlor.loop.ui.CustomFontTextView
+                    android:id="@+id/full_name_tv"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:gravity="center_vertical"
+                    android:shadowColor="@color/transparent_black_ninty_five"
+                    android:shadowDx="1"
+                    android:shadowDy="1"
+                    android:shadowRadius="1"
+                    android:singleLine="true"
+                    android:textColor="@android:color/white"
+                    android:textSize="14sp"
+                    app:textFont="Roboto_Medium" />
+
+                <com.etiennelawlor.loop.ui.CustomFontTextView
+                    android:id="@+id/email_tv"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:gravity="center_vertical"
+                    android:singleLine="true"
+                    android:textColor="@android:color/white"
+                    android:textSize="14sp"
+                    app:textFont="Roboto_Regular" />
+
+            </LinearLayout>
 
             <com.etiennelawlor.loop.ui.CustomFontTextView
-                android:id="@+id/full_name_tv"
-                app:textFont="Roboto_Medium"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:id="@+id/login_tv"
+                android:layout_width="match_parent"
+                android:layout_height="48dp"
+                android:background="?android:attr/selectableItemBackground"
+                android:drawablePadding="40dp"
                 android:gravity="center_vertical"
-                android:singleLine="true"
+                android:paddingLeft="16dp"
+                android:paddingRight="16dp"
+                android:text="Sign Up or Log In"
                 android:textColor="@android:color/white"
                 android:textSize="14sp"
-                android:shadowDy="1"
-                android:shadowDx="1"
-                android:shadowRadius="1"
-                android:shadowColor="@color/transparent_black_ninty_five"/>
+                android:visibility="gone"
+                app:textFont="Roboto_Medium" />
 
-            <com.etiennelawlor.loop.ui.CustomFontTextView
-                android:id="@+id/email_tv"
-                app:textFont="Roboto_Regular"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:gravity="center_vertical"
-                android:singleLine="true"
-                android:textColor="@android:color/white"
-                android:textSize="14sp" />
+            <!--android:drawableLeft="@drawable/ic_drawer_profile"-->
 
-        </LinearLayout>
+        </FrameLayout>
 
-        <com.etiennelawlor.loop.ui.CustomFontTextView
-            android:id="@+id/login_tv"
-            app:textFont="Roboto_Medium"
-            android:layout_width="match_parent"
-            android:layout_height="48dp"
-            android:background="?android:attr/selectableItemBackground"
-            android:drawablePadding="40dp"
-            android:gravity="center_vertical"
-            android:paddingLeft="16dp"
-            android:paddingRight="16dp"
-            android:text="Sign Up or Log In"
-            android:textColor="@android:color/white"
-            android:textSize="14sp"
-            android:visibility="gone" />
-
-        <!--android:drawableLeft="@drawable/ic_drawer_profile"-->
-
-    </FrameLayout>
-
-    <de.hdodenhof.circleimageview.CircleImageView
-        android:id="@+id/user_avatar_riv"
-        android:layout_width="64dp"
-        android:layout_height="64dp"
-        android:layout_above="@id/nav_drawer_fl"
-        android:layout_marginBottom="8dp"
-        android:layout_marginLeft="16dp"
-        android:layout_marginRight="16dp"
-        app:border_width="2dp"
-        app:border_color="@android:color/white"
-        android:elevation="8dp"
-        android:src="@drawable/ic_loop"
-        android:background="@drawable/avatar_bg"/>
-
+    </LinearLayout>
 
 </RelativeLayout>

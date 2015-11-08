@@ -22,6 +22,7 @@ import com.etiennelawlor.loop.network.models.response.User;
 import com.etiennelawlor.loop.network.models.response.Video;
 import com.etiennelawlor.loop.ui.LoadingImageView;
 import com.etiennelawlor.loop.utilities.LoopUtility;
+import com.etiennelawlor.trestle.library.Regex;
 import com.etiennelawlor.trestle.library.Span;
 import com.etiennelawlor.trestle.library.Trestle;
 
@@ -206,7 +207,7 @@ public class SuggestionsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
             if(!TextUtils.isEmpty(mCurrentQuery)){
                 CharSequence formattedSuggestion = Trestle.getFormattedText(
                         new Span.Builder(suggestion)
-                                .regex(mCurrentQuery)
+                                .regex(new Regex(mCurrentQuery, Regex.CASE_INSENSITIVE))
                                 .foregroundColor(ContextCompat.getColor(tv.getContext(), R.color.primary)) // Pass resolved color instead of resource id
                                 .typeface(mBlackFont)
                                 .build());

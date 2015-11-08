@@ -22,6 +22,7 @@ import butterknife.ButterKnife;
 import retrofit.Call;
 import retrofit.Callback;
 import retrofit.Response;
+import retrofit.Retrofit;
 import timber.log.Timber;
 
 /**
@@ -95,7 +96,7 @@ public class LoginActivity extends AppCompatActivity {
     // region Callbacks
     private Callback<OAuthResponse> mExchangeCodeCallback = new Callback<OAuthResponse>() {
         @Override
-        public void onResponse(Response<OAuthResponse> response) {
+        public void onResponse(Response<OAuthResponse> response, Retrofit retrofit) {
             if (response != null) {
                 OAuthResponse oAuthResponse = response.body();
                 if (oAuthResponse != null) {
@@ -113,7 +114,6 @@ public class LoginActivity extends AppCompatActivity {
                     finish();
                 }
             }
-
         }
 
         @Override

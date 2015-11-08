@@ -40,6 +40,7 @@ import butterknife.ButterKnife;
 import retrofit.Call;
 import retrofit.Callback;
 import retrofit.Response;
+import retrofit.Retrofit;
 import timber.log.Timber;
 
 /**
@@ -66,7 +67,7 @@ public class VideoPlayerFragment extends BaseFragment {
     // region Callbacks
     private Callback<VideoConfig> mGetVideoConfigCallback = new Callback<VideoConfig>() {
         @Override
-        public void onResponse(Response<VideoConfig> response) {
+        public void onResponse(Response<VideoConfig> response, Retrofit retrofit) {
             Timber.d("onResponse()");
 
             if (response != null) {

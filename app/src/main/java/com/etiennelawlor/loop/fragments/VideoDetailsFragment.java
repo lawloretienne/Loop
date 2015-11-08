@@ -66,6 +66,7 @@ import butterknife.OnClick;
 import retrofit.Call;
 import retrofit.Callback;
 import retrofit.Response;
+import retrofit.Retrofit;
 import timber.log.Timber;
 
 /**
@@ -152,8 +153,7 @@ public class VideoDetailsFragment extends BaseFragment implements RelatedVideosA
 
     private Callback<VideosCollection> mGetRelatedVideosFirstFetchCallback = new Callback<VideosCollection>() {
         @Override
-        public void onResponse(Response<VideosCollection> response) {
-
+        public void onResponse(Response<VideosCollection> response, Retrofit retrofit) {
             if (response != null) {
                 if (response.isSuccess()) {
                     VideosCollection videosCollection = response.body();
@@ -247,8 +247,7 @@ public class VideoDetailsFragment extends BaseFragment implements RelatedVideosA
 
     private Callback<VideosCollection> mGetRelatedVideosNextFetchCallback = new Callback<VideosCollection>() {
         @Override
-        public void onResponse(Response<VideosCollection> response) {
-
+        public void onResponse(Response<VideosCollection> response, Retrofit retrofit) {
             mRelatedVideosAdapter.removeLoading();
             mIsLoading = false;
 
@@ -361,9 +360,8 @@ public class VideoDetailsFragment extends BaseFragment implements RelatedVideosA
 
     private Callback<Object> mLikeVideoCallback = new Callback<Object>() {
         @Override
-        public void onResponse(Response<Object> response) {
-
-//            mRelatedVideosAdapter.removeLoading();
+        public void onResponse(Response<Object> response, Retrofit retrofit) {
+            //            mRelatedVideosAdapter.removeLoading();
 //            mIsLoading = false;
 
             if (response != null) {
@@ -479,7 +477,7 @@ public class VideoDetailsFragment extends BaseFragment implements RelatedVideosA
 
     private Callback<Object> mUnlikeVideoCallback = new Callback<Object>() {
         @Override
-        public void onResponse(Response<Object> response) {
+        public void onResponse(Response<Object> response, Retrofit retrofit) {
 
 //            mRelatedVideosAdapter.removeLoading();
 //            mIsLoading = false;
@@ -591,7 +589,7 @@ public class VideoDetailsFragment extends BaseFragment implements RelatedVideosA
 
     private Callback<Object> mAddVideoToWatchLaterCallback = new Callback<Object>() {
         @Override
-        public void onResponse(Response<Object> response) {
+        public void onResponse(Response<Object> response, Retrofit retrofit) {
 
 //            mRelatedVideosAdapter.removeLoading();
 //            mIsLoading = false;
@@ -697,7 +695,7 @@ public class VideoDetailsFragment extends BaseFragment implements RelatedVideosA
 
     private Callback<Object> mRemoveVideoFromWatchLaterCallback = new Callback<Object>() {
         @Override
-        public void onResponse(Response<Object> response) {
+        public void onResponse(Response<Object> response, Retrofit retrofit) {
 
 //            mRelatedVideosAdapter.removeLoading();
 //            mIsLoading = false;

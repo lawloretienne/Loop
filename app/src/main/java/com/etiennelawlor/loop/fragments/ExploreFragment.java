@@ -44,6 +44,7 @@ import jp.wasabeef.recyclerview.animators.SlideInUpAnimator;
 import retrofit.Call;
 import retrofit.Callback;
 import retrofit.Response;
+import retrofit.Retrofit;
 import timber.log.Timber;
 
 /**
@@ -80,7 +81,7 @@ public class ExploreFragment extends BaseFragment implements CategoriesAdapter.O
     // region Callbacks
     private Callback<CategoriesCollection> mGetCategoriesCallback = new Callback<CategoriesCollection>() {
         @Override
-        public void onResponse(Response<CategoriesCollection> response) {
+        public void onResponse(Response<CategoriesCollection> response, Retrofit retrofit) {
             Timber.d("onResponse()");
 
             mLoadingImageView.setVisibility(View.GONE);
