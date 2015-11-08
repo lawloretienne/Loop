@@ -280,22 +280,10 @@ public class VideosFragment extends BaseFragment implements VideosAdapter.OnItem
                 LoopUtility.logError(t);
 
                 if (t instanceof SocketTimeoutException) {
-                    Snackbar.make(getActivity().findViewById(android.R.id.content),
-                            String.format("message - %s", message),
-                            Snackbar.LENGTH_INDEFINITE)
-                            .setAction("Reload", mReloadOnClickListener)
-//                                .setActionTextColor(Color.RED)
-                            .show();
+                    showReloadSnackbar(String.format("message - %s", message));
                 } else if (t instanceof UnknownHostException) {
                     Timber.e("Timeout occurred");
-
-                    Snackbar.make(getActivity().findViewById(android.R.id.content),
-                            "Can't load data. Check your network connection.",
-                            Snackbar.LENGTH_INDEFINITE)
-                            .setAction("Reload", mReloadOnClickListener)
-//                                .setActionTextColor(Color.RED)
-                            .show();
-
+                    showReloadSnackbar("Can't load data. Check your network connection.");
 //                    mIsLoading = false;
 //                    mProgressBar.setVisibility(View.GONE);
 
@@ -530,6 +518,15 @@ public class VideosFragment extends BaseFragment implements VideosAdapter.OnItem
 
     public String getQuery() {
         return mQuery;
+    }
+
+    private void showReloadSnackbar(String message){
+        Snackbar.make(getActivity().findViewById(android.R.id.content),
+                message,
+                Snackbar.LENGTH_INDEFINITE)
+                .setAction("Reload", mReloadOnClickListener)
+//                                .setActionTextColor(Color.RED)
+                .show();
     }
     // endregion
 }
