@@ -8,6 +8,7 @@ import android.content.pm.PackageManager;
 import android.content.res.Configuration;
 import android.graphics.Point;
 import android.net.Uri;
+import android.text.TextUtils;
 import android.text.format.DateUtils;
 import android.util.DisplayMetrics;
 import android.view.Display;
@@ -20,6 +21,8 @@ import com.etiennelawlor.loop.R;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.concurrent.TimeUnit;
+
+import timber.log.Timber;
 
 /**
  * Created by etiennelawlor on 5/23/15.
@@ -171,6 +174,21 @@ public class LoopUtility {
         if (inputMethodManager != null) {
             inputMethodManager.showSoftInput(view, InputMethodManager.SHOW_IMPLICIT);
         }
+    }
+
+    public static void logError(Throwable throwable){
+        Throwable cause = throwable.getCause();
+        String message = throwable.getMessage();
+
+        if (cause != null) {
+            Timber.e("failure() : cause.toString() -" + cause.toString());
+        }
+
+        if (!TextUtils.isEmpty(message)) {
+            Timber.e("failure() : message - " + message);
+        }
+
+        throwable.printStackTrace();
     }
     // endregion
 }

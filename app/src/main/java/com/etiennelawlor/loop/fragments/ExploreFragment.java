@@ -121,18 +121,8 @@ public class ExploreFragment extends BaseFragment implements CategoriesAdapter.O
             Timber.d("onFailure()");
 
             if (t != null) {
-                Throwable cause = t.getCause();
                 String message = t.getMessage();
-
-                if (cause != null) {
-                    Timber.e("failure() : cause.toString() -" + cause.toString());
-                }
-
-                if (!TextUtils.isEmpty(message)) {
-                    Timber.e("failure() : message - " + message);
-                }
-
-                t.printStackTrace();
+                LoopUtility.logError(t);
 
                 if (t instanceof SocketTimeoutException || t instanceof UnknownHostException) {
                     Timber.e("Timeout occurred");

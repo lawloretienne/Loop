@@ -43,6 +43,7 @@ import com.etiennelawlor.loop.otto.events.ShowSearchSuggestionsEvent;
 import com.etiennelawlor.loop.realm.RealmUtility;
 import com.etiennelawlor.loop.ui.LoadingImageView;
 import com.etiennelawlor.loop.ui.MaterialSearchView;
+import com.etiennelawlor.loop.utilities.LoopUtility;
 import com.squareup.okhttp.ResponseBody;
 import com.squareup.otto.Subscribe;
 
@@ -216,18 +217,8 @@ public class SearchableFragment extends BaseFragment implements VideosAdapter.On
             Timber.e("onFailure()");
 
             if (t != null) {
-                Throwable cause = t.getCause();
                 String message = t.getMessage();
-
-                if (cause != null) {
-                    Timber.e("onFailure() : cause.toString() -" + cause.toString());
-                }
-
-                if (!TextUtils.isEmpty(message)) {
-                    Timber.e("onFailure() : message - " + message);
-                }
-
-                t.printStackTrace();
+                LoopUtility.logError(t);
 
                 if (t instanceof SocketTimeoutException || t instanceof UnknownHostException) {
                     Timber.e("Timeout occurred");
@@ -300,18 +291,8 @@ public class SearchableFragment extends BaseFragment implements VideosAdapter.On
             mVideosAdapter.removeLoading();
 
             if (t != null) {
-                Throwable cause = t.getCause();
                 String message = t.getMessage();
-
-                if (cause != null) {
-                    Timber.e("onFailure() : cause.toString() -" + cause.toString());
-                }
-
-                if (!TextUtils.isEmpty(message)) {
-                    Timber.e("onFailure() : message - " + message);
-                }
-
-                t.printStackTrace();
+                LoopUtility.logError(t);
 
                 if (t instanceof SocketTimeoutException) {
                     Snackbar.make(getActivity().findViewById(android.R.id.content),

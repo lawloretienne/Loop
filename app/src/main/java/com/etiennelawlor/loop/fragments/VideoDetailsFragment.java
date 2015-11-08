@@ -51,6 +51,7 @@ import com.etiennelawlor.loop.otto.BusProvider;
 import com.etiennelawlor.loop.otto.events.SearchPerformedEvent;
 import com.etiennelawlor.loop.otto.events.VideoLikedEvent;
 import com.etiennelawlor.loop.otto.events.WatchLaterEvent;
+import com.etiennelawlor.loop.utilities.LoopUtility;
 import com.squareup.okhttp.ResponseBody;
 import com.squareup.otto.Subscribe;
 
@@ -204,16 +205,8 @@ public class VideoDetailsFragment extends BaseFragment implements RelatedVideosA
             Timber.d("onFailure()");
 
             if (t != null) {
-                Throwable cause = t.getCause();
                 String message = t.getMessage();
-
-                if (cause != null) {
-                    Timber.e("onFailure() : cause.toString() -" + cause.toString());
-                }
-
-                if (!TextUtils.isEmpty(message)) {
-                    Timber.e("onFailure() : message - " + message);
-                }
+                LoopUtility.logError(t);
 
                 if(isAdded() && isResumed()){
                     Snackbar.make(getActivity().findViewById(android.R.id.content),
@@ -223,8 +216,6 @@ public class VideoDetailsFragment extends BaseFragment implements RelatedVideosA
 //                                .setActionTextColor(Color.RED)
                             .show();
                 }
-
-                t.printStackTrace();
 
                 if (t instanceof SocketTimeoutException || t instanceof UnknownHostException) {
                     Timber.e("Timeout occurred");
@@ -310,19 +301,8 @@ public class VideoDetailsFragment extends BaseFragment implements RelatedVideosA
 //            mIsLoading = false;
 
             if (t != null) {
-                Throwable cause = t.getCause();
                 String message = t.getMessage();
-
-                if (cause != null) {
-                    Timber.e("failure() : cause.toString() -" + cause.toString());
-                }
-
-                if (!TextUtils.isEmpty(message)) {
-                    Timber.e("failure() : message - " + message);
-                }
-
-
-                t.printStackTrace();
+                LoopUtility.logError(t);
 
                 if (t instanceof SocketTimeoutException) {
                     Snackbar.make(getActivity().findViewById(android.R.id.content),
@@ -443,18 +423,8 @@ public class VideoDetailsFragment extends BaseFragment implements RelatedVideosA
 //            mIsLoading = false;
 
             if (t != null) {
-                Throwable cause = t.getCause();
                 String message = t.getMessage();
-
-                if (cause != null) {
-                    Timber.e("failure() : cause.toString() -" + cause.toString());
-                }
-
-                if (!TextUtils.isEmpty(message)) {
-                    Timber.e("failure() : message - " + message);
-                }
-
-                t.printStackTrace();
+                LoopUtility.logError(t);
 
                 if (t instanceof SocketTimeoutException || t instanceof UnknownHostException) {
                     Timber.e("Timeout occurred");
@@ -555,18 +525,8 @@ public class VideoDetailsFragment extends BaseFragment implements RelatedVideosA
 //            mIsLoading = false;
 
             if (t != null) {
-                Throwable cause = t.getCause();
                 String message = t.getMessage();
-
-                if (cause != null) {
-                    Timber.e("failure() : cause.toString() -" + cause.toString());
-                }
-
-                if (!TextUtils.isEmpty(message)) {
-                    Timber.e("failure() : message - " + message);
-                }
-
-                t.printStackTrace();
+                LoopUtility.logError(t);
 
                 if (t instanceof SocketTimeoutException || t instanceof UnknownHostException) {
                     Timber.e("Timeout occurred");
@@ -661,18 +621,8 @@ public class VideoDetailsFragment extends BaseFragment implements RelatedVideosA
 //            mIsLoading = false;
 
             if (t != null) {
-                Throwable cause = t.getCause();
                 String message = t.getMessage();
-
-                if (cause != null) {
-                    Timber.e("failure() : cause.toString() -" + cause.toString());
-                }
-
-                if (!TextUtils.isEmpty(message)) {
-                    Timber.e("failure() : message - " + message);
-                }
-
-                t.printStackTrace();
+                LoopUtility.logError(t);
 
                 if (t instanceof SocketTimeoutException || t instanceof UnknownHostException) {
                     Timber.e("Timeout occurred");
@@ -764,18 +714,8 @@ public class VideoDetailsFragment extends BaseFragment implements RelatedVideosA
 //            mIsLoading = false;
 
             if (t != null) {
-                Throwable cause = t.getCause();
                 String message = t.getMessage();
-
-                if (cause != null) {
-                    Timber.e("failure() : cause.toString() -" + cause.toString());
-                }
-
-                if (!TextUtils.isEmpty(message)) {
-                    Timber.e("failure() : message - " + message);
-                }
-
-                t.printStackTrace();
+                LoopUtility.logError(t);
 
                 if (t instanceof SocketTimeoutException || t instanceof UnknownHostException) {
                     Timber.e("Timeout occurred");

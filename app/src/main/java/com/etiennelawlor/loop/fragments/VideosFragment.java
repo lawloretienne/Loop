@@ -33,6 +33,7 @@ import com.etiennelawlor.loop.network.models.response.Video;
 import com.etiennelawlor.loop.network.models.response.VideosCollection;
 import com.etiennelawlor.loop.otto.BusProvider;
 import com.etiennelawlor.loop.ui.LoadingImageView;
+import com.etiennelawlor.loop.utilities.LoopUtility;
 import com.squareup.okhttp.ResponseBody;
 
 import java.io.IOException;
@@ -188,18 +189,8 @@ public class VideosFragment extends BaseFragment implements VideosAdapter.OnItem
             Timber.d("onFailure() : mQuery - " + mQuery);
 
             if (t != null) {
-                Throwable cause = t.getCause();
                 String message = t.getMessage();
-
-                if (cause != null) {
-                    Timber.e("onFailure() : cause.toString() -" + cause.toString());
-                }
-
-                if (!TextUtils.isEmpty(message)) {
-                    Timber.e("onFailure() : message - " + message);
-                }
-
-                t.printStackTrace();
+                LoopUtility.logError(t);
 
                 if (t instanceof SocketTimeoutException
                         || t instanceof UnknownHostException
@@ -285,16 +276,8 @@ public class VideosFragment extends BaseFragment implements VideosAdapter.OnItem
             mVideosAdapter.removeLoading();
 
             if (t != null) {
-                Throwable cause = t.getCause();
                 String message = t.getMessage();
-
-                if (cause != null) {
-                    Timber.e("onFailure() : cause.toString() -" + cause.toString());
-                }
-
-                if (!TextUtils.isEmpty(message)) {
-                    Timber.e("onFailure() : message - " + message);
-                }
+                LoopUtility.logError(t);
 
                 if (t instanceof SocketTimeoutException) {
                     Snackbar.make(getActivity().findViewById(android.R.id.content),
@@ -319,8 +302,6 @@ public class VideosFragment extends BaseFragment implements VideosAdapter.OnItem
 //                    mErrorTextView.setText("Can't load data.\nCheck your network connection.");
 //                    mErrorLinearLayout.setVisibility(View.VISIBLE);
                 }
-
-                t.printStackTrace();
             }
         }
     };

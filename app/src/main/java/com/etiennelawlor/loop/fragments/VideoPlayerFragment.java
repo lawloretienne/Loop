@@ -29,6 +29,7 @@ import com.etiennelawlor.loop.network.models.response.VideoConfig;
 import com.etiennelawlor.loop.network.models.response.VideoFormat;
 import com.etiennelawlor.loop.otto.BusProvider;
 import com.etiennelawlor.loop.ui.LoadingImageView;
+import com.etiennelawlor.loop.utilities.LoopUtility;
 import com.squareup.okhttp.ResponseBody;
 
 import java.io.IOException;
@@ -110,18 +111,8 @@ public class VideoPlayerFragment extends BaseFragment {
             Timber.e("onFailure()");
 
             if (t != null) {
-                Throwable cause = t.getCause();
                 String message = t.getMessage();
-
-                if (cause != null) {
-                    Timber.e("onFailure() : cause.toString() -" + cause.toString());
-                }
-
-                if (!TextUtils.isEmpty(message)) {
-                    Timber.e("onFailure() : message - " + message);
-                }
-
-                t.printStackTrace();
+                LoopUtility.logError(t);
 
                 if (t instanceof SocketTimeoutException || t instanceof UnknownHostException) {
                     Timber.e("Timeout occurred");
