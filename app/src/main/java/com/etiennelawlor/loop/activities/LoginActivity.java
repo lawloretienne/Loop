@@ -16,6 +16,7 @@ import com.etiennelawlor.loop.network.VimeoService;
 import com.etiennelawlor.loop.models.AccessToken;
 import com.etiennelawlor.loop.network.models.response.AuthorizedUser;
 import com.etiennelawlor.loop.network.models.response.OAuthResponse;
+import com.etiennelawlor.loop.utilities.LogUtility;
 import com.etiennelawlor.loop.utilities.LoopUtility;
 
 import butterknife.Bind;
@@ -122,7 +123,7 @@ public class LoginActivity extends AppCompatActivity {
             Timber.e("");
 
             if(t != null){
-                LoopUtility.logError(t);
+                LogUtility.logFailure(t);
             }
         }
     };

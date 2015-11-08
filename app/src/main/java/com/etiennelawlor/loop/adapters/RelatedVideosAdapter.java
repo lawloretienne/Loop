@@ -26,6 +26,7 @@ import com.etiennelawlor.loop.network.models.response.Video;
 import com.etiennelawlor.loop.otto.BusProvider;
 import com.etiennelawlor.loop.otto.events.SearchPerformedEvent;
 import com.etiennelawlor.loop.ui.LoadingImageView;
+import com.etiennelawlor.loop.utilities.DateUtility;
 import com.etiennelawlor.loop.utilities.LoopUtility;
 import com.etiennelawlor.loop.utilities.Transformers;
 import com.greenfrvr.hashtagview.HashtagView;
@@ -334,7 +335,7 @@ public class RelatedVideosAdapter extends RecyclerView.Adapter<RecyclerView.View
             Calendar futureCalendar = Calendar.getInstance();
             futureCalendar.setTime(date);
 
-            uploadDate = LoopUtility.getRelativeDate(futureCalendar);
+            uploadDate = DateUtility.getRelativeDate(futureCalendar);
         } catch (ParseException e) {
             Timber.e("");
         }
@@ -438,7 +439,7 @@ public class RelatedVideosAdapter extends RecyclerView.Adapter<RecyclerView.View
             Calendar futureCalendar = Calendar.getInstance();
             futureCalendar.setTime(date);
 
-            uploadDate = LoopUtility.getRelativeDate(futureCalendar);
+            uploadDate = DateUtility.getRelativeDate(futureCalendar);
         } catch (ParseException e) {
             Timber.e("");
         }

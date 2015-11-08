@@ -43,6 +43,7 @@ import com.etiennelawlor.loop.otto.events.ShowSearchSuggestionsEvent;
 import com.etiennelawlor.loop.realm.RealmUtility;
 import com.etiennelawlor.loop.ui.LoadingImageView;
 import com.etiennelawlor.loop.ui.MaterialSearchView;
+import com.etiennelawlor.loop.utilities.LogUtility;
 import com.etiennelawlor.loop.utilities.LoopUtility;
 import com.squareup.okhttp.ResponseBody;
 import com.squareup.otto.Subscribe;
@@ -183,14 +184,11 @@ public class SearchableFragment extends BaseFragment implements VideosAdapter.On
 
                     mMaterialSearchView.enableFilter();
                 } else {
-                    ResponseBody responseBody = response.errorBody();
                     com.squareup.okhttp.Response rawResponse = response.raw();
                     if (rawResponse != null) {
-                        String message = rawResponse.message();
-                        int code = rawResponse.code();
-                        Timber.d("onResponse() : message - " + message);
-                        Timber.d("onResponse() : code - " + code);
+                        LogUtility.logFailedResponse(rawResponse);
 
+                        int code = rawResponse.code();
                         switch (code) {
                             case 500:
                                 mErrorTextView.setText("Can't load data.\nCheck your network connection.");
@@ -218,7 +216,7 @@ public class SearchableFragment extends BaseFragment implements VideosAdapter.On
 
             if (t != null) {
                 String message = t.getMessage();
-                LoopUtility.logError(t);
+                LogUtility.logFailure(t);
 
                 if (t instanceof SocketTimeoutException || t instanceof UnknownHostException) {
                     Timber.e("Timeout occurred");
@@ -262,14 +260,11 @@ public class SearchableFragment extends BaseFragment implements VideosAdapter.On
                         }
                     }
                 } else {
-                    ResponseBody responseBody = response.errorBody();
                     com.squareup.okhttp.Response rawResponse = response.raw();
                     if (rawResponse != null) {
-                        String message = rawResponse.message();
-                        int code = rawResponse.code();
-                        Timber.d("onResponse() : message - " + message);
-                        Timber.d("onResponse() : code - " + code);
+                        LogUtility.logFailedResponse(rawResponse);
 
+                        int code = rawResponse.code();
                         switch (code) {
                             case 500:
                                 Timber.e("Display error message in place of load more");
@@ -292,7 +287,7 @@ public class SearchableFragment extends BaseFragment implements VideosAdapter.On
 
             if (t != null) {
                 String message = t.getMessage();
-                LoopUtility.logError(t);
+                LogUtility.logFailure(t);
 
                 if (t instanceof SocketTimeoutException) {
                     showReloadSnackbar(String.format("message - %s", message));

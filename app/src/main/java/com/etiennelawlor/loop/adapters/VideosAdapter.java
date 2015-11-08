@@ -17,6 +17,7 @@ import com.etiennelawlor.loop.network.models.response.Stats;
 import com.etiennelawlor.loop.network.models.response.User;
 import com.etiennelawlor.loop.network.models.response.Video;
 import com.etiennelawlor.loop.ui.LoadingImageView;
+import com.etiennelawlor.loop.utilities.DateUtility;
 import com.etiennelawlor.loop.utilities.LoopUtility;
 
 import java.text.ParseException;
@@ -293,7 +294,7 @@ public class VideosAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
             Calendar futureCalendar = Calendar.getInstance();
             futureCalendar.setTime(date);
 
-            uploadDate = LoopUtility.getRelativeDate(futureCalendar);
+            uploadDate = DateUtility.getRelativeDate(futureCalendar);
         } catch (ParseException e) {
             Timber.e("");
         }

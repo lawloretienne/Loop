@@ -33,6 +33,7 @@ import com.etiennelawlor.loop.network.models.response.Video;
 import com.etiennelawlor.loop.network.models.response.VideosCollection;
 import com.etiennelawlor.loop.otto.BusProvider;
 import com.etiennelawlor.loop.ui.LoadingImageView;
+import com.etiennelawlor.loop.utilities.LogUtility;
 import com.etiennelawlor.loop.utilities.LoopUtility;
 import com.squareup.okhttp.ResponseBody;
 
@@ -163,14 +164,11 @@ public class VideosFragment extends BaseFragment implements VideosAdapter.OnItem
                         }
                     }
                 } else {
-                    ResponseBody responseBody = response.errorBody();
                     com.squareup.okhttp.Response rawResponse = response.raw();
                     if (rawResponse != null) {
-                        String message = rawResponse.message();
-                        int code = rawResponse.code();
-                        Timber.d("onResponse() : message - " + message);
-                        Timber.d("onResponse() : code - " + code);
+                        LogUtility.logFailedResponse(rawResponse);
 
+                        int code = rawResponse.code();
                         switch (code) {
                             case 500:
                                 mErrorTextView.setText("Can't load data.\nCheck your network connection.");
@@ -190,7 +188,7 @@ public class VideosFragment extends BaseFragment implements VideosAdapter.OnItem
 
             if (t != null) {
                 String message = t.getMessage();
-                LoopUtility.logError(t);
+                LogUtility.logFailure(t);
 
                 if (t instanceof SocketTimeoutException
                         || t instanceof UnknownHostException
@@ -238,13 +236,12 @@ public class VideosFragment extends BaseFragment implements VideosAdapter.OnItem
                         }
                     }
                 } else {
-                    ResponseBody responseBody = response.errorBody();
                     com.squareup.okhttp.Response rawResponse = response.raw();
                     if (rawResponse != null) {
+                        LogUtility.logFailedResponse(rawResponse);
+
                         String message = rawResponse.message();
                         int code = rawResponse.code();
-                        Timber.d("onResponse() : message - " + message);
-                        Timber.d("onResponse() : code - " + code);
 
                         Snackbar.make(getActivity().findViewById(android.R.id.content),
                                 String.format("message - %s : code - %d", message, code),
@@ -256,8 +253,6 @@ public class VideosFragment extends BaseFragment implements VideosAdapter.OnItem
                         switch (code) {
                             case 500:
                                 Timber.e("Display error message in place of load more");
-
-
 //                                mErrorTextView.setText("Can't load data.\nCheck your network connection.");
 //                                mErrorLinearLayout.setVisibility(View.VISIBLE);
                                 break;
@@ -277,7 +272,7 @@ public class VideosFragment extends BaseFragment implements VideosAdapter.OnItem
 
             if (t != null) {
                 String message = t.getMessage();
-                LoopUtility.logError(t);
+                LogUtility.logFailure(t);
 
                 if (t instanceof SocketTimeoutException) {
                     showReloadSnackbar(String.format("message - %s", message));

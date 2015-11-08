@@ -50,56 +50,6 @@ public class LoopUtility {
         return (int) (px / displaymetrics.density + 0.5f);
     }
 
-    public static String getRelativeDate(Calendar future) {
-
-        String relativeDate = "";
-
-        long days = getDateDiff(future.getTime(), Calendar.getInstance().getTime(), TimeUnit.DAYS);
-
-        if (days < 7) {
-            CharSequence relativeTime = DateUtils.getRelativeTimeSpanString(future.getTimeInMillis(), System.currentTimeMillis(),
-                    DateUtils.SECOND_IN_MILLIS,
-                    DateUtils.FORMAT_ABBREV_ALL);
-
-//      Timber.d("relativeTime - " + relativeTime);
-
-            if (relativeTime.toString().equals("0 minutes ago")
-                    || relativeTime.toString().equals("in 0 minutes")) {
-                relativeDate = "Just now";
-            } else if(relativeTime.toString().contains("hr. ")){
-                if(relativeTime.toString().equals("1 hr. ago")){
-                    relativeDate = "1 hour ago";
-                } else {
-                    relativeDate = relativeTime.toString().replace("hr. ", "hours ");
-                }
-            } else {
-                relativeDate = relativeTime.toString();
-            }
-        } else if (days >= 7 && days < 14) {
-            relativeDate = "A week ago";
-        } else if (days >= 14 && days < 21) {
-            relativeDate = "2 weeks ago";
-        } else if (days >= 21 && days < 28) {
-            relativeDate = "3 weeks ago";
-        } else if ((days / 30) == 1) {
-            relativeDate = "1 month ago";
-        } else if ((days / 30) >= 2 && (days / 30) < 12) {
-            relativeDate = String.format("%d months ago", (days / 30));
-        } else if ((days / 365) > 1) {
-            relativeDate = String.format("%d years ago", (days / 365));
-        }
-
-//        Timber.d("getRelativeDate() : days - " + days);
-//        Timber.d("getRelativeDate() : relativeDate - " + relativeDate);
-
-        return relativeDate;
-    }
-
-    public static long getDateDiff(Date date1, Date date2, TimeUnit timeUnit) {
-        long diffInMillies = date2.getTime() - date1.getTime();
-        return timeUnit.convert(diffInMillies, TimeUnit.MILLISECONDS);
-    }
-
     public static Intent getEmailIntent(Context context) {
 //        final Intent intent = new Intent(Intent.ACTION_SEND);
         final Intent intent = new Intent(Intent.ACTION_SENDTO, Uri.parse("mailto:"));
@@ -174,21 +124,6 @@ public class LoopUtility {
         if (inputMethodManager != null) {
             inputMethodManager.showSoftInput(view, InputMethodManager.SHOW_IMPLICIT);
         }
-    }
-
-    public static void logError(Throwable throwable){
-        Throwable cause = throwable.getCause();
-        String message = throwable.getMessage();
-
-        if (cause != null) {
-            Timber.e("failure() : cause.toString() -" + cause.toString());
-        }
-
-        if (!TextUtils.isEmpty(message)) {
-            Timber.e("failure() : message - " + message);
-        }
-
-        throwable.printStackTrace();
     }
     // endregion
 }
