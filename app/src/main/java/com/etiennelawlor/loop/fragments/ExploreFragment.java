@@ -206,8 +206,6 @@ public class ExploreFragment extends BaseFragment implements CategoriesAdapter.O
             ab.setTitle("Explore");
         }
 
-//        ((AppCompatActivity)getActivity()).getSupportActionBar().setTitle(mQuery);
-
         LinearLayoutManager layoutManager = new GridLayoutManager(getActivity(), 2);
         mCategoriesRecyclerView.setLayoutManager(layoutManager);
         mCategoriesRecyclerView.addItemDecoration(new GridSpacesItemDecoration(LoopUtility.dp2px(getActivity(), 8)));
@@ -226,8 +224,6 @@ public class ExploreFragment extends BaseFragment implements CategoriesAdapter.O
     @Override
     public void onDestroyView() {
         super.onDestroyView();
-
-//        mVideosRecyclerView.removeOnScrollListener(mRecyclerViewOnScrollListener);
         ButterKnife.unbind(this);
     }
 
@@ -254,29 +250,6 @@ public class ExploreFragment extends BaseFragment implements CategoriesAdapter.O
         searchView.setSearchableInfo(searchManager.getSearchableInfo(getActivity().getComponentName()));
         searchView.setQueryRefinementEnabled(true);
     }
-
-//    @Override
-//    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-//        super.onCreateOptionsMenu(menu, inflater);
-//
-//        inflater.inflate(R.menu.main_menu, menu);
-//    }
-
-//    @Override
-//    public boolean onOptionsItemSelected(MenuItem item) {
-//        switch (item.getItemId()) {
-////            case R.id.sort_by:
-////                showSortByDialog();
-////                break;
-////            case R.id.sort_order:
-////                showSortOrderDialog();
-////                break;
-//            default:
-//                // do nothing
-//                break;
-//        }
-//        return super.onOptionsItemSelected(item);
-//    }
 
     // region CategoriesAdapter.OnItemClickListener Methods
     @Override

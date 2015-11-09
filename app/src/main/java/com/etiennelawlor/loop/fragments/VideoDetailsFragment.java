@@ -79,7 +79,6 @@ public class VideoDetailsFragment extends BaseFragment implements RelatedVideosA
     // endregion
 
     // region Member Variables
-
     @Bind(R.id.video_thumbnail_iv)
     ImageView mVideoThumbnailImageView;
     @Bind(R.id.toolbar)
@@ -949,22 +948,6 @@ public class VideoDetailsFragment extends BaseFragment implements RelatedVideosA
         intent.putExtra(SearchManager.QUERY, query);
         getContext().startActivity(intent);
     }
-
-//    private String formatViewCount(int viewCount) {
-//        String formattedViewCount = "";
-//
-//        if (viewCount < 1000000000 && viewCount >= 1000000) {
-//            formattedViewCount = String.format("%dM views", viewCount / 1000000);
-//        } else if (viewCount < 1000000 && viewCount >= 1000) {
-//            formattedViewCount = String.format("%dK views", viewCount / 1000);
-//        } else if (viewCount < 1000 && viewCount > 1) {
-//            formattedViewCount = String.format("%d views", viewCount);
-//        } else if (viewCount == 1) {
-//            formattedViewCount = String.format("%d view", viewCount);
-//        }
-//
-//        return formattedViewCount;
-//    }
 
     private void showReloadSnackbar(String message){
         Snackbar.make(getActivity().findViewById(android.R.id.content),

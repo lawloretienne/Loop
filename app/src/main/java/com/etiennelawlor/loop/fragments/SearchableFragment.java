@@ -149,12 +149,6 @@ public class SearchableFragment extends BaseFragment implements VideosAdapter.On
         mCalls.add(findVideosCall);
         findVideosCall.enqueue(mFindVideosFirstFetchCallback);
     }
-
-//    @OnClick(R.id.fab)
-//    @SuppressWarnings("UnusedDeclaration")
-//    public void onSortFABClicked() {
-//        showSortDialog();
-//    }
     // endregion
 
     // region Callbacks

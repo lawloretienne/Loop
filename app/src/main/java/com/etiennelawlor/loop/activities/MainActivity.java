@@ -65,37 +65,30 @@ public class MainActivity extends AppCompatActivity {
                     String title = menuItem.getTitle().toString();
                     switch (title) {
                         case "Watch Now":
-                            Timber.d("");
-
                             getSupportFragmentManager()
                                     .beginTransaction()
                                     .replace(R.id.content_fl, WatchNowFragment.newInstance(), "")
                                     .commit();
-
                             break;
                         case "Likes":
-                            Timber.d("");
                             getSupportFragmentManager()
                                     .beginTransaction()
                                     .replace(R.id.content_fl, LikedVideosFragment.newInstance(), "")
                                     .commit();
                             break;
                         case "Watch Later":
-                            Timber.d("");
                             getSupportFragmentManager()
                                     .beginTransaction()
                                     .replace(R.id.content_fl, WatchLaterVideosFragment.newInstance(), "")
                                     .commit();
                             break;
                         case "Explore":
-                            Timber.d("");
                             getSupportFragmentManager()
                                     .beginTransaction()
                                     .replace(R.id.content_fl, ExploreFragment.newInstance(), "")
                                     .commit();
                             break;
                         case "Settings":
-                            Timber.d("");
                             getSupportFragmentManager()
                                     .beginTransaction()
                                     .replace(R.id.content_fl, PlaceholderFragment.newInstance(), "")

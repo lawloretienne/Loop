@@ -93,16 +93,6 @@ public class CategoriesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
         return getItemCount() == 0;
     }
 
-//    public void removeLoading() {
-//        int position = mVideoWrappers.size() - 1;
-//        VideoWrapper item = getItem(position);
-//
-//        if (item != null && item.getType() == VideoWrapper.LOADING) {
-//            mVideoWrappers.remove(position);
-//            notifyItemChanged(position + 1);
-//        }
-//    }
-
     public Category getItem(int position) {
         return mCategories.get(position);
     }
@@ -111,23 +101,12 @@ public class CategoriesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
         this.mOnItemClickListener = onItemClickListener;
     }
 
-
-//    private RecyclerView.ViewHolder createHeaderViewHolder(ViewGroup parent){
-//
-//    }
-
     private RecyclerView.ViewHolder createCategoryViewHolder(ViewGroup parent) {
         // create a new view
         View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.category_card, parent, false);
 
         return new CategoryViewHolder(v);
     }
-
-//    private RecyclerView.ViewHolder createLoadingViewHolder(ViewGroup parent) {
-//        View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.load_more, parent, false);
-//
-//        return new MoreViewHolder(v);
-//    }
 
     private void bindCategoryViewHolder(RecyclerView.ViewHolder viewHolder, final int position) {
         final CategoryViewHolder holder = (CategoryViewHolder) viewHolder;
@@ -175,134 +154,8 @@ public class CategoriesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
                     }
                 }
             });
-
-
-//            final Video video = videoWrapper.getVideo();
-//
-//            if (video != null) {
-//                setUpTitle(holder.mTitleTextView, video);
-//                setUpSubtitle(holder.mSubtitleTextView, video);
-//                setUpVideoThumbnail(holder.mVideoThumbnailImageView, video);
-//                setUpDuration(holder.mDurationTextView, video);
-//                setUpUploadedDate(holder.mUploadedDateTextView, video);
-//            }
         }
     }
-
-//    private void setUpTitle(TextView tv, Video video) {
-//        String name = video.getName();
-//        if (!TextUtils.isEmpty(name)) {
-//            tv.setText(name);
-//        }
-//    }
-//
-//    private void setUpSubtitle(TextView tv, Video video) {
-//        User user = video.getUser();
-//        if (user != null) {
-//            String userName = user.getName();
-//            if (!TextUtils.isEmpty(userName)) {
-//                tv.setText(userName);
-//            }
-//        }
-//    }
-//
-//    private void setUpVideoThumbnail(ImageView iv, Video video) {
-//        Pictures pictures = video.getPictures();
-//        if (pictures != null) {
-//            List<Size> sizes = pictures.getSizes();
-//            if (sizes != null && sizes.size() > 0) {
-//                Size size = sizes.get(sizes.size() - 1);
-//                if (size != null) {
-//                    String link = size.getLink();
-//                    if (!TextUtils.isEmpty(link)) {
-//                        Picasso.with(mContext)
-//                                .load(link)
-////                                .placeholder(R.drawable.ic_placeholder)
-////                                .error(R.drawable.ic_error)
-//                                .into(iv);
-//                    }
-//                }
-//            }
-//        }
-//    }
-//
-//    private void setUpDuration(TextView tv, Video video) {
-//        Integer duration = video.getDuration();
-//
-//        long minutes = duration / 60;
-//        long seconds = duration % 60;
-//
-//        String time;
-//        if (minutes == 0L) {
-//            if (seconds > 0L) {
-//                if (seconds < 10L)
-//                    time = String.format("0:0%s", String.valueOf(seconds));
-//                else
-//                    time = String.format("0:%s", String.valueOf(seconds));
-//            } else {
-//                time = "0:00";
-//            }
-//
-//        } else {
-//            if (seconds > 0L) {
-//                if (seconds < 10L)
-//                    time = String.format("%s:0%s", String.valueOf(minutes), String.valueOf(seconds));
-//                else
-//                    time = String.format("%s:%s", String.valueOf(minutes), String.valueOf(seconds));
-//            } else {
-//                time = String.format("%s:00", String.valueOf(minutes));
-//            }
-//        }
-//
-//        tv.setText(time);
-//    }
-//
-//    private void setUpUploadedDate(TextView tv, Video video) {
-//        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'hh:mm:ssZ", Locale.ENGLISH);
-//        String uploadDate = "";
-//
-//        String createdTime = video.getCreatedTime();
-//        try {
-//            Date date = sdf.parse(createdTime);
-//
-//            Calendar futureCalendar = Calendar.getInstance();
-//            futureCalendar.setTime(date);
-//
-//            uploadDate = LoopUtility.getRelativeDate(futureCalendar);
-//        } catch (ParseException e) {
-//            Timber.e("");
-//        }
-//
-//        int viewCount = 0;
-//        Stats stats = video.getStats();
-//        if (stats != null) {
-//            viewCount = stats.getPlays();
-//        }
-//
-//        if (viewCount > 0) {
-////                String formattedViewCount = NumberFormat.getNumberInstance(Locale.US).format(viewCount);
-//            String formattedViewCount = formatViewCount(viewCount);
-//            tv.setText(String.format("%s - %s", uploadDate, formattedViewCount));
-//        } else {
-//            tv.setText(String.format("%s", uploadDate));
-//        }
-//    }
-//
-//    private String formatViewCount(int viewCount) {
-//        String formattedViewCount = "";
-//
-//        if (viewCount < 1000000000 && viewCount >= 1000000) {
-//            formattedViewCount = String.format("%dM views", viewCount / 1000000);
-//        } else if (viewCount < 1000000 && viewCount >= 1000) {
-//            formattedViewCount = String.format("%dK views", viewCount / 1000);
-//        } else if (viewCount < 1000 && viewCount > 1) {
-//            formattedViewCount = String.format("%d views", viewCount);
-//        } else if (viewCount == 1) {
-//            formattedViewCount = String.format("%d view", viewCount);
-//        }
-//
-//        return formattedViewCount;
-//    }
     // endregion
 
     // region Inner Classes
@@ -320,17 +173,6 @@ public class CategoriesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
             ButterKnife.bind(this, view);
         }
     }
-
-//    public static class MoreViewHolder extends RecyclerView.ViewHolder {
-//        public MoreViewHolder(View view) {
-//            super(view);
-//            ProgressBar pb = ButterKnife.findById(view, R.id.progress_bar);
-//            pb.getIndeterminateDrawable()
-//                    .mutate()
-//                    .setColorFilter(view.getResources().getColor(R.color.accent), PorterDuff.Mode.SRC_ATOP);
-//        }
-//    }
-
     // endregion
 
 }
