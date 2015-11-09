@@ -195,8 +195,8 @@ public class VideosFragment extends BaseFragment implements VideosAdapter.OnItem
                     if (message.equals("Canceled")) {
                         Timber.e("onFailure() : Canceled");
                     } else {
-                        mIsLoading = false;
-                        mLoadingImageView.setVisibility(View.GONE);
+//                        mIsLoading = false;
+//                        mLoadingImageView.setVisibility(View.GONE);
                     }
                 }
             }

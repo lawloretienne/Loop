@@ -20,8 +20,8 @@ public class Category implements Parcelable {
     private String link;
     @SerializedName("top_level")
     private Boolean topLevel;
-//    @SerializedName("pictures")
-//    private Pictures pictures;
+    @SerializedName("pictures")
+    private Pictures pictures;
     @SerializedName("metadata")
     private Metadata metadata;
     // endregion
@@ -43,9 +43,9 @@ public class Category implements Parcelable {
         return topLevel == null ? false : topLevel;
     }
 
-//    public Pictures getPictures() {
-//        return pictures;
-//    }
+    public Pictures getPictures() {
+        return pictures;
+    }
 
     public Metadata getMetadata() {
         return metadata;
@@ -71,9 +71,9 @@ public class Category implements Parcelable {
         this.topLevel = topLevel;
     }
 
-//    public void setPictures(Pictures pictures) {
-//        this.pictures = pictures;
-//    }
+    public void setPictures(Pictures pictures) {
+        this.pictures = pictures;
+    }
 
     public void setMetadata(Metadata metadata) {
         this.metadata = metadata;
@@ -93,7 +93,7 @@ public class Category implements Parcelable {
         dest.writeString(getName());
         dest.writeString(getLink());
         dest.writeByte((byte) (getTopLevel() ? 1 : 0));
-//        dest.writeParcelable(getPictures(), flags);
+        dest.writeParcelable(getPictures(), flags);
         dest.writeParcelable(getMetadata(), flags);
     }
     // endregion
@@ -108,7 +108,7 @@ public class Category implements Parcelable {
             video.setName(source.readString());
             video.setLink(source.readString());
             video.setTopLevel((source.readByte() == 1));
-//            video.setPictures((Pictures) source.readParcelable(Pictures.class.getClassLoader()));
+            video.setPictures((Pictures) source.readParcelable(Pictures.class.getClassLoader()));
             video.setMetadata((Metadata) source.readParcelable(Metadata.class.getClassLoader()));
 
             return video;

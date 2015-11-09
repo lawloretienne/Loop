@@ -2,6 +2,7 @@ package com.etiennelawlor.loop.adapters;
 
 import android.content.Context;
 import android.support.v7.widget.RecyclerView;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -11,6 +12,8 @@ import android.widget.TextView;
 import com.bumptech.glide.Glide;
 import com.etiennelawlor.loop.R;
 import com.etiennelawlor.loop.network.models.response.Category;
+import com.etiennelawlor.loop.network.models.response.Pictures;
+import com.etiennelawlor.loop.network.models.response.Size;
 import com.etiennelawlor.loop.ui.DynamicHeightImageView;
 
 import java.util.ArrayList;
@@ -140,20 +143,29 @@ public class CategoriesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
 
             holder.mTitleTextView.setText(name);
 
-            String link = "";
-
             Context context = holder.mVideoThumbnailImageView.getContext();
-            String[] categoryThumbnails = context.getResources().getStringArray(R.array.category_thumbnails);
 
-            holder.mVideoThumbnailImageView.setHeightRatio(9.0D/16.0D);
-//            holder.mVideoThumbnailImageView.setHeightRatio(1.0D/1.0D);
+//            holder.mVideoThumbnailImageView.setHeightRatio(9.0D/16.0D);
+            holder.mVideoThumbnailImageView.setHeightRatio(1.0D/1.0D);
 
 
-            Glide.with(context)
-                    .load(categoryThumbnails[position])
+            Pictures pictures = category.getPictures();
+            if(pictures != null){
+                List<Size> sizes = pictures.getSizes();
+                if(sizes != null && sizes.size() > 0){
+                    Size size = sizes.get(sizes.size()-1);
+                    if(size != null){
+                        String thumbnail = size.getLink();
+                        if(!TextUtils.isEmpty(thumbnail)){
+                            Glide.with(context)
+                                    .load(thumbnail)
 //                                .placeholder(R.drawable.ic_placeholder)
 //                                .error(R.drawable.ic_error)
-                    .into(holder.mVideoThumbnailImageView);
+                                    .into(holder.mVideoThumbnailImageView);
+                        }
+                    }
+                }
+            }
 
             holder.mCategoryCardRootFrameLayout.setOnClickListener(new View.OnClickListener() {
                 @Override

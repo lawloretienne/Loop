@@ -39,6 +39,7 @@ import java.util.List;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
+import butterknife.OnClick;
 import jp.wasabeef.recyclerview.animators.SlideInUpAnimator;
 import retrofit.Call;
 import retrofit.Callback;
@@ -74,6 +75,15 @@ public class ExploreFragment extends BaseFragment implements CategoriesAdapter.O
     // endregion
 
     // region Listeners
+    @OnClick(R.id.reload_btn)
+    public void onReloadButtonClicked() {
+        mErrorLinearLayout.setVisibility(View.GONE);
+        mLoadingImageView.setVisibility(View.VISIBLE);
+
+        Call getCategoriesCall = mVimeoService.getCategories();
+        mCalls.add(getCategoriesCall);
+        getCategoriesCall.enqueue(mGetCategoriesCallback);
+    }
     // endregion
 
     // region Callbacks
