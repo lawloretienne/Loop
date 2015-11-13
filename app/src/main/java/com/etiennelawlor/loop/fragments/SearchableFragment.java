@@ -450,8 +450,7 @@ public class SearchableFragment extends BaseFragment implements VideosAdapter.On
     @Override
     public void onDestroyView() {
         super.onDestroyView();
-
-        mVideosRecyclerView.removeOnScrollListener(mRecyclerViewOnScrollListener);
+        removeListeners();
         ButterKnife.unbind(this);
     }
     // endregion
@@ -648,6 +647,10 @@ public class SearchableFragment extends BaseFragment implements VideosAdapter.On
                 .setAction("Reload", mReloadOnClickListener)
 //                                .setActionTextColor(Color.RED)
                 .show();
+    }
+
+    private void removeListeners(){
+        mVideosRecyclerView.removeOnScrollListener(mRecyclerViewOnScrollListener);
     }
     // endregion
 }

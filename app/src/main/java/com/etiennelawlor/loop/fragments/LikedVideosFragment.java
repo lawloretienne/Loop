@@ -373,8 +373,7 @@ public class LikedVideosFragment extends BaseFragment implements VideosAdapter.O
     @Override
     public void onDestroyView() {
         super.onDestroyView();
-
-        mVideosRecyclerView.removeOnScrollListener(mRecyclerViewOnScrollListener);
+        removeListeners();
         ButterKnife.unbind(this);
     }
 
@@ -569,6 +568,10 @@ public class LikedVideosFragment extends BaseFragment implements VideosAdapter.O
                 .setAction("Reload", mReloadOnClickListener)
 //                                .setActionTextColor(Color.RED)
                 .show();
+    }
+
+    private void removeListeners(){
+        mVideosRecyclerView.removeOnScrollListener(mRecyclerViewOnScrollListener);
     }
     // endregion
 }

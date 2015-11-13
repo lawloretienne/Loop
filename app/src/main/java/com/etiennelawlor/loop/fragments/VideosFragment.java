@@ -349,8 +349,7 @@ public class VideosFragment extends BaseFragment implements VideosAdapter.OnItem
     @Override
     public void onDestroyView() {
         super.onDestroyView();
-
-        mVideosRecyclerView.removeOnScrollListener(mRecyclerViewOnScrollListener);
+        removeListeners();
         mCurrentPage = 1;
         ButterKnife.unbind(this);
     }
@@ -503,6 +502,10 @@ public class VideosFragment extends BaseFragment implements VideosAdapter.OnItem
                 .setAction("Reload", mReloadOnClickListener)
 //                                .setActionTextColor(Color.RED)
                 .show();
+    }
+
+    private void removeListeners(){
+        mVideosRecyclerView.removeOnScrollListener(mRecyclerViewOnScrollListener);
     }
     // endregion
 }

@@ -372,8 +372,7 @@ public class WatchLaterVideosFragment extends BaseFragment implements VideosAdap
     @Override
     public void onDestroyView() {
         super.onDestroyView();
-
-        mVideosRecyclerView.removeOnScrollListener(mRecyclerViewOnScrollListener);
+        removeListeners();
         ButterKnife.unbind(this);
     }
 
@@ -554,6 +553,10 @@ public class WatchLaterVideosFragment extends BaseFragment implements VideosAdap
                 .setAction("Reload", mReloadOnClickListener)
 //                                .setActionTextColor(Color.RED)
                 .show();
+    }
+
+    private void removeListeners(){
+        mVideosRecyclerView.removeOnScrollListener(mRecyclerViewOnScrollListener);
     }
     // endregion
 }

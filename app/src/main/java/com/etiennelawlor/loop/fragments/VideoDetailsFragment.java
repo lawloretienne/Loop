@@ -722,6 +722,7 @@ public class VideoDetailsFragment extends BaseFragment implements RelatedVideosA
     @Override
     public void onDestroyView() {
         super.onDestroyView();
+        removeListeners();
         ButterKnife.unbind(this);
     }
 
@@ -956,6 +957,10 @@ public class VideoDetailsFragment extends BaseFragment implements RelatedVideosA
                 .setAction("Reload", mReloadOnClickListener)
 //                                .setActionTextColor(Color.RED)
                 .show();
+    }
+
+    private void removeListeners(){
+        mVideosRecyclerView.removeOnScrollListener(mRecyclerViewOnScrollListener);
     }
     // endregion
 }
