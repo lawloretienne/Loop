@@ -326,8 +326,8 @@ public class VideoPlayerFragment extends BaseFragment {
     private String getHLSVideoUrl(HLS hls) {
         String videoUrl = "";
         if (hls != null) {
-            String all = hls.getAll();
-            videoUrl = all;
+            String url = hls.getUrl();
+            videoUrl = url;
         }
         return videoUrl;
     }

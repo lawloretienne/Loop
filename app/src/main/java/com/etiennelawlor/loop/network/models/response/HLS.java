@@ -14,8 +14,8 @@ public class HLS {
     private String origin;
     @SerializedName("cdn")
     private String cdn;
-    @SerializedName("all")
-    private String all;
+    @SerializedName("url")
+    private String url;
     // endregion
 
     // region Getters
@@ -27,8 +27,8 @@ public class HLS {
         return TextUtils.isEmpty(cdn) ? "" : cdn;
     }
 
-    public String getAll() {
-        return TextUtils.isEmpty(all) ? "" : all;
+    public String getUrl() {
+        return TextUtils.isEmpty(url) ? "" : url;
     }
     // endregion
 
@@ -41,8 +41,8 @@ public class HLS {
         this.cdn = cdn;
     }
 
-    public void setAll(String all) {
-        this.all = all;
+    public void setAll(String url) {
+        this.url = url;
     }
     // endregion
 }
