@@ -102,7 +102,6 @@ public class CategoriesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
     }
 
     private RecyclerView.ViewHolder createCategoryViewHolder(ViewGroup parent) {
-        // create a new view
         View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.category_card, parent, false);
 
         return new CategoryViewHolder(v);
@@ -113,38 +112,8 @@ public class CategoriesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
 
         Category category = mCategories.get(position);
         if (category != null) {
-
-            String name = category.getName();
-
-            if(name.contains("&")){
-                name = name.replace("&", "\n&");
-            }
-
-            holder.mTitleTextView.setText(name);
-
-            Context context = holder.mVideoThumbnailImageView.getContext();
-
-//            holder.mVideoThumbnailImageView.setHeightRatio(9.0D/16.0D);
-            holder.mVideoThumbnailImageView.setHeightRatio(1.0D/1.0D);
-
-
-            Pictures pictures = category.getPictures();
-            if(pictures != null){
-                List<Size> sizes = pictures.getSizes();
-                if(sizes != null && sizes.size() > 0){
-                    Size size = sizes.get(sizes.size()-1);
-                    if(size != null){
-                        String thumbnail = size.getLink();
-                        if(!TextUtils.isEmpty(thumbnail)){
-                            Glide.with(context)
-                                    .load(thumbnail)
-//                                .placeholder(R.drawable.ic_placeholder)
-//                                .error(R.drawable.ic_error)
-                                    .into(holder.mVideoThumbnailImageView);
-                        }
-                    }
-                }
-            }
+            setUpThumbnail(holder.mVideoThumbnailImageView, category);
+            setUpTitle(holder.mTitleTextView, category);
 
             holder.mCategoryCardRootFrameLayout.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -156,6 +125,42 @@ public class CategoriesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
             });
         }
     }
+
+    private void setUpThumbnail(DynamicHeightImageView iv, Category category){
+//            holder.mVideoThumbnailImageView.setHeightRatio(9.0D/16.0D);
+        iv.setHeightRatio(1.0D/1.0D);
+
+        Pictures pictures = category.getPictures();
+        if(pictures != null){
+            List<Size> sizes = pictures.getSizes();
+            if(sizes != null && sizes.size() > 0){
+                Size size = sizes.get(sizes.size()-1);
+                if(size != null){
+                    String thumbnail = size.getLink();
+                    if(!TextUtils.isEmpty(thumbnail)){
+                        Glide.with(iv.getContext())
+                                .load(thumbnail)
+//                                .placeholder(R.drawable.ic_placeholder)
+//                                .error(R.drawable.ic_error)
+                                .into(iv);
+                    }
+                }
+            }
+        }
+    }
+
+    private void setUpTitle(TextView tv, Category category){
+        String name = category.getName();
+
+        if(!TextUtils.isEmpty(name)){
+            if(name.contains("&")){
+                name = name.replace("&", "\n&");
+            }
+
+            tv.setText(name);
+        }
+    }
+
     // endregion
 
     // region Inner Classes
@@ -168,7 +173,7 @@ public class CategoriesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
         @Bind(R.id.category_card_root_fl)
         FrameLayout mCategoryCardRootFrameLayout;
 
-        CategoryViewHolder(View view) {
+        public CategoryViewHolder(View view) {
             super(view);
             ButterKnife.bind(this, view);
         }

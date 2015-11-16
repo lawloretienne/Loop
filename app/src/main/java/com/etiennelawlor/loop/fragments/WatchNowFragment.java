@@ -223,7 +223,7 @@ public class WatchNowFragment extends BaseFragment {
     // endregion
 
     // region Inner Classes
-    static class Adapter extends FragmentPagerAdapter {
+    public static class Adapter extends FragmentPagerAdapter {
         private final List<Fragment> mFragments = new ArrayList<>();
         private final List<String> mFragmentTitles = new ArrayList<>();
 

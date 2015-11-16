@@ -217,7 +217,7 @@ public class SuggestionsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
         @Bind(R.id.search_suggest_complete_iv)
         ImageView mSuggestionCompleteImageView;
 
-        SuggestionViewHolder(View view) {
+        public SuggestionViewHolder(View view) {
             super(view);
             ButterKnife.bind(this, view);
         }

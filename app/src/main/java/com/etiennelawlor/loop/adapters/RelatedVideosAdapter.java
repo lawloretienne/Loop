@@ -546,7 +546,7 @@ public class RelatedVideosAdapter extends RecyclerView.Adapter<RecyclerView.View
         @Bind(R.id.loading_iv)
         LoadingImageView mLoadingImageView;
 
-        MoreViewHolder(View view) {
+        public MoreViewHolder(View view) {
             super(view);
             ButterKnife.bind(this, view);
         }

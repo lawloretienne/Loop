@@ -337,7 +337,7 @@ public class VideosAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
     // region Inner Classes
 
     public static class HeaderViewHolder extends RecyclerView.ViewHolder {
-        HeaderViewHolder(View view) {
+        public HeaderViewHolder(View view) {
             super(view);
             ButterKnife.bind(this, view);
         }
@@ -357,7 +357,7 @@ public class VideosAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
         @Bind(R.id.video_row_root_ll)
         LinearLayout mVideoRowRootLinearLayout;
 
-        VideoViewHolder(View view) {
+        public VideoViewHolder(View view) {
             super(view);
             ButterKnife.bind(this, view);
         }
@@ -367,7 +367,7 @@ public class VideosAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
         @Bind(R.id.loading_iv)
         LoadingImageView mLoadingImageView;
 
-        MoreViewHolder(View view) {
+        public MoreViewHolder(View view) {
             super(view);
             ButterKnife.bind(this, view);
         }
