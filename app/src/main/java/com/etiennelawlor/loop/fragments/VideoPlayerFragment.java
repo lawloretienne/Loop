@@ -22,6 +22,7 @@ import com.etiennelawlor.loop.models.AccessToken;
 import com.etiennelawlor.loop.network.models.response.Files;
 import com.etiennelawlor.loop.network.models.response.H264;
 import com.etiennelawlor.loop.network.models.response.HLS;
+import com.etiennelawlor.loop.network.models.response.ProgressiveData;
 import com.etiennelawlor.loop.network.models.response.Request;
 import com.etiennelawlor.loop.network.models.response.VP6;
 import com.etiennelawlor.loop.network.models.response.VideoConfig;
@@ -33,6 +34,7 @@ import com.etiennelawlor.loop.utilities.LogUtility;
 import java.io.IOException;
 import java.net.SocketTimeoutException;
 import java.net.UnknownHostException;
+import java.util.List;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
@@ -304,12 +306,16 @@ public class VideoPlayerFragment extends BaseFragment {
                     H264 h264 = files.getH264();
                     HLS hls = files.getHls();
                     VP6 vp6 = files.getVp6();
+                    List<ProgressiveData> progressiveDataList = files.getProgressive();
 
+                    String progressiveDataUrl = getProgressiveDataUrl(progressiveDataList);
                     String h264VideoUrl = getH264VideoUrl(h264);
                     String vp6VideoUrl = getVP6VideoUrl(vp6);
                     String hlsVideoUrl = getHLSVideoUrl(hls);
 
-                    if (!TextUtils.isEmpty(h264VideoUrl)) {
+                    if (!TextUtils.isEmpty(progressiveDataUrl)) {
+                        videoUrl = progressiveDataUrl;
+                    } else if (!TextUtils.isEmpty(h264VideoUrl)) {
                         videoUrl = h264VideoUrl;
                     } else if (!TextUtils.isEmpty(vp6VideoUrl)) {
                         videoUrl = vp6VideoUrl;
@@ -330,6 +336,35 @@ public class VideoPlayerFragment extends BaseFragment {
             videoUrl = url;
         }
         return videoUrl;
+    }
+
+    private String getProgressiveDataUrl(List<ProgressiveData> progressiveDataList){
+        String progressiveDataUrl = "";
+
+        String progessiveData270pUrl = "";
+        String progessiveData360pUrl = "";
+        String progessiveData1080pUrl = "";
+
+        for(ProgressiveData progressiveData : progressiveDataList){
+            String quality = progressiveData.getQuality();
+            if(quality.equals("1080p")){
+                progessiveData1080pUrl = progressiveData.getUrl();
+            } else if(quality.equals("360p")){
+                progessiveData360pUrl = progressiveData.getUrl();
+            } else if(quality.equals("270p")){
+                progessiveData270pUrl = progressiveData.getUrl();
+            }
+        }
+
+        if(!TextUtils.isEmpty(progessiveData1080pUrl)){
+            progressiveDataUrl = progessiveData1080pUrl;
+        } else if(!TextUtils.isEmpty(progessiveData360pUrl)){
+            progressiveDataUrl = progessiveData360pUrl;
+        } else if(!TextUtils.isEmpty(progessiveData270pUrl)){
+            progressiveDataUrl = progessiveData270pUrl;
+        }
+
+        return progressiveDataUrl;
     }
 
     private String getH264VideoUrl(H264 h264) {
