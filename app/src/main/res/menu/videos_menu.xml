@@ -5,7 +5,7 @@
 
     <item
         android:id="@+id/sort"
-        android:title="Sort"
+        android:title="@string/sort"
         app:showAsAction="never"
         android:orderInCategory="0"/>
 

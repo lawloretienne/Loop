@@ -317,9 +317,6 @@ public class SearchableFragment extends BaseFragment implements VideosAdapter.On
 
         if(getArguments() != null){
             mQuery = getArguments().getString(SearchManager.QUERY);
-//            SearchRecentSuggestions suggestions = new SearchRecentSuggestions(getActivity(),
-//                    CustomSearchRecentSuggestionsProvider.AUTHORITY, CustomSearchRecentSuggestionsProvider.MODE);
-//            suggestions.saveRecentQuery(mQuery, null);
 
             RealmUtility.saveQuery(mQuery);
 

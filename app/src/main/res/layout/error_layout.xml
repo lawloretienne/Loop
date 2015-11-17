@@ -13,7 +13,7 @@
     <ImageView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:contentDescription=""
+        android:contentDescription="@string/content_desc"
         android:src="@drawable/ic_error_view_cloud" />
 
     <com.etiennelawlor.loop.ui.CustomFontTextView
@@ -31,7 +31,7 @@
         android:id="@+id/reload_btn"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="RELOAD"
+        android:text="@string/reload"
         android:textColor="@android:color/white"/>
 
 </LinearLayout>

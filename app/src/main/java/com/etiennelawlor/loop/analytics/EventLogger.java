@@ -26,17 +26,16 @@ public class EventLogger {
 
         CustomEvent customEvent = new CustomEvent(name);
 
-        Iterator it = map.entrySet().iterator();
-        while (it.hasNext()) {
-            Map.Entry pair = (Map.Entry)it.next();
+        for (Object o : map.entrySet()) {
+            Map.Entry pair = (Map.Entry) o;
 
             String key = (String) pair.getKey();
             Object value = pair.getValue();
 
-            if(value instanceof Number) {
+            if (value instanceof Number) {
                 customEvent.putCustomAttribute(key, (Number) value);
-            } else if(value instanceof String){
-                customEvent.putCustomAttribute(key, (String)value);
+            } else if (value instanceof String) {
+                customEvent.putCustomAttribute(key, (String) value);
             }
         }
 
@@ -49,9 +48,8 @@ public class EventLogger {
 
         Map<String, String> flurryMap = new HashMap<>();
 
-        Iterator it = map.entrySet().iterator();
-        while (it.hasNext()) {
-            Map.Entry pair = (Map.Entry)it.next();
+        for (Object o : map.entrySet()) {
+            Map.Entry pair = (Map.Entry) o;
 
             String key = (String) pair.getKey();
             Object value = pair.getValue();

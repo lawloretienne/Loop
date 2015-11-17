@@ -6,32 +6,32 @@
         <item
             android:id="@+id/nav_watch_now"
             android:icon="@drawable/ic_watch_now"
-            android:title="Watch Now"
+            android:title="@string/watch_now"
             android:checked="true"/>
         <item
             android:id="@+id/nav_likes"
             android:icon="@drawable/ic_likes"
-            android:title="Likes" />
+            android:title="@string/likes" />
         <item
             android:id="@+id/nav_watch_later"
             android:icon="@drawable/ic_watch_later"
-            android:title="Watch Later" />
+            android:title="@string/watch_later" />
         <item
             android:id="@+id/nav_explore"
             android:icon="@drawable/ic_explore"
-            android:title="Explore" />
+            android:title="@string/explore" />
     </group>
 
     <group android:id="@+id/group_2">
         <item
             android:icon="@drawable/ic_settings"
-            android:title="Settings" />
+            android:title="@string/settings" />
         <item
             android:icon="@drawable/ic_help"
-            android:title="Help and Feedback" />
+            android:title="@string/help_and_feedback" />
         <item
             android:icon="@drawable/ic_logout"
-            android:title="Logout" />
+            android:title="@string/logout" />
     </group>
 
 </menu>

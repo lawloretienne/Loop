@@ -1,6 +1,5 @@
 package com.etiennelawlor.loop.adapters;
 
-import android.content.Context;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
 import android.view.LayoutInflater;

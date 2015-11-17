@@ -5,7 +5,7 @@
 
     <item android:id="@+id/action_search"
         android:orderInCategory="0"
-        android:title="Search"
+        android:title="@string/search"
         android:icon="@android:drawable/ic_menu_search"
         app:showAsAction="always"
         app:actionViewClass="android.support.v7.widget.SearchView" />

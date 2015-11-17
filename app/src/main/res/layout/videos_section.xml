@@ -25,7 +25,7 @@
             android:textColor="@color/grey_500"
             android:textSize="14sp"
             android:drawablePadding="8dp"
-            android:text="No videos"
+            android:text="@string/no_videos"
             android:gravity="center"
             android:layout_centerInParent="true"
             app:textFont="Roboto_Regular"

@@ -32,7 +32,7 @@ public class VideosCollection {
     }
 
     public Integer getPerPage() {
-        return total == null ? -1 : total;
+        return perPage == null ? -1 : perPage;
     }
 
     public Paging getPaging() {

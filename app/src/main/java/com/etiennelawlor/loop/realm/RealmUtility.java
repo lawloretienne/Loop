@@ -14,7 +14,6 @@ import io.realm.Realm;
 import io.realm.RealmConfiguration;
 import io.realm.RealmResults;
 import io.realm.exceptions.RealmMigrationNeededException;
-import timber.log.Timber;
 
 /**
  * Created by etiennelawlor on 10/8/15.

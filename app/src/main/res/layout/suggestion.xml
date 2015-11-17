@@ -15,6 +15,7 @@
         android:layout_height="wrap_content"
         android:src="@drawable/ic_history"
         android:tint="@color/grey_400"
+        android:contentDescription="@string/content_desc"
         android:layout_centerVertical="true"/>
 
     <com.etiennelawlor.loop.ui.CustomFontTextView
@@ -37,6 +38,7 @@
         android:layout_alignParentRight="true"
         android:src="@drawable/ic_search_suggest_complete"
         android:tint="@color/grey_400"
+        android:contentDescription="@string/content_desc"
         android:background="@drawable/ripple"
         android:layout_centerVertical="true"/>
 

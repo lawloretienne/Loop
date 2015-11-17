@@ -81,25 +81,10 @@
         <item>desc</item>
     </string-array>
 
-    <!-- Nav Drawer Menu Items -->
-    <string-array name="navigation_drawer_items_array">
-        <item>Bodyboarding</item>
-        <item>Surfing</item>
-        <item>Wind Surfing</item>
-        <item>Snowboarding</item>
-        <item>Skiing</item>
-        <item>Skateboarding</item>
-        <item>BMX</item>
-        <item>Motocross</item>
-    </string-array>
-
     <string-array name="scopes">
         <item>public</item>
         <item>private</item>
         <item>interact</item>
     </string-array>
-
-    <!--<item>Settings</item>-->
-    <!--<item>Send Feedback</item>-->
 
 </resources>

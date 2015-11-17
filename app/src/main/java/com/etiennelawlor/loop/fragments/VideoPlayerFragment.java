@@ -347,12 +347,16 @@ public class VideoPlayerFragment extends BaseFragment {
 
         for(ProgressiveData progressiveData : progressiveDataList){
             String quality = progressiveData.getQuality();
-            if(quality.equals("1080p")){
-                progessiveData1080pUrl = progressiveData.getUrl();
-            } else if(quality.equals("360p")){
-                progessiveData360pUrl = progressiveData.getUrl();
-            } else if(quality.equals("270p")){
-                progessiveData270pUrl = progressiveData.getUrl();
+            switch (quality) {
+                case "1080p":
+                    progessiveData1080pUrl = progressiveData.getUrl();
+                    break;
+                case "360p":
+                    progessiveData360pUrl = progressiveData.getUrl();
+                    break;
+                case "270p":
+                    progessiveData270pUrl = progressiveData.getUrl();
+                    break;
             }
         }
 
