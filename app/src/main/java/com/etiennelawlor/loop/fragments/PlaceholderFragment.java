@@ -55,7 +55,7 @@ public class PlaceholderFragment extends BaseFragment {
         }
 
         setHasOptionsMenu(true);
-        BusProvider.get().register(this);
+        BusProvider.getInstance().register(this);
     }
 
     @Override

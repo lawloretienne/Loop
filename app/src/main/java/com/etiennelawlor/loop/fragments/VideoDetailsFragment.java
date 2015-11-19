@@ -327,7 +327,7 @@ public class VideoDetailsFragment extends BaseFragment implements RelatedVideosA
                         switch (code) {
                             case 204:
                                 // No Content
-                                BusProvider.get().post(new VideoLikedEvent());
+                                BusProvider.getInstance().post(new VideoLikedEvent());
 
                                 Timber.d("mLikeVideoCallback() : duration - " + mVideo.getDuration());
                                 Timber.d("mLikeVideoCallback() : mVideoId - " + mVideoId);
@@ -416,7 +416,7 @@ public class VideoDetailsFragment extends BaseFragment implements RelatedVideosA
                         switch (code) {
                             case 204:
                                 // No Content
-                                BusProvider.get().post(new VideoLikedEvent());
+                                BusProvider.getInstance().post(new VideoLikedEvent());
 
                                 HashMap<String, Object> map = new HashMap<>();
                                 map.put(EventMapKeys.NAME, mVideo.getName());
@@ -499,7 +499,7 @@ public class VideoDetailsFragment extends BaseFragment implements RelatedVideosA
                         switch (code) {
                             case 204:
                                 // No Content
-                                BusProvider.get().post(new WatchLaterEvent());
+                                BusProvider.getInstance().post(new WatchLaterEvent());
                                 break;
 //                            case 400:
 //                                // If the video is owned by the authenticated user
@@ -576,7 +576,7 @@ public class VideoDetailsFragment extends BaseFragment implements RelatedVideosA
                         switch (code) {
                             case 204:
                                 // No Content
-                                BusProvider.get().post(new WatchLaterEvent());
+                                BusProvider.getInstance().post(new WatchLaterEvent());
                                 break;
 //                            case 403:
 //                                // If the authenticated user is not allowed to like videos
@@ -710,13 +710,13 @@ public class VideoDetailsFragment extends BaseFragment implements RelatedVideosA
     @Override
     public void onResume() {
         super.onResume();
-        BusProvider.get().register(this);
+        BusProvider.getInstance().register(this);
     }
 
     @Override
     public void onPause() {
         super.onPause();
-        BusProvider.get().unregister(this);
+        BusProvider.getInstance().unregister(this);
     }
 
     @Override

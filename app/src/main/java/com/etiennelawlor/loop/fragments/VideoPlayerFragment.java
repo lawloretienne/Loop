@@ -146,7 +146,7 @@ public class VideoPlayerFragment extends BaseFragment {
         // retain this fragment
         setRetainInstance(true);
 
-        BusProvider.get().register(this);
+        BusProvider.getInstance().register(this);
 
         if(getArguments() != null){
             mVideoId = getArguments().getLong("video_id");

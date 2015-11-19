@@ -315,7 +315,7 @@ public class LikedVideosFragment extends BaseFragment implements VideosAdapter.O
                 token);
 
         setHasOptionsMenu(true);
-        BusProvider.get().register(this);
+        BusProvider.getInstance().register(this);
     }
 
     @Override
@@ -382,7 +382,7 @@ public class LikedVideosFragment extends BaseFragment implements VideosAdapter.O
         super.onDestroy();
 
         // Unregister Otto Bus
-        BusProvider.get().unregister(this);
+        BusProvider.getInstance().unregister(this);
     }
     // endregion
 

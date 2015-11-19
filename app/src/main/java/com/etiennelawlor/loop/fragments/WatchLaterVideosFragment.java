@@ -314,7 +314,7 @@ public class WatchLaterVideosFragment extends BaseFragment implements VideosAdap
                 token);
 
         setHasOptionsMenu(true);
-        BusProvider.get().register(this);
+        BusProvider.getInstance().register(this);
     }
 
     @Override
@@ -381,7 +381,7 @@ public class WatchLaterVideosFragment extends BaseFragment implements VideosAdap
         super.onDestroy();
 
         // Unregister Otto Bus
-        BusProvider.get().unregister(this);
+        BusProvider.getInstance().unregister(this);
     }
     // endregion
 

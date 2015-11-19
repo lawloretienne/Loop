@@ -304,7 +304,7 @@ public class VideosFragment extends BaseFragment implements VideosAdapter.OnItem
                 token);
 
         setHasOptionsMenu(true);
-        BusProvider.get().register(this);
+        BusProvider.getInstance().register(this);
     }
 
     @Override
@@ -359,7 +359,7 @@ public class VideosFragment extends BaseFragment implements VideosAdapter.OnItem
         super.onDestroy();
 
         // Unregister Otto Bus
-        BusProvider.get().unregister(this);
+        BusProvider.getInstance().unregister(this);
     }
     // endregion
 

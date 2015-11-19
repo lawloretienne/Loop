@@ -118,13 +118,13 @@ public class WatchNowFragment extends BaseFragment {
     @Override
     public void onResume() {
         super.onResume();
-        BusProvider.get().register(this);
+        BusProvider.getInstance().register(this);
     }
 
     @Override
     public void onPause() {
         super.onPause();
-        BusProvider.get().unregister(this);
+        BusProvider.getInstance().unregister(this);
     }
 
     @Override

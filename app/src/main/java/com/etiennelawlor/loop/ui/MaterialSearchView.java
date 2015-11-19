@@ -135,7 +135,7 @@ public class MaterialSearchView extends FrameLayout implements
                     break;
             }
 
-            BusProvider.get().post(new LeftDrawableClickedEvent(type));
+            BusProvider.getInstance().post(new LeftDrawableClickedEvent(type));
         }
     }
 
@@ -156,7 +156,7 @@ public class MaterialSearchView extends FrameLayout implements
 
         if (mIsSearchEditTextFocused) {
             mSuggestionsAdapter.setCurrentQuery(text.toString());
-            BusProvider.get().post(new ShowSearchSuggestionsEvent(text.toString()));
+            BusProvider.getInstance().post(new ShowSearchSuggestionsEvent(text.toString()));
         }
 
         mFilterImageView.setVisibility(View.GONE);
@@ -184,7 +184,7 @@ public class MaterialSearchView extends FrameLayout implements
     private OnClickListener mFilterImageViewOnClickListener = new OnClickListener() {
         @Override
         public void onClick(View v) {
-            BusProvider.get().post(new FilterClickedEvent());
+            BusProvider.getInstance().post(new FilterClickedEvent());
         }
     };
     // endregion
@@ -227,7 +227,7 @@ public class MaterialSearchView extends FrameLayout implements
         String suggestion = suggestionTextView.getText().toString();
 
         hideSearchSuggestions();
-        BusProvider.get().post(new SearchPerformedEvent(suggestion));
+        BusProvider.getInstance().post(new SearchPerformedEvent(suggestion));
     }
     // endregion
 
@@ -244,7 +244,7 @@ public class MaterialSearchView extends FrameLayout implements
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 RealmUtility.deleteQuery(suggestion);
-                BusProvider.get().post(new ShowSearchSuggestionsEvent(getQuery()));
+                BusProvider.getInstance().post(new ShowSearchSuggestionsEvent(getQuery()));
                 dialog.dismiss();
             }
         });
@@ -316,7 +316,7 @@ public class MaterialSearchView extends FrameLayout implements
 
                 if (actionId == EditorInfo.IME_ACTION_SEARCH) {
                     hideSearchSuggestions();
-                    BusProvider.get().post(new SearchPerformedEvent(getQuery()));
+                    BusProvider.getInstance().post(new SearchPerformedEvent(getQuery()));
                     return true;
                 } else {
                     return false;
@@ -366,7 +366,7 @@ public class MaterialSearchView extends FrameLayout implements
     }
 
     private void showSearchSuggestions() {
-        BusProvider.get().post(new ShowSearchSuggestionsEvent(getQuery()));
+        BusProvider.getInstance().post(new ShowSearchSuggestionsEvent(getQuery()));
 
         mSuggestionsAdapter.setOnItemClickListener(this);
         mSuggestionsAdapter.setOnItemLongClickListener(this);

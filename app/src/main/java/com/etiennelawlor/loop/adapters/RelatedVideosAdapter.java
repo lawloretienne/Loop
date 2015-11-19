@@ -472,7 +472,7 @@ public class RelatedVideosAdapter extends RecyclerView.Adapter<RecyclerView.View
                         String tag = (String) item;
                         Timber.d("setUpTags() : tag - " + tag);
 
-                        BusProvider.get().post(new SearchPerformedEvent(tag));
+                        BusProvider.getInstance().post(new SearchPerformedEvent(tag));
                     }
                 });
                 htv.setVisibility(View.VISIBLE);

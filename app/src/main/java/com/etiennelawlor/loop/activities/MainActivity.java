@@ -145,7 +145,7 @@ public class MainActivity extends AppCompatActivity {
                 .replace(R.id.content_fl, WatchNowFragment.newInstance(), "")
                 .commit();
 
-        BusProvider.get().register(this);
+        BusProvider.getInstance().register(this);
     }
 
     @Override
@@ -156,7 +156,7 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        BusProvider.get().unregister(this);
+        BusProvider.getInstance().unregister(this);
     }
     // endregion
 

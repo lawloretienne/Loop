@@ -36,13 +36,13 @@ public class SearchableActivity extends AppCompatActivity {
                     .commit();
         }
 
-        BusProvider.get().register(this);
+        BusProvider.getInstance().register(this);
     }
 
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        BusProvider.get().unregister(this);
+        BusProvider.getInstance().unregister(this);
     }
     // endregion
 

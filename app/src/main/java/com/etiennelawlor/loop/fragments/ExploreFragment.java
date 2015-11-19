@@ -181,7 +181,7 @@ public class ExploreFragment extends BaseFragment implements CategoriesAdapter.O
                 token);
 
         setHasOptionsMenu(true);
-        BusProvider.get().register(this);
+        BusProvider.getInstance().register(this);
     }
 
     @Override
@@ -232,7 +232,7 @@ public class ExploreFragment extends BaseFragment implements CategoriesAdapter.O
         super.onDestroy();
 
         // Unregister Otto Bus
-        BusProvider.get().unregister(this);
+        BusProvider.getInstance().unregister(this);
     }
     // endregion
 

@@ -5,13 +5,13 @@ import com.squareup.otto.ThreadEnforcer;
 
 public final class BusProvider {
 
-  private BusProvider() {
-    // No instances.
-  }
+  private static final Bus BUS = new Bus();
 
-  public static Bus get() {
+  public static Bus getInstance() {
     return BUS;
   }
 
-  private static final Bus BUS = new Bus(ThreadEnforcer.ANY);
+  private BusProvider() {
+    // No instances.
+  }
 }

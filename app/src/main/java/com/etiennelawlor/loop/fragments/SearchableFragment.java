@@ -433,7 +433,7 @@ public class SearchableFragment extends BaseFragment implements VideosAdapter.On
     @Override
     public void onResume() {
         super.onResume();
-        BusProvider.get().register(this);
+        BusProvider.getInstance().register(this);
 
         setupSearchView();
     }
@@ -441,7 +441,7 @@ public class SearchableFragment extends BaseFragment implements VideosAdapter.On
     @Override
     public void onPause() {
         super.onPause();
-        BusProvider.get().unregister(this);
+        BusProvider.getInstance().unregister(this);
     }
 
     @Override
