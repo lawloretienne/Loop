@@ -68,7 +68,7 @@ public class SearchableActivity extends AppCompatActivity {
 
     // region Otto Methods
     @Subscribe
-    public void onLeftDrawableClickedEvent(LeftDrawableClickedEvent event) {
+    public void onLeftDrawableClicked(LeftDrawableClickedEvent event) {
         Timber.d("onLeftDrawableClickedEvent");
         LeftDrawableClickedEvent.Type type = event.getType();
 

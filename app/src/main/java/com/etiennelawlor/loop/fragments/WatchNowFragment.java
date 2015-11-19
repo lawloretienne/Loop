@@ -157,7 +157,7 @@ public class WatchNowFragment extends BaseFragment {
 
     // region Otto Methods
     @Subscribe
-    public void onSearchPerformedEvent(SearchPerformedEvent event) {
+    public void onSearchPerformed(SearchPerformedEvent event) {
         String query = event.getQuery();
         if (!TextUtils.isEmpty(query)) {
             mMaterialSearchView.setQuery("");
@@ -166,7 +166,7 @@ public class WatchNowFragment extends BaseFragment {
     }
 
     @Subscribe
-    public void onShowSearchSuggestionsEvent(ShowSearchSuggestionsEvent event) {
+    public void onShowSearchSuggestions(ShowSearchSuggestionsEvent event) {
         String query = event.getQuery();
 
         mMaterialSearchView.addSuggestions(RealmUtility.getSuggestions(query));

@@ -530,12 +530,12 @@ public class SearchableFragment extends BaseFragment implements VideosAdapter.On
 
     // region Otto Methods
     @Subscribe
-    public void onFilterClickedEvent(FilterClickedEvent event) {
+    public void onFilterClicked(FilterClickedEvent event) {
         showSortDialog();
     }
 
     @Subscribe
-    public void onSearchPerformedEvent(SearchPerformedEvent event) {
+    public void onSearchPerformed(SearchPerformedEvent event) {
         String query = event.getQuery();
         if (!TextUtils.isEmpty(query)) {
             launchSearchActivity(query);
@@ -543,7 +543,7 @@ public class SearchableFragment extends BaseFragment implements VideosAdapter.On
     }
 
     @Subscribe
-    public void onShowSearchSuggestionsEvent(ShowSearchSuggestionsEvent event) {
+    public void onShowSearchSuggestions(ShowSearchSuggestionsEvent event) {
         String query = event.getQuery();
 
         mMaterialSearchView.addSuggestions(RealmUtility.getSuggestions(query));

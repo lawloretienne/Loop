@@ -445,7 +445,7 @@ public class WatchLaterVideosFragment extends BaseFragment implements VideosAdap
 
     // region Otto Methods
     @Subscribe
-    public void onWatchLaterEvent(WatchLaterEvent event) {
+    public void onWatchLater(WatchLaterEvent event) {
         Timber.d("onWatchLaterEvent");
 
         if (isResumed()) {

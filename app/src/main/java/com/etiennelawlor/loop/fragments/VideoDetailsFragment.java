@@ -903,7 +903,7 @@ public class VideoDetailsFragment extends BaseFragment implements RelatedVideosA
 
     // region Otto Methods
     @Subscribe
-    public void onSearchPerformedEvent(SearchPerformedEvent event) {
+    public void onSearchPerformed(SearchPerformedEvent event) {
         String query = event.getQuery();
         if (!TextUtils.isEmpty(query)) {
             launchSearchActivity(query);
