@@ -62,7 +62,7 @@ public class SuggestionsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
     // region Constructors
     public SuggestionsAdapter() {
         mSuggestions = new ArrayList<>();
-        mBlackFont = Typeface.createFromAsset(LoopApplication.get().getAssets(), "fonts/Roboto-Black.ttf");
+        mBlackFont = Typeface.createFromAsset(LoopApplication.getInstance().getAssets(), "fonts/Roboto-Black.ttf");
     }
     // endregion
 

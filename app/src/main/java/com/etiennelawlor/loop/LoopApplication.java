@@ -44,7 +44,7 @@ public class LoopApplication extends Application {
     }
 
     // region Helper Methods
-    public static LoopApplication get() {
+    public static LoopApplication getInstance() {
         return sCurrentApplication;
     }
 

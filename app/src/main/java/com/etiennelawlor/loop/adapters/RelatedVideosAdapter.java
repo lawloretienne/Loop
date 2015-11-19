@@ -74,7 +74,7 @@ public class RelatedVideosAdapter extends RecyclerView.Adapter<RecyclerView.View
         mVideo = video;
         mVideos = new ArrayList<>();
 
-        mBoldFont = Typeface.createFromAsset(LoopApplication.get().getApplicationContext().getAssets(), "fonts/Roboto-Bold.ttf");
+        mBoldFont = Typeface.createFromAsset(LoopApplication.getInstance().getApplicationContext().getAssets(), "fonts/Roboto-Bold.ttf");
     }
     // endregion
 

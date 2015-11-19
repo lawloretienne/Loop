@@ -32,7 +32,7 @@ public class RealmUtility {
     }
 
     public static void saveQuery(String query){
-        Context context = LoopApplication.get().getApplicationContext();
+        Context context = LoopApplication.getInstance().getApplicationContext();
         try{
             mRealm = Realm.getInstance(context);
         } catch (RealmMigrationNeededException e) {
@@ -55,7 +55,7 @@ public class RealmUtility {
     }
 
     public static void deleteQuery(String query){
-        Context context = LoopApplication.get().getApplicationContext();
+        Context context = LoopApplication.getInstance().getApplicationContext();
         try{
             mRealm = Realm.getInstance(context);
         } catch (RealmMigrationNeededException e) {
@@ -80,7 +80,7 @@ public class RealmUtility {
     }
 
     public static List<String> getSuggestions(String query) {
-        Context context = LoopApplication.get().getApplicationContext();
+        Context context = LoopApplication.getInstance().getApplicationContext();
 
         try{
             mRealm = Realm.getInstance(context);
