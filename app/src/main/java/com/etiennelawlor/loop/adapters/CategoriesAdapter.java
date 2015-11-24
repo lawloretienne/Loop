@@ -103,25 +103,30 @@ public class CategoriesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
     private RecyclerView.ViewHolder createCategoryViewHolder(ViewGroup parent) {
         View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.category_card, parent, false);
 
-        return new CategoryViewHolder(v);
+        final CategoryViewHolder holder = new CategoryViewHolder(v);
+
+        holder.mCategoryCardRootFrameLayout.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                int adapterPos = holder.getAdapterPosition();
+                if(adapterPos != RecyclerView.NO_POSITION){
+                    if (mOnItemClickListener != null) {
+                        mOnItemClickListener.onItemClick(adapterPos, holder.itemView);
+                    }
+                }
+            }
+        });
+
+        return holder;
     }
 
-    private void bindCategoryViewHolder(RecyclerView.ViewHolder viewHolder, final int position) {
+    private void bindCategoryViewHolder(RecyclerView.ViewHolder viewHolder, int position) {
         final CategoryViewHolder holder = (CategoryViewHolder) viewHolder;
 
         Category category = mCategories.get(position);
         if (category != null) {
             setUpThumbnail(holder.mVideoThumbnailImageView, category);
             setUpTitle(holder.mTitleTextView, category);
-
-            holder.mCategoryCardRootFrameLayout.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    if (mOnItemClickListener != null) {
-                        mOnItemClickListener.onItemClick(position, holder.itemView);
-                    }
-                }
-            });
         }
     }
 

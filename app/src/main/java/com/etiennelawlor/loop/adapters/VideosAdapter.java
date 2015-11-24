@@ -66,17 +66,23 @@ public class VideosAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
 
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+        RecyclerView.ViewHolder viewHolder = null;
+
         switch (viewType) {
             case HEADER:
-                return null;
+                break;
             case ITEM:
-                return createVideoViewHolder(parent);
+                viewHolder = createVideoViewHolder(parent);
+                break;
             case LOADING:
-                return createLoadingViewHolder(parent);
+                viewHolder = createLoadingViewHolder(parent);
+                break;
             default:
                 Timber.e("[ERR] type is not supported!!! type is %d", viewType);
-                return null;
+                break;
         }
+
+        return viewHolder;
     }
 
     @Override
@@ -170,7 +176,21 @@ public class VideosAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
         // create a new view
         View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.video_row, parent, false);
 
-        return new VideoViewHolder(v);
+        final VideoViewHolder holder = new VideoViewHolder(v);
+
+        holder.mVideoRowRootLinearLayout.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                int adapterPos = holder.getAdapterPosition();
+                if(adapterPos != RecyclerView.NO_POSITION){
+                    if (mOnItemClickListener != null) {
+                        mOnItemClickListener.onItemClick(adapterPos, holder.itemView);
+                    }
+                }
+            }
+        });
+
+        return holder;
     }
 
     private RecyclerView.ViewHolder createLoadingViewHolder(ViewGroup parent) {
@@ -179,7 +199,7 @@ public class VideosAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
         return new MoreViewHolder(v);
     }
 
-    private void bindVideoViewHolder(RecyclerView.ViewHolder viewHolder, final int position) {
+    private void bindVideoViewHolder(RecyclerView.ViewHolder viewHolder, int position) {
         final VideoViewHolder holder = (VideoViewHolder) viewHolder;
 
         final Video video = mVideos.get(position);
@@ -189,16 +209,6 @@ public class VideosAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
             setUpVideoThumbnail(holder.mVideoThumbnailImageView, video);
             setUpDuration(holder.mDurationTextView, video);
             setUpUploadedDate(holder.mUploadedDateTextView, video);
-
-            holder.mVideoRowRootLinearLayout.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    if (mOnItemClickListener != null) {
-                        mOnItemClickListener.onItemClick(position, holder.itemView);
-                    }
-                }
-            });
-
         }
     }
 

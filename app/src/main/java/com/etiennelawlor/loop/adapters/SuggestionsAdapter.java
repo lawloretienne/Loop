@@ -68,13 +68,18 @@ public class SuggestionsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
 
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+        RecyclerView.ViewHolder viewHolder = null;
+
         switch (viewType) {
             case ITEM:
-                return createSuggestionViewHolder(parent);
+                viewHolder = createSuggestionViewHolder(parent);
+                break;
             default:
                 Timber.e("[ERR] type is not supported!!! type is %d", viewType);
-                return null;
+                break;
         }
+
+        return viewHolder;
     }
 
     @Override
@@ -147,43 +152,54 @@ public class SuggestionsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
     private RecyclerView.ViewHolder createSuggestionViewHolder(ViewGroup parent){
         View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.suggestion, parent, false);
 
-        return new SuggestionViewHolder(v);
+        final SuggestionViewHolder holder = new SuggestionViewHolder(v);
+
+        holder.itemView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                int adapterPos = holder.getAdapterPosition();
+                if(adapterPos != RecyclerView.NO_POSITION){
+                    if (mOnItemClickListener != null) {
+                        mOnItemClickListener.onItemClick(adapterPos, holder.itemView);
+                    }
+                }
+            }
+        });
+
+        holder.itemView.setOnLongClickListener(new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View v) {
+                int adapterPos = holder.getAdapterPosition();
+                if(adapterPos != RecyclerView.NO_POSITION){
+                    if (mOnItemLongClickListener != null) {
+                        mOnItemLongClickListener.onItemLongClick(adapterPos, holder.itemView);
+                    }
+                }
+                return true;
+            }
+        });
+
+        holder.mSuggestionCompleteImageView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                int adapterPos = holder.getAdapterPosition();
+                if(adapterPos != RecyclerView.NO_POSITION){
+                    if (mOnSearchSuggestionCompleteClickListener != null) {
+                        mOnSearchSuggestionCompleteClickListener.onSearchSuggestionCompleteClickListener(adapterPos, holder.mSuggestionTextView);
+                    }
+                }
+            }
+        });
+
+        return holder;
     }
 
-    private void bindSuggestionViewHolder(RecyclerView.ViewHolder viewHolder, final int position) {
+    private void bindSuggestionViewHolder(RecyclerView.ViewHolder viewHolder, int position) {
         final SuggestionViewHolder holder = (SuggestionViewHolder) viewHolder;
 
         final String suggestion = mSuggestions.get(position);
         if (!TextUtils.isEmpty(suggestion)) {
             setUpSuggestion(holder.mSuggestionTextView, suggestion);
-
-            holder.itemView.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    if (mOnItemClickListener != null) {
-                        mOnItemClickListener.onItemClick(position, holder.itemView);
-                    }
-                }
-            });
-
-            holder.itemView.setOnLongClickListener(new View.OnLongClickListener() {
-                @Override
-                public boolean onLongClick(View v) {
-                    if (mOnItemLongClickListener != null) {
-                        mOnItemLongClickListener.onItemLongClick(position, holder.itemView);
-                    }
-                    return true;
-                }
-            });
-
-            holder.mSuggestionCompleteImageView.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    if (mOnSearchSuggestionCompleteClickListener != null) {
-                        mOnSearchSuggestionCompleteClickListener.onSearchSuggestionCompleteClickListener(position, holder.mSuggestionTextView);
-                    }
-                }
-            });
         }
     }
 
