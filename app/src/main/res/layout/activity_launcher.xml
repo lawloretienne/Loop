@@ -22,7 +22,7 @@
             android:textSize="34sp"
             android:drawablePadding="24dp"
             android:drawableTop="@drawable/ic_loop_large"
-            app:textFont="Roboto_Bold"/>
+            app:textFont="roboto_bold"/>
 
     </RelativeLayout>
 

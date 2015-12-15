@@ -15,6 +15,6 @@
         android:layout_margin="16dp"
         tools:text="Place Holder"
         android:textSize="16sp"
-        app:textFont="Roboto_Regular"/>
+        app:textFont="roboto_regular"/>
 
 </FrameLayout>

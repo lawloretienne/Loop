@@ -28,7 +28,7 @@
             android:text="@string/no_videos"
             android:gravity="center"
             android:layout_centerInParent="true"
-            app:textFont="Roboto_Regular"
+            app:textFont="roboto_regular"
             android:drawableTop="@drawable/ic_watch_later_large"
             />
 

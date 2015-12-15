@@ -10,6 +10,7 @@ import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityOptionsCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.util.Pair;
+import android.support.v4.view.ViewCompat;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
@@ -87,6 +88,7 @@ public class VideoDetailsFragment extends BaseFragment implements RelatedVideosA
     RecyclerView mVideosRecyclerView;
 
     private Video mVideo;
+    private String mTransitionName;
     private RelatedVideosAdapter mRelatedVideosAdapter;
     private VimeoService mVimeoService;
     private LinearLayoutManager mLayoutManager;
@@ -649,6 +651,7 @@ public class VideoDetailsFragment extends BaseFragment implements RelatedVideosA
 
         if (getArguments() != null) {
             mVideo = (Video) getArguments().get("video");
+//            mTransitionName = getArguments().getString("TRANSITION_KEY");
         }
 
         AccessToken token = PreferencesHelper.getAccessToken(getActivity());
@@ -672,6 +675,8 @@ public class VideoDetailsFragment extends BaseFragment implements RelatedVideosA
     @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+
+//        ViewCompat.setTransitionName(mVideoThumbnailImageView, mTransitionName);
 
         ((AppCompatActivity) getActivity()).setSupportActionBar(mToolbar);
 

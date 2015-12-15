@@ -17,10 +17,12 @@
             android:id="@+id/video_thumbnail_iv"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:transitionName="videoTransition"
             android:scaleType="centerCrop"
             android:contentDescription="@string/content_desc"
             android:background="?colorPrimary"/>
+
+        <!--android:transitionName="videoTransition"-->
+
 
         <com.etiennelawlor.loop.ui.CustomFontTextView
             android:id="@+id/duration_tv"
@@ -34,7 +36,7 @@
             android:textColor="@android:color/white"
             tools:text="Duration"
             android:textSize="14sp"
-            app:textFont="Roboto_Regular"/>
+            app:textFont="roboto_regular"/>
 
     </RelativeLayout>
 
@@ -56,7 +58,7 @@
             android:maxLines="2"
             android:ellipsize="end"
             android:textSize="16sp"
-            app:textFont="RobotoCondensed_Bold"/>
+            app:textFont="robotoCondensed_bold"/>
 
         <com.etiennelawlor.loop.ui.CustomFontTextView
             android:id="@+id/subtitle_tv"
@@ -68,7 +70,7 @@
             android:maxLines="5"
             android:ellipsize="end"
             android:textSize="14sp"
-            app:textFont="Roboto_Medium"/>
+            app:textFont="roboto_medium"/>
 
         <com.etiennelawlor.loop.ui.CustomFontTextView
             android:id="@+id/uploaded_date_tv"
@@ -79,7 +81,7 @@
             tools:text="Uploaded date"
             android:textSize="14sp"
             android:layout_marginTop="8dp"
-            app:textFont="Roboto_Regular"/>
+            app:textFont="roboto_regular"/>
 
 
     </LinearLayout>

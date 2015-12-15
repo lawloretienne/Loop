@@ -1,5 +1,6 @@
 package com.etiennelawlor.loop.adapters;
 
+import android.support.v4.view.ViewCompat;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
@@ -209,6 +210,9 @@ public class VideosAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
             setUpVideoThumbnail(holder.mVideoThumbnailImageView, video);
             setUpDuration(holder.mDurationTextView, video);
             setUpUploadedDate(holder.mUploadedDateTextView, video);
+
+            int adapterPos = holder.getAdapterPosition();
+            ViewCompat.setTransitionName(holder.mSubtitleTextView,"myTransition"+adapterPos);
         }
     }
 

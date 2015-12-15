@@ -7,6 +7,7 @@ import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.ActivityOptionsCompat;
 import android.support.v4.util.Pair;
+import android.support.v4.view.ViewCompat;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
@@ -19,6 +20,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
@@ -396,23 +398,37 @@ public class VideosFragment extends BaseFragment implements VideosAdapter.OnItem
 
             Bundle bundle = new Bundle();
             bundle.putParcelable("video", video);
+            ImageView iv = (ImageView)view.findViewById(R.id.video_thumbnail_iv);
+
+            intent.putExtra("TRANSITION_KEY", ViewCompat.getTransitionName(iv));
+
             intent.putExtras(bundle);
 
-            Pair<View, String> p1 = Pair.create(view.findViewById(R.id.video_thumbnail_iv), "videoTransition");
+//            Pair<View, String> p1 = Pair.create(view.findViewById(R.id.video_thumbnail_iv), "videoTransition");
+
 //                Pair<View, String> p2 = Pair.create((View) view.findViewById(R.id.title_tv), "titleTransition");
 //                Pair<View, String> p3 = Pair.create((View) view.findViewById(R.id.subtitle_tv), "subtitleTransition");
 //        Pair<View, String> p4 = Pair.create((View)view.findViewById(R.id.uploaded_tv), "uploadedTransition");
 
-            ActivityOptionsCompat options = ActivityOptionsCompat.makeSceneTransitionAnimation(getActivity(),
-                    p1);
+//            ActivityOptionsCompat options = ActivityOptionsCompat.makeSceneTransitionAnimation(getActivity(),
+//                    p1);
 
 //                ActivityOptionsCompat options = ActivityOptionsCompat.makeSceneTransitionAnimation(getActivity(),
 //                        p1, p2, p3);
 
 
-            ActivityCompat.startActivity(getActivity(), intent, options.toBundle());
+//            ImageView iv = (ImageView) view.findViewById(R.id.video_thumbnail_iv);
 
-//            startActivity(intent);
+//            ActivityOptionsCompat options = ActivityOptionsCompat.makeSceneTransitionAnimation(getActivity(),
+//                    iv, "videoTransition");
+
+//            ActivityOptionsCompat options = ActivityOptionsCompat.makeSceneTransitionAnimation(
+//                    getActivity(), iv, ViewCompat.getTransitionName(iv));
+
+
+//            ActivityCompat.startActivity(getActivity(), intent, options.toBundle());
+
+            startActivity(intent);
         }
 
     }

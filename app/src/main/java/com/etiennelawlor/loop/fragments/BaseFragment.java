@@ -2,6 +2,7 @@ package com.etiennelawlor.loop.fragments;
 
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.NetworkOnMainThreadException;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.view.View;
@@ -62,14 +63,14 @@ public abstract class BaseFragment extends Fragment {
         for(final Call call : mCalls){
             Timber.d("onDestroyView() : call.cancel() - "+call.toString());
 
-//            try {
-//                call.cancel();
-//            } catch (NetworkOnMainThreadException e){
-//                Timber.d("onDestroyView() : NetworkOnMainThreadException thrown");
-//                e.printStackTrace();
-//            }
+            try {
+                call.cancel();
+            } catch (NetworkOnMainThreadException e){
+                Timber.d("onDestroyView() : NetworkOnMainThreadException thrown");
+                e.printStackTrace();
+            }
 
-            new CancelTask().execute(call);
+//            new CancelTask().execute(call);
 
 //            OkHttpClient client = new OkHttpClient();
 //            client.getDispatcher().getExecutorService().execute(new Runnable() {
