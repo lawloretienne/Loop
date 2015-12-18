@@ -3,6 +3,7 @@ package com.etiennelawlor.loop.network;
 import android.text.TextUtils;
 import android.util.Base64;
 
+import com.etiennelawlor.loop.BuildConfig;
 import com.etiennelawlor.loop.LoopApplication;
 import com.etiennelawlor.loop.models.AccessToken;
 import com.squareup.okhttp.Cache;
@@ -10,6 +11,7 @@ import com.squareup.okhttp.Interceptor;
 import com.squareup.okhttp.OkHttpClient;
 import com.squareup.okhttp.Request;
 import com.squareup.okhttp.Response;
+import com.squareup.okhttp.logging.HttpLoggingInterceptor;
 
 import java.io.File;
 import java.io.IOException;
@@ -53,7 +55,7 @@ public class ServiceGenerator {
         okHttpClient.setConnectTimeout(10, TimeUnit.SECONDS);
         okHttpClient.setReadTimeout(10, TimeUnit.SECONDS);
         okHttpClient.setWriteTimeout(10, TimeUnit.SECONDS);
-//        okHttpClient.interceptors().add(new LoggingInterceptor()); // Add only for debugging purposes
+
         okHttpClient.networkInterceptors().add(new Interceptor() {
             @Override
             public Response intercept(Chain chain) throws IOException {
@@ -81,6 +83,14 @@ public class ServiceGenerator {
             }
         });
 
+        HttpLoggingInterceptor httpLoggingInterceptor = new HttpLoggingInterceptor();
+        if (BuildConfig.DEBUG) {
+            httpLoggingInterceptor.setLevel(HttpLoggingInterceptor.Level.BODY);
+        } else {
+            httpLoggingInterceptor.setLevel(HttpLoggingInterceptor.Level.NONE);
+        }
+        okHttpClient.interceptors().add(httpLoggingInterceptor); // Add only for debugging purposes
+
         sRetrofitBuilder.client(okHttpClient);
         sRetrofitBuilder.baseUrl(baseUrl);
         sRetrofitBuilder.addConverterFactory(GsonConverterFactory.create());
@@ -94,7 +104,7 @@ public class ServiceGenerator {
         okHttpClient.setConnectTimeout(10, TimeUnit.SECONDS);
         okHttpClient.setReadTimeout(10, TimeUnit.SECONDS);
         okHttpClient.setWriteTimeout(10, TimeUnit.SECONDS);
-//        okHttpClient.interceptors().add(new LoggingInterceptor()); // Add only for debugging purposes
+
         okHttpClient.networkInterceptors().add(new Interceptor() {
             @Override
             public Response intercept(Chain chain) throws IOException {
@@ -116,6 +126,13 @@ public class ServiceGenerator {
                 return null;
             }
         });
+
+        HttpLoggingInterceptor httpLoggingInterceptor = new HttpLoggingInterceptor();
+        if (BuildConfig.DEBUG) {
+            httpLoggingInterceptor.setLevel(HttpLoggingInterceptor.Level.BODY);
+        } else {
+            httpLoggingInterceptor.setLevel(HttpLoggingInterceptor.Level.NONE);
+        }        okHttpClient.interceptors().add(httpLoggingInterceptor); // Add only for debugging purposes
 
         sRetrofitBuilder.client(okHttpClient);
         sRetrofitBuilder.baseUrl(baseUrl);
