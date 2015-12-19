@@ -11,7 +11,7 @@ import android.support.v7.widget.RecyclerView;
 import android.util.AttributeSet;
 import android.view.View;
 
-import com.etiennelawlor.loop.utilities.LoopUtility;
+import com.etiennelawlor.loop.utilities.DisplayUtility;
 
 public class DividerItemDecoration extends RecyclerView.ItemDecoration {
 
@@ -103,7 +103,7 @@ public class DividerItemDecoration extends RecyclerView.ItemDecoration {
 
         if (orientation == LinearLayoutManager.VERTICAL) {
             size = mDivider.getIntrinsicHeight();
-            left = parent.getPaddingLeft() + LoopUtility.dp2px(parent.getContext(), 64);
+            left = parent.getPaddingLeft() + DisplayUtility.dp2px(parent.getContext(), 56);
             right = parent.getWidth() - parent.getPaddingRight();
         } else { //horizontal
             size = mDivider.getIntrinsicWidth();
@@ -119,7 +119,7 @@ public class DividerItemDecoration extends RecyclerView.ItemDecoration {
                 top = child.getTop() - params.topMargin - size;
                 bottom = top + size;
             } else { //horizontal
-                left = child.getLeft() - params.leftMargin + LoopUtility.dp2px(parent.getContext(), 64);
+                left = child.getLeft() - params.leftMargin + DisplayUtility.dp2px(parent.getContext(), 56);
                 right = left + size;
             }
 
@@ -136,7 +136,7 @@ public class DividerItemDecoration extends RecyclerView.ItemDecoration {
                     top = child.getBottom() + params.bottomMargin;
                     bottom = top + size;
                 } else { // horizontal
-                    left = child.getRight() + params.rightMargin + LoopUtility.dp2px(parent.getContext(), 64);
+                    left = child.getRight() + params.rightMargin + DisplayUtility.dp2px(parent.getContext(), 56);
                     right = left + size;
                 }
                 mDivider.setBounds(left, top, right, bottom);

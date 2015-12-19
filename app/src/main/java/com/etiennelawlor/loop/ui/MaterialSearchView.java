@@ -23,16 +23,18 @@ import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.etiennelawlor.loop.R;
 import com.etiennelawlor.loop.adapters.SuggestionsAdapter;
 import com.etiennelawlor.loop.otto.BusProvider;
 import com.etiennelawlor.loop.otto.events.FilterClickedEvent;
+import com.etiennelawlor.loop.otto.events.HideSearchSuggestionsEvent;
+import com.etiennelawlor.loop.otto.events.LeftDrawableClickedEvent;
 import com.etiennelawlor.loop.otto.events.SearchPerformedEvent;
 import com.etiennelawlor.loop.otto.events.ShowSearchSuggestionsEvent;
-import com.etiennelawlor.loop.otto.events.LeftDrawableClickedEvent;
 import com.etiennelawlor.loop.realm.RealmUtility;
-import com.etiennelawlor.loop.utilities.LoopUtility;
+import com.etiennelawlor.loop.utilities.DisplayUtility;
 
 import java.util.List;
 
@@ -62,12 +64,13 @@ public class MaterialSearchView extends FrameLayout implements
     // region Member Variables
     private boolean mAreSearchSuggestionsVisible;
     private DividerItemDecoration mDividerItemDecoration;
-    private Integer mLeftDrawableType;
+    private int mLeftDrawableType;
     private String mHintText;
     private int mMarginTop;
     private int mMarginBottom;
     private int mMarginLeft;
     private int mMarginRight;
+    private String mVoicePrompt;
     private SuggestionsAdapter mSuggestionsAdapter = new SuggestionsAdapter();
     private boolean mIsSearchEditTextFocused = false;
 
@@ -107,11 +110,13 @@ public class MaterialSearchView extends FrameLayout implements
             hideSearchSuggestions();
 
             Intent intent = new Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH);
-            intent.putExtra(RecognizerIntent.EXTRA_PROMPT, "Speak now");
+            intent.putExtra(RecognizerIntent.EXTRA_PROMPT, mVoicePrompt);
             intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL, RecognizerIntent.LANGUAGE_MODEL_WEB_SEARCH);
             intent.putExtra(RecognizerIntent.EXTRA_MAX_RESULTS, 1);
 
             ((Activity) ((ContextWrapper) mMicrophoneImageView.getContext()).getBaseContext()).startActivityForResult(intent, REQUEST_VOICE);
+        } else {
+            Toast.makeText(getContext(), "Voice Search is unavailable", Toast.LENGTH_SHORT).show();
         }
     }
 
@@ -175,9 +180,9 @@ public class MaterialSearchView extends FrameLayout implements
             if (!mAreSearchSuggestionsVisible) {
                 showSearchSuggestions();
             }
-            LoopUtility.showKeyboard(getContext(), mSearchEditText);
+            DisplayUtility.showKeyboard(getContext(), mSearchEditText);
         } else {
-            LoopUtility.hideKeyboard(getContext(), mSearchEditText);
+            DisplayUtility.hideKeyboard(getContext(), mSearchEditText);
         }
     }
 
@@ -270,32 +275,30 @@ public class MaterialSearchView extends FrameLayout implements
 
     // region Helper Methods
     private void init(AttributeSet attrs) {
-//        if (isInEditMode()) {
-//            return;
-//        }
+        if (!isInEditMode()) {
+            LayoutInflater.from(getContext()).inflate((R.layout.material_search_view), this, true);
+            ButterKnife.bind(this);
 
-        LayoutInflater.from(getContext()).inflate((R.layout.material_search_view), this, true);
-        ButterKnife.bind(this);
-
-        if (attrs != null) {
-            TypedArray a = getContext().getTheme().obtainStyledAttributes(attrs, R.styleable.MaterialSearchView, 0, 0);
-            try {
-                mLeftDrawableType = a.getInteger(R.styleable.MaterialSearchView_leftDrawableType, 1);
-                mHintText = a.getString(R.styleable.MaterialSearchView_hintText);
-                mMarginTop = a.getDimensionPixelSize(R.styleable.MaterialSearchView_layout_marginTop, 0);
-                mMarginBottom = a.getDimensionPixelSize(R.styleable.MaterialSearchView_layout_marginBottom, 0);
-                mMarginLeft = a.getDimensionPixelSize(R.styleable.MaterialSearchView_layout_marginLeft, 0);
-                mMarginRight = a.getDimensionPixelSize(R.styleable.MaterialSearchView_layout_marginRight, 0);
-
-            } finally {
-                a.recycle();
+            if (attrs != null) {
+                TypedArray a = getContext().getTheme().obtainStyledAttributes(attrs, R.styleable.MaterialSearchView, 0, 0);
+                try {
+                    mLeftDrawableType = a.getInteger(R.styleable.MaterialSearchView_leftDrawableType, 1);
+                    mHintText = a.getString(R.styleable.MaterialSearchView_hintText);
+                    mVoicePrompt = a.getString(R.styleable.MaterialSearchView_voicePrompt);
+                    mMarginTop = a.getDimensionPixelSize(R.styleable.MaterialSearchView_layout_marginTop, 0);
+                    mMarginBottom = a.getDimensionPixelSize(R.styleable.MaterialSearchView_layout_marginBottom, 0);
+                    mMarginLeft = a.getDimensionPixelSize(R.styleable.MaterialSearchView_layout_marginLeft, 0);
+                    mMarginRight = a.getDimensionPixelSize(R.styleable.MaterialSearchView_layout_marginRight, 0);
+                } finally {
+                    a.recycle();
+                }
             }
-        }
 
-        setUpLeftDrawable(false);
-        setUpCardView();
-        setUpHintText();
-        setUpListeners();
+            setUpLeftDrawable(false);
+            setUpCardView();
+            setUpHintText();
+            setUpListeners();
+        }
     }
 
     private void setUpCardView() {
@@ -357,12 +360,13 @@ public class MaterialSearchView extends FrameLayout implements
         }
     }
 
-    public void setLeftDrawableType(int type){
+    public void setLeftDrawableType(int type) {
         mLeftDrawableType = type;
     }
 
     private void setUpHintText() {
-        mSearchEditText.setHint(mHintText);
+        if (mSearchEditText != null)
+            mSearchEditText.setHint(mHintText);
     }
 
     private void showSearchSuggestions() {
@@ -407,6 +411,8 @@ public class MaterialSearchView extends FrameLayout implements
 
         mSearchEditText.clearFocus();
         mAreSearchSuggestionsVisible = false;
+
+        BusProvider.getInstance().post(new HideSearchSuggestionsEvent());
     }
 
     private boolean isVoiceAvailable() {
@@ -427,7 +433,7 @@ public class MaterialSearchView extends FrameLayout implements
         return mSearchEditText.getText().toString();
     }
 
-    public void setHint(String hint){
+    public void setHint(String hint) {
         mSearchEditText.setHint(hint);
     }
 

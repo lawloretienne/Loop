@@ -1,18 +1,13 @@
 package com.etiennelawlor.loop.fragments;
 
-import android.app.SearchManager;
-import android.content.Context;
 import android.os.Bundle;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.support.v7.widget.SearchView;
 import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
-import android.view.Menu;
-import android.view.MenuInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
@@ -21,16 +16,16 @@ import android.widget.TextView;
 import com.etiennelawlor.loop.R;
 import com.etiennelawlor.loop.adapters.CategoriesAdapter;
 import com.etiennelawlor.loop.helper.PreferencesHelper;
+import com.etiennelawlor.loop.models.AccessToken;
 import com.etiennelawlor.loop.network.ServiceGenerator;
 import com.etiennelawlor.loop.network.VimeoService;
-import com.etiennelawlor.loop.models.AccessToken;
 import com.etiennelawlor.loop.network.models.response.CategoriesCollection;
 import com.etiennelawlor.loop.network.models.response.Category;
 import com.etiennelawlor.loop.otto.BusProvider;
 import com.etiennelawlor.loop.ui.GridSpacesItemDecoration;
 import com.etiennelawlor.loop.ui.LoadingImageView;
+import com.etiennelawlor.loop.utilities.DisplayUtility;
 import com.etiennelawlor.loop.utilities.LogUtility;
-import com.etiennelawlor.loop.utilities.LoopUtility;
 
 import java.io.IOException;
 import java.net.SocketTimeoutException;
@@ -180,7 +175,6 @@ public class ExploreFragment extends BaseFragment implements CategoriesAdapter.O
                 VimeoService.BASE_URL,
                 token);
 
-        setHasOptionsMenu(true);
         BusProvider.getInstance().register(this);
     }
 
@@ -208,7 +202,7 @@ public class ExploreFragment extends BaseFragment implements CategoriesAdapter.O
 
         LinearLayoutManager layoutManager = new GridLayoutManager(getActivity(), 2);
         mCategoriesRecyclerView.setLayoutManager(layoutManager);
-        mCategoriesRecyclerView.addItemDecoration(new GridSpacesItemDecoration(LoopUtility.dp2px(getActivity(), 8)));
+        mCategoriesRecyclerView.addItemDecoration(new GridSpacesItemDecoration(DisplayUtility.dp2px(getActivity(), 8)));
 
         mCategoriesAdapter = new CategoriesAdapter();
         mCategoriesAdapter.setOnItemClickListener(this);
@@ -235,21 +229,6 @@ public class ExploreFragment extends BaseFragment implements CategoriesAdapter.O
         BusProvider.getInstance().unregister(this);
     }
     // endregion
-
-    @Override
-    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-        super.onCreateOptionsMenu(menu, inflater);
-
-        inflater.inflate(R.menu.explore_menu, menu);
-
-        // Get the SearchView and set the searchable configuration
-        SearchManager searchManager = (SearchManager) getActivity().getSystemService(Context.SEARCH_SERVICE);
-        SearchView searchView = (SearchView) menu.findItem(R.id.action_search).getActionView();
-
-        // Assumes current activity is the searchable activity
-        searchView.setSearchableInfo(searchManager.getSearchableInfo(getActivity().getComponentName()));
-        searchView.setQueryRefinementEnabled(true);
-    }
 
     // region CategoriesAdapter.OnItemClickListener Methods
     @Override

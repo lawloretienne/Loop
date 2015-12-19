@@ -54,6 +54,7 @@
         app:layout_marginRight="8dp"
         app:layout_marginBottom="8dp"
         app:layout_marginTop="8dp"
-        app:hintText="Search Loop"/>
+        app:hintText="Search Loop"
+        app:voicePrompt="@string/voice_prompt"/>
 
 </android.support.design.widget.CoordinatorLayout>

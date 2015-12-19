@@ -21,6 +21,7 @@ import android.view.ViewGroup;
 import com.etiennelawlor.loop.R;
 import com.etiennelawlor.loop.activities.SearchableActivity;
 import com.etiennelawlor.loop.otto.BusProvider;
+import com.etiennelawlor.loop.otto.events.HideSearchSuggestionsEvent;
 import com.etiennelawlor.loop.otto.events.SearchPerformedEvent;
 import com.etiennelawlor.loop.otto.events.ShowSearchSuggestionsEvent;
 import com.etiennelawlor.loop.realm.RealmUtility;
@@ -170,6 +171,11 @@ public class WatchNowFragment extends BaseFragment {
         String query = event.getQuery();
 
         mMaterialSearchView.addSuggestions(RealmUtility.getSuggestions(query));
+    }
+
+    @Subscribe
+    public void onHideSearchSuggestions(HideSearchSuggestionsEvent event) {
+//        showFAB();
     }
     // endregion
 

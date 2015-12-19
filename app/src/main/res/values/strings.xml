@@ -60,4 +60,6 @@
     <string name="sort_order">Sort order</string>
     <string name="no_videos">No videos</string>
 
+    <string name="voice_prompt">What video are you looking for?</string>
+
 </resources>

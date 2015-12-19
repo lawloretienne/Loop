@@ -3,43 +3,47 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:background="?android:attr/selectableItemBackground"
     android:layout_width="match_parent"
-    android:layout_height="56dp"
-    android:paddingLeft="16dp"
-    android:paddingRight="16dp">
+    android:layout_height="48dp"
+    android:background="?android:attr/selectableItemBackground"
+    android:paddingLeft="12dp"
+    android:paddingRight="12dp">
 
     <ImageView
         android:id="@+id/search_suggest_type_iv"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:src="@drawable/ic_history"
-        android:tint="@color/grey_400"
+        android:layout_centerVertical="true"
+        android:layout_marginLeft="4dp"
         android:contentDescription="@string/content_desc"
-        android:layout_centerVertical="true"/>
+        android:src="@drawable/ic_history"
+        android:tint="@color/grey_400" />
 
     <com.etiennelawlor.loop.ui.CustomFontTextView
         android:id="@+id/suggestion_tv"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_toLeftOf="@+id/search_suggest_complete_iv"
         android:layout_alignParentLeft="true"
+        android:layout_centerVertical="true"
+        android:layout_marginLeft="48dp"
+        android:layout_toLeftOf="@+id/search_suggest_complete_iv"
+        android:ellipsize="end"
+        android:singleLine="true"
         android:textColor="@color/grey_500"
         android:textSize="16sp"
-        android:layout_marginLeft="48dp"
         app:textFont="roboto_regular"
-        tools:text="Suggestion"
-        android:layout_centerVertical="true"/>
+        tools:text="Suggestion" />
 
     <ImageView
         android:id="@+id/search_suggest_complete_iv"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentRight="true"
-        android:src="@drawable/ic_search_suggest_complete"
-        android:tint="@color/grey_400"
-        android:contentDescription="@string/content_desc"
+        android:layout_centerVertical="true"
         android:background="@drawable/ripple"
-        android:layout_centerVertical="true"/>
+        android:contentDescription="@string/content_desc"
+        android:padding="4dp"
+        android:src="@drawable/ic_search_suggest_complete"
+        android:tint="@color/grey_400" />
 
 </RelativeLayout>

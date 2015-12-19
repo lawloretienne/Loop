@@ -48,6 +48,7 @@
             <enum name="avatar" value="3" />
         </attr>
         <attr name="hintText" format="string" />
+        <attr name="voicePrompt" format="string" />
         <attr name="layout_marginTop" format="dimension"/>
         <attr name="layout_marginBottom" format="dimension"/>
         <attr name="layout_marginLeft" format="dimension"/>
