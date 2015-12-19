@@ -4,4 +4,12 @@
     <!--<style name="TabIndicator">-->
         <!--<item name="android:theme">@style/ActionBarThemeOverlay</item>-->
     <!--</style>-->
+
+    <style name="CardViewStyle" parent="android:Widget.TextView">
+        <item name="android:foreground">?android:attr/selectableItemBackground</item>
+        <item name="cardCornerRadius">@dimen/card_corner_radius</item>
+        <item name="cardElevation">@dimen/card_elevation</item>
+        <item name="cardPreventCornerOverlap">false</item>
+        <item name="cardUseCompatPadding">true</item>
+    </style>
 </resources>

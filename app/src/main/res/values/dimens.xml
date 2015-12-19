@@ -24,5 +24,8 @@
 
     <dimen name="msv_margin">72dp</dimen>
 
+    <dimen name="card_corner_radius">2dp</dimen>
+    <dimen name="card_elevation">2dp</dimen>
+
 
 </resources>

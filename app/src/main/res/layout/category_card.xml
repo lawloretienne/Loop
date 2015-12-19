@@ -2,63 +2,59 @@
 <android.support.v7.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    style="@style/CardViewStyle"
     android:layout_width="match_parent"
     android:layout_height="wrap_content">
 
     <FrameLayout
-        android:id="@+id/category_card_root_fl"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:foreground="?android:attr/selectableItemBackground">
+        android:foreground="@color/transparent_black_twenty">
 
-        <FrameLayout
+        <com.etiennelawlor.loop.ui.DynamicHeightImageView
+            android:id="@+id/thumbnail_iv"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:foreground="@color/transparent_black_twenty">
-
-            <com.etiennelawlor.loop.ui.DynamicHeightImageView
-                android:id="@+id/thumbnail_iv"
-                android:scaleType="centerCrop"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"/>
-        </FrameLayout>
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:layout_centerInParent="true">
-
-            <View android:layout_width="match_parent"
-                android:layout_height="1dp"
-                android:layout_marginLeft="40dp"
-                android:layout_marginRight="40dp"
-                android:background="@color/transparent_white_fifty"/>
-
-            <TextView
-                android:id="@+id/title_tv"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:gravity="center"
-                tools:text="@string/comedy"
-                android:textColor="@android:color/white"
-                android:textSize="16sp"
-                android:textAllCaps="true"
-                android:layout_marginTop="8dp"
-                android:layout_marginBottom="8dp"
-                android:shadowDy="1"
-                android:shadowDx="1"
-                android:shadowRadius="8"
-                android:shadowColor="@color/transparent_black_ninty_five"/>
-
-            <View android:layout_width="match_parent"
-                android:layout_height="1dp"
-                android:layout_marginLeft="40dp"
-                android:layout_marginRight="40dp"
-                android:background="@color/transparent_white_fifty"/>
-
-        </LinearLayout>
-
+            android:layout_height="match_parent"
+            android:scaleType="centerCrop" />
     </FrameLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true"
+        android:layout_gravity="center"
+        android:orientation="vertical">
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:layout_marginLeft="40dp"
+            android:layout_marginRight="40dp"
+            android:background="@color/transparent_white_fifty" />
+
+        <TextView
+            android:id="@+id/title_tv"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="8dp"
+            android:layout_marginTop="8dp"
+            android:gravity="center"
+            android:shadowColor="@color/transparent_black_ninty_five"
+            android:shadowDx="1"
+            android:shadowDy="1"
+            android:shadowRadius="8"
+            android:textAllCaps="true"
+            android:textColor="@android:color/white"
+            android:textSize="16sp"
+            tools:text="@string/comedy" />
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:layout_marginLeft="40dp"
+            android:layout_marginRight="40dp"
+            android:background="@color/transparent_white_fifty" />
+
+    </LinearLayout>
 
 </android.support.v7.widget.CardView>

@@ -105,7 +105,7 @@ public class CategoriesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
 
         final CategoryViewHolder holder = new CategoryViewHolder(v);
 
-        holder.mCategoryCardRootFrameLayout.setOnClickListener(new View.OnClickListener() {
+        holder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 int adapterPos = holder.getAdapterPosition();
@@ -174,8 +174,6 @@ public class CategoriesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
         DynamicHeightImageView mVideoThumbnailImageView;
         @Bind(R.id.title_tv)
         TextView mTitleTextView;
-        @Bind(R.id.category_card_root_fl)
-        FrameLayout mCategoryCardRootFrameLayout;
 
         public CategoryViewHolder(View view) {
             super(view);

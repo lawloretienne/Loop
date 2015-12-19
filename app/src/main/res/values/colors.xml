@@ -48,6 +48,8 @@
     <color name="transparent_white_ninty_five">#F2FFFFFF</color>
 
 
+    <color name="fifty_percent_transparency_grey_400">#80bdbdbd</color>
+
     <!-- Light Theme -->
     <color name="search_light_background">#ffffffff</color>
     <color name="search_light_icon">#ff616161</color>
