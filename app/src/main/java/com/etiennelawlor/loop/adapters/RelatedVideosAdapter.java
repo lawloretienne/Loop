@@ -1,6 +1,8 @@
 package com.etiennelawlor.loop.adapters;
 
+import android.content.res.ColorStateList;
 import android.graphics.Typeface;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
@@ -13,6 +15,9 @@ import android.widget.TextView;
 import com.bumptech.glide.Glide;
 import com.etiennelawlor.loop.LoopApplication;
 import com.etiennelawlor.loop.R;
+import com.etiennelawlor.loop.network.models.response.Interaction;
+import com.etiennelawlor.loop.network.models.response.Interactions;
+import com.etiennelawlor.loop.network.models.response.Metadata;
 import com.etiennelawlor.loop.network.models.response.Pictures;
 import com.etiennelawlor.loop.network.models.response.Size;
 import com.etiennelawlor.loop.network.models.response.Stats;
@@ -56,8 +61,14 @@ public class RelatedVideosAdapter extends RecyclerView.Adapter<RecyclerView.View
     private Video mVideo;
     private List<Video> mVideos;
     private OnItemClickListener mOnItemClickListener;
+    private OnLikeClickListener mOnLikeClickListener;
+    private OnWatchLaterClickListener mOnWatchLaterClickListener;
+    private OnCommentsClickListener mOnCommentsClickListener;
+    private OnInfoClickListener mOnInfoClickListener;
     private boolean mIsLoadingFooterAdded = false;
     private Typeface mBoldFont;
+    private boolean mIsLikeOn = false;
+    private boolean mIsWatchLaterOn = false;
     // endregion
 
     // region Listeners
@@ -66,6 +77,22 @@ public class RelatedVideosAdapter extends RecyclerView.Adapter<RecyclerView.View
     // region Interfaces
     public interface OnItemClickListener {
         void onItemClick(int position, View view);
+    }
+
+    public interface OnLikeClickListener {
+        void onLikeClick(ImageView imageView);
+    }
+
+    public interface OnWatchLaterClickListener {
+        void onWatchLaterClick(ImageView imageView);
+    }
+
+    public interface OnCommentsClickListener {
+        void onCommentsClick();
+    }
+
+    public interface OnInfoClickListener {
+        void onInfoClick(ImageView imageView);
     }
     // endregion
 
@@ -200,9 +227,70 @@ public class RelatedVideosAdapter extends RecyclerView.Adapter<RecyclerView.View
         this.mOnItemClickListener = onItemClickListener;
     }
 
+
+    public void setOnLikeClickListener(OnLikeClickListener onLikeClickListener) {
+        this.mOnLikeClickListener = onLikeClickListener;
+    }
+
+    public void setOnWatchLaterClickListener(OnWatchLaterClickListener onWatchLaterClickListener) {
+        this.mOnWatchLaterClickListener = onWatchLaterClickListener;
+    }
+
+    public void setOnCommentsClickListener(OnCommentsClickListener onCommentsClickListener) {
+        this.mOnCommentsClickListener = onCommentsClickListener;
+    }
+
+    public void setOnInfoClickListener(OnInfoClickListener onInfoClickListener) {
+        this.mOnInfoClickListener = onInfoClickListener;
+    }
+
     private RecyclerView.ViewHolder createHeaderViewHolder(ViewGroup parent){
         View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.video_info, parent, false);
-        return new HeaderViewHolder(v);
+        final HeaderViewHolder holder = new HeaderViewHolder(v);
+
+        holder.mLikeImageView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(mOnLikeClickListener != null){
+                    mOnLikeClickListener.onLikeClick(holder.mLikeImageView);
+                }
+            }
+        });
+
+        holder.mWatchLaterImageView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(mOnWatchLaterClickListener != null){
+                    mOnWatchLaterClickListener.onWatchLaterClick(holder.mWatchLaterImageView);
+                }
+            }
+        });
+
+        holder.mCommentsImageView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(mOnCommentsClickListener != null){
+                    mOnCommentsClickListener.onCommentsClick();
+                }
+            }
+        });
+
+        holder.mInfoImageView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(mOnInfoClickListener != null){
+                    mOnInfoClickListener.onInfoClick(holder.mInfoImageView);
+                    int visibility = holder.mAdditionalInfoLinearLayout.getVisibility();
+                    if(visibility == View.VISIBLE){
+                        holder.mAdditionalInfoLinearLayout.setVisibility(View.GONE);
+                    } else if(visibility == View.GONE){
+                        holder.mAdditionalInfoLinearLayout.setVisibility(View.VISIBLE);
+                    }
+                }
+            }
+        });
+
+        return holder;
     }
 
     private RecyclerView.ViewHolder createVideoViewHolder(ViewGroup parent) {
@@ -235,6 +323,8 @@ public class RelatedVideosAdapter extends RecyclerView.Adapter<RecyclerView.View
         if(mVideo != null){
             setUpTitle(holder.mTitleTextView, mVideo);
             setUpSubtitle(holder.mSubtitleTextView, mVideo);
+            setUpLike(holder.mLikeImageView, mVideo);
+            setUpWatchLater(holder.mWatchLaterImageView, mVideo);
             setUpUserImage(holder.mUserImageView, mVideo);
             setUpDescription(holder.mDescriptionTextView, mVideo);
             setUpViewCount(holder.mViewCountTextView, mVideo);
@@ -278,6 +368,48 @@ public class RelatedVideosAdapter extends RecyclerView.Adapter<RecyclerView.View
             }
         }
     }
+
+    private void setUpLike(ImageView iv, Video video){
+        Metadata metadata = video.getMetadata();
+        if (metadata != null) {
+            Interactions interactions = metadata.getInteractions();
+            if (interactions != null) {
+                Interaction likeInteraction = interactions.getLike();
+
+                if (likeInteraction != null) {
+                    if (likeInteraction.getAdded()) {
+                        setIsLikeOn(true);
+                        iv.setImageTintList(ColorStateList.valueOf(ContextCompat.getColor(iv.getContext(), R.color.accent)));
+                    }
+                }
+            }
+        }
+    }
+
+    private void setUpWatchLater(ImageView iv, Video video){
+        Metadata metadata = video.getMetadata();
+        if (metadata != null) {
+            Interactions interactions = metadata.getInteractions();
+            if (interactions != null) {
+                Interaction watchLaterInteraction = interactions.getWatchlater();
+
+                if (watchLaterInteraction != null) {
+                    if (watchLaterInteraction.getAdded()) {
+                        setIsWatchLaterOn(true);
+                        iv.setImageTintList(ColorStateList.valueOf(ContextCompat.getColor(iv.getContext(), R.color.accent)));
+                    }
+                }
+            }
+        }
+    }
+
+    public boolean isLikeOn() {return mIsLikeOn; }
+
+    public void setIsLikeOn(boolean isLikeOn) { mIsLikeOn = isLikeOn; }
+
+    public boolean isWatchLaterOn() {return mIsWatchLaterOn; }
+
+    public void setIsWatchLaterOn(boolean isWatchLaterOn) { mIsWatchLaterOn = isWatchLaterOn; }
 
     private void setUpVideoThumbnail(ImageView iv, Video video) {
         Pictures pictures = video.getPictures();
@@ -520,6 +652,14 @@ public class RelatedVideosAdapter extends RecyclerView.Adapter<RecyclerView.View
         TextView mViewCountTextView;
         @Bind(R.id.upload_date_tv)
         TextView mUploadDateTextView;
+        @Bind(R.id.like_iv)
+        ImageView mLikeImageView;
+        @Bind(R.id.watch_later_iv)
+        ImageView mWatchLaterImageView;
+        @Bind(R.id.comments_iv)
+        ImageView mCommentsImageView;
+        @Bind(R.id.info_iv)
+        ImageView mInfoImageView;
         @Bind(R.id.htv)
         HashtagView mHashtagView;
         @Bind(R.id.description_tv)
