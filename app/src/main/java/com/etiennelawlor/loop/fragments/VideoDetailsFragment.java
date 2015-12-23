@@ -648,6 +648,9 @@ public class VideoDetailsFragment extends BaseFragment implements RelatedVideosA
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
+        // Retain this fragment across configuration changes.
+        setRetainInstance(true);
+
         if (getArguments() != null) {
             mVideo = (Video) getArguments().get("video");
 //            mTransitionName = getArguments().getString("TRANSITION_KEY");

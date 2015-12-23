@@ -170,8 +170,6 @@ public class CommentsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
             Timber.e("");
         }
 
-        Timber.d(String.format("createdOn - %s : commentData - %s", createdOn, commentDate));
-
         tv.setText(commentDate);
     }
 

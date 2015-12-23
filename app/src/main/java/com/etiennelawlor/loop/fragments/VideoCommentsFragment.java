@@ -204,7 +204,7 @@ public class VideoCommentsFragment extends BaseFragment implements CommentsAdapt
                         Timber.e("onFailure() : Canceled");
                     } else {
                         mIsLoading = false;
-                        mLoadingImageView.setVisibility(View.GONE);
+//                        mLoadingImageView.setVisibility(View.GONE);
                     }
                 }
             }
@@ -411,7 +411,6 @@ public class VideoCommentsFragment extends BaseFragment implements CommentsAdapt
     // region Factory Methods
     public static VideoCommentsFragment newInstance(Bundle extras) {
         VideoCommentsFragment fragment = new VideoCommentsFragment();
-
         fragment.setArguments(extras);
         return fragment;
     }
@@ -425,6 +424,10 @@ public class VideoCommentsFragment extends BaseFragment implements CommentsAdapt
     @Override
     public void onCreate(Bundle bundle) {
         super.onCreate(bundle);
+
+        // Retain this fragment across configuration changes.
+        setRetainInstance(true);
+
         BusProvider.getInstance().register(this);
         if (getArguments() != null) {
             mVideo = (Video) getArguments().get("video");

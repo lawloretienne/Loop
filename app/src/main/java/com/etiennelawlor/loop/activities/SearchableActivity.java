@@ -8,6 +8,7 @@ import android.view.MenuItem;
 
 import com.etiennelawlor.loop.R;
 import com.etiennelawlor.loop.fragments.SearchableFragment;
+import com.etiennelawlor.loop.fragments.VideoCommentsFragment;
 import com.etiennelawlor.loop.otto.BusProvider;
 import com.etiennelawlor.loop.otto.events.LeftDrawableClickedEvent;
 import com.google.android.gms.actions.SearchIntents;
@@ -30,10 +31,19 @@ public class SearchableActivity extends AppCompatActivity {
 
         if (Intent.ACTION_SEARCH.equals(getIntent().getAction())
                 ||  SearchIntents.ACTION_SEARCH.equals(getIntent().getAction())) {
-            getSupportFragmentManager()
-                    .beginTransaction()
-                    .add(R.id.content_fl, SearchableFragment.newInstance(getIntent().getExtras()), "")
-                    .commit();
+            Fragment fragment = getSupportFragmentManager().findFragmentById(R.id.content_fl);
+            if(fragment == null){
+                fragment = SearchableFragment.newInstance(getIntent().getExtras());
+                getSupportFragmentManager()
+                        .beginTransaction()
+                        .replace(R.id.content_fl, fragment, "")
+                        .commit();
+            } else {
+                getSupportFragmentManager()
+                        .beginTransaction()
+                        .attach(fragment)
+                        .commit();
+            }
         }
 
         BusProvider.getInstance().register(this);

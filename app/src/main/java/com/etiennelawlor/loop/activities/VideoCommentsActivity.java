@@ -1,11 +1,13 @@
 package com.etiennelawlor.loop.activities;
 
 import android.os.Bundle;
+import android.support.v4.app.Fragment;
 import android.support.v7.app.AppCompatActivity;
 import android.view.MenuItem;
 
 import com.etiennelawlor.loop.R;
 import com.etiennelawlor.loop.fragments.VideoCommentsFragment;
+import com.etiennelawlor.loop.fragments.VideoPlayerFragment;
 
 import butterknife.ButterKnife;
 
@@ -24,10 +26,19 @@ public class VideoCommentsActivity extends AppCompatActivity {
         setContentView(R.layout.activity_video_comments);
         ButterKnife.bind(this);
 
-        getSupportFragmentManager()
-                .beginTransaction()
-                .add(android.R.id.content, VideoCommentsFragment.newInstance(getIntent().getExtras()), "")
-                .commit();
+        Fragment fragment = getSupportFragmentManager().findFragmentById(android.R.id.content);
+        if(fragment == null){
+            fragment = VideoCommentsFragment.newInstance(getIntent().getExtras());
+            getSupportFragmentManager()
+                    .beginTransaction()
+                    .replace(android.R.id.content, fragment, "")
+                    .commit();
+        } else {
+            getSupportFragmentManager()
+                    .beginTransaction()
+                    .attach(fragment)
+                    .commit();
+        }
     }
 
     @Override

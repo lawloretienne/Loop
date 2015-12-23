@@ -315,6 +315,9 @@ public class SearchableFragment extends BaseFragment implements VideosAdapter.On
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
+        // Retain this fragment across configuration changes.
+        setRetainInstance(true);
+
         if(getArguments() != null){
             mQuery = getArguments().getString(SearchManager.QUERY);
 

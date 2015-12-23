@@ -143,7 +143,8 @@ public class VideoPlayerFragment extends BaseFragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        // retain this fragment
+
+        // Retain this fragment across configuration changes.
         setRetainInstance(true);
 
         BusProvider.getInstance().register(this);

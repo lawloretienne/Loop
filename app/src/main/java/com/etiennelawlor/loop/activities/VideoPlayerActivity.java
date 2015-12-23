@@ -30,7 +30,7 @@ public class VideoPlayerActivity extends AppCompatActivity {
             fragment = VideoPlayerFragment.newInstance(getIntent().getExtras());
             getSupportFragmentManager()
                     .beginTransaction()
-                    .add(R.id.content_fl, fragment, "")
+                    .replace(R.id.content_fl, fragment, "")
                     .commit();
         } else {
             getSupportFragmentManager()
