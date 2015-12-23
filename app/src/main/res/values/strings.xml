@@ -59,7 +59,9 @@
     <string name="sort_by">Sort by</string>
     <string name="sort_order">Sort order</string>
     <string name="no_videos">No videos</string>
+    <string name="comments">Comments</string>
 
     <string name="voice_prompt">What video are you looking for?</string>
+    <string name="leave_a_comment">Leave a comment here</string>
 
 </resources>

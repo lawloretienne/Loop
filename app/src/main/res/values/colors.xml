@@ -49,6 +49,7 @@
 
 
     <color name="fifty_percent_transparency_grey_400">#80bdbdbd</color>
+    <color name="fifty_percent_transparency_teal_500">#80009688</color>
 
     <!-- Light Theme -->
     <color name="search_light_background">#ffffffff</color>

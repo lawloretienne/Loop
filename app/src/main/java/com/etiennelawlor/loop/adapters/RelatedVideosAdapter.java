@@ -379,7 +379,7 @@ public class RelatedVideosAdapter extends RecyclerView.Adapter<RecyclerView.View
                 if (likeInteraction != null) {
                     if (likeInteraction.getAdded()) {
                         setIsLikeOn(true);
-                        iv.setImageTintList(ColorStateList.valueOf(ContextCompat.getColor(iv.getContext(), R.color.accent)));
+                        iv.setImageResource(R.drawable.ic_like_on);
                     }
                 }
             }
@@ -396,7 +396,7 @@ public class RelatedVideosAdapter extends RecyclerView.Adapter<RecyclerView.View
                 if (watchLaterInteraction != null) {
                     if (watchLaterInteraction.getAdded()) {
                         setIsWatchLaterOn(true);
-                        iv.setImageTintList(ColorStateList.valueOf(ContextCompat.getColor(iv.getContext(), R.color.accent)));
+                        iv.setImageResource(R.drawable.ic_watch_later_on);
                     }
                 }
             }

@@ -46,6 +46,8 @@ public class DateUtility {
             relativeDate = "1 month ago";
         } else if ((days / 30) >= 2 && (days / 30) < 12) {
             relativeDate = String.format("%d months ago", (days / 30));
+        } else if ((days / 365) == 1) {
+            relativeDate = "1 year ago";
         } else if ((days / 365) > 1) {
             relativeDate = String.format("%d years ago", (days / 365));
         }

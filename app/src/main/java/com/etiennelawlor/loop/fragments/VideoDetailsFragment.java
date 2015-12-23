@@ -4,12 +4,10 @@ import android.app.Activity;
 import android.app.SearchManager;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.res.ColorStateList;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityOptionsCompat;
-import android.support.v4.content.ContextCompat;
 import android.support.v4.util.Pair;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AlertDialog;
@@ -30,6 +28,7 @@ import com.bumptech.glide.Glide;
 import com.etiennelawlor.loop.EventMapKeys;
 import com.etiennelawlor.loop.EventNames;
 import com.etiennelawlor.loop.R;
+import com.etiennelawlor.loop.activities.VideoCommentsActivity;
 import com.etiennelawlor.loop.activities.SearchableActivity;
 import com.etiennelawlor.loop.activities.VideoDetailsActivity;
 import com.etiennelawlor.loop.activities.VideoPlayerActivity;
@@ -37,9 +36,9 @@ import com.etiennelawlor.loop.adapters.RelatedVideosAdapter;
 import com.etiennelawlor.loop.analytics.Event;
 import com.etiennelawlor.loop.analytics.EventLogger;
 import com.etiennelawlor.loop.helper.PreferencesHelper;
+import com.etiennelawlor.loop.models.AccessToken;
 import com.etiennelawlor.loop.network.ServiceGenerator;
 import com.etiennelawlor.loop.network.VimeoService;
-import com.etiennelawlor.loop.models.AccessToken;
 import com.etiennelawlor.loop.network.models.response.Pictures;
 import com.etiennelawlor.loop.network.models.response.Size;
 import com.etiennelawlor.loop.network.models.response.Video;
@@ -827,7 +826,7 @@ public class VideoDetailsFragment extends BaseFragment implements RelatedVideosA
             alertDialogBuilder.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
                 public void onClick(DialogInterface dialog, int whichButton) {
                     mRelatedVideosAdapter.setIsLikeOn(false);
-                    imageView.setImageTintList(ColorStateList.valueOf(ContextCompat.getColor(getActivity(), R.color.grey_400)));
+                    imageView.setImageResource(R.drawable.ic_like_off);
 
                     Call unlikeVideoCall = mVimeoService.unlikeVideo(String.valueOf(mVideoId));
                     mCalls.add(unlikeVideoCall);
@@ -842,7 +841,7 @@ public class VideoDetailsFragment extends BaseFragment implements RelatedVideosA
             alertDialogBuilder.show();
         } else {
             mRelatedVideosAdapter.setIsLikeOn(true);
-            imageView.setImageTintList(ColorStateList.valueOf(ContextCompat.getColor(getActivity(), R.color.accent)));
+            imageView.setImageResource(R.drawable.ic_like_on);
 
             Call likeVideoCall = mVimeoService.likeVideo(String.valueOf(mVideoId));
             mCalls.add(likeVideoCall);
@@ -860,7 +859,7 @@ public class VideoDetailsFragment extends BaseFragment implements RelatedVideosA
             alertDialogBuilder.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
                 public void onClick(DialogInterface dialog, int whichButton) {
                     mRelatedVideosAdapter.setIsWatchLaterOn(false);
-                    imageView.setImageTintList(ColorStateList.valueOf(ContextCompat.getColor(getActivity(), R.color.grey_400)));
+                    imageView.setImageResource(R.drawable.ic_watch_later_off);
 
                     Call removeVideoFromWatchLaterCall = mVimeoService.removeVideoFromWatchLater(String.valueOf(mVideoId));
                     mCalls.add(removeVideoFromWatchLaterCall);
@@ -875,7 +874,7 @@ public class VideoDetailsFragment extends BaseFragment implements RelatedVideosA
             alertDialogBuilder.show();
         } else {
             mRelatedVideosAdapter.setIsWatchLaterOn(true);
-            imageView.setImageTintList(ColorStateList.valueOf(ContextCompat.getColor(getActivity(), R.color.accent)));
+            imageView.setImageResource(R.drawable.ic_watch_later_on);
 
             Call addVideoToWatchLaterCall = mVimeoService.addVideoToWatchLater(String.valueOf(mVideoId));
             mCalls.add(addVideoToWatchLaterCall);
@@ -888,6 +887,13 @@ public class VideoDetailsFragment extends BaseFragment implements RelatedVideosA
     @Override
     public void onCommentsClick() {
 
+        Intent intent = new Intent(getActivity(), VideoCommentsActivity.class);
+
+        Bundle bundle = new Bundle();
+        bundle.putParcelable("video", mVideo);
+        intent.putExtras(bundle);
+
+        startActivity(intent);
     }
     // endregion
 

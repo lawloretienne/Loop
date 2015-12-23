@@ -56,7 +56,7 @@
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:padding="16dp">
+        android:padding="12dp">
 
         <ImageView
             android:id="@+id/like_iv"
@@ -64,8 +64,7 @@
             android:layout_height="wrap_content"
             android:background="@drawable/ripple"
             android:padding="4dp"
-            android:src="@drawable/ic_menu_like_off"
-            android:tint="@color/grey_400" />
+            android:src="@drawable/ic_like_off" />
 
         <ImageView
             android:id="@+id/watch_later_iv"
@@ -75,8 +74,7 @@
             android:layout_toRightOf="@id/like_iv"
             android:background="@drawable/ripple"
             android:padding="4dp"
-            android:src="@drawable/ic_menu_watch_later_off"
-            android:tint="@color/grey_400" />
+            android:src="@drawable/ic_watch_later_off" />
 
         <ImageView
             android:id="@+id/comments_iv"

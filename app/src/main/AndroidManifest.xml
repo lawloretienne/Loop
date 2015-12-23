@@ -50,6 +50,10 @@
             android:theme="@style/Theme.Loop.VideoPlayerActivity">
         </activity>
         <activity
+            android:name=".activities.VideoCommentsActivity"
+            android:label="@string/comments">
+        </activity>
+        <activity
             android:name=".activities.SearchableActivity" >
             <intent-filter>
                 <action android:name="android.intent.action.SEARCH" />

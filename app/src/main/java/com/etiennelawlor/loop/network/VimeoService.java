@@ -1,11 +1,15 @@
 package com.etiennelawlor.loop.network;
 
+import com.etiennelawlor.loop.network.models.request.CommentPost;
 import com.etiennelawlor.loop.network.models.response.CategoriesCollection;
+import com.etiennelawlor.loop.network.models.response.Comment;
+import com.etiennelawlor.loop.network.models.response.CommentsCollection;
 import com.etiennelawlor.loop.network.models.response.OAuthResponse;
 import com.etiennelawlor.loop.network.models.response.VideosCollection;
 
 import retrofit.Call;
 //import retrofit.Response;
+import retrofit.http.Body;
 import retrofit.http.DELETE;
 import retrofit.http.Field;
 import retrofit.http.FormUrlEncoded;
@@ -42,6 +46,17 @@ public interface VimeoService {
                              @Query("direction") String direction,
                              @Query("page") Integer page,
                              @Query("per_page") Integer perPage);
+
+    @GET("/videos/{videoId}/comments")
+    Call<CommentsCollection> getComments(@Path("videoId") Long videoId,
+                                         @Query("sort") String sort,
+                                         @Query("direction") String direction,
+                                         @Query("page") Integer page,
+                                         @Query("per_page") Integer perPage);
+
+    @POST("/videos/{videoId}/comments")
+    Call<Comment> addComment(@Path("videoId") Long videoId,
+                             @Body CommentPost commentPost);
 
     @GET("/videos/{videoId}/videos?filter=related")
     Call<VideosCollection> findRelatedVideos( @Path("videoId") Long videoId,
