@@ -72,6 +72,15 @@
             android:layout_above="@id/divider_v"
             android:layout_marginTop="?attr/actionBarSize" />
 
+        <com.etiennelawlor.loop.ui.LoadingImageView
+            android:id="@+id/loading_iv"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:src="@drawable/ic_loop_loading"
+            app:anim_auto_start="true"
+            app:mask_color="?colorAccent" />
+
     </RelativeLayout>
 
 </android.support.design.widget.CoordinatorLayout>

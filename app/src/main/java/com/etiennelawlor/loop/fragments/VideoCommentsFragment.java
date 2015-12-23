@@ -35,6 +35,7 @@ import com.etiennelawlor.loop.network.models.response.CommentsCollection;
 import com.etiennelawlor.loop.network.models.response.User;
 import com.etiennelawlor.loop.network.models.response.Video;
 import com.etiennelawlor.loop.otto.BusProvider;
+import com.etiennelawlor.loop.ui.LoadingImageView;
 import com.etiennelawlor.loop.utilities.LogUtility;
 
 import java.io.IOException;
@@ -86,6 +87,8 @@ public class VideoCommentsFragment extends BaseFragment implements CommentsAdapt
     RecyclerView mCommentsRecyclerView;
     @Bind(R.id.toolbar)
     Toolbar mToolbar;
+    @Bind(R.id.loading_iv)
+    LoadingImageView mLoadingImageView;
     // endregion
 
     // region Listeners
@@ -138,7 +141,7 @@ public class VideoCommentsFragment extends BaseFragment implements CommentsAdapt
         @Override
         public void onResponse(Response<CommentsCollection> response, Retrofit retrofit) {
             Timber.d("onResponse()");
-//            mLoadingImageView.setVisibility(View.GONE);
+            mLoadingImageView.setVisibility(View.GONE);
             mIsLoading = false;
 
             if (response != null) {
@@ -192,7 +195,7 @@ public class VideoCommentsFragment extends BaseFragment implements CommentsAdapt
                 if (t instanceof SocketTimeoutException || t instanceof UnknownHostException) {
                     Timber.e("Timeout occurred");
                     mIsLoading = false;
-//                    mLoadingImageView.setVisibility(View.GONE);
+                    mLoadingImageView.setVisibility(View.GONE);
 //
 //                    mErrorTextView.setText("Can't load data.\nCheck your network connection.");
 //                    mErrorLinearLayout.setVisibility(View.VISIBLE);
@@ -201,7 +204,7 @@ public class VideoCommentsFragment extends BaseFragment implements CommentsAdapt
                         Timber.e("onFailure() : Canceled");
                     } else {
                         mIsLoading = false;
-//                        mLoadingImageView.setVisibility(View.GONE);
+                        mLoadingImageView.setVisibility(View.GONE);
                     }
                 }
             }
@@ -218,9 +221,11 @@ public class VideoCommentsFragment extends BaseFragment implements CommentsAdapt
 
             if (response != null) {
                 if(response.isSuccess()){
+                    List<Comment> comments = new ArrayList<>();
                     Comment comment = response.body();
                     if(comment != null){
-                        mCommentsAdapter.add(comment);
+                        comments.add(comment);
+                        mCommentsAdapter.addAll(comments);
                     }
                 } else {
                     com.squareup.okhttp.Response rawResponse = response.raw();
