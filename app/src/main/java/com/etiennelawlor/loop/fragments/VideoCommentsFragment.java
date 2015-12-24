@@ -4,6 +4,7 @@ import android.content.DialogInterface;
 import android.content.res.ColorStateList;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.annotation.Nullable;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AlertDialog;
@@ -14,6 +15,7 @@ import android.support.v7.widget.Toolbar;
 import android.text.Editable;
 import android.text.TextUtils;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -65,15 +67,16 @@ public class VideoCommentsFragment extends BaseFragment implements CommentsAdapt
 
     //region Member Variables
     private CommentsAdapter mCommentsAdapter;
-    private boolean mCommentChangeMade = false;
     private VimeoService mVimeoService;
-    private String mSortByValue = "date";
-    private String mSortOrderValue = "desc";
-    private int mCurrentPage = 1;
     private Video mVideo;
+    private CommentsCollection mCommentsCollection;
+    private int mCurrentPage = 1;
     private Long mVideoId = -1L;
+    private boolean mCommentChangeMade = false;
     private boolean mIsLoading = false;
     private boolean mIsLastPage = false;
+    private String mSortByValue = "date";
+    private String mSortOrderValue = "desc";
 
     @Bind(R.id.comment_et)
     EditText mCommentEditText;
@@ -146,18 +149,9 @@ public class VideoCommentsFragment extends BaseFragment implements CommentsAdapt
 
             if (response != null) {
                 if(response.isSuccess()){
-                    CommentsCollection commentsCollection = response.body();
-                    if(commentsCollection != null){
-                        List<Comment> comments = commentsCollection.getComments();
-                        if (comments != null && comments.size()>0) {
-                            mCommentsAdapter.addAll(comments);
-
-                            if(comments.size() >= PAGE_SIZE){
-//                            mCommentsAdapter.addLoading();
-                            } else {
-                                mIsLastPage = true;
-                            }
-                        }
+                    mCommentsCollection = response.body();
+                    if(mCommentsCollection != null){
+                        loadComments();
                     }
                 } else {
                     com.squareup.okhttp.Response rawResponse = response.raw();
@@ -451,6 +445,7 @@ public class VideoCommentsFragment extends BaseFragment implements CommentsAdapt
     @Override
     public void onViewCreated(final View view, Bundle bundle) {
         super.onViewCreated(view, bundle);
+
         ((AppCompatActivity) getActivity()).setSupportActionBar(mToolbar);
 
         ActionBar actionBar = ((AppCompatActivity) getActivity()).getSupportActionBar();
@@ -479,19 +474,24 @@ public class VideoCommentsFragment extends BaseFragment implements CommentsAdapt
 
         mCommentsRecyclerView.smoothScrollToPosition(mCommentsAdapter.getItemCount());
 
-        Timber.d("");
-        String uri = mVideo.getUri();
-        if (!TextUtils.isEmpty(uri)) {
-            String lastPathSegment = Uri.parse(uri).getLastPathSegment();
-            mVideoId = Long.parseLong(lastPathSegment);
+        if(mCommentsCollection != null){
+            loadComments();
+        } else {
+            String uri = mVideo.getUri();
+            if (!TextUtils.isEmpty(uri)) {
+                mLoadingImageView.setVisibility(View.VISIBLE);
 
-            Call getCommentsCall = mVimeoService.getComments(mVideoId,
-                mSortByValue,
-                mSortOrderValue,
-                mCurrentPage,
-                PAGE_SIZE);
-            mCalls.add(getCommentsCall);
-            getCommentsCall.enqueue(mGetCommentsFirstFetchCallback);
+                String lastPathSegment = Uri.parse(uri).getLastPathSegment();
+                mVideoId = Long.parseLong(lastPathSegment);
+
+                Call getCommentsCall = mVimeoService.getComments(mVideoId,
+                        mSortByValue,
+                        mSortOrderValue,
+                        mCurrentPage,
+                        PAGE_SIZE);
+                mCalls.add(getCommentsCall);
+                getCommentsCall.enqueue(mGetCommentsFirstFetchCallback);
+            }
         }
     }
 
@@ -503,6 +503,7 @@ public class VideoCommentsFragment extends BaseFragment implements CommentsAdapt
     @Override
     public void onDestroyView() {
         super.onDestroyView();
+
         removeListeners();
         ButterKnife.unbind(this);
     }
@@ -525,13 +526,6 @@ public class VideoCommentsFragment extends BaseFragment implements CommentsAdapt
     }
     // endregion
 
-    @Override
-    public void onSaveInstanceState(Bundle outState) {
-//        outState.putParcelable(ExtraName.product.name(), mProduct);
-
-        super.onSaveInstanceState(outState);
-    }
-
     // region CommentsAdapter.OnItemLongClickListener Methods
     @Override
     public void onItemLongClick(final int position) {
@@ -540,7 +534,6 @@ public class VideoCommentsFragment extends BaseFragment implements CommentsAdapt
             User user = comment.getUser();
             AuthorizedUser authorizedUser = PreferencesHelper.getAuthorizedUser(getActivity());
 
-//            com.biggu.shopsavvy.web.orm.User loggedInUser = ShopSavvyUtils.getUserLoggedIn();
             if (user != null && authorizedUser != null) {
                 String commenterDisplayName = user.getName();
                 String loggedInUserDisplayName = authorizedUser.getName();
@@ -584,6 +577,19 @@ public class VideoCommentsFragment extends BaseFragment implements CommentsAdapt
 
     private void removeListeners() {
         mCommentEditText.removeTextChangedListener(mCommentEditTextTextWatcher);
+    }
+
+    private void loadComments(){
+        List<Comment> comments = mCommentsCollection.getComments();
+        if (comments != null && comments.size()>0) {
+            mCommentsAdapter.addAll(comments);
+
+            if(comments.size() >= PAGE_SIZE){
+//                            mCommentsAdapter.addLoading();
+            } else {
+                mIsLastPage = true;
+            }
+        }
     }
     // endregion
 }

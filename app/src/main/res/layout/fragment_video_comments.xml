@@ -79,7 +79,8 @@
             android:layout_centerInParent="true"
             android:src="@drawable/ic_loop_loading"
             app:anim_auto_start="true"
-            app:mask_color="?colorAccent" />
+            app:mask_color="?colorAccent"
+            android:visibility="gone"/>
 
     </RelativeLayout>
 
