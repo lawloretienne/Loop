@@ -69,6 +69,8 @@ public class RelatedVideosAdapter extends RecyclerView.Adapter<RecyclerView.View
     private Typeface mBoldFont;
     private boolean mIsLikeOn = false;
     private boolean mIsWatchLaterOn = false;
+    private boolean mHasDescription = false;
+    private boolean mHasTags = false;
     // endregion
 
     // region Listeners
@@ -323,13 +325,14 @@ public class RelatedVideosAdapter extends RecyclerView.Adapter<RecyclerView.View
         if(mVideo != null){
             setUpTitle(holder.mTitleTextView, mVideo);
             setUpSubtitle(holder.mSubtitleTextView, mVideo);
+            setUpViewCount(holder.mViewCountTextView, mVideo);
             setUpLike(holder.mLikeImageView, mVideo);
             setUpWatchLater(holder.mWatchLaterImageView, mVideo);
             setUpUserImage(holder.mUserImageView, mVideo);
-            setUpDescription(holder.mDescriptionTextView, mVideo);
-            setUpViewCount(holder.mViewCountTextView, mVideo);
             setUpUploadedDate2(holder.mUploadDateTextView, mVideo);
+            setUpDescription(holder.mDescriptionTextView, mVideo);
             setUpTags(holder.mHashtagView, mVideo);
+            setUpInfoImage(holder.mInfoImageView);
         }
     }
 
@@ -607,6 +610,7 @@ public class RelatedVideosAdapter extends RecyclerView.Adapter<RecyclerView.View
             Timber.d("setUpTags() : canonicalTags.size() - " + canonicalTags.size());
 
             if(canonicalTags.size() > 0){
+                mHasTags = true;
                 htv.setData(canonicalTags, Transformers.HASH);
                 htv.setTypeface(mBoldFont);
                 htv.addOnTagClickListener(new HashtagView.TagsClickListener() {
@@ -629,11 +633,18 @@ public class RelatedVideosAdapter extends RecyclerView.Adapter<RecyclerView.View
     private void setUpDescription(TextView tv, Video video) {
         String description = video.getDescription();
         if (!TextUtils.isEmpty(description)) {
+            mHasDescription = true;
 //            description = description.replaceAll("[\\t\\n\\r]+", "\n");
             tv.setText(description.trim());
             tv.setVisibility(View.VISIBLE);
         } else {
             tv.setVisibility(View.GONE);
+        }
+    }
+
+    private void setUpInfoImage(ImageView iv){
+        if(mHasDescription || mHasTags){
+            iv.setVisibility(View.VISIBLE);
         }
     }
 
