@@ -209,9 +209,14 @@ public class VideoCommentsFragment extends BaseFragment implements CommentsAdapt
     private Callback<Comment> mAddCommentCallback = new Callback<Comment>() {
         @Override
         public void onResponse(Response<Comment> response, Retrofit retrofit) {
+            mCommentChangeMade = true;
+
             Timber.d("onResponse()");
 //            mLoadingImageView.setVisibility(View.GONE);
-            mIsLoading = false;
+
+            mSubmitCommentFrameLayout.setBackgroundColor(ContextCompat.getColor(getContext(), R.color.primary));
+            mSubmitCommentProgressBar.setVisibility(View.GONE);
+            mSubmitCommentImageView.setVisibility(View.VISIBLE);
 
             if (response != null) {
                 if(response.isSuccess()){
@@ -238,14 +243,6 @@ public class VideoCommentsFragment extends BaseFragment implements CommentsAdapt
                     }
                 }
             }
-
-//            if (mCommentsAdapter.isEmpty()) {
-//                mEmptyTextView.setText(getString(R.string.watch_later_empty_prompt));
-//                Drawable drawable = ContextCompat.getDrawable(getContext(), R.drawable.ic_watch_later_large);
-//                DrawableCompat.setTint(drawable, ContextCompat.getColor(getActivity(), R.color.grey_500));
-//                mEmptyTextView.setCompoundDrawablesWithIntrinsicBounds(null, drawable, null, null);
-//                mEmptyView.setVisibility(View.VISIBLE);
-//            }
         }
 
         @Override
@@ -253,6 +250,10 @@ public class VideoCommentsFragment extends BaseFragment implements CommentsAdapt
             if (t != null) {
                 String message = t.getMessage();
                 LogUtility.logFailure(t);
+
+                mSubmitCommentFrameLayout.setBackgroundColor(ContextCompat.getColor(getContext(), R.color.primary));
+                mSubmitCommentProgressBar.setVisibility(View.GONE);
+                mSubmitCommentImageView.setVisibility(View.VISIBLE);
 
                 if (t instanceof SocketTimeoutException || t instanceof UnknownHostException) {
                     Timber.e("Timeout occurred");
@@ -272,62 +273,6 @@ public class VideoCommentsFragment extends BaseFragment implements CommentsAdapt
             }
         }
     };
-
-//    private Callback<Comment> mAddCommentCallback = new Callback<Comment>() {
-//        @Override
-//        public void success(Comment comment, Response response2) {
-//            Event.fire(SalesEvent.actionComment());
-//            if (isAdded() && isResumed()) {
-//                mCommentChangeMade = true;
-//
-//                mSubmitCommentFrameLayout.setBackgroundColor(ContextCompat.getColor(getContext(), R.color.shopsavvy_green));
-//                mSubmitCommentProgressBar.setVisibility(View.GONE);
-//                mSubmitCommentImageView.setVisibility(View.VISIBLE);
-//
-//                if (comment != null) {
-//                    mCommentsAdapter.add(0, comment);
-//                    mCommentEditText.setText("");
-//
-//                    mCommentsAdapter.notifyDataSetChanged();
-//                }
-//
-//                Retailer retailer = mSale.getRetailer();
-//                if (retailer != null) {
-//                    long storeId = retailer.getId();
-//                    String storeName = retailer.getLocalName();
-//                    int requestingUserVote = mSale.getRequestingUserVote();
-//
-//                    String venue = mSale.getVenue();
-//                    if (venue.toLowerCase().equals("local")) {
-//                        Event.fire(SalesEvent.actionCommentNearbySale(storeId, storeName, requestingUserVote));
-//                    } else if (venue.toLowerCase().equals("local")) {
-//                        Event.fire(SalesEvent.actionCommentOnlineSale(storeId, storeName, requestingUserVote));
-//                    }
-//                }
-//            }
-//        }
-//
-//        @Override
-//        public void failure(RetrofitError error) {
-//            if (isAdded() && isResumed()) {
-//                mSubmitCommentFrameLayout.setBackgroundColor(ContextCompat.getColor(getContext(), R.color.shopsavvy_green));
-//                mSubmitCommentProgressBar.setVisibility(View.GONE);
-//                mSubmitCommentImageView.setVisibility(View.VISIBLE);
-//
-//                Timber.d("mAddCommentCallback : success()");
-//
-//                if (error != null) {
-//                    Response response = error.getResponse();
-//                    if (response != null) {
-//                        Timber.d("mAddCommentCallback : failure() : response.getStatus() - " + response.getStatus());
-//                        Timber.d("mAddCommentCallback : failure() : response.getReason() - " + response.getReason());
-//                    }
-//                    Timber.d("mAddCommentCallback : failure() : error.getMessage() - " + error.getMessage());
-//                    Timber.d("mAddCommentCallback : failure() : error.getCause() - " + error.getCause());
-//                }
-//            }
-//        }
-//    };
 
 //    private Callback<List<Comment>> mGetCommentsCallback = new Callback<List<Comment>>() {
 //        @Override

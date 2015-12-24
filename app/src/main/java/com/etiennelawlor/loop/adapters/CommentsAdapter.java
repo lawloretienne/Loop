@@ -44,6 +44,7 @@ public class CommentsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
     private Context mContext;
     private Typeface mBoldFont;
     private OnItemLongClickListener mOnItemLongClickListener;
+    private Typeface mItalicFont;
     // endregion
 
     // region Interfaces
@@ -57,6 +58,7 @@ public class CommentsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
         mContext = context;
         mComments = new ArrayList<>();
         mBoldFont = Typeface.createFromAsset(mContext.getAssets(), "fonts/Roboto-Bold.ttf");
+        mItalicFont = Typeface.createFromAsset(mContext.getAssets(), "fonts/Roboto-Italic.ttf");
     }
     // endregion
 
@@ -90,7 +92,6 @@ public class CommentsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
 
         if (comment != null) {
             setUpCommentText(holder.mCommentTextView, comment);
-            setUpCommentDate(holder.mCommentDateTextView, comment);
             setUpCommentImage(holder.mCommentImageView, comment);
         }
     }
@@ -132,29 +133,51 @@ public class CommentsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
     }
 
     private void setUpCommentText(TextView tv, Comment comment){
-
         String commentText = comment.getText();
         User user = comment.getUser();
 
-        if (user != null) {
-            String displayName = user.getName();
+        String commentDate = getCommentDate(comment);
 
-            List<Span> spans = new ArrayList<>();
+        String displayName = "";
+
+        if (user != null) {
+            displayName = user.getName();
+        }
+
+        List<Span> spans = new ArrayList<>();
+
+        if(!TextUtils.isEmpty(displayName)
+                && !TextUtils.isEmpty(commentText)
+                && !TextUtils.isEmpty(commentDate)){
             spans.add(new Span.Builder(String.format("%s ", displayName))
-                    .foregroundColor(ContextCompat.getColor(tv.getContext(), R.color.grey_600))
+                    .foregroundColor(ContextCompat.getColor(tv.getContext(), R.color.primary))
                     .typeface(mBoldFont)
                     .build());
             spans.add(new Span.Builder(commentText)
                     .build());
-            CharSequence formattedText = Trestle.getFormattedText(spans);
-            tv.setText(formattedText);
-
-        } else {
-            tv.setText(commentText);
+            spans.add(new Span.Builder("\n")
+                    .build());
+            spans.add(new Span.Builder(commentDate)
+                    .foregroundColor(ContextCompat.getColor(tv.getContext(), R.color.grey_400))
+                    .typeface(mItalicFont)
+                    .build());
+        } else if(!TextUtils.isEmpty(commentText)
+                    && !TextUtils.isEmpty(commentDate)){
+            spans.add(new Span.Builder(commentText)
+                    .build());
+            spans.add(new Span.Builder("\n")
+                    .build());
+            spans.add(new Span.Builder(commentDate)
+                    .foregroundColor(ContextCompat.getColor(tv.getContext(), R.color.grey_400))
+                    .typeface(mItalicFont)
+                    .build());
         }
+
+        CharSequence formattedText = Trestle.getFormattedText(spans);
+        tv.setText(formattedText);
     }
 
-    private void setUpCommentDate(TextView tv, Comment comment){
+    private String getCommentDate(Comment comment){
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'hh:mm:ssZ", Locale.ENGLISH);
         String commentDate = "";
 
@@ -170,7 +193,7 @@ public class CommentsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
             Timber.e("");
         }
 
-        tv.setText(commentDate);
+        return commentDate;
     }
 
     private void setUpCommentImage(ImageView iv, Comment comment){
@@ -210,8 +233,6 @@ public class CommentsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
     public static class CommentViewHolder extends RecyclerView.ViewHolder {
         @Bind(R.id.comment_tv)
         TextView mCommentTextView;
-        @Bind(R.id.comment_date_tv)
-        TextView mCommentDateTextView;
         @Bind(R.id.comment_iv)
         ImageView mCommentImageView;
 
