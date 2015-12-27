@@ -4,7 +4,6 @@ import android.content.DialogInterface;
 import android.content.res.ColorStateList;
 import android.net.Uri;
 import android.os.Bundle;
-import android.support.annotation.Nullable;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AlertDialog;
@@ -15,7 +14,6 @@ import android.support.v7.widget.Toolbar;
 import android.text.Editable;
 import android.text.TextUtils;
 import android.text.TextWatcher;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -25,7 +23,7 @@ import android.widget.ImageView;
 import android.widget.ProgressBar;
 
 import com.etiennelawlor.loop.R;
-import com.etiennelawlor.loop.adapters.CommentsAdapter;
+import com.etiennelawlor.loop.adapters.VideoCommentsAdapter;
 import com.etiennelawlor.loop.helper.PreferencesHelper;
 import com.etiennelawlor.loop.models.AccessToken;
 import com.etiennelawlor.loop.network.ServiceGenerator;
@@ -38,6 +36,7 @@ import com.etiennelawlor.loop.network.models.response.User;
 import com.etiennelawlor.loop.network.models.response.Video;
 import com.etiennelawlor.loop.otto.BusProvider;
 import com.etiennelawlor.loop.ui.LoadingImageView;
+import com.etiennelawlor.loop.utilities.DisplayUtility;
 import com.etiennelawlor.loop.utilities.LogUtility;
 
 import java.io.IOException;
@@ -59,14 +58,14 @@ import timber.log.Timber;
 /**
  * Created by etiennelawlor on 12/20/15.
  */
-public class VideoCommentsFragment extends BaseFragment implements CommentsAdapter.OnItemLongClickListener {
+public class VideoCommentsFragment extends BaseFragment implements VideoCommentsAdapter.OnItemLongClickListener {
 
     // region Constants
     public static final int PAGE_SIZE = 60;
     // endregion
 
     //region Member Variables
-    private CommentsAdapter mCommentsAdapter;
+    private VideoCommentsAdapter mVideoCommentsAdapter;
     private VimeoService mVimeoService;
     private Video mVideo;
     private CommentsCollection mCommentsCollection;
@@ -171,7 +170,7 @@ public class VideoCommentsFragment extends BaseFragment implements CommentsAdapt
                 }
             }
 
-//            if (mCommentsAdapter.isEmpty()) {
+//            if (mVideoCommentsAdapter.isEmpty()) {
 //                mEmptyTextView.setText(getString(R.string.watch_later_empty_prompt));
 //                Drawable drawable = ContextCompat.getDrawable(getContext(), R.drawable.ic_watch_later_large);
 //                DrawableCompat.setTint(drawable, ContextCompat.getColor(getActivity(), R.color.grey_500));
@@ -218,13 +217,16 @@ public class VideoCommentsFragment extends BaseFragment implements CommentsAdapt
             mSubmitCommentProgressBar.setVisibility(View.GONE);
             mSubmitCommentImageView.setVisibility(View.VISIBLE);
 
+            mCommentEditText.setText("");
+            DisplayUtility.hideKeyboard(getActivity(), mCommentEditText);
+
             if (response != null) {
                 if(response.isSuccess()){
                     List<Comment> comments = new ArrayList<>();
                     Comment comment = response.body();
                     if(comment != null){
                         comments.add(comment);
-                        mCommentsAdapter.addAll(comments);
+                        mVideoCommentsAdapter.addAll(comments);
                     }
                 } else {
                     com.squareup.okhttp.Response rawResponse = response.raw();
@@ -255,6 +257,9 @@ public class VideoCommentsFragment extends BaseFragment implements CommentsAdapt
                 mSubmitCommentProgressBar.setVisibility(View.GONE);
                 mSubmitCommentImageView.setVisibility(View.VISIBLE);
 
+                mCommentEditText.setText("");
+                DisplayUtility.hideKeyboard(getActivity(), mCommentEditText);
+
                 if (t instanceof SocketTimeoutException || t instanceof UnknownHostException) {
                     Timber.e("Timeout occurred");
                     mIsLoading = false;
@@ -280,8 +285,8 @@ public class VideoCommentsFragment extends BaseFragment implements CommentsAdapt
 //            if (isAdded() && isResumed()) {
 //                Timber.d("mGetCommentsCallback : success()");
 //                Collections.reverse(comments);
-//                mCommentsAdapter.addAll(Lists.reverse(comments));
-//                mCommentsRecyclerView.smoothScrollToPosition(mCommentsAdapter.getItemCount());
+//                mVideoCommentsAdapter.addAll(Lists.reverse(comments));
+//                mCommentsRecyclerView.smoothScrollToPosition(mVideoCommentsAdapter.getItemCount());
 //
 //            }
 //        }
@@ -406,18 +411,18 @@ public class VideoCommentsFragment extends BaseFragment implements CommentsAdapt
         layoutManager.setReverseLayout(true);
         mCommentsRecyclerView.setLayoutManager(layoutManager);
 
-        mCommentsAdapter = new CommentsAdapter(getActivity());
-        mCommentsAdapter.setOnItemLongClickListener(this);
+        mVideoCommentsAdapter = new VideoCommentsAdapter(getActivity());
+        mVideoCommentsAdapter.setOnItemLongClickListener(this);
 
 //        List<Comment> comments = mSale.getComments();
 //        if (comments != null && comments.size() > 0) {
 //            Collections.reverse(comments);
-//            mCommentsAdapter.addAll(comments);
+//            mVideoCommentsAdapter.addAll(comments);
 //        }
 
-        mCommentsRecyclerView.setAdapter(mCommentsAdapter);
+        mCommentsRecyclerView.setAdapter(mVideoCommentsAdapter);
 
-        mCommentsRecyclerView.smoothScrollToPosition(mCommentsAdapter.getItemCount());
+        mCommentsRecyclerView.smoothScrollToPosition(mVideoCommentsAdapter.getItemCount());
 
         if(mCommentsCollection != null){
             loadComments();
@@ -459,8 +464,8 @@ public class VideoCommentsFragment extends BaseFragment implements CommentsAdapt
 
         if (mCommentChangeMade) {
             List<Comment> comments = new ArrayList<>();
-            for (int i = mCommentsAdapter.getItemCount() - 1; i >= 0; i--) {
-                Comment comment = mCommentsAdapter.getItem(i);
+            for (int i = mVideoCommentsAdapter.getItemCount() - 1; i >= 0; i--) {
+                Comment comment = mVideoCommentsAdapter.getItem(i);
                 comments.add(comment);
             }
 
@@ -471,10 +476,10 @@ public class VideoCommentsFragment extends BaseFragment implements CommentsAdapt
     }
     // endregion
 
-    // region CommentsAdapter.OnItemLongClickListener Methods
+    // region VideoCommentsAdapter.OnItemLongClickListener Methods
     @Override
     public void onItemLongClick(final int position) {
-        final Comment comment = mCommentsAdapter.getItem(position);
+        final Comment comment = mVideoCommentsAdapter.getItem(position);
         if (comment != null) {
             User user = comment.getUser();
             AuthorizedUser authorizedUser = PreferencesHelper.getAuthorizedUser(getActivity());
@@ -493,8 +498,8 @@ public class VideoCommentsFragment extends BaseFragment implements CommentsAdapt
                     deleteCommentAlert.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
                         public void onClick(DialogInterface dialog, int whichButton) {
 
-//                            mCommentsAdapter.remove(position);
-//                            mCommentsAdapter.notifyDataSetChanged();
+//                            mVideoCommentsAdapter.remove(position);
+//                            mVideoCommentsAdapter.notifyDataSetChanged();
 
 //                            Api.getService(Api.getEndpointUrl()).deleteComment(mSale.getId(), comment.getId(), mDeleteCommentCallback);
                         }
@@ -527,10 +532,10 @@ public class VideoCommentsFragment extends BaseFragment implements CommentsAdapt
     private void loadComments(){
         List<Comment> comments = mCommentsCollection.getComments();
         if (comments != null && comments.size()>0) {
-            mCommentsAdapter.addAll(comments);
+            mVideoCommentsAdapter.addAll(comments);
 
             if(comments.size() >= PAGE_SIZE){
-//                            mCommentsAdapter.addLoading();
+//                            mVideoCommentsAdapter.addLoading();
             } else {
                 mIsLastPage = true;
             }

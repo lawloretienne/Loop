@@ -40,7 +40,7 @@ public class DateUtility {
             relativeDate = "A week ago";
         } else if (days >= 14 && days < 21) {
             relativeDate = "2 weeks ago";
-        } else if (days >= 21 && days < 28) {
+        } else if (days >= 21 && days < 30) {
             relativeDate = "3 weeks ago";
         } else if ((days / 30) == 1) {
             relativeDate = "1 month ago";

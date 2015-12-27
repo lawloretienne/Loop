@@ -37,7 +37,7 @@ import timber.log.Timber;
  * Created by etiennelawlor on 12/20/15.
  */
 
-public class CommentsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
+public class VideoCommentsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
     // region Member Variables
     private List<Comment> mComments;
@@ -54,7 +54,7 @@ public class CommentsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
     // endregion
 
     // region Constructors
-    public CommentsAdapter(Context context) {
+    public VideoCommentsAdapter(Context context) {
         mContext = context;
         mComments = new ArrayList<>();
         mBoldFont = Typeface.createFromAsset(mContext.getAssets(), "fonts/Roboto-Bold.ttf");

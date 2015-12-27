@@ -72,6 +72,7 @@ public class ServiceGenerator {
                                 .header("Authorization", authorization)
                                 .header("Accept", "application/json")
                                 .build();
+                        Timber.d("Authorization : "+ authorization);
 
                         return chain.proceed(modifiedRequest);
                     } else {
@@ -112,10 +113,13 @@ public class ServiceGenerator {
                     Request originalRequest = chain.request();
 
                     if (accessToken != null) {
+                        String authorization = accessToken.getTokenType() + " " + accessToken.getAccessToken();
+
                         Request modifiedRequest = originalRequest.newBuilder()
-                                .header("Authorization", accessToken.getTokenType() + " " + accessToken.getAccessToken())
+                                .header("Authorization", authorization)
                                 .header("Accept", "application/vnd.vimeo.*+json; version=3.2")
                                 .build();
+                        Timber.d("Authorization : "+ authorization);
 
                         return chain.proceed(modifiedRequest);
                     } else {
