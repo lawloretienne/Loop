@@ -84,6 +84,8 @@
     <string-array name="scopes">
         <item>public</item>
         <item>private</item>
+        <item>delete</item>
+        <item>edit</item>
         <item>interact</item>
     </string-array>
 

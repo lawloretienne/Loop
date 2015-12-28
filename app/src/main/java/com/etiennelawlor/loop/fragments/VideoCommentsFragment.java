@@ -38,11 +38,13 @@ import com.etiennelawlor.loop.otto.BusProvider;
 import com.etiennelawlor.loop.ui.LoadingImageView;
 import com.etiennelawlor.loop.utilities.DisplayUtility;
 import com.etiennelawlor.loop.utilities.LogUtility;
+import com.google.common.collect.Lists;
 
 import java.io.IOException;
 import java.net.SocketTimeoutException;
 import java.net.UnknownHostException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import butterknife.Bind;
@@ -132,8 +134,6 @@ public class VideoCommentsFragment extends BaseFragment implements VideoComments
             Call addCommentCall = mVimeoService.addComment(mVideoId, commentPost);
             mCalls.add(addCommentCall);
             addCommentCall.enqueue(mAddCommentCallback);
-
-//            Api.getService(Api.getEndpointUrl()).addComment(mSale.getId(), commentPost, mAddCommentCallback);
         }
     }
     // endregion
@@ -147,9 +147,9 @@ public class VideoCommentsFragment extends BaseFragment implements VideoComments
             mIsLoading = false;
 
             if (response != null) {
-                if(response.isSuccess()){
+                if (response.isSuccess()) {
                     mCommentsCollection = response.body();
-                    if(mCommentsCollection != null){
+                    if (mCommentsCollection != null) {
                         loadComments();
                     }
                 } else {
@@ -192,8 +192,8 @@ public class VideoCommentsFragment extends BaseFragment implements VideoComments
 //
 //                    mErrorTextView.setText("Can't load data.\nCheck your network connection.");
 //                    mErrorLinearLayout.setVisibility(View.VISIBLE);
-                } else if(t instanceof IOException){
-                    if(message.equals("Canceled")){
+                } else if (t instanceof IOException) {
+                    if (message.equals("Canceled")) {
                         Timber.e("onFailure() : Canceled");
                     } else {
                         mIsLoading = false;
@@ -221,13 +221,9 @@ public class VideoCommentsFragment extends BaseFragment implements VideoComments
             DisplayUtility.hideKeyboard(getActivity(), mCommentEditText);
 
             if (response != null) {
-                if(response.isSuccess()){
-                    List<Comment> comments = new ArrayList<>();
+                if (response.isSuccess()) {
                     Comment comment = response.body();
-                    if(comment != null){
-                        comments.add(comment);
-                        mVideoCommentsAdapter.addAll(comments);
-                    }
+                    mVideoCommentsAdapter.add(comment, mVideoCommentsAdapter.getItemCount()-1);
                 } else {
                     com.squareup.okhttp.Response rawResponse = response.raw();
                     if (rawResponse != null) {
@@ -267,8 +263,8 @@ public class VideoCommentsFragment extends BaseFragment implements VideoComments
 //
 //                    mErrorTextView.setText("Can't load data.\nCheck your network connection.");
 //                    mErrorLinearLayout.setVisibility(View.VISIBLE);
-                } else if(t instanceof IOException){
-                    if(message.equals("Canceled")){
+                } else if (t instanceof IOException) {
+                    if (message.equals("Canceled")) {
                         Timber.e("onFailure() : Canceled");
                     } else {
                         mIsLoading = false;
@@ -279,35 +275,61 @@ public class VideoCommentsFragment extends BaseFragment implements VideoComments
         }
     };
 
-//    private Callback<List<Comment>> mGetCommentsCallback = new Callback<List<Comment>>() {
-//        @Override
-//        public void success(List<Comment> comments, Response response) {
-//            if (isAdded() && isResumed()) {
-//                Timber.d("mGetCommentsCallback : success()");
-//                Collections.reverse(comments);
-//                mVideoCommentsAdapter.addAll(Lists.reverse(comments));
-//                mCommentsRecyclerView.smoothScrollToPosition(mVideoCommentsAdapter.getItemCount());
+    private Callback<Object> mDeleteCommentCallback = new Callback<Object>() {
+        @Override
+        public void onResponse(Response<Object> response, Retrofit retrofit) {
+            mCommentChangeMade = true;
+
+
+            if (response != null) {
+                if (response.isSuccess()) {
+                    Object object = response.body();
+                    Timber.d("");
+//                    mVideoCommentsAdapter.add(comment, mVideoCommentsAdapter.getItemCount()-1);
+                } else {
+                    com.squareup.okhttp.Response rawResponse = response.raw();
+                    if (rawResponse != null) {
+                        LogUtility.logFailedResponse(rawResponse);
+
+                        int code = rawResponse.code();
+                        switch (code) {
+                            case 500:
+//                                mErrorTextView.setText("Can't load data.\nCheck your network connection.");
+//                                mErrorLinearLayout.setVisibility(View.VISIBLE);
+                                break;
+                            default:
+                                break;
+                        }
+                    }
+                }
+            }
+        }
+
+        @Override
+        public void onFailure(Throwable t) {
+            if (t != null) {
+                String message = t.getMessage();
+                LogUtility.logFailure(t);
+
+                if (t instanceof SocketTimeoutException || t instanceof UnknownHostException) {
+                    Timber.e("Timeout occurred");
+                    mIsLoading = false;
+//                    mLoadingImageView.setVisibility(View.GONE);
 //
-//            }
-//        }
-//
-//        @Override
-//        public void failure(RetrofitError error) {
-//            if (isAdded() && isResumed()) {
-//                Timber.d("mGetCommentsCallback : failure()");
-//
-//                if (error != null) {
-//                    Response response = error.getResponse();
-//                    if (response != null) {
-//                        Timber.d("mGetCommentsCallback : failure() : response.getStatus() - " + response.getStatus());
-//                        Timber.d("mGetCommentsCallback : failure() : response.getReason() - " + response.getReason());
-//                    }
-//                    Timber.d("mGetCommentsCallback : failure() : error.getMessage() - " + error.getMessage());
-//                    Timber.d("mGetCommentsCallback : failure() : error.getCause() - " + error.getCause());
-//                }
-//            }
-//        }
-//    };
+//                    mErrorTextView.setText("Can't load data.\nCheck your network connection.");
+//                    mErrorLinearLayout.setVisibility(View.VISIBLE);
+                } else if (t instanceof IOException) {
+                    if (message.equals("Canceled")) {
+                        Timber.e("onFailure() : Canceled");
+                    } else {
+                        mIsLoading = false;
+//                        mLoadingImageView.setVisibility(View.GONE);
+                    }
+                }
+            }
+        }
+    };
+
 
 //    private Callback<Response> mDeleteCommentCallback = new Callback<Response>() {
 //        @Override
@@ -408,7 +430,7 @@ public class VideoCommentsFragment extends BaseFragment implements VideoComments
         mCommentsRecyclerView.setItemAnimator(new SlideInUpAnimator());
 
         LinearLayoutManager layoutManager = new LinearLayoutManager(getActivity());
-        layoutManager.setReverseLayout(true);
+//        layoutManager.setReverseLayout(true);
         mCommentsRecyclerView.setLayoutManager(layoutManager);
 
         mVideoCommentsAdapter = new VideoCommentsAdapter(getActivity());
@@ -424,15 +446,14 @@ public class VideoCommentsFragment extends BaseFragment implements VideoComments
 
         mCommentsRecyclerView.smoothScrollToPosition(mVideoCommentsAdapter.getItemCount());
 
-        if(mCommentsCollection != null){
+        if (mCommentsCollection != null) {
             loadComments();
         } else {
-            String uri = mVideo.getUri();
-            if (!TextUtils.isEmpty(uri)) {
+            long id = mVideo.getId();
+            if (id != -1L) {
                 mLoadingImageView.setVisibility(View.VISIBLE);
 
-                String lastPathSegment = Uri.parse(uri).getLastPathSegment();
-                mVideoId = Long.parseLong(lastPathSegment);
+                mVideoId = id;
 
                 Call getCommentsCall = mVimeoService.getComments(mVideoId,
                         mSortByValue,
@@ -485,11 +506,9 @@ public class VideoCommentsFragment extends BaseFragment implements VideoComments
             AuthorizedUser authorizedUser = PreferencesHelper.getAuthorizedUser(getActivity());
 
             if (user != null && authorizedUser != null) {
-                String commenterDisplayName = user.getName();
-                String loggedInUserDisplayName = authorizedUser.getName();
-                if (!TextUtils.isEmpty(commenterDisplayName)
-                        && !TextUtils.isEmpty(loggedInUserDisplayName)
-                        && commenterDisplayName.equals(loggedInUserDisplayName)) {
+                long commenterId = user.getId();
+                long loggedInUserId = authorizedUser.getId();
+                if (commenterId == loggedInUserId) {
 
                     AlertDialog.Builder deleteCommentAlert = new AlertDialog.Builder(getActivity(), R.style.DialogTheme);
 
@@ -497,11 +516,13 @@ public class VideoCommentsFragment extends BaseFragment implements VideoComments
 
                     deleteCommentAlert.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
                         public void onClick(DialogInterface dialog, int whichButton) {
+                            mVideoCommentsAdapter.remove(comment);
+                            mVideoCommentsAdapter.notifyDataSetChanged();
 
-//                            mVideoCommentsAdapter.remove(position);
-//                            mVideoCommentsAdapter.notifyDataSetChanged();
-
-//                            Api.getService(Api.getEndpointUrl()).deleteComment(mSale.getId(), comment.getId(), mDeleteCommentCallback);
+                            Call deleteCommentCall = mVimeoService.deleteComment(mVideoId,
+                                    comment.getId());
+                            mCalls.add(deleteCommentCall);
+                            deleteCommentCall.enqueue(mDeleteCommentCallback);
                         }
                     });
 
@@ -514,7 +535,6 @@ public class VideoCommentsFragment extends BaseFragment implements VideoComments
                     deleteCommentAlert.show();
 
                 }
-
             }
         }
     }
@@ -529,12 +549,17 @@ public class VideoCommentsFragment extends BaseFragment implements VideoComments
         mCommentEditText.removeTextChangedListener(mCommentEditTextTextWatcher);
     }
 
-    private void loadComments(){
+    private void loadComments() {
         List<Comment> comments = mCommentsCollection.getComments();
-        if (comments != null && comments.size()>0) {
-            mVideoCommentsAdapter.addAll(comments);
+        if (comments != null && comments.size() > 0) {
 
-            if(comments.size() >= PAGE_SIZE){
+            Collections.reverse(comments);
+            mVideoCommentsAdapter.addAll(comments);
+            mCommentsRecyclerView.smoothScrollToPosition(mVideoCommentsAdapter.getItemCount());
+//
+//            mVideoCommentsAdapter.addAll(comments);
+
+            if (comments.size() >= PAGE_SIZE) {
 //                            mVideoCommentsAdapter.addLoading();
             } else {
                 mIsLastPage = true;

@@ -102,26 +102,33 @@ public class VideoCommentsAdapter extends RecyclerView.Adapter<RecyclerView.View
     }
 
     // region Helper Methods
-    public void add(int position, Comment item) {
-        mComments.add(position, item);
+    public void add(Comment item, int position) {
+        mComments.add(item);
         notifyItemInserted(position);
     }
 
     public void addAll(List<Comment> comments) {
         for (Comment comment : comments) {
-            add(getItemCount(), comment);
+            add(comment, getItemCount()-1);
         }
     }
 
     public void clear() {
         while (getItemCount() > 0) {
-            remove(0);
+            remove(getItem(0));
         }
     }
 
-    public void remove(int position) {
-        mComments.remove(position);
-        notifyItemRemoved(position);
+    public boolean isEmpty() {
+        return getItemCount() == 0;
+    }
+
+    public void remove(Comment item) {
+        int position = mComments.indexOf(item);
+        if (position > -1) {
+            mComments.remove(position);
+            notifyItemRemoved(position);
+        }
     }
 
     public Comment getItem(int position) {

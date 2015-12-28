@@ -691,10 +691,9 @@ public class VideoDetailsFragment extends BaseFragment implements RelatedVideosA
         if (mVideo != null) {
             setUpVideoThumbnail();
 
-            String uri = mVideo.getUri();
-            if (!TextUtils.isEmpty(uri)) {
-                String lastPathSegment = Uri.parse(uri).getLastPathSegment();
-                mVideoId = Long.parseLong(lastPathSegment);
+            long id = mVideo.getId();
+            if (id != -1L) {
+                mVideoId = id;
 
                 mLayoutManager = new LinearLayoutManager(getActivity());
                 mVideosRecyclerView.setLayoutManager(mLayoutManager);

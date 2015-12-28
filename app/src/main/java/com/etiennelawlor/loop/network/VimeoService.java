@@ -58,6 +58,10 @@ public interface VimeoService {
     Call<Comment> addComment(@Path("videoId") Long videoId,
                              @Body CommentPost commentPost);
 
+    @DELETE("/videos/{videoId}/comments/{commentId}")
+    Call<Object> deleteComment(@Path("videoId") Long videoId,
+                               @Path("commentId") Long commentId);
+
     @GET("/videos/{videoId}/videos?filter=related")
     Call<VideosCollection> findRelatedVideos( @Path("videoId") Long videoId,
                             @Query("page") Integer page,

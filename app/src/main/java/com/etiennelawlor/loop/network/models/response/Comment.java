@@ -1,5 +1,6 @@
 package com.etiennelawlor.loop.network.models.response;
 
+import android.net.Uri;
 import android.os.Parcel;
 import android.os.Parcelable;
 import android.text.TextUtils;
@@ -52,6 +53,16 @@ public class Comment implements Parcelable {
 
     public Metadata getMetadata() {
         return metadata;
+    }
+
+    public long getId() {
+        long id = -1L;
+        String uri = getUri();
+        if (!TextUtils.isEmpty(uri)) {
+            String lastPathSegment = Uri.parse(uri).getLastPathSegment();
+            id = Long.parseLong(lastPathSegment);
+        }
+        return id;
     }
     // endregion
 
