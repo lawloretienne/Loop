@@ -118,6 +118,8 @@
             android:textColor="@color/grey_600"
             android:textSize="14sp"
             android:paddingBottom="16dp"
+            android:autoLink="all"
+            android:textColorLink="@color/primary"
             app:textFont="roboto_regular"
             tools:text="Description" />
 
