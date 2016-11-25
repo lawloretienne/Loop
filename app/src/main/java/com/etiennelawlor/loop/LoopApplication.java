@@ -33,9 +33,7 @@ public class LoopApplication extends Application {
     private RefWatcher mRefWatcher;
     // endregion
 
-    // region Callbacks
-    // endregion
-
+    // region Lifecycle Methods
     @Override
     public void onCreate() {
         super.onCreate();
@@ -47,6 +45,7 @@ public class LoopApplication extends Application {
 
         currentApplication = this;
     }
+    // endregion
 
     @Override
     protected void attachBaseContext(Context base) {
