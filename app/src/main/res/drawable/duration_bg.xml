@@ -3,9 +3,9 @@
     android:shape="rectangle">
 
     <corners android:radius="2dp" />
-    <solid android:color="@color/transparent_black_seventy" />
+    <solid android:color="@color/seventy_percent_transparency_black" />
     <stroke
         android:width="1dp"
-        android:color="@color/transparent_grey_500_seventy" />
+        android:color="@color/seventy_percent_transparency_white" />
 
 </shape>

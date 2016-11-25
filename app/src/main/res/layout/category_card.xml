@@ -9,7 +9,7 @@
     <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:foreground="@color/transparent_black_twenty">
+        android:foreground="@color/twenty_percent_transparency_black">
 
         <com.etiennelawlor.loop.ui.DynamicHeightImageView
             android:id="@+id/thumbnail_iv"
@@ -30,7 +30,7 @@
             android:layout_height="1dp"
             android:layout_marginLeft="40dp"
             android:layout_marginRight="40dp"
-            android:background="@color/transparent_white_fifty" />
+            android:background="@color/fifty_percent_transparency_white" />
 
         <TextView
             android:id="@+id/title_tv"
@@ -39,12 +39,12 @@
             android:layout_marginBottom="8dp"
             android:layout_marginTop="8dp"
             android:gravity="center"
-            android:shadowColor="@color/transparent_black_ninty_five"
+            android:shadowColor="@color/ninty_five_percent_transparency_black"
             android:shadowDx="1"
             android:shadowDy="1"
             android:shadowRadius="8"
             android:textAllCaps="true"
-            android:textColor="@android:color/white"
+            android:textColor="@color/inverse_primary_text"
             android:textSize="16sp"
             tools:text="@string/comedy" />
 
@@ -53,7 +53,7 @@
             android:layout_height="1dp"
             android:layout_marginLeft="40dp"
             android:layout_marginRight="40dp"
-            android:background="@color/transparent_white_fifty" />
+            android:background="@color/fifty_percent_transparency_white" />
 
     </LinearLayout>
 

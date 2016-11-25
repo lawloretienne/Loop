@@ -165,7 +165,7 @@ public class VideoCommentsAdapter extends RecyclerView.Adapter<RecyclerView.View
             spans.add(new Span.Builder("\n")
                     .build());
             spans.add(new Span.Builder(commentDate)
-                    .foregroundColor(ContextCompat.getColor(tv.getContext(), R.color.grey_400))
+                    .foregroundColor(ContextCompat.getColor(tv.getContext(), R.color.tertiary_text))
                     .typeface(italicFont)
                     .build());
         } else if(!TextUtils.isEmpty(commentText)
@@ -175,7 +175,7 @@ public class VideoCommentsAdapter extends RecyclerView.Adapter<RecyclerView.View
             spans.add(new Span.Builder("\n")
                     .build());
             spans.add(new Span.Builder(commentDate)
-                    .foregroundColor(ContextCompat.getColor(tv.getContext(), R.color.grey_400))
+                    .foregroundColor(ContextCompat.getColor(tv.getContext(), R.color.tertiary_text))
                     .typeface(italicFont)
                     .build());
         }

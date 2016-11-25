@@ -47,12 +47,12 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:gravity="center_vertical"
-                    android:shadowColor="@color/transparent_black_ninty_five"
+                    android:shadowColor="@color/ninty_five_percent_transparency_black"
                     android:shadowDx="1"
                     android:shadowDy="1"
                     android:shadowRadius="1"
                     android:singleLine="true"
-                    android:textColor="@android:color/white"
+                    android:textColor="@color/inverse_primary_text"
                     android:textSize="14sp"
                     app:textFont="roboto_medium" />
 
@@ -62,7 +62,7 @@
                     android:layout_height="wrap_content"
                     android:gravity="center_vertical"
                     android:singleLine="true"
-                    android:textColor="@android:color/white"
+                    android:textColor="@color/inverse_primary_text"
                     android:textSize="14sp"
                     app:textFont="roboto_regular" />
 
@@ -78,7 +78,7 @@
                 android:paddingLeft="16dp"
                 android:paddingRight="16dp"
                 android:text="@string/sign_up_or_log_in"
-                android:textColor="@android:color/white"
+                android:textColor="@color/inverse_primary_text"
                 android:textSize="14sp"
                 android:visibility="gone"
                 app:textFont="roboto_medium" />

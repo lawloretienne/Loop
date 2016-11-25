@@ -10,7 +10,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:gravity="center"
-        android:textColor="@color/grey_800"
+        android:textColor="@color/secondary_text"
         android:layout_gravity="center"
         android:layout_margin="16dp"
         tools:text="Place Holder"

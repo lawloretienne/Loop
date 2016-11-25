@@ -57,8 +57,8 @@
                 android:imeOptions="actionSearch"
                 android:inputType="text"
                 android:singleLine="true"
-                android:textColor="@color/grey_700"
-                android:textColorHint="@color/grey_500"
+                android:textColor="@color/primary_text"
+                android:textColorHint="@color/tertiary_text"
                 android:textSize="@dimen/text_medium" />
 
             <FrameLayout

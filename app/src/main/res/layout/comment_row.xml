@@ -23,7 +23,7 @@
         android:layout_marginLeft="16dp"
         android:layout_marginRight="16dp"
         android:layout_toRightOf="@id/comment_iv"
-        android:textColor="@color/grey_700"
+        android:textColor="@color/primary_text"
         android:textSize="16sp"
         app:textFont="roboto_regular"
         tools:text="Thanks for letting me know about this, I was able to pick up 2 new PS4 controllers for the price of 1" />

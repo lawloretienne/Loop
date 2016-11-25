@@ -17,6 +17,6 @@
         app:tabIndicatorHeight="2dp"
         app:tabMode="scrollable"
         app:tabSelectedTextColor="@android:color/white"
-        app:tabTextColor="@color/transparent_white_fifty" />
+        app:tabTextColor="@color/fifty_percent_transparency_white" />
 
 </android.support.design.widget.AppBarLayout>

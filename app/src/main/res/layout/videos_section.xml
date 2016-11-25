@@ -22,7 +22,7 @@
             android:id="@+id/empty_tv"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textColor="@color/grey_500"
+            android:textColor="@color/secondary_text"
             android:textSize="14sp"
             android:drawablePadding="8dp"
             android:text="@string/no_videos"

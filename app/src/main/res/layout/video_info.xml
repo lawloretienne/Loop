@@ -23,7 +23,7 @@
             android:layout_marginRight="72dp"
             android:ellipsize="end"
             android:maxLines="2"
-            android:textColor="@color/grey_700"
+            android:textColor="@color/primary_text"
             android:textSize="22sp"
             android:transitionName="titleTransition"
             app:textFont="robotoCondensed_bold"
@@ -36,7 +36,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_below="@id/title_tv"
-            android:textColor="@color/grey_600"
+            android:textColor="@color/secondary_text"
             android:textSize="16sp"
             app:textFont="roboto_regular"
             tools:text="Views" />
@@ -119,7 +119,7 @@
             android:textSize="14sp"
             android:paddingBottom="16dp"
             android:autoLink="all"
-            android:textColorLink="@color/primary"
+            android:textColorLink="@color/secondary_text"
             app:textFont="roboto_regular"
             tools:text="Description" />
 
@@ -170,7 +170,7 @@
                 android:layout_height="wrap_content"
                 android:ellipsize="end"
                 android:maxLines="1"
-                android:textColor="@color/grey_700"
+                android:textColor="@color/primary_text"
                 android:textSize="18sp"
                 android:transitionName="subtitleTransition"
                 app:textFont="roboto_medium"
@@ -180,7 +180,7 @@
                 android:id="@+id/upload_date_tv"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:textColor="@color/grey_600"
+                android:textColor="@color/secondary_text"
                 android:textSize="14sp"
                 app:textFont="roboto_regular"
                 tools:text="Upload date" />

@@ -1,6 +1,119 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
+    <!--Hex Opacity Values:
+    100% — FF
+    99% — FC
+    98% — FA
+    97% — F7
+    96% — F5
+    95% — F2
+    94% — F0
+    93% — ED
+    92% — EB
+    91% — E8
+
+    90% — E6
+    89% — E3
+    88% — E0
+    87% — DE
+    86% — DB
+    85% — D9
+    84% — D6
+    83% — D4
+    82% — D1
+    81% — CF
+
+    80% — CC
+    79% — C9
+    78% — C7
+    77% — C4
+    76% — C2
+    75% — BF
+    74% — BD
+    73% — BA
+    72% — B8
+    71% — B5
+
+    70% — B3
+    69% — B0
+    68% — AD
+    67% — AB
+    66% — A8
+    65% — A6
+    64% — A3
+    63% — A1
+    62% — 9E
+    61% — 9C
+
+    60% — 99
+    59% — 96
+    58% — 94
+    57% — 91
+    56% — 8F
+    55% — 8C
+    54% — 8A
+    53% — 87
+    52% — 85
+    51% — 82
+
+    50% — 80
+    49% — 7D
+    48% — 7A
+    47% — 78
+    46% — 75
+    45% — 73
+    44% — 70
+    43% — 6E
+    42% — 6B
+    41% — 69
+
+    40% — 66
+    39% — 63
+    38% — 61
+    37% — 5E
+    36% — 5C
+    35% — 59
+    34% — 57
+    33% — 54
+    32% — 52
+    31% — 4F
+
+    30% — 4D
+    29% — 4A
+    28% — 47
+    27% — 45
+    26% — 42
+    25% — 40
+    24% — 3D
+    23% — 3B
+    22% — 38
+    21% — 36
+
+    20% — 33
+    19% — 30
+    18% — 2E
+    17% — 2B
+    16% — 29
+    15% — 26
+    14% — 24
+    13% — 21
+    12% — 1F
+    11% — 1C
+
+    10% — 1A
+    9% — 17
+    8% — 14
+    7% — 12
+    6% — 0F
+    5% — 0D
+    4% — 0A
+    3% — 08
+    2% — 05
+    1% — 03
+    0% — 00
+    -->
+
     <color name="primary">@color/teal_500</color>
     <color name="primary_dark">@color/teal_600</color>
     <!--<color name="accent">@color/teal_800</color>-->
@@ -10,6 +123,22 @@
     <color name="control_normal">@color/teal_800</color>
     <color name="control_highlight">@color/teal_700</color>
     <color name="control_activated">@color/teal_500</color>
+
+    <!-- Dark text on light backgrounds -->
+    <color name="primary_text">#DE000000</color>
+    <color name="secondary_text">#8A000000</color>
+    <color name="tertiary_text">#61000000</color>
+    <color name="hint_text">#61000000</color>
+    <color name="disabled_text">#61000000</color>
+    <color name="divider">#1F000000</color>
+
+    <!-- White text on dark backgrounds -->
+    <color name="inverse_primary_text">#FFFFFFFF</color>
+    <color name="inverse_secondary_text">#B3FFFFFF</color>
+    <color name="inverse_tertiary_text">#80FFFFFF</color>
+    <color name="inverse_hint_text">#80FFFFFF</color>
+    <color name="inverse_disabled_text">#80FFFFFF</color>
+
 
     <!--<color name="window_background">#FFF5F5F5</color>-->
 
@@ -25,27 +154,27 @@
 
     <color name="transparent_grey_500_seventy">#B39e9e9e</color>
 
-    <color name="transparent_black_five">#0D000000</color>
-    <color name="transparent_black_ten">#1A000000</color>
-    <color name="transparent_black_twenty">#33000000</color>
-    <color name="transparent_black_forty">#66000000</color>
-    <color name="transparent_black_fifty">#80000000</color>
-    <color name="transparent_black_sixty">#99000000</color>
-    <color name="transparent_black_seventy">#B3000000</color>
-    <color name="transparent_black_eighty">#CC000000</color>
-    <color name="transparent_black_ninty">#E6000000</color>
-    <color name="transparent_black_ninty_five">#F2000000</color>
+    <color name="five_percent_transparency_white">#0Dffffff</color>
+    <color name="ten_percent_transparency_white">#1Affffff</color>
+    <color name="twenty_percent_transparency_white">#33ffffff</color>
+    <color name="thirty_percent_transparency_white">#4Dffffff</color>
+    <color name="fifty_percent_transparency_white">#80ffffff</color>
+    <color name="sixty_percent_transparency_white">#99ffffff</color>
+    <color name="seventy_percent_transparency_white">#B3ffffff</color>
+    <color name="eighty_percent_transparency_white">#CCffffff</color>
+    <color name="ninty_percent_transparency_white">#E6ffffff</color>
+    <color name="ninty_five_percent_transparency_white">#F2ffffff</color>
 
-    <color name="transparent_white_five">#0DFFFFFF</color>
-    <color name="transparent_white_ten">#1AFFFFFF</color>
-    <color name="transparent_white_twenty">#33FFFFFF</color>
-    <color name="transparent_white_forty">#66FFFFFF</color>
-    <color name="transparent_white_fifty">#80FFFFFF</color>
-    <color name="transparent_white_sixty">#99FFFFFF</color>
-    <color name="transparent_white_seventy">#B3FFFFFF</color>
-    <color name="transparent_white_eighty">#CCFFFFFF</color>
-    <color name="transparent_white_ninty">#E6FFFFFF</color>
-    <color name="transparent_white_ninty_five">#F2FFFFFF</color>
+    <color name="five_percent_transparency_black">#0D000000</color>
+    <color name="ten_percent_transparency_black">#1A000000</color>
+    <color name="twenty_percent_transparency_black">#33000000</color>
+    <color name="forty_percent_transparency_black">#66000000</color>
+    <color name="fifty_percent_transparency_black">#80000000</color>
+    <color name="sixty_percent_transparency_black">#99000000</color>
+    <color name="seventy_percent_transparency_black">#B3000000</color>
+    <color name="eighty_percent_transparency_black">#CC000000</color>
+    <color name="ninty_percent_transparency_black">#E6000000</color>
+    <color name="ninty_five_percent_transparency_black">#F2000000</color>
 
 
     <color name="fifty_percent_transparency_grey_400">#80bdbdbd</color>

@@ -22,7 +22,7 @@
         android:layout_height="wrap_content"
         android:layout_margin="16dp"
         android:gravity="center"
-        android:textColor="@color/grey_800"
+        android:textColor="@color/secondary_text"
         android:textSize="16sp"
         app:textFont="roboto_regular"
         tools:text="Can't load data.\nCheck your network connection." />

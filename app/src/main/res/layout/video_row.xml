@@ -33,7 +33,7 @@
             android:padding="4dp"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textColor="@android:color/white"
+            android:textColor="@color/inverse_primary_text"
             tools:text="Duration"
             android:textSize="14sp"
             app:textFont="roboto_regular"/>
@@ -52,7 +52,7 @@
             android:id="@+id/title_tv"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textColor="@color/grey_700"
+            android:textColor="@color/primary_text"
             android:transitionName="titleTransition"
             tools:text="Video Title"
             android:maxLines="2"
@@ -64,7 +64,7 @@
             android:id="@+id/subtitle_tv"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textColor="@color/grey_600"
+            android:textColor="@color/secondary_text"
             android:transitionName="subtitleTransition"
             tools:text="Video Subtitle"
             android:maxLines="5"
@@ -76,11 +76,10 @@
             android:id="@+id/uploaded_date_tv"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textColor="@color/grey_500"
+            android:textColor="@color/tertiary_text"
             android:transitionName="uploadedTransition"
             tools:text="Uploaded date"
             android:textSize="14sp"
-            android:layout_marginTop="8dp"
             app:textFont="roboto_regular"/>
 
 

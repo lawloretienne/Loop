@@ -100,7 +100,7 @@ public class RelatedVideosAdapter extends RecyclerView.Adapter<RecyclerView.View
 
     // region Constructors
     public RelatedVideosAdapter(Video video) {
-        video = video;
+        this.video = video;
         videos = new ArrayList<>();
 
         boldFont = Typeface.createFromAsset(LoopApplication.getInstance().getApplicationContext().getAssets(), "fonts/Roboto-Bold.ttf");
@@ -491,7 +491,7 @@ public class RelatedVideosAdapter extends RecyclerView.Adapter<RecyclerView.View
 //                String formattedViewCount = NumberFormat.getNumberInstance(Locale.US).format(viewCount);
             String formattedViewCount = formatViewCount(viewCount);
             if(!TextUtils.isEmpty(uploadDate))
-                tv.setText(String.format("%s - %s", uploadDate, formattedViewCount));
+                tv.setText(String.format("%s \u2022 %s", formattedViewCount, uploadDate));
             else
                 tv.setText(formattedViewCount);
 
