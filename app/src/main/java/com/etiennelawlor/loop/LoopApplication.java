@@ -2,6 +2,8 @@ package com.etiennelawlor.loop;
 
 import android.app.Application;
 import android.content.Context;
+import android.support.multidex.MultiDex;
+import android.support.v7.app.AppCompatDelegate;
 import android.util.Log;
 
 import com.crashlytics.android.Crashlytics;
@@ -19,8 +21,12 @@ import timber.log.Timber;
  */
 public class LoopApplication extends Application {
 
+    static {
+        AppCompatDelegate.setCompatVectorFromResourcesEnabled(true);
+    }
+
     // region Static Variables
-    private static LoopApplication sCurrentApplication = null;
+    private static LoopApplication currentApplication = null;
     // endregion
 
     // region Member Variables
@@ -39,17 +45,22 @@ public class LoopApplication extends Application {
         initializeTimber();
         initializeFlurry();
 
-        sCurrentApplication = this;
+        currentApplication = this;
+    }
 
+    @Override
+    protected void attachBaseContext(Context base) {
+        super.attachBaseContext(base);
+        MultiDex.install(this);
     }
 
     // region Helper Methods
     public static LoopApplication getInstance() {
-        return sCurrentApplication;
+        return currentApplication;
     }
 
     public static File getCacheDirectory()  {
-        return sCurrentApplication.getCacheDir();
+        return currentApplication.getCacheDir();
     }
 
     public static RefWatcher getRefWatcher(Context context) {
