@@ -62,44 +62,44 @@ public class MaterialSearchView extends FrameLayout implements
     // endregion
 
     // region Member Variables
-    private boolean mAreSearchSuggestionsVisible;
-    private DividerItemDecoration mDividerItemDecoration;
-    private int mLeftDrawableType;
-    private String mHintText;
-    private int mMarginTop;
-    private int mMarginBottom;
-    private int mMarginLeft;
-    private int mMarginRight;
-    private String mVoicePrompt;
-    private SuggestionsAdapter mSuggestionsAdapter = new SuggestionsAdapter();
-    private boolean mIsSearchEditTextFocused = false;
+    private boolean areSearchSuggestionsVisible;
+    private DividerItemDecoration dividerItemDecoration;
+    private int leftDrawableType;
+    private String hintText;
+    private int marginTop;
+    private int marginBottom;
+    private int marginLeft;
+    private int marginRight;
+    private String voicePrompt;
+    private SuggestionsAdapter suggestionsAdapter = new SuggestionsAdapter();
+    private boolean isSearchEditTextFocused = false;
 
     @Bind(R.id.search_et)
-    EditText mSearchEditText;
+    EditText searchEditText;
     @Bind(R.id.microphone_iv)
-    ImageView mMicrophoneImageView;
+    ImageView microphoneImageView;
     @Bind(R.id.clear_iv)
-    ImageView mClearImageView;
+    ImageView clearImageView;
     @Bind(R.id.filter_iv)
-    ImageView mFilterImageView;
+    ImageView filterImageView;
     @Bind(R.id.cv)
-    CardView mCardView;
+    CardView cardView;
     @Bind(R.id.left_drawable_iv)
-    ImageView mLeftDrawableImageView;
+    ImageView leftDrawableImageView;
     @Bind(R.id.left_drawable_riv)
-    CircleImageView mLeftDrawableRoundedImageView;
+    CircleImageView leftDrawableRoundedImageView;
     @Bind(R.id.divider_v)
-    View mDividerView;
+    View dividerView;
     @Bind(R.id.bg_cover_fl)
-    FrameLayout mBackgroundCoverFrameLayout;
+    FrameLayout backgroundCoverFrameLayout;
     @Bind(R.id.rv)
-    RecyclerView mRecyclerView;
+    RecyclerView recyclerView;
     // endregion
 
     // region Listeners
     @OnClick(R.id.bg_cover_fl)
     public void backgroundCoverFrameLayoutClicked() {
-        if (mAreSearchSuggestionsVisible) {
+        if (areSearchSuggestionsVisible) {
             hideSearchSuggestions();
         }
     }
@@ -110,11 +110,11 @@ public class MaterialSearchView extends FrameLayout implements
             hideSearchSuggestions();
 
             Intent intent = new Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH);
-            intent.putExtra(RecognizerIntent.EXTRA_PROMPT, mVoicePrompt);
+            intent.putExtra(RecognizerIntent.EXTRA_PROMPT, voicePrompt);
             intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL, RecognizerIntent.LANGUAGE_MODEL_WEB_SEARCH);
             intent.putExtra(RecognizerIntent.EXTRA_MAX_RESULTS, 1);
 
-            ((Activity) ((ContextWrapper) mMicrophoneImageView.getContext()).getBaseContext()).startActivityForResult(intent, REQUEST_VOICE);
+            ((Activity) ((ContextWrapper) microphoneImageView.getContext()).getBaseContext()).startActivityForResult(intent, REQUEST_VOICE);
         } else {
             Toast.makeText(getContext(), "Voice Search is unavailable", Toast.LENGTH_SHORT).show();
         }
@@ -122,11 +122,11 @@ public class MaterialSearchView extends FrameLayout implements
 
     @OnClick(R.id.left_drawable_iv)
     public void leftDrawableImageViewClicked() {
-        if (mAreSearchSuggestionsVisible) {
+        if (areSearchSuggestionsVisible) {
             hideSearchSuggestions();
         } else {
             LeftDrawableClickedEvent.Type type = null;
-            switch (mLeftDrawableType) {
+            switch (leftDrawableType) {
                 case 0:
                     type = LeftDrawableClickedEvent.Type.MENU;
                     break;
@@ -135,7 +135,7 @@ public class MaterialSearchView extends FrameLayout implements
                     break;
                 case 2:
                     type = LeftDrawableClickedEvent.Type.SEARCH;
-                    mSearchEditText.requestFocus();
+                    searchEditText.requestFocus();
                 default:
                     break;
             }
@@ -152,37 +152,37 @@ public class MaterialSearchView extends FrameLayout implements
     @OnTextChanged(R.id.search_et)
     public void onSearchEditTextTextChanged(CharSequence text) {
         if (text.length() > 0) {
-            mMicrophoneImageView.setVisibility(View.GONE);
-            mClearImageView.setVisibility(View.VISIBLE);
+            microphoneImageView.setVisibility(View.GONE);
+            clearImageView.setVisibility(View.VISIBLE);
         } else {
-            mClearImageView.setVisibility(View.GONE);
-            mMicrophoneImageView.setVisibility(View.VISIBLE);
+            clearImageView.setVisibility(View.GONE);
+            microphoneImageView.setVisibility(View.VISIBLE);
         }
 
-        if (mIsSearchEditTextFocused) {
-            mSuggestionsAdapter.setCurrentQuery(text.toString());
+        if (isSearchEditTextFocused) {
+            suggestionsAdapter.setCurrentQuery(text.toString());
             BusProvider.getInstance().post(new ShowSearchSuggestionsEvent(text.toString()));
         }
 
-        mFilterImageView.setVisibility(View.GONE);
+        filterImageView.setVisibility(View.GONE);
     }
 
     @OnClick(R.id.search_et)
     public void searchEditTextClicked() {
-        mSearchEditText.requestFocus();
+        searchEditText.requestFocus();
     }
 
     @OnFocusChange(R.id.search_et)
     public void onSearchEditTextFocusChanged(boolean focused) {
-        mIsSearchEditTextFocused = focused;
+        isSearchEditTextFocused = focused;
 
-        if (mIsSearchEditTextFocused) {
-            if (!mAreSearchSuggestionsVisible) {
+        if (isSearchEditTextFocused) {
+            if (!areSearchSuggestionsVisible) {
                 showSearchSuggestions();
             }
-            DisplayUtility.showKeyboard(getContext(), mSearchEditText);
+            DisplayUtility.showKeyboard(getContext(), searchEditText);
         } else {
-            DisplayUtility.hideKeyboard(getContext(), mSearchEditText);
+            DisplayUtility.hideKeyboard(getContext(), searchEditText);
         }
     }
 
@@ -216,7 +216,7 @@ public class MaterialSearchView extends FrameLayout implements
         if (event != null) {
             int keyCode = event.getKeyCode();
             if (keyCode == KeyEvent.KEYCODE_BACK) {
-                if (mAreSearchSuggestionsVisible) {
+                if (areSearchSuggestionsVisible) {
                     hideSearchSuggestions();
                 }
             }
@@ -267,9 +267,9 @@ public class MaterialSearchView extends FrameLayout implements
     // region SuggestionsAdapter.OnSearchSuggestionCompleteClickListener Methods
     @Override
     public void onSearchSuggestionCompleteClickListener(int position, TextView textView) {
-        mSearchEditText.setText(textView.getText().toString());
-        int textLength = mSearchEditText.getText().length();
-        mSearchEditText.setSelection(textLength, textLength);
+        searchEditText.setText(textView.getText().toString());
+        int textLength = searchEditText.getText().length();
+        searchEditText.setSelection(textLength, textLength);
     }
     // endregion
 
@@ -282,13 +282,13 @@ public class MaterialSearchView extends FrameLayout implements
             if (attrs != null) {
                 TypedArray a = getContext().getTheme().obtainStyledAttributes(attrs, R.styleable.MaterialSearchView, 0, 0);
                 try {
-                    mLeftDrawableType = a.getInteger(R.styleable.MaterialSearchView_leftDrawableType, 1);
-                    mHintText = a.getString(R.styleable.MaterialSearchView_hintText);
-                    mVoicePrompt = a.getString(R.styleable.MaterialSearchView_voicePrompt);
-                    mMarginTop = a.getDimensionPixelSize(R.styleable.MaterialSearchView_layout_marginTop, 0);
-                    mMarginBottom = a.getDimensionPixelSize(R.styleable.MaterialSearchView_layout_marginBottom, 0);
-                    mMarginLeft = a.getDimensionPixelSize(R.styleable.MaterialSearchView_layout_marginLeft, 0);
-                    mMarginRight = a.getDimensionPixelSize(R.styleable.MaterialSearchView_layout_marginRight, 0);
+                    leftDrawableType = a.getInteger(R.styleable.MaterialSearchView_leftDrawableType, 1);
+                    hintText = a.getString(R.styleable.MaterialSearchView_hintText);
+                    voicePrompt = a.getString(R.styleable.MaterialSearchView_voicePrompt);
+                    marginTop = a.getDimensionPixelSize(R.styleable.MaterialSearchView_layout_marginTop, 0);
+                    marginBottom = a.getDimensionPixelSize(R.styleable.MaterialSearchView_layout_marginBottom, 0);
+                    marginLeft = a.getDimensionPixelSize(R.styleable.MaterialSearchView_layout_marginLeft, 0);
+                    marginRight = a.getDimensionPixelSize(R.styleable.MaterialSearchView_layout_marginRight, 0);
                 } finally {
                     a.recycle();
                 }
@@ -303,17 +303,17 @@ public class MaterialSearchView extends FrameLayout implements
 
     private void setUpCardView() {
         LayoutParams params = new LayoutParams(
-                mCardView.getLayoutParams());
-        params.topMargin = mMarginTop;
-        params.bottomMargin = mMarginBottom;
-        params.leftMargin = mMarginLeft;
-        params.rightMargin = mMarginRight;
+                cardView.getLayoutParams());
+        params.topMargin = marginTop;
+        params.bottomMargin = marginBottom;
+        params.leftMargin = marginLeft;
+        params.rightMargin = marginRight;
 
-        mCardView.setLayoutParams(params);
+        cardView.setLayoutParams(params);
     }
 
     private void setUpListeners() {
-        mSearchEditText.setOnEditorActionListener(new TextView.OnEditorActionListener() {
+        searchEditText.setOnEditorActionListener(new TextView.OnEditorActionListener() {
             @Override
             public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
 
@@ -330,19 +330,19 @@ public class MaterialSearchView extends FrameLayout implements
 
     private void setUpLeftDrawable(boolean showingSearchSuggestions) {
         if (showingSearchSuggestions) {
-            mLeftDrawableImageView.setImageDrawable(ContextCompat.getDrawable(getContext(), R.drawable.ic_arrow_back_black_24dp));
-            mLeftDrawableRoundedImageView.setVisibility(View.GONE);
-            mLeftDrawableImageView.setVisibility(View.VISIBLE);
+            leftDrawableImageView.setImageDrawable(ContextCompat.getDrawable(getContext(), R.drawable.ic_arrow_back_black_24dp));
+            leftDrawableRoundedImageView.setVisibility(View.GONE);
+            leftDrawableImageView.setVisibility(View.VISIBLE);
         } else {
-            switch (mLeftDrawableType) {
+            switch (leftDrawableType) {
                 case MENU:
-                    mLeftDrawableImageView.setImageDrawable(ContextCompat.getDrawable(getContext(), R.drawable.ic_menu_black_24dp));
+                    leftDrawableImageView.setImageDrawable(ContextCompat.getDrawable(getContext(), R.drawable.ic_menu_black_24dp));
                     break;
                 case BACK:
-                    mLeftDrawableImageView.setImageDrawable(ContextCompat.getDrawable(getContext(), R.drawable.ic_arrow_back_black_24dp));
+                    leftDrawableImageView.setImageDrawable(ContextCompat.getDrawable(getContext(), R.drawable.ic_arrow_back_black_24dp));
                     break;
                 case SEARCH:
-                    mLeftDrawableImageView.setImageDrawable(ContextCompat.getDrawable(getContext(), R.drawable.ic_search_black_24dp));
+                    leftDrawableImageView.setImageDrawable(ContextCompat.getDrawable(getContext(), R.drawable.ic_search_black_24dp));
                     break;
                 case AVATAR:
                     break;
@@ -350,67 +350,67 @@ public class MaterialSearchView extends FrameLayout implements
                     break;
             }
 
-            if (mLeftDrawableType == AVATAR) {
-                mLeftDrawableImageView.setVisibility(View.GONE);
-                mLeftDrawableRoundedImageView.setVisibility(View.VISIBLE);
+            if (leftDrawableType == AVATAR) {
+                leftDrawableImageView.setVisibility(View.GONE);
+                leftDrawableRoundedImageView.setVisibility(View.VISIBLE);
             } else {
-                mLeftDrawableRoundedImageView.setVisibility(View.GONE);
-                mLeftDrawableImageView.setVisibility(View.VISIBLE);
+                leftDrawableRoundedImageView.setVisibility(View.GONE);
+                leftDrawableImageView.setVisibility(View.VISIBLE);
             }
         }
     }
 
     public void setLeftDrawableType(int type) {
-        mLeftDrawableType = type;
+        leftDrawableType = type;
     }
 
     private void setUpHintText() {
-        if (mSearchEditText != null)
-            mSearchEditText.setHint(mHintText);
+        if (searchEditText != null)
+            searchEditText.setHint(hintText);
     }
 
     private void showSearchSuggestions() {
         BusProvider.getInstance().post(new ShowSearchSuggestionsEvent(getQuery()));
 
-        mSuggestionsAdapter.setOnItemClickListener(this);
-        mSuggestionsAdapter.setOnItemLongClickListener(this);
-        mSuggestionsAdapter.setOnSearchSuggestionCompleteClickListener(this);
+        suggestionsAdapter.setOnItemClickListener(this);
+        suggestionsAdapter.setOnItemLongClickListener(this);
+        suggestionsAdapter.setOnSearchSuggestionCompleteClickListener(this);
 
         CustomLinearLayoutManager layoutManager = new CustomLinearLayoutManager(getContext());
 //        LinearLayoutManager layoutManager = new LinearLayoutManager(getContext());
-        mRecyclerView.setLayoutManager(layoutManager);
+        recyclerView.setLayoutManager(layoutManager);
 
-        mDividerItemDecoration = new DividerItemDecoration(ContextCompat.getDrawable(getContext(), R.drawable.divider));
-        mRecyclerView.addItemDecoration(mDividerItemDecoration);
+        dividerItemDecoration = new DividerItemDecoration(ContextCompat.getDrawable(getContext(), R.drawable.divider));
+        recyclerView.addItemDecoration(dividerItemDecoration);
 //        mRecyclerView.setItemAnimator(new SlideInUpAnimator());
-        mRecyclerView.setAdapter(mSuggestionsAdapter);
+        recyclerView.setAdapter(suggestionsAdapter);
 
-        if (mSuggestionsAdapter.getItemCount() > 0) {
-            mRecyclerView.setVisibility(View.VISIBLE);
-            mDividerView.setVisibility(View.VISIBLE);
+        if (suggestionsAdapter.getItemCount() > 0) {
+            recyclerView.setVisibility(View.VISIBLE);
+            dividerView.setVisibility(View.VISIBLE);
         } else {
-            mRecyclerView.setVisibility(View.GONE);
-            mDividerView.setVisibility(View.GONE);
+            recyclerView.setVisibility(View.GONE);
+            dividerView.setVisibility(View.GONE);
         }
 
-        mBackgroundCoverFrameLayout.setVisibility(View.VISIBLE);
+        backgroundCoverFrameLayout.setVisibility(View.VISIBLE);
 
         setUpLeftDrawable(true);
 
-        mAreSearchSuggestionsVisible = true;
+        areSearchSuggestionsVisible = true;
     }
 
     private void hideSearchSuggestions() {
-        mDividerView.setVisibility(View.GONE);
-        mBackgroundCoverFrameLayout.setVisibility(View.GONE);
+        dividerView.setVisibility(View.GONE);
+        backgroundCoverFrameLayout.setVisibility(View.GONE);
 
         setUpLeftDrawable(false);
 
-        mRecyclerView.setVisibility(View.GONE);
-        mRecyclerView.removeItemDecoration(mDividerItemDecoration);
+        recyclerView.setVisibility(View.GONE);
+        recyclerView.removeItemDecoration(dividerItemDecoration);
 
-        mSearchEditText.clearFocus();
-        mAreSearchSuggestionsVisible = false;
+        searchEditText.clearFocus();
+        areSearchSuggestionsVisible = false;
 
         BusProvider.getInstance().post(new HideSearchSuggestionsEvent());
     }
@@ -423,45 +423,45 @@ public class MaterialSearchView extends FrameLayout implements
     }
 
     public void setQuery(String query) {
-        mSearchEditText.setText(query);
-        mSuggestionsAdapter.setCurrentQuery(query);
+        searchEditText.setText(query);
+        suggestionsAdapter.setCurrentQuery(query);
         if (!TextUtils.isEmpty(query))
-            mFilterImageView.setVisibility(View.VISIBLE);
+            filterImageView.setVisibility(View.VISIBLE);
     }
 
     public String getQuery() {
-        return mSearchEditText.getText().toString();
+        return searchEditText.getText().toString();
     }
 
     public void setHint(String hint) {
-        mSearchEditText.setHint(hint);
+        searchEditText.setHint(hint);
     }
 
     public void addSuggestions(List<String> suggestions) {
-        mSuggestionsAdapter.clear();
-        mSuggestionsAdapter.addAll(suggestions);
+        suggestionsAdapter.clear();
+        suggestionsAdapter.addAll(suggestions);
 
-        if (mSuggestionsAdapter.getItemCount() > 0) {
-            mRecyclerView.setVisibility(View.VISIBLE);
-            mDividerView.setVisibility(View.VISIBLE);
+        if (suggestionsAdapter.getItemCount() > 0) {
+            recyclerView.setVisibility(View.VISIBLE);
+            dividerView.setVisibility(View.VISIBLE);
         } else {
-            mRecyclerView.setVisibility(View.GONE);
-            mDividerView.setVisibility(View.GONE);
+            recyclerView.setVisibility(View.GONE);
+            dividerView.setVisibility(View.GONE);
         }
 
-        mBackgroundCoverFrameLayout.setVisibility(View.VISIBLE);
+        backgroundCoverFrameLayout.setVisibility(View.VISIBLE);
     }
 
     public void enableFilter() {
-        mFilterImageView.setOnClickListener(mFilterImageViewOnClickListener);
-        mFilterImageView.setBackgroundDrawable(ContextCompat.getDrawable(getContext(), R.drawable.ripple));
-        mFilterImageView.setColorFilter(ContextCompat.getColor(getContext(), R.color.grey_700));
+        filterImageView.setOnClickListener(mFilterImageViewOnClickListener);
+        filterImageView.setBackgroundDrawable(ContextCompat.getDrawable(getContext(), R.drawable.ripple));
+        filterImageView.setColorFilter(ContextCompat.getColor(getContext(), R.color.grey_700));
     }
 
     public void disableFilter() {
-        mFilterImageView.setOnClickListener(null);
-        mFilterImageView.setBackgroundDrawable(null);
-        mFilterImageView.setColorFilter(ContextCompat.getColor(getContext(), R.color.grey_300));
+        filterImageView.setOnClickListener(null);
+        filterImageView.setBackgroundDrawable(null);
+        filterImageView.setColorFilter(ContextCompat.getColor(getContext(), R.color.grey_300));
     }
 
 //    public void setAvatar(Retailer retailer){

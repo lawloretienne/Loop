@@ -45,9 +45,9 @@ public class VideosAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
     // endregion
 
     // region Member Variables
-    private List<Video> mVideos;
-    private OnItemClickListener mOnItemClickListener;
-    private boolean mIsLoadingFooterAdded = false;
+    private List<Video> videos;
+    private OnItemClickListener onItemClickListener;
+    private boolean isLoadingFooterAdded = false;
     // endregion
 
     // region Listeners
@@ -61,7 +61,7 @@ public class VideosAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
 
     // region Constructors
     public VideosAdapter() {
-        mVideos = new ArrayList<>();
+        videos = new ArrayList<>();
     }
     // endregion
 
@@ -103,18 +103,18 @@ public class VideosAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
 
     @Override
     public int getItemCount() {
-        return mVideos.size();
+        return videos.size();
     }
 
     @Override
     public int getItemViewType(int position) {
-        return (position == mVideos.size()-1 && mIsLoadingFooterAdded) ? LOADING : ITEM;
+        return (position == videos.size()-1 && isLoadingFooterAdded) ? LOADING : ITEM;
     }
 
     // region Helper Methods
     private void add(Video item) {
-        mVideos.add(item);
-        notifyItemInserted(mVideos.size()-1);
+        videos.add(item);
+        notifyItemInserted(videos.size()-1);
     }
 
     public void addAll(List<Video> videos) {
@@ -124,15 +124,15 @@ public class VideosAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
     }
 
     public void remove(Video item) {
-        int position = mVideos.indexOf(item);
+        int position = videos.indexOf(item);
         if (position > -1) {
-            mVideos.remove(position);
+            videos.remove(position);
             notifyItemRemoved(position);
         }
     }
 
     public void clear() {
-        mIsLoadingFooterAdded = false;
+        isLoadingFooterAdded = false;
         while (getItemCount() > 0) {
             remove(getItem(0));
         }
@@ -143,28 +143,28 @@ public class VideosAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
     }
 
     public void addLoading(){
-        mIsLoadingFooterAdded = true;
+        isLoadingFooterAdded = true;
         add(new Video());
     }
 
     public void removeLoading() {
-        mIsLoadingFooterAdded = false;
+        isLoadingFooterAdded = false;
 
-        int position = mVideos.size() - 1;
+        int position = videos.size() - 1;
         Video item = getItem(position);
 
         if (item != null) {
-            mVideos.remove(position);
+            videos.remove(position);
             notifyItemRemoved(position);
         }
     }
 
     public Video getItem(int position) {
-        return mVideos.get(position);
+        return videos.get(position);
     }
 
     public void setOnItemClickListener(OnItemClickListener onItemClickListener) {
-        this.mOnItemClickListener = onItemClickListener;
+        this.onItemClickListener = onItemClickListener;
     }
 
     private RecyclerView.ViewHolder createHeaderViewHolder(ViewGroup parent){
@@ -179,13 +179,13 @@ public class VideosAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
 
         final VideoViewHolder holder = new VideoViewHolder(v);
 
-        holder.mVideoRowRootLinearLayout.setOnClickListener(new View.OnClickListener() {
+        holder.videoRowRootLinearLayout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 int adapterPos = holder.getAdapterPosition();
                 if(adapterPos != RecyclerView.NO_POSITION){
-                    if (mOnItemClickListener != null) {
-                        mOnItemClickListener.onItemClick(adapterPos, holder.itemView);
+                    if (onItemClickListener != null) {
+                        onItemClickListener.onItemClick(adapterPos, holder.itemView);
                     }
                 }
             }
@@ -203,23 +203,23 @@ public class VideosAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
     private void bindVideoViewHolder(RecyclerView.ViewHolder viewHolder, int position) {
         final VideoViewHolder holder = (VideoViewHolder) viewHolder;
 
-        final Video video = mVideos.get(position);
+        final Video video = videos.get(position);
         if (video != null) {
-            setUpTitle(holder.mTitleTextView, video);
-            setUpSubtitle(holder.mSubtitleTextView, video);
-            setUpVideoThumbnail(holder.mVideoThumbnailImageView, video);
-            setUpDuration(holder.mDurationTextView, video);
-            setUpUploadedDate(holder.mUploadedDateTextView, video);
+            setUpTitle(holder.titleTextView, video);
+            setUpSubtitle(holder.subtitleTextView, video);
+            setUpVideoThumbnail(holder.videoThumbnailImageView, video);
+            setUpDuration(holder.durationTextView, video);
+            setUpUploadedDate(holder.uploadedDateTextView, video);
 
             int adapterPos = holder.getAdapterPosition();
-            ViewCompat.setTransitionName(holder.mSubtitleTextView,"myTransition"+adapterPos);
+            ViewCompat.setTransitionName(holder.subtitleTextView,"myTransition"+adapterPos);
         }
     }
 
     private void bindLoadingViewHolder(RecyclerView.ViewHolder viewHolder){
         MoreViewHolder holder = (MoreViewHolder) viewHolder;
 
-        holder.mLoadingImageView.setMaskOrientation(LoadingImageView.MaskOrientation.LeftToRight);
+        holder.loadingImageView.setMaskOrientation(LoadingImageView.MaskOrientation.LeftToRight);
     }
 
     private void setUpTitle(TextView tv, Video video) {
@@ -359,17 +359,17 @@ public class VideosAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
 
     public static class VideoViewHolder extends RecyclerView.ViewHolder {
         @Bind(R.id.video_thumbnail_iv)
-        ImageView mVideoThumbnailImageView;
+        ImageView videoThumbnailImageView;
         @Bind(R.id.title_tv)
-        TextView mTitleTextView;
+        TextView titleTextView;
         @Bind(R.id.uploaded_date_tv)
-        TextView mUploadedDateTextView;
+        TextView uploadedDateTextView;
         @Bind(R.id.duration_tv)
-        TextView mDurationTextView;
+        TextView durationTextView;
         @Bind(R.id.subtitle_tv)
-        TextView mSubtitleTextView;
+        TextView subtitleTextView;
         @Bind(R.id.video_row_root_ll)
-        LinearLayout mVideoRowRootLinearLayout;
+        LinearLayout videoRowRootLinearLayout;
 
         public VideoViewHolder(View view) {
             super(view);
@@ -379,7 +379,7 @@ public class VideosAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
 
     public static class MoreViewHolder extends RecyclerView.ViewHolder {
         @Bind(R.id.loading_iv)
-        LoadingImageView mLoadingImageView;
+        LoadingImageView loadingImageView;
 
         public MoreViewHolder(View view) {
             super(view);

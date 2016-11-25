@@ -58,19 +58,19 @@ public class RelatedVideosAdapter extends RecyclerView.Adapter<RecyclerView.View
     // endregion
 
     // region Member Variables
-    private Video mVideo;
-    private List<Video> mVideos;
-    private OnItemClickListener mOnItemClickListener;
-    private OnLikeClickListener mOnLikeClickListener;
-    private OnWatchLaterClickListener mOnWatchLaterClickListener;
-    private OnCommentsClickListener mOnCommentsClickListener;
-    private OnInfoClickListener mOnInfoClickListener;
-    private boolean mIsLoadingFooterAdded = false;
-    private Typeface mBoldFont;
-    private boolean mIsLikeOn = false;
-    private boolean mIsWatchLaterOn = false;
-    private boolean mHasDescription = false;
-    private boolean mHasTags = false;
+    private Video video;
+    private List<Video> videos;
+    private OnItemClickListener onItemClickListener;
+    private OnLikeClickListener onLikeClickListener;
+    private OnWatchLaterClickListener onWatchLaterClickListener;
+    private OnCommentsClickListener onCommentsClickListener;
+    private OnInfoClickListener onInfoClickListener;
+    private boolean isLoadingFooterAdded = false;
+    private Typeface boldFont;
+    private boolean isLikeOn = false;
+    private boolean isWatchLaterOn = false;
+    private boolean hasDescription = false;
+    private boolean hasTags = false;
     // endregion
 
     // region Listeners
@@ -100,10 +100,10 @@ public class RelatedVideosAdapter extends RecyclerView.Adapter<RecyclerView.View
 
     // region Constructors
     public RelatedVideosAdapter(Video video) {
-        mVideo = video;
-        mVideos = new ArrayList<>();
+        video = video;
+        videos = new ArrayList<>();
 
-        mBoldFont = Typeface.createFromAsset(LoopApplication.getInstance().getApplicationContext().getAssets(), "fonts/Roboto-Bold.ttf");
+        boldFont = Typeface.createFromAsset(LoopApplication.getInstance().getApplicationContext().getAssets(), "fonts/Roboto-Bold.ttf");
     }
     // endregion
 
@@ -148,7 +148,7 @@ public class RelatedVideosAdapter extends RecyclerView.Adapter<RecyclerView.View
 
     @Override
     public int getItemCount() {
-        return mVideos.size();
+        return videos.size();
     }
 
     @Override
@@ -156,12 +156,12 @@ public class RelatedVideosAdapter extends RecyclerView.Adapter<RecyclerView.View
         if(position == 0)
             return HEADER;
         else
-            return (position == getItemCount()-1 && mIsLoadingFooterAdded) ? LOADING : ITEM;
+            return (position == getItemCount()-1 && isLoadingFooterAdded) ? LOADING : ITEM;
     }
 
     // region Helper Methods
     private void add(Video item) {
-        mVideos.add(item);
+        videos.add(item);
         notifyItemInserted(getItemCount()-1);
     }
 
@@ -172,15 +172,15 @@ public class RelatedVideosAdapter extends RecyclerView.Adapter<RecyclerView.View
     }
 
     public void remove(Video item) {
-        int position = mVideos.indexOf(item);
+        int position = videos.indexOf(item);
         if (position > -1) {
-            mVideos.remove(position);
+            videos.remove(position);
             notifyItemRemoved(position);
         }
     }
 
     public void clear() {
-        mIsLoadingFooterAdded = false;
+        isLoadingFooterAdded = false;
         while (getItemCount() > 0) {
             remove(getItem(0));
         }
@@ -195,15 +195,15 @@ public class RelatedVideosAdapter extends RecyclerView.Adapter<RecyclerView.View
     }
 
     public void addLoading(){
-        if(!mIsLoadingFooterAdded){
-            mIsLoadingFooterAdded = true;
+        if(!isLoadingFooterAdded){
+            isLoadingFooterAdded = true;
             add(new Video());
         }
     }
 
     public void removeLoading() {
-        if(mIsLoadingFooterAdded){
-            mIsLoadingFooterAdded = false;
+        if(isLoadingFooterAdded){
+            isLoadingFooterAdded = false;
 
             int itemCount = getItemCount();
             if(itemCount > 0){
@@ -211,7 +211,7 @@ public class RelatedVideosAdapter extends RecyclerView.Adapter<RecyclerView.View
                 Video item = getItem(position);
 
                 if (item != null) {
-                    mVideos.remove(position);
+                    videos.remove(position);
                     notifyItemRemoved(position);
                 }
             }
@@ -220,73 +220,73 @@ public class RelatedVideosAdapter extends RecyclerView.Adapter<RecyclerView.View
 
     public Video getItem(int position) {
         if(position>=0)
-            return mVideos.get(position);
+            return videos.get(position);
         else
             return null;
     }
 
     public void setOnItemClickListener(OnItemClickListener onItemClickListener) {
-        this.mOnItemClickListener = onItemClickListener;
+        this.onItemClickListener = onItemClickListener;
     }
 
 
     public void setOnLikeClickListener(OnLikeClickListener onLikeClickListener) {
-        this.mOnLikeClickListener = onLikeClickListener;
+        this.onLikeClickListener = onLikeClickListener;
     }
 
     public void setOnWatchLaterClickListener(OnWatchLaterClickListener onWatchLaterClickListener) {
-        this.mOnWatchLaterClickListener = onWatchLaterClickListener;
+        this.onWatchLaterClickListener = onWatchLaterClickListener;
     }
 
     public void setOnCommentsClickListener(OnCommentsClickListener onCommentsClickListener) {
-        this.mOnCommentsClickListener = onCommentsClickListener;
+        this.onCommentsClickListener = onCommentsClickListener;
     }
 
     public void setOnInfoClickListener(OnInfoClickListener onInfoClickListener) {
-        this.mOnInfoClickListener = onInfoClickListener;
+        this.onInfoClickListener = onInfoClickListener;
     }
 
     private RecyclerView.ViewHolder createHeaderViewHolder(ViewGroup parent){
         View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.video_info, parent, false);
         final HeaderViewHolder holder = new HeaderViewHolder(v);
 
-        holder.mLikeImageView.setOnClickListener(new View.OnClickListener() {
+        holder.likeImageView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(mOnLikeClickListener != null){
-                    mOnLikeClickListener.onLikeClick(holder.mLikeImageView);
+                if(onLikeClickListener != null){
+                    onLikeClickListener.onLikeClick(holder.likeImageView);
                 }
             }
         });
 
-        holder.mWatchLaterImageView.setOnClickListener(new View.OnClickListener() {
+        holder.watchLaterImageView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(mOnWatchLaterClickListener != null){
-                    mOnWatchLaterClickListener.onWatchLaterClick(holder.mWatchLaterImageView);
+                if(onWatchLaterClickListener != null){
+                    onWatchLaterClickListener.onWatchLaterClick(holder.watchLaterImageView);
                 }
             }
         });
 
-        holder.mCommentsImageView.setOnClickListener(new View.OnClickListener() {
+        holder.commentsImageView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(mOnCommentsClickListener != null){
-                    mOnCommentsClickListener.onCommentsClick();
+                if(onCommentsClickListener != null){
+                    onCommentsClickListener.onCommentsClick();
                 }
             }
         });
 
-        holder.mInfoImageView.setOnClickListener(new View.OnClickListener() {
+        holder.infoImageView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(mOnInfoClickListener != null){
-                    mOnInfoClickListener.onInfoClick(holder.mInfoImageView);
-                    int visibility = holder.mAdditionalInfoLinearLayout.getVisibility();
+                if(onInfoClickListener != null){
+                    onInfoClickListener.onInfoClick(holder.infoImageView);
+                    int visibility = holder.additionalInfoLinearLayout.getVisibility();
                     if(visibility == View.VISIBLE){
-                        holder.mAdditionalInfoLinearLayout.setVisibility(View.GONE);
+                        holder.additionalInfoLinearLayout.setVisibility(View.GONE);
                     } else if(visibility == View.GONE){
-                        holder.mAdditionalInfoLinearLayout.setVisibility(View.VISIBLE);
+                        holder.additionalInfoLinearLayout.setVisibility(View.VISIBLE);
                     }
                 }
             }
@@ -299,13 +299,13 @@ public class RelatedVideosAdapter extends RecyclerView.Adapter<RecyclerView.View
         View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.video_row, parent, false);
         final VideoViewHolder holder = new VideoViewHolder(v);
 
-        holder.mVideoRowRootLinearLayout.setOnClickListener(new View.OnClickListener() {
+        holder.videoRowRootLinearLayout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 int adapterPos = holder.getAdapterPosition();
                 if(adapterPos != RecyclerView.NO_POSITION){
-                    if (mOnItemClickListener != null) {
-                        mOnItemClickListener.onItemClick(adapterPos, holder.itemView);
+                    if (onItemClickListener != null) {
+                        onItemClickListener.onItemClick(adapterPos, holder.itemView);
                     }
                 }
             }
@@ -322,37 +322,37 @@ public class RelatedVideosAdapter extends RecyclerView.Adapter<RecyclerView.View
     private void bindHeaderViewHolder(RecyclerView.ViewHolder viewHolder) {
         HeaderViewHolder holder = (HeaderViewHolder) viewHolder;
 
-        if(mVideo != null){
-            setUpTitle(holder.mTitleTextView, mVideo);
-            setUpSubtitle(holder.mSubtitleTextView, mVideo);
-            setUpViewCount(holder.mViewCountTextView, mVideo);
-            setUpLike(holder.mLikeImageView, mVideo);
-            setUpWatchLater(holder.mWatchLaterImageView, mVideo);
-            setUpUserImage(holder.mUserImageView, mVideo);
-            setUpUploadedDate2(holder.mUploadDateTextView, mVideo);
-            setUpDescription(holder.mDescriptionTextView, mVideo);
-            setUpTags(holder.mHashtagView, mVideo);
-            setUpInfoImage(holder.mInfoImageView);
+        if(video != null){
+            setUpTitle(holder.titleTextView, video);
+            setUpSubtitle(holder.subtitleTextView, video);
+            setUpViewCount(holder.viewCountTextView, video);
+            setUpLike(holder.likeImageView, video);
+            setUpWatchLater(holder.watchLaterImageView, video);
+            setUpUserImage(holder.userImageView, video);
+            setUpUploadedDate2(holder.uploadDateTextView, video);
+            setUpDescription(holder.descriptionTextView, video);
+            setUpTags(holder.hashtagView, video);
+            setUpInfoImage(holder.infoImageView);
         }
     }
 
     private void bindVideoViewHolder(RecyclerView.ViewHolder viewHolder, int position) {
         final VideoViewHolder holder = (VideoViewHolder) viewHolder;
 
-        final Video video = mVideos.get(position);
+        final Video video = videos.get(position);
         if (video != null) {
-            setUpTitle(holder.mTitleTextView, video);
-            setUpSubtitle(holder.mSubtitleTextView, video);
-            setUpVideoThumbnail(holder.mVideoThumbnailImageView, video);
-            setUpDuration(holder.mDurationTextView, video);
-            setUpUploadedDate(holder.mUploadedDateTextView, video);
+            setUpTitle(holder.titleTextView, video);
+            setUpSubtitle(holder.subtitleTextView, video);
+            setUpVideoThumbnail(holder.videoThumbnailImageView, video);
+            setUpDuration(holder.durationTextView, video);
+            setUpUploadedDate(holder.uploadedDateTextView, video);
         }
     }
 
     private void bindLoadingViewHolder(RecyclerView.ViewHolder viewHolder){
         MoreViewHolder holder = (MoreViewHolder) viewHolder;
 
-        holder.mLoadingImageView.setMaskOrientation(LoadingImageView.MaskOrientation.LeftToRight);
+        holder.loadingImageView.setMaskOrientation(LoadingImageView.MaskOrientation.LeftToRight);
     }
 
     private void setUpTitle(TextView tv, Video video) {
@@ -406,13 +406,13 @@ public class RelatedVideosAdapter extends RecyclerView.Adapter<RecyclerView.View
         }
     }
 
-    public boolean isLikeOn() {return mIsLikeOn; }
+    public boolean isLikeOn() {return isLikeOn; }
 
-    public void setIsLikeOn(boolean isLikeOn) { mIsLikeOn = isLikeOn; }
+    public void setIsLikeOn(boolean isLikeOn) { isLikeOn = isLikeOn; }
 
-    public boolean isWatchLaterOn() {return mIsWatchLaterOn; }
+    public boolean isWatchLaterOn() {return isWatchLaterOn; }
 
-    public void setIsWatchLaterOn(boolean isWatchLaterOn) { mIsWatchLaterOn = isWatchLaterOn; }
+    public void setIsWatchLaterOn(boolean isWatchLaterOn) { isWatchLaterOn = isWatchLaterOn; }
 
     private void setUpVideoThumbnail(ImageView iv, Video video) {
         Pictures pictures = video.getPictures();
@@ -610,9 +610,9 @@ public class RelatedVideosAdapter extends RecyclerView.Adapter<RecyclerView.View
             Timber.d("setUpTags() : canonicalTags.size() - " + canonicalTags.size());
 
             if(canonicalTags.size() > 0){
-                mHasTags = true;
+                hasTags = true;
                 htv.setData(canonicalTags, Transformers.HASH);
-                htv.setTypeface(mBoldFont);
+                htv.setTypeface(boldFont);
                 htv.addOnTagClickListener(new HashtagView.TagsClickListener() {
                     @Override
                     public void onItemClicked(Object item) {
@@ -633,7 +633,7 @@ public class RelatedVideosAdapter extends RecyclerView.Adapter<RecyclerView.View
     private void setUpDescription(TextView tv, Video video) {
         String description = video.getDescription();
         if (!TextUtils.isEmpty(description)) {
-            mHasDescription = true;
+            hasDescription = true;
 //            description = description.replaceAll("[\\t\\n\\r]+", "\n");
             tv.setText(description.trim());
             tv.setVisibility(View.VISIBLE);
@@ -643,7 +643,7 @@ public class RelatedVideosAdapter extends RecyclerView.Adapter<RecyclerView.View
     }
 
     private void setUpInfoImage(ImageView iv){
-        if(mHasDescription || mHasTags){
+        if(hasDescription || hasTags){
             iv.setVisibility(View.VISIBLE);
         }
     }
@@ -654,29 +654,29 @@ public class RelatedVideosAdapter extends RecyclerView.Adapter<RecyclerView.View
 
     public static class HeaderViewHolder extends RecyclerView.ViewHolder {
         @Bind(R.id.title_tv)
-        TextView mTitleTextView;
+        TextView titleTextView;
         @Bind(R.id.subtitle_tv)
-        TextView mSubtitleTextView;
+        TextView subtitleTextView;
         @Bind(R.id.user_iv)
-        CircleImageView mUserImageView;
+        CircleImageView userImageView;
         @Bind(R.id.view_count_tv)
-        TextView mViewCountTextView;
+        TextView viewCountTextView;
         @Bind(R.id.upload_date_tv)
-        TextView mUploadDateTextView;
+        TextView uploadDateTextView;
         @Bind(R.id.like_iv)
-        ImageView mLikeImageView;
+        ImageView likeImageView;
         @Bind(R.id.watch_later_iv)
-        ImageView mWatchLaterImageView;
+        ImageView watchLaterImageView;
         @Bind(R.id.comments_iv)
-        ImageView mCommentsImageView;
+        ImageView commentsImageView;
         @Bind(R.id.info_iv)
-        ImageView mInfoImageView;
+        ImageView infoImageView;
         @Bind(R.id.htv)
-        HashtagView mHashtagView;
+        HashtagView hashtagView;
         @Bind(R.id.description_tv)
-        TextView mDescriptionTextView;
+        TextView descriptionTextView;
         @Bind(R.id.additional_info_ll)
-        LinearLayout mAdditionalInfoLinearLayout;
+        LinearLayout additionalInfoLinearLayout;
 
         HeaderViewHolder(View view) {
             super(view);
@@ -686,17 +686,17 @@ public class RelatedVideosAdapter extends RecyclerView.Adapter<RecyclerView.View
 
     public static class VideoViewHolder extends RecyclerView.ViewHolder {
         @Bind(R.id.video_thumbnail_iv)
-        ImageView mVideoThumbnailImageView;
+        ImageView videoThumbnailImageView;
         @Bind(R.id.title_tv)
-        TextView mTitleTextView;
+        TextView titleTextView;
         @Bind(R.id.uploaded_date_tv)
-        TextView mUploadedDateTextView;
+        TextView uploadedDateTextView;
         @Bind(R.id.duration_tv)
-        TextView mDurationTextView;
+        TextView durationTextView;
         @Bind(R.id.subtitle_tv)
-        TextView mSubtitleTextView;
+        TextView subtitleTextView;
         @Bind(R.id.video_row_root_ll)
-        LinearLayout mVideoRowRootLinearLayout;
+        LinearLayout videoRowRootLinearLayout;
 
         VideoViewHolder(View view) {
             super(view);
@@ -706,7 +706,7 @@ public class RelatedVideosAdapter extends RecyclerView.Adapter<RecyclerView.View
 
     public static class MoreViewHolder extends RecyclerView.ViewHolder {
         @Bind(R.id.loading_iv)
-        LoadingImageView mLoadingImageView;
+        LoadingImageView loadingImageView;
 
         public MoreViewHolder(View view) {
             super(view);

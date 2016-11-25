@@ -34,12 +34,12 @@ public class SuggestionsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
     // endregion
 
     // region Member Variables
-    private List<String> mSuggestions;
-    private Typeface mBlackFont;
-    private OnItemClickListener mOnItemClickListener;
-    private OnItemLongClickListener mOnItemLongClickListener;
-    private OnSearchSuggestionCompleteClickListener mOnSearchSuggestionCompleteClickListener;
-    private String mCurrentQuery = "";
+    private List<String> suggestions;
+    private Typeface blackFont;
+    private OnItemClickListener onItemClickListener;
+    private OnItemLongClickListener onItemLongClickListener;
+    private OnSearchSuggestionCompleteClickListener onSearchSuggestionCompleteClickListener;
+    private String currentQuery = "";
     // endregion
 
     // region Listeners
@@ -61,8 +61,8 @@ public class SuggestionsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
 
     // region Constructors
     public SuggestionsAdapter() {
-        mSuggestions = new ArrayList<>();
-        mBlackFont = Typeface.createFromAsset(LoopApplication.getInstance().getAssets(), "fonts/Roboto-Black.ttf");
+        suggestions = new ArrayList<>();
+        blackFont = Typeface.createFromAsset(LoopApplication.getInstance().getAssets(), "fonts/Roboto-Black.ttf");
     }
     // endregion
 
@@ -95,7 +95,7 @@ public class SuggestionsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
 
     @Override
     public int getItemCount() {
-        return mSuggestions.size();
+        return suggestions.size();
     }
 
     @Override
@@ -105,8 +105,8 @@ public class SuggestionsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
 
     // region Helper Methods
     private void add(String item) {
-        mSuggestions.add(item);
-        notifyItemInserted(mSuggestions.size()-1);
+        suggestions.add(item);
+        notifyItemInserted(suggestions.size()-1);
     }
 
     public void addAll(List<String> suggestions) {
@@ -116,9 +116,9 @@ public class SuggestionsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
     }
 
     public void remove(String item) {
-        int position = mSuggestions.indexOf(item);
+        int position = suggestions.indexOf(item);
         if (position > -1) {
-            mSuggestions.remove(position);
+            suggestions.remove(position);
             notifyItemRemoved(position);
         }
     }
@@ -134,19 +134,19 @@ public class SuggestionsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
     }
 
     public String getItem(int position) {
-        return mSuggestions.get(position);
+        return suggestions.get(position);
     }
 
     public void setOnItemClickListener(OnItemClickListener onItemClickListener) {
-        this.mOnItemClickListener = onItemClickListener;
+        this.onItemClickListener = onItemClickListener;
     }
 
     public void setOnItemLongClickListener(OnItemLongClickListener onItemLongClickListener) {
-        this.mOnItemLongClickListener = onItemLongClickListener;
+        this.onItemLongClickListener = onItemLongClickListener;
     }
 
     public void setOnSearchSuggestionCompleteClickListener(OnSearchSuggestionCompleteClickListener onSearchSuggestionCompleteClickListener) {
-        this.mOnSearchSuggestionCompleteClickListener = onSearchSuggestionCompleteClickListener;
+        this.onSearchSuggestionCompleteClickListener = onSearchSuggestionCompleteClickListener;
     }
 
     private RecyclerView.ViewHolder createSuggestionViewHolder(ViewGroup parent){
@@ -159,8 +159,8 @@ public class SuggestionsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
             public void onClick(View v) {
                 int adapterPos = holder.getAdapterPosition();
                 if(adapterPos != RecyclerView.NO_POSITION){
-                    if (mOnItemClickListener != null) {
-                        mOnItemClickListener.onItemClick(adapterPos, holder.itemView);
+                    if (onItemClickListener != null) {
+                        onItemClickListener.onItemClick(adapterPos, holder.itemView);
                     }
                 }
             }
@@ -171,21 +171,21 @@ public class SuggestionsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
             public boolean onLongClick(View v) {
                 int adapterPos = holder.getAdapterPosition();
                 if(adapterPos != RecyclerView.NO_POSITION){
-                    if (mOnItemLongClickListener != null) {
-                        mOnItemLongClickListener.onItemLongClick(adapterPos, holder.itemView);
+                    if (onItemLongClickListener != null) {
+                        onItemLongClickListener.onItemLongClick(adapterPos, holder.itemView);
                     }
                 }
                 return true;
             }
         });
 
-        holder.mSuggestionCompleteImageView.setOnClickListener(new View.OnClickListener() {
+        holder.suggestionCompleteImageView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 int adapterPos = holder.getAdapterPosition();
                 if(adapterPos != RecyclerView.NO_POSITION){
-                    if (mOnSearchSuggestionCompleteClickListener != null) {
-                        mOnSearchSuggestionCompleteClickListener.onSearchSuggestionCompleteClickListener(adapterPos, holder.mSuggestionTextView);
+                    if (onSearchSuggestionCompleteClickListener != null) {
+                        onSearchSuggestionCompleteClickListener.onSearchSuggestionCompleteClickListener(adapterPos, holder.suggestionTextView);
                     }
                 }
             }
@@ -197,20 +197,20 @@ public class SuggestionsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
     private void bindSuggestionViewHolder(RecyclerView.ViewHolder viewHolder, int position) {
         final SuggestionViewHolder holder = (SuggestionViewHolder) viewHolder;
 
-        final String suggestion = mSuggestions.get(position);
+        final String suggestion = suggestions.get(position);
         if (!TextUtils.isEmpty(suggestion)) {
-            setUpSuggestion(holder.mSuggestionTextView, suggestion);
+            setUpSuggestion(holder.suggestionTextView, suggestion);
         }
     }
 
     private void setUpSuggestion(TextView tv, String suggestion){
         if(!TextUtils.isEmpty(suggestion)){
-            if(!TextUtils.isEmpty(mCurrentQuery)){
+            if(!TextUtils.isEmpty(currentQuery)){
                 CharSequence formattedSuggestion = Trestle.getFormattedText(
                         new Span.Builder(suggestion)
-                                .regex(new Regex(mCurrentQuery, Regex.CASE_INSENSITIVE))
+                                .regex(new Regex(currentQuery, Regex.CASE_INSENSITIVE))
                                 .foregroundColor(ContextCompat.getColor(tv.getContext(), R.color.primary)) // Pass resolved color instead of resource id
-                                .typeface(mBlackFont)
+                                .typeface(blackFont)
                                 .build());
 
                 tv.setText(formattedSuggestion);
@@ -221,7 +221,7 @@ public class SuggestionsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
     }
 
     public void setCurrentQuery(String query){
-        mCurrentQuery = query;
+        currentQuery = query;
     }
     // endregion
 
@@ -229,9 +229,9 @@ public class SuggestionsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
 
     public static class SuggestionViewHolder extends RecyclerView.ViewHolder {
         @Bind(R.id.suggestion_tv)
-        TextView mSuggestionTextView;
+        TextView suggestionTextView;
         @Bind(R.id.search_suggest_complete_iv)
-        ImageView mSuggestionCompleteImageView;
+        ImageView suggestionCompleteImageView;
 
         public SuggestionViewHolder(View view) {
             super(view);

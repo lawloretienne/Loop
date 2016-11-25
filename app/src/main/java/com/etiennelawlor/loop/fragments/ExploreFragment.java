@@ -52,50 +52,50 @@ public class ExploreFragment extends BaseFragment implements CategoriesAdapter.O
 
     // region Member Variables
     @Bind(R.id.categories_rv)
-    RecyclerView mCategoriesRecyclerView;
+    RecyclerView categoriesRecyclerView;
     @Bind(android.R.id.empty)
-    View mEmptyView;
+    View emptyView;
     @Bind(R.id.loading_iv)
-    LoadingImageView mLoadingImageView;
+    LoadingImageView loadingImageView;
     @Bind(R.id.error_ll)
-    LinearLayout mErrorLinearLayout;
+    LinearLayout errorLinearLayout;
     @Bind(R.id.error_tv)
-    TextView mErrorTextView;
+    TextView errorTextView;
     @Bind(R.id.toolbar)
-    Toolbar mToolbar;
+    Toolbar toolbar;
 
-    private boolean mIsLoading = false;
-    private CategoriesAdapter mCategoriesAdapter;
-    private VimeoService mVimeoService;
+    private boolean isLoading = false;
+    private CategoriesAdapter categoriesAdapter;
+    private VimeoService vimeoService;
     // endregion
 
     // region Listeners
     @OnClick(R.id.reload_btn)
     public void onReloadButtonClicked() {
-        mErrorLinearLayout.setVisibility(View.GONE);
-        mLoadingImageView.setVisibility(View.VISIBLE);
+        errorLinearLayout.setVisibility(View.GONE);
+        loadingImageView.setVisibility(View.VISIBLE);
 
-        Call getCategoriesCall = mVimeoService.getCategories();
-        mCalls.add(getCategoriesCall);
-        getCategoriesCall.enqueue(mGetCategoriesCallback);
+        Call getCategoriesCall = vimeoService.getCategories();
+        calls.add(getCategoriesCall);
+        getCategoriesCall.enqueue(getCategoriesCallback);
     }
     // endregion
 
     // region Callbacks
-    private Callback<CategoriesCollection> mGetCategoriesCallback = new Callback<CategoriesCollection>() {
+    private Callback<CategoriesCollection> getCategoriesCallback = new Callback<CategoriesCollection>() {
         @Override
         public void onResponse(Response<CategoriesCollection> response, Retrofit retrofit) {
             Timber.d("onResponse()");
 
-            mLoadingImageView.setVisibility(View.GONE);
-            mIsLoading = false;
+            loadingImageView.setVisibility(View.GONE);
+            isLoading = false;
 
             if (response != null) {
                 if(response.isSuccess()){
                     CategoriesCollection categoriesCollection = response.body();
                     if (categoriesCollection != null) {
                         List<Category> categories = categoriesCollection.getCategories();
-                        mCategoriesAdapter.addAll(categories);
+                        categoriesAdapter.addAll(categories);
                     }
                 } else {
                     com.squareup.okhttp.Response rawResponse = response.raw();
@@ -105,8 +105,8 @@ public class ExploreFragment extends BaseFragment implements CategoriesAdapter.O
                         int code = rawResponse.code();
                         switch (code) {
                             case 500:
-                                mErrorTextView.setText("Can't load data.\nCheck your network connection.");
-                                mErrorLinearLayout.setVisibility(View.VISIBLE);
+                                errorTextView.setText("Can't load data.\nCheck your network connection.");
+                                errorLinearLayout.setVisibility(View.VISIBLE);
                                 break;
                             default:
                                 break;
@@ -124,17 +124,17 @@ public class ExploreFragment extends BaseFragment implements CategoriesAdapter.O
 
                 if (t instanceof SocketTimeoutException || t instanceof UnknownHostException) {
                     Timber.e("Timeout occurred");
-                    mIsLoading = false;
-                    mLoadingImageView.setVisibility(View.GONE);
+                    isLoading = false;
+                    loadingImageView.setVisibility(View.GONE);
 
-                    mErrorTextView.setText("Can't load data.\nCheck your network connection.");
-                    mErrorLinearLayout.setVisibility(View.VISIBLE);
+                    errorTextView.setText("Can't load data.\nCheck your network connection.");
+                    errorLinearLayout.setVisibility(View.VISIBLE);
                 } else if(t instanceof IOException){
                     if(message.equals("Canceled")){
                         Timber.e("onFailure() : Canceled");
                     } else {
-                        mIsLoading = false;
-                        mLoadingImageView.setVisibility(View.GONE);
+                        isLoading = false;
+                        loadingImageView.setVisibility(View.GONE);
                     }
                 }
             }
@@ -170,7 +170,7 @@ public class ExploreFragment extends BaseFragment implements CategoriesAdapter.O
         }
 
         AccessToken token = PreferencesHelper.getAccessToken(getActivity());
-        mVimeoService = ServiceGenerator.createService(
+        vimeoService = ServiceGenerator.createService(
                 VimeoService.class,
                 VimeoService.BASE_URL,
                 token);
@@ -191,7 +191,7 @@ public class ExploreFragment extends BaseFragment implements CategoriesAdapter.O
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        ((AppCompatActivity) getActivity()).setSupportActionBar(mToolbar);
+        ((AppCompatActivity) getActivity()).setSupportActionBar(toolbar);
 
         final ActionBar ab = ((AppCompatActivity) getActivity()).getSupportActionBar();
         if(ab != null){
@@ -201,18 +201,18 @@ public class ExploreFragment extends BaseFragment implements CategoriesAdapter.O
         }
 
         LinearLayoutManager layoutManager = new GridLayoutManager(getActivity(), 2);
-        mCategoriesRecyclerView.setLayoutManager(layoutManager);
-        mCategoriesRecyclerView.addItemDecoration(new GridSpacesItemDecoration(DisplayUtility.dp2px(getActivity(), 8)));
+        categoriesRecyclerView.setLayoutManager(layoutManager);
+        categoriesRecyclerView.addItemDecoration(new GridSpacesItemDecoration(DisplayUtility.dp2px(getActivity(), 8)));
 
-        mCategoriesAdapter = new CategoriesAdapter();
-        mCategoriesAdapter.setOnItemClickListener(this);
+        categoriesAdapter = new CategoriesAdapter();
+        categoriesAdapter.setOnItemClickListener(this);
 
-        mCategoriesRecyclerView.setItemAnimator(new SlideInUpAnimator());
-        mCategoriesRecyclerView.setAdapter(mCategoriesAdapter);
+        categoriesRecyclerView.setItemAnimator(new SlideInUpAnimator());
+        categoriesRecyclerView.setAdapter(categoriesAdapter);
 
-        Call getCategoriesCall = mVimeoService.getCategories();
-        mCalls.add(getCategoriesCall);
-        getCategoriesCall.enqueue(mGetCategoriesCallback);
+        Call getCategoriesCall = vimeoService.getCategories();
+        calls.add(getCategoriesCall);
+        getCategoriesCall.enqueue(getCategoriesCallback);
     }
 
     @Override
@@ -234,7 +234,7 @@ public class ExploreFragment extends BaseFragment implements CategoriesAdapter.O
     @Override
     public void onItemClick(int position, View view) {
 
-        Category category = mCategoriesAdapter.getItem(position);
+        Category category = categoriesAdapter.getItem(position);
         Timber.d("");
 
 //        if (videoWrapper != null) {

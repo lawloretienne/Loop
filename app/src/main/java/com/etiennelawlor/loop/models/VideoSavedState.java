@@ -6,8 +6,8 @@ package com.etiennelawlor.loop.models;
 public class VideoSavedState {
 
     // region Fields
-    private String mVideoUrl;
-    private int mCurrentPosition;
+    private String videoUrl;
+    private int currentPosition;
     // endregion
 
     public VideoSavedState(){
@@ -16,21 +16,21 @@ public class VideoSavedState {
 
     // region Getters
     public String getVideoUrl() {
-        return mVideoUrl;
+        return videoUrl;
     }
 
     public int getCurrentPosition() {
-        return mCurrentPosition;
+        return currentPosition;
     }
     // endregion
 
     // region Setters
     public void setVideoUrl(String videoUrl) {
-        mVideoUrl = videoUrl;
+        this.videoUrl = videoUrl;
     }
 
     public void setCurrentPosition(int currentPosition) {
-        mCurrentPosition = currentPosition;
+        this.currentPosition = currentPosition;
     }
     // endregion
 }

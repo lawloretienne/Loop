@@ -40,11 +40,11 @@ import timber.log.Timber;
 public class VideoCommentsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
     // region Member Variables
-    private List<Comment> mComments;
-    private Context mContext;
-    private Typeface mBoldFont;
-    private OnItemLongClickListener mOnItemLongClickListener;
-    private Typeface mItalicFont;
+    private List<Comment> comments;
+    private Context context;
+    private Typeface boldFont;
+    private OnItemLongClickListener onItemLongClickListener;
+    private Typeface italicFont;
     // endregion
 
     // region Interfaces
@@ -55,10 +55,10 @@ public class VideoCommentsAdapter extends RecyclerView.Adapter<RecyclerView.View
 
     // region Constructors
     public VideoCommentsAdapter(Context context) {
-        mContext = context;
-        mComments = new ArrayList<>();
-        mBoldFont = Typeface.createFromAsset(mContext.getAssets(), "fonts/Roboto-Bold.ttf");
-        mItalicFont = Typeface.createFromAsset(mContext.getAssets(), "fonts/Roboto-Italic.ttf");
+        this.context = context;
+        comments = new ArrayList<>();
+        boldFont = Typeface.createFromAsset(context.getAssets(), "fonts/Roboto-Bold.ttf");
+        italicFont = Typeface.createFromAsset(context.getAssets(), "fonts/Roboto-Italic.ttf");
     }
     // endregion
 
@@ -72,8 +72,8 @@ public class VideoCommentsAdapter extends RecyclerView.Adapter<RecyclerView.View
             public boolean onLongClick(View v) {
                 int adapterPos = holder.getAdapterPosition();
                 if(adapterPos != RecyclerView.NO_POSITION){
-                    if (mOnItemLongClickListener != null) {
-                        mOnItemLongClickListener.onItemLongClick(adapterPos);
+                    if (onItemLongClickListener != null) {
+                        onItemLongClickListener.onItemLongClick(adapterPos);
                     }
                 }
 
@@ -88,22 +88,22 @@ public class VideoCommentsAdapter extends RecyclerView.Adapter<RecyclerView.View
     public void onBindViewHolder(RecyclerView.ViewHolder viewHolder, int position) {
         CommentViewHolder holder = (CommentViewHolder) viewHolder;
 
-        final Comment comment = mComments.get(position);
+        final Comment comment = comments.get(position);
 
         if (comment != null) {
-            setUpCommentText(holder.mCommentTextView, comment);
-            setUpCommentImage(holder.mCommentImageView, comment);
+            setUpCommentText(holder.commentTextView, comment);
+            setUpCommentImage(holder.commentImageView, comment);
         }
     }
 
     @Override
     public int getItemCount() {
-        return mComments.size();
+        return comments.size();
     }
 
     // region Helper Methods
     public void add(Comment item, int position) {
-        mComments.add(item);
+        comments.add(item);
         notifyItemInserted(position);
     }
 
@@ -124,19 +124,19 @@ public class VideoCommentsAdapter extends RecyclerView.Adapter<RecyclerView.View
     }
 
     public void remove(Comment item) {
-        int position = mComments.indexOf(item);
+        int position = comments.indexOf(item);
         if (position > -1) {
-            mComments.remove(position);
+            comments.remove(position);
             notifyItemRemoved(position);
         }
     }
 
     public Comment getItem(int position) {
-        return mComments.get(position);
+        return comments.get(position);
     }
 
     public void setOnItemLongClickListener(OnItemLongClickListener onItemLongClickListener) {
-        this.mOnItemLongClickListener = onItemLongClickListener;
+        this.onItemLongClickListener = onItemLongClickListener;
     }
 
     private void setUpCommentText(TextView tv, Comment comment){
@@ -158,7 +158,7 @@ public class VideoCommentsAdapter extends RecyclerView.Adapter<RecyclerView.View
                 && !TextUtils.isEmpty(commentDate)){
             spans.add(new Span.Builder(String.format("%s ", displayName))
                     .foregroundColor(ContextCompat.getColor(tv.getContext(), R.color.primary))
-                    .typeface(mBoldFont)
+                    .typeface(boldFont)
                     .build());
             spans.add(new Span.Builder(commentText)
                     .build());
@@ -166,7 +166,7 @@ public class VideoCommentsAdapter extends RecyclerView.Adapter<RecyclerView.View
                     .build());
             spans.add(new Span.Builder(commentDate)
                     .foregroundColor(ContextCompat.getColor(tv.getContext(), R.color.grey_400))
-                    .typeface(mItalicFont)
+                    .typeface(italicFont)
                     .build());
         } else if(!TextUtils.isEmpty(commentText)
                     && !TextUtils.isEmpty(commentDate)){
@@ -176,7 +176,7 @@ public class VideoCommentsAdapter extends RecyclerView.Adapter<RecyclerView.View
                     .build());
             spans.add(new Span.Builder(commentDate)
                     .foregroundColor(ContextCompat.getColor(tv.getContext(), R.color.grey_400))
-                    .typeface(mItalicFont)
+                    .typeface(italicFont)
                     .build());
         }
 
@@ -239,9 +239,9 @@ public class VideoCommentsAdapter extends RecyclerView.Adapter<RecyclerView.View
 
     public static class CommentViewHolder extends RecyclerView.ViewHolder {
         @Bind(R.id.comment_tv)
-        TextView mCommentTextView;
+        TextView commentTextView;
         @Bind(R.id.comment_iv)
-        ImageView mCommentImageView;
+        ImageView commentImageView;
 
         public CommentViewHolder(View view) {
             super(view);

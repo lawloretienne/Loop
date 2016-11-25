@@ -67,36 +67,36 @@ public class VideoCommentsFragment extends BaseFragment implements VideoComments
     // endregion
 
     //region Member Variables
-    private VideoCommentsAdapter mVideoCommentsAdapter;
-    private VimeoService mVimeoService;
-    private Video mVideo;
-    private CommentsCollection mCommentsCollection;
-    private int mCurrentPage = 1;
-    private Long mVideoId = -1L;
-    private boolean mCommentChangeMade = false;
-    private boolean mIsLoading = false;
-    private boolean mIsLastPage = false;
-    private String mSortByValue = "date";
-    private String mSortOrderValue = "desc";
+    private VideoCommentsAdapter videoCommentsAdapter;
+    private VimeoService vimeoService;
+    private Video video;
+    private CommentsCollection commentsCollection;
+    private int currentPage = 1;
+    private Long videoId = -1L;
+    private boolean commentChangeMade = false;
+    private boolean isLoading = false;
+    private boolean isLastPage = false;
+    private String sortByValue = "date";
+    private String sortOrderValue = "desc";
 
     @Bind(R.id.comment_et)
-    EditText mCommentEditText;
+    EditText commentEditText;
     @Bind(R.id.sumbit_comment_iv)
-    ImageView mSubmitCommentImageView;
+    ImageView submitCommentImageView;
     @Bind(R.id.sumbit_comment_pb)
-    ProgressBar mSubmitCommentProgressBar;
+    ProgressBar submitCommentProgressBar;
     @Bind(R.id.sumbit_comment_fl)
-    FrameLayout mSubmitCommentFrameLayout;
+    FrameLayout submitCommentFrameLayout;
     @Bind(R.id.rv)
-    RecyclerView mCommentsRecyclerView;
+    RecyclerView commentsRecyclerView;
     @Bind(R.id.toolbar)
-    Toolbar mToolbar;
+    Toolbar toolbar;
     @Bind(R.id.loading_iv)
-    LoadingImageView mLoadingImageView;
+    LoadingImageView loadingImageView;
     // endregion
 
     // region Listeners
-    private TextWatcher mCommentEditTextTextWatcher = new TextWatcher() {
+    private TextWatcher commentEditTextTextWatcher = new TextWatcher() {
         @Override
         public void beforeTextChanged(CharSequence s, int start, int count, int after) {
 
@@ -106,10 +106,10 @@ public class VideoCommentsFragment extends BaseFragment implements VideoComments
         public void onTextChanged(CharSequence s, int start, int before, int count) {
             if (s.length() > 0) {
 //                mSubmitCommentImageView.setImageResource(R.drawable.ic_comment_button_highlighted);
-                mSubmitCommentImageView.setImageTintList(ColorStateList.valueOf(ContextCompat.getColor(mSubmitCommentImageView.getContext(), android.R.color.white)));
+                submitCommentImageView.setImageTintList(ColorStateList.valueOf(ContextCompat.getColor(submitCommentImageView.getContext(), android.R.color.white)));
             } else {
 //                mSubmitCommentImageView.setImageResource(R.drawable.ic_comment_button);
-                mSubmitCommentImageView.setImageTintList(ColorStateList.valueOf(ContextCompat.getColor(mSubmitCommentImageView.getContext(), R.color.fifty_percent_transparency_teal_500)));
+                submitCommentImageView.setImageTintList(ColorStateList.valueOf(ContextCompat.getColor(submitCommentImageView.getContext(), R.color.fifty_percent_transparency_teal_500)));
 
             }
         }
@@ -122,34 +122,34 @@ public class VideoCommentsFragment extends BaseFragment implements VideoComments
 
     @OnClick(R.id.sumbit_comment_fl)
     public void submitComment() {
-        String comment = mCommentEditText.getText().toString();
+        String comment = commentEditText.getText().toString();
         if (!TextUtils.isEmpty(comment)) {
             CommentPost commentPost = new CommentPost();
             commentPost.setText(comment);
 //
-            mSubmitCommentFrameLayout.setBackgroundColor(ContextCompat.getColor(getContext(), R.color.grey_200));
-            mSubmitCommentImageView.setVisibility(View.GONE);
-            mSubmitCommentProgressBar.setVisibility(View.VISIBLE);
+            submitCommentFrameLayout.setBackgroundColor(ContextCompat.getColor(getContext(), R.color.grey_200));
+            submitCommentImageView.setVisibility(View.GONE);
+            submitCommentProgressBar.setVisibility(View.VISIBLE);
 
-            Call addCommentCall = mVimeoService.addComment(mVideoId, commentPost);
-            mCalls.add(addCommentCall);
-            addCommentCall.enqueue(mAddCommentCallback);
+            Call addCommentCall = vimeoService.addComment(videoId, commentPost);
+            calls.add(addCommentCall);
+            addCommentCall.enqueue(addCommentCallback);
         }
     }
     // endregion
 
     // region Callbacks
-    private Callback<CommentsCollection> mGetCommentsFirstFetchCallback = new Callback<CommentsCollection>() {
+    private Callback<CommentsCollection> getCommentsFirstFetchCallback = new Callback<CommentsCollection>() {
         @Override
         public void onResponse(Response<CommentsCollection> response, Retrofit retrofit) {
             Timber.d("onResponse()");
-            mLoadingImageView.setVisibility(View.GONE);
-            mIsLoading = false;
+            loadingImageView.setVisibility(View.GONE);
+            isLoading = false;
 
             if (response != null) {
                 if (response.isSuccess()) {
-                    mCommentsCollection = response.body();
-                    if (mCommentsCollection != null) {
+                    commentsCollection = response.body();
+                    if (commentsCollection != null) {
                         loadComments();
                     }
                 } else {
@@ -187,8 +187,8 @@ public class VideoCommentsFragment extends BaseFragment implements VideoComments
 
                 if (t instanceof SocketTimeoutException || t instanceof UnknownHostException) {
                     Timber.e("Timeout occurred");
-                    mIsLoading = false;
-                    mLoadingImageView.setVisibility(View.GONE);
+                    isLoading = false;
+                    loadingImageView.setVisibility(View.GONE);
 //
 //                    mErrorTextView.setText("Can't load data.\nCheck your network connection.");
 //                    mErrorLinearLayout.setVisibility(View.VISIBLE);
@@ -196,7 +196,7 @@ public class VideoCommentsFragment extends BaseFragment implements VideoComments
                     if (message.equals("Canceled")) {
                         Timber.e("onFailure() : Canceled");
                     } else {
-                        mIsLoading = false;
+                        isLoading = false;
 //                        mLoadingImageView.setVisibility(View.GONE);
                     }
                 }
@@ -205,25 +205,25 @@ public class VideoCommentsFragment extends BaseFragment implements VideoComments
     };
 
 
-    private Callback<Comment> mAddCommentCallback = new Callback<Comment>() {
+    private Callback<Comment> addCommentCallback = new Callback<Comment>() {
         @Override
         public void onResponse(Response<Comment> response, Retrofit retrofit) {
-            mCommentChangeMade = true;
+            commentChangeMade = true;
 
             Timber.d("onResponse()");
 //            mLoadingImageView.setVisibility(View.GONE);
 
-            mSubmitCommentFrameLayout.setBackgroundColor(ContextCompat.getColor(getContext(), R.color.primary));
-            mSubmitCommentProgressBar.setVisibility(View.GONE);
-            mSubmitCommentImageView.setVisibility(View.VISIBLE);
+            submitCommentFrameLayout.setBackgroundColor(ContextCompat.getColor(getContext(), R.color.primary));
+            submitCommentProgressBar.setVisibility(View.GONE);
+            submitCommentImageView.setVisibility(View.VISIBLE);
 
-            mCommentEditText.setText("");
-            DisplayUtility.hideKeyboard(getActivity(), mCommentEditText);
+            commentEditText.setText("");
+            DisplayUtility.hideKeyboard(getActivity(), commentEditText);
 
             if (response != null) {
                 if (response.isSuccess()) {
                     Comment comment = response.body();
-                    mVideoCommentsAdapter.add(comment, mVideoCommentsAdapter.getItemCount()-1);
+                    videoCommentsAdapter.add(comment, videoCommentsAdapter.getItemCount()-1);
                 } else {
                     com.squareup.okhttp.Response rawResponse = response.raw();
                     if (rawResponse != null) {
@@ -249,16 +249,16 @@ public class VideoCommentsFragment extends BaseFragment implements VideoComments
                 String message = t.getMessage();
                 LogUtility.logFailure(t);
 
-                mSubmitCommentFrameLayout.setBackgroundColor(ContextCompat.getColor(getContext(), R.color.primary));
-                mSubmitCommentProgressBar.setVisibility(View.GONE);
-                mSubmitCommentImageView.setVisibility(View.VISIBLE);
+                submitCommentFrameLayout.setBackgroundColor(ContextCompat.getColor(getContext(), R.color.primary));
+                submitCommentProgressBar.setVisibility(View.GONE);
+                submitCommentImageView.setVisibility(View.VISIBLE);
 
-                mCommentEditText.setText("");
-                DisplayUtility.hideKeyboard(getActivity(), mCommentEditText);
+                commentEditText.setText("");
+                DisplayUtility.hideKeyboard(getActivity(), commentEditText);
 
                 if (t instanceof SocketTimeoutException || t instanceof UnknownHostException) {
                     Timber.e("Timeout occurred");
-                    mIsLoading = false;
+                    isLoading = false;
 //                    mLoadingImageView.setVisibility(View.GONE);
 //
 //                    mErrorTextView.setText("Can't load data.\nCheck your network connection.");
@@ -267,7 +267,7 @@ public class VideoCommentsFragment extends BaseFragment implements VideoComments
                     if (message.equals("Canceled")) {
                         Timber.e("onFailure() : Canceled");
                     } else {
-                        mIsLoading = false;
+                        isLoading = false;
 //                        mLoadingImageView.setVisibility(View.GONE);
                     }
                 }
@@ -275,11 +275,10 @@ public class VideoCommentsFragment extends BaseFragment implements VideoComments
         }
     };
 
-    private Callback<Object> mDeleteCommentCallback = new Callback<Object>() {
+    private Callback<Object> deleteCommentCallback = new Callback<Object>() {
         @Override
         public void onResponse(Response<Object> response, Retrofit retrofit) {
-            mCommentChangeMade = true;
-
+            commentChangeMade = true;
 
             if (response != null) {
                 if (response.isSuccess()) {
@@ -313,7 +312,7 @@ public class VideoCommentsFragment extends BaseFragment implements VideoComments
 
                 if (t instanceof SocketTimeoutException || t instanceof UnknownHostException) {
                     Timber.e("Timeout occurred");
-                    mIsLoading = false;
+                    isLoading = false;
 //                    mLoadingImageView.setVisibility(View.GONE);
 //
 //                    mErrorTextView.setText("Can't load data.\nCheck your network connection.");
@@ -322,7 +321,7 @@ public class VideoCommentsFragment extends BaseFragment implements VideoComments
                     if (message.equals("Canceled")) {
                         Timber.e("onFailure() : Canceled");
                     } else {
-                        mIsLoading = false;
+                        isLoading = false;
 //                        mLoadingImageView.setVisibility(View.GONE);
                     }
                 }
@@ -396,11 +395,11 @@ public class VideoCommentsFragment extends BaseFragment implements VideoComments
 
         BusProvider.getInstance().register(this);
         if (getArguments() != null) {
-            mVideo = (Video) getArguments().get("video");
+            video = (Video) getArguments().get("video");
         }
 
         AccessToken token = PreferencesHelper.getAccessToken(getActivity());
-        mVimeoService = ServiceGenerator.createService(
+        vimeoService = ServiceGenerator.createService(
                 VimeoService.class,
                 VimeoService.BASE_URL,
                 token);
@@ -418,7 +417,7 @@ public class VideoCommentsFragment extends BaseFragment implements VideoComments
     public void onViewCreated(final View view, Bundle bundle) {
         super.onViewCreated(view, bundle);
 
-        ((AppCompatActivity) getActivity()).setSupportActionBar(mToolbar);
+        ((AppCompatActivity) getActivity()).setSupportActionBar(toolbar);
 
         ActionBar actionBar = ((AppCompatActivity) getActivity()).getSupportActionBar();
         if (actionBar != null) {
@@ -427,14 +426,14 @@ public class VideoCommentsFragment extends BaseFragment implements VideoComments
 
         setUpListeners();
 
-        mCommentsRecyclerView.setItemAnimator(new SlideInUpAnimator());
+        commentsRecyclerView.setItemAnimator(new SlideInUpAnimator());
 
         LinearLayoutManager layoutManager = new LinearLayoutManager(getActivity());
 //        layoutManager.setReverseLayout(true);
-        mCommentsRecyclerView.setLayoutManager(layoutManager);
+        commentsRecyclerView.setLayoutManager(layoutManager);
 
-        mVideoCommentsAdapter = new VideoCommentsAdapter(getActivity());
-        mVideoCommentsAdapter.setOnItemLongClickListener(this);
+        videoCommentsAdapter = new VideoCommentsAdapter(getActivity());
+        videoCommentsAdapter.setOnItemLongClickListener(this);
 
 //        List<Comment> comments = mSale.getComments();
 //        if (comments != null && comments.size() > 0) {
@@ -442,26 +441,26 @@ public class VideoCommentsFragment extends BaseFragment implements VideoComments
 //            mVideoCommentsAdapter.addAll(comments);
 //        }
 
-        mCommentsRecyclerView.setAdapter(mVideoCommentsAdapter);
+        commentsRecyclerView.setAdapter(videoCommentsAdapter);
 
-        mCommentsRecyclerView.smoothScrollToPosition(mVideoCommentsAdapter.getItemCount());
+        commentsRecyclerView.smoothScrollToPosition(videoCommentsAdapter.getItemCount());
 
-        if (mCommentsCollection != null) {
+        if (commentsCollection != null) {
             loadComments();
         } else {
-            long id = mVideo.getId();
+            long id = video.getId();
             if (id != -1L) {
-                mLoadingImageView.setVisibility(View.VISIBLE);
+                loadingImageView.setVisibility(View.VISIBLE);
 
-                mVideoId = id;
+                videoId = id;
 
-                Call getCommentsCall = mVimeoService.getComments(mVideoId,
-                        mSortByValue,
-                        mSortOrderValue,
-                        mCurrentPage,
+                Call getCommentsCall = vimeoService.getComments(videoId,
+                        sortByValue,
+                        sortOrderValue,
+                        currentPage,
                         PAGE_SIZE);
-                mCalls.add(getCommentsCall);
-                getCommentsCall.enqueue(mGetCommentsFirstFetchCallback);
+                calls.add(getCommentsCall);
+                getCommentsCall.enqueue(getCommentsFirstFetchCallback);
             }
         }
     }
@@ -483,10 +482,10 @@ public class VideoCommentsFragment extends BaseFragment implements VideoComments
     public void onDestroy() {
         BusProvider.getInstance().unregister(this);
 
-        if (mCommentChangeMade) {
+        if (commentChangeMade) {
             List<Comment> comments = new ArrayList<>();
-            for (int i = mVideoCommentsAdapter.getItemCount() - 1; i >= 0; i--) {
-                Comment comment = mVideoCommentsAdapter.getItem(i);
+            for (int i = videoCommentsAdapter.getItemCount() - 1; i >= 0; i--) {
+                Comment comment = videoCommentsAdapter.getItem(i);
                 comments.add(comment);
             }
 
@@ -500,7 +499,7 @@ public class VideoCommentsFragment extends BaseFragment implements VideoComments
     // region VideoCommentsAdapter.OnItemLongClickListener Methods
     @Override
     public void onItemLongClick(final int position) {
-        final Comment comment = mVideoCommentsAdapter.getItem(position);
+        final Comment comment = videoCommentsAdapter.getItem(position);
         if (comment != null) {
             User user = comment.getUser();
             AuthorizedUser authorizedUser = PreferencesHelper.getAuthorizedUser(getActivity());
@@ -516,13 +515,13 @@ public class VideoCommentsFragment extends BaseFragment implements VideoComments
 
                     deleteCommentAlert.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
                         public void onClick(DialogInterface dialog, int whichButton) {
-                            mVideoCommentsAdapter.remove(comment);
-                            mVideoCommentsAdapter.notifyDataSetChanged();
+                            videoCommentsAdapter.remove(comment);
+                            videoCommentsAdapter.notifyDataSetChanged();
 
-                            Call deleteCommentCall = mVimeoService.deleteComment(mVideoId,
+                            Call deleteCommentCall = vimeoService.deleteComment(videoId,
                                     comment.getId());
-                            mCalls.add(deleteCommentCall);
-                            deleteCommentCall.enqueue(mDeleteCommentCallback);
+                            calls.add(deleteCommentCall);
+                            deleteCommentCall.enqueue(deleteCommentCallback);
                         }
                     });
 
@@ -542,27 +541,27 @@ public class VideoCommentsFragment extends BaseFragment implements VideoComments
 
     // region Helper Methods
     private void setUpListeners() {
-        mCommentEditText.addTextChangedListener(mCommentEditTextTextWatcher);
+        commentEditText.addTextChangedListener(commentEditTextTextWatcher);
     }
 
     private void removeListeners() {
-        mCommentEditText.removeTextChangedListener(mCommentEditTextTextWatcher);
+        commentEditText.removeTextChangedListener(commentEditTextTextWatcher);
     }
 
     private void loadComments() {
-        List<Comment> comments = mCommentsCollection.getComments();
+        List<Comment> comments = commentsCollection.getComments();
         if (comments != null && comments.size() > 0) {
 
             Collections.reverse(comments);
-            mVideoCommentsAdapter.addAll(comments);
-            mCommentsRecyclerView.smoothScrollToPosition(mVideoCommentsAdapter.getItemCount());
+            videoCommentsAdapter.addAll(comments);
+            commentsRecyclerView.smoothScrollToPosition(videoCommentsAdapter.getItemCount());
 //
 //            mVideoCommentsAdapter.addAll(comments);
 
             if (comments.size() >= PAGE_SIZE) {
 //                            mVideoCommentsAdapter.addLoading();
             } else {
-                mIsLastPage = true;
+                isLastPage = true;
             }
         }
     }

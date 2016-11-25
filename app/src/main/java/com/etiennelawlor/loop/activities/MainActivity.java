@@ -44,14 +44,14 @@ import timber.log.Timber;
 public class MainActivity extends AppCompatActivity {
 
     @Bind(R.id.drawer_layout)
-    DrawerLayout mDrawerLayout;
+    DrawerLayout drawerLayout;
     @Bind(R.id.nav_view)
-    NavigationView mNavigationView;
+    NavigationView navigationView;
 
-    private CircleImageView mAvatarImageView;
-    private TextView mFullNameTextView;
+    private CircleImageView avatarImageView;
+    private TextView fullNameTextView;
 
-    private AuthorizedUser mAuthorizedUser;
+    private AuthorizedUser authorizedUser;
     // endregion
 
     // region Listeners
@@ -60,7 +60,7 @@ public class MainActivity extends AppCompatActivity {
                 @Override
                 public boolean onNavigationItemSelected(MenuItem menuItem) {
                     menuItem.setChecked(true);
-                    mDrawerLayout.closeDrawers();
+                    drawerLayout.closeDrawers();
 
                     String title = menuItem.getTitle().toString();
                     switch (title) {
@@ -127,18 +127,18 @@ public class MainActivity extends AppCompatActivity {
             }
         }
 
-        mAuthorizedUser = PreferencesHelper.getAuthorizedUser(this);
+        authorizedUser = PreferencesHelper.getAuthorizedUser(this);
 
         View header = LayoutInflater.from(this).inflate(R.layout.nav_header, null);
-        mAvatarImageView = (CircleImageView) header.findViewById(R.id.user_avatar_riv);
-        mFullNameTextView = (TextView) header.findViewById(R.id.full_name_tv);
-        mNavigationView.addHeaderView(header);
+        avatarImageView = (CircleImageView) header.findViewById(R.id.user_avatar_riv);
+        fullNameTextView = (TextView) header.findViewById(R.id.full_name_tv);
+        navigationView.addHeaderView(header);
 
         setUpAvatar();
         setUpFullName();
 
         // Setup NavigationView
-        mNavigationView.setNavigationItemSelectedListener(mNavigationViewOnNavigationItemSelectedListener);
+        navigationView.setNavigationItemSelectedListener(mNavigationViewOnNavigationItemSelectedListener);
 
         getSupportFragmentManager()
                 .beginTransaction()
@@ -164,7 +164,7 @@ public class MainActivity extends AppCompatActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case android.R.id.home:
-                mDrawerLayout.openDrawer(GravityCompat.START);
+                drawerLayout.openDrawer(GravityCompat.START);
                 return true;
         }
         return super.onOptionsItemSelected(item);
@@ -172,8 +172,8 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     public void onBackPressed() {
-        if (mDrawerLayout.isDrawerOpen(Gravity.LEFT)) {
-            mDrawerLayout.closeDrawer(Gravity.LEFT);
+        if (drawerLayout.isDrawerOpen(Gravity.LEFT)) {
+            drawerLayout.closeDrawer(Gravity.LEFT);
         } else {
             super.onBackPressed();
         }
@@ -202,15 +202,15 @@ public class MainActivity extends AppCompatActivity {
         LeftDrawableClickedEvent.Type type = event.getType();
 
         if(type == LeftDrawableClickedEvent.Type.MENU)
-            mDrawerLayout.openDrawer(GravityCompat.START);
+            drawerLayout.openDrawer(GravityCompat.START);
 
     }
     // endregion
 
     // region Helper Methods
     private void setUpAvatar(){
-        if(mAuthorizedUser != null){
-            List<Picture> pictures = mAuthorizedUser.getPictures();
+        if(authorizedUser != null){
+            List<Picture> pictures = authorizedUser.getPictures();
             if(pictures != null && pictures.size()>0){
                 Picture picture = pictures.get(pictures.size() - 1);
                 if(picture != null){
@@ -220,7 +220,7 @@ public class MainActivity extends AppCompatActivity {
                                 .load(link)
 //                                .placeholder(R.drawable.ic_placeholder)
 //                                .error(R.drawable.ic_error)
-                                .into(mAvatarImageView);
+                                .into(avatarImageView);
                     }
                 }
             }
@@ -228,10 +228,10 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void setUpFullName(){
-        if(mAuthorizedUser != null){
-            String name = mAuthorizedUser.getName();
+        if(authorizedUser != null){
+            String name = authorizedUser.getName();
             if(!TextUtils.isEmpty(name)){
-                mFullNameTextView.setText(name);
+                fullNameTextView.setText(name);
             }
         }
     }

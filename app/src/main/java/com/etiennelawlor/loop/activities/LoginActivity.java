@@ -33,7 +33,7 @@ public class LoginActivity extends AppCompatActivity {
 
     // region Member Variables
     @Bind(R.id.wv)
-    WebView mWebView;
+    WebView webView;
 
     private WebViewClient mWebViewClient = new WebViewClient() {
         public boolean shouldOverrideUrlLoading(WebView view, String url) {
@@ -135,7 +135,7 @@ public class LoginActivity extends AppCompatActivity {
         setContentView(R.layout.activity_login);
         ButterKnife.bind(this);
 
-        WebSettings webSettings = mWebView.getSettings();
+        WebSettings webSettings = webView.getSettings();
         webSettings.setJavaScriptEnabled(true);
         webSettings.setDomStorageEnabled(true);
         webSettings.setLoadWithOverviewMode(true);
@@ -143,10 +143,10 @@ public class LoginActivity extends AppCompatActivity {
         webSettings.setSupportZoom(true);
         webSettings.setUseWideViewPort(true);
 
-        mWebView.setScrollBarStyle(WebView.SCROLLBARS_OUTSIDE_OVERLAY);
-        mWebView.setWebViewClient(mWebViewClient);
+        webView.setScrollBarStyle(WebView.SCROLLBARS_OUTSIDE_OVERLAY);
+        webView.setWebViewClient(mWebViewClient);
 
-        mWebView.loadUrl(setUpAuthorizeUrl());
+        webView.loadUrl(setUpAuthorizeUrl());
     }
 
     @Override

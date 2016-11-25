@@ -28,8 +28,8 @@ import butterknife.ButterKnife;
 public class CategoriesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
     // region Member Variables
-    private List<Category> mCategories;
-    private OnItemClickListener mOnItemClickListener;
+    private List<Category> categories;
+    private OnItemClickListener onItemClickListener;
     // endregion
 
     // region Listeners
@@ -43,7 +43,7 @@ public class CategoriesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
 
     // region Constructors
     public CategoriesAdapter() {
-        mCategories = new ArrayList<>();
+        categories = new ArrayList<>();
     }
     // endregion
 
@@ -59,13 +59,13 @@ public class CategoriesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
 
     @Override
     public int getItemCount() {
-        return mCategories.size();
+        return categories.size();
     }
 
     // region Helper Methods
     private void add(Category item) {
-        mCategories.add(item);
-        notifyItemInserted(mCategories.size());
+        categories.add(item);
+        notifyItemInserted(categories.size());
     }
 
     public void addAll(List<Category> categories) {
@@ -75,9 +75,9 @@ public class CategoriesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
     }
 
     public void remove(Category item) {
-        int position = mCategories.indexOf(item);
+        int position = categories.indexOf(item);
         if (position > -1) {
-            mCategories.remove(position);
+            categories.remove(position);
             notifyItemRemoved(position);
         }
     }
@@ -93,11 +93,11 @@ public class CategoriesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
     }
 
     public Category getItem(int position) {
-        return mCategories.get(position);
+        return categories.get(position);
     }
 
     public void setOnItemClickListener(OnItemClickListener onItemClickListener) {
-        this.mOnItemClickListener = onItemClickListener;
+        this.onItemClickListener = onItemClickListener;
     }
 
     private RecyclerView.ViewHolder createCategoryViewHolder(ViewGroup parent) {
@@ -110,8 +110,8 @@ public class CategoriesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
             public void onClick(View v) {
                 int adapterPos = holder.getAdapterPosition();
                 if(adapterPos != RecyclerView.NO_POSITION){
-                    if (mOnItemClickListener != null) {
-                        mOnItemClickListener.onItemClick(adapterPos, holder.itemView);
+                    if (onItemClickListener != null) {
+                        onItemClickListener.onItemClick(adapterPos, holder.itemView);
                     }
                 }
             }
@@ -123,10 +123,10 @@ public class CategoriesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
     private void bindCategoryViewHolder(RecyclerView.ViewHolder viewHolder, int position) {
         final CategoryViewHolder holder = (CategoryViewHolder) viewHolder;
 
-        Category category = mCategories.get(position);
+        Category category = categories.get(position);
         if (category != null) {
-            setUpThumbnail(holder.mVideoThumbnailImageView, category);
-            setUpTitle(holder.mTitleTextView, category);
+            setUpThumbnail(holder.videoThumbnailImageView, category);
+            setUpTitle(holder.titleTextView, category);
         }
     }
 
@@ -171,9 +171,9 @@ public class CategoriesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
 
     public static class CategoryViewHolder extends RecyclerView.ViewHolder {
         @Bind(R.id.thumbnail_iv)
-        DynamicHeightImageView mVideoThumbnailImageView;
+        DynamicHeightImageView videoThumbnailImageView;
         @Bind(R.id.title_tv)
-        TextView mTitleTextView;
+        TextView titleTextView;
 
         public CategoryViewHolder(View view) {
             super(view);

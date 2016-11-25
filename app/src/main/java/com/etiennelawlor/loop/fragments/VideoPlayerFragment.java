@@ -53,33 +53,33 @@ public class VideoPlayerFragment extends BaseFragment {
     // endregion
 
     // region Member Variables
-    private Long mVideoId;
-    private String mVideoUrl;
-    private MediaController mMediaController;
-    private VimeoPlayerService mVimeoPlayerService;
-    private VideoSavedState mVideoSavedState;
+    private Long videoId;
+    private String videoUrl;
+    private MediaController mediaController;
+    private VimeoPlayerService vimeoPlayerService;
+    private VideoSavedState videoSavedState;
 
     @Bind(R.id.vv)
-    VideoView mVideoView;
+    VideoView videoView;
     @Bind(R.id.loading_iv)
-    LoadingImageView mLoadingImageView;
+    LoadingImageView loadingImageView;
     // endregion
 
     // region Callbacks
-    private Callback<VideoConfig> mGetVideoConfigCallback = new Callback<VideoConfig>() {
+    private Callback<VideoConfig> getVideoConfigCallback = new Callback<VideoConfig>() {
         @Override
         public void onResponse(Response<VideoConfig> response, Retrofit retrofit) {
             if (response != null) {
                 if(response.isSuccess()){
                     VideoConfig videoConfig = response.body();
                     if (videoConfig != null) {
-                        mVideoUrl = getVideoUrl(videoConfig);
-                        Timber.d("onResponse() : videoUrl - " + mVideoUrl);
+                        videoUrl = getVideoUrl(videoConfig);
+                        Timber.d("onResponse() : videoUrl - " + videoUrl);
 
-                        if (!TextUtils.isEmpty(mVideoUrl)) {
+                        if (!TextUtils.isEmpty(videoUrl)) {
                             Timber.d("playVideo()");
 
-                            playVideo(mVideoUrl, 0);
+                            playVideo(videoUrl, 0);
                         }
                     }
                 } else {
@@ -150,11 +150,11 @@ public class VideoPlayerFragment extends BaseFragment {
         BusProvider.getInstance().register(this);
 
         if(getArguments() != null){
-            mVideoId = getArguments().getLong("video_id");
+            videoId = getArguments().getLong("video_id");
         }
 
         AccessToken token = PreferencesHelper.getAccessToken(getActivity());
-        mVimeoPlayerService = ServiceGenerator.createService(
+        vimeoPlayerService = ServiceGenerator.createService(
                 VimeoPlayerService.class,
                 VimeoPlayerService.BASE_URL,
                 token);
@@ -175,10 +175,10 @@ public class VideoPlayerFragment extends BaseFragment {
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        mMediaController = new MediaController(getActivity());
-        mMediaController.setAnchorView(mVideoView);
-        mMediaController.setMediaPlayer(mVideoView);
-        mVideoView.setMediaController(mMediaController);
+        mediaController = new MediaController(getActivity());
+        mediaController.setAnchorView(videoView);
+        mediaController.setMediaPlayer(videoView);
+        videoView.setMediaController(mediaController);
 
         setUpSystemUiControls();
 
@@ -188,9 +188,9 @@ public class VideoPlayerFragment extends BaseFragment {
             int currentPosition = videoSavedState.getCurrentPosition();
             playVideo(videoUrl, currentPosition);
         } else {
-            Call getVideoConfigCall = mVimeoPlayerService.getVideoConfig(mVideoId);
-            mCalls.add(getVideoConfigCall);
-            getVideoConfigCall.enqueue(mGetVideoConfigCallback);
+            Call getVideoConfigCall = vimeoPlayerService.getVideoConfig(videoId);
+            calls.add(getVideoConfigCall);
+            getVideoConfigCall.enqueue(getVideoConfigCallback);
         }
     }
 
@@ -198,23 +198,23 @@ public class VideoPlayerFragment extends BaseFragment {
     public void onResume() {
         super.onResume();
 
-        if (!mVideoView.isPlaying())
-            mVideoView.resume();
+        if (!videoView.isPlaying())
+            videoView.resume();
     }
 
     @Override
     public void onPause() {
         super.onPause();
 
-        if(!TextUtils.isEmpty(mVideoUrl)){
+        if(!TextUtils.isEmpty(videoUrl)){
             VideoSavedState videoSavedState = new VideoSavedState();
-            videoSavedState.setVideoUrl(mVideoUrl);
-            videoSavedState.setCurrentPosition(mVideoView.getCurrentPosition());
+            videoSavedState.setVideoUrl(videoUrl);
+            videoSavedState.setCurrentPosition(videoView.getCurrentPosition());
             setVideoSavedState(videoSavedState);
         }
 
-        if (mVideoView.isPlaying())
-            mVideoView.suspend();
+        if (videoView.isPlaying())
+            videoView.suspend();
     }
 
     @Override
@@ -226,8 +226,8 @@ public class VideoPlayerFragment extends BaseFragment {
     @Override
     public void onDestroy() {
         super.onDestroy();
-        if (mVideoView != null) {
-            mVideoView.stopPlayback();
+        if (videoView != null) {
+            videoView.stopPlayback();
 //            mVideoView.setVisibility(View.GONE);
         }
     }
@@ -271,7 +271,7 @@ public class VideoPlayerFragment extends BaseFragment {
                             // other navigational controls.
                             Timber.d("onSystemUiVisibilityChange() : system bars VISIBLE");
 
-                            mMediaController.show(3000);
+                            mediaController.show(3000);
 
                             new Handler().postDelayed(new Runnable() {
 
@@ -290,7 +290,7 @@ public class VideoPlayerFragment extends BaseFragment {
                             // adjustments to your UI, such as hiding the action bar or
                             // other navigational controls.
                             Timber.d("onSystemUiVisibilityChange() : system bars NOT VISIBLE");
-                            mMediaController.hide();
+                            mediaController.hide();
                         }
                     }
                 });
@@ -435,16 +435,16 @@ public class VideoPlayerFragment extends BaseFragment {
     }
 
     private void playVideo(String videoUrl, int currentPosition) {
-        mVideoView.setVideoPath(videoUrl);
+        videoView.setVideoPath(videoUrl);
 
-        mVideoView.requestFocus();
-        mVideoView.seekTo(currentPosition);
+        videoView.requestFocus();
+        videoView.seekTo(currentPosition);
 
-        mVideoView.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
+        videoView.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
             @Override
             public void onPrepared(MediaPlayer arg0) {
-                mLoadingImageView.setVisibility(View.GONE);
-                mVideoView.start();
+                loadingImageView.setVisibility(View.GONE);
+                videoView.start();
 
 //                mVideoView.requestFocus();
             }
@@ -452,11 +452,11 @@ public class VideoPlayerFragment extends BaseFragment {
     }
 
     public void setVideoSavedState(VideoSavedState videoSavedState) {
-        mVideoSavedState = videoSavedState;
+        videoSavedState = videoSavedState;
     }
 
     public VideoSavedState getVideoSavedState() {
-        return mVideoSavedState;
+        return videoSavedState;
     }
     // endregion
 }

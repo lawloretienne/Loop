@@ -67,36 +67,36 @@ public class WatchLaterVideosFragment extends BaseFragment implements VideosAdap
 
     // region Member Variables
     @Bind(R.id.videos_rv)
-    RecyclerView mVideosRecyclerView;
+    RecyclerView videosRecyclerView;
     @Bind(android.R.id.empty)
-    View mEmptyView;
+    View emptyView;
     @Bind(R.id.empty_tv)
-    TextView mEmptyTextView;
+    TextView emptyTextView;
     @Bind(R.id.loading_iv)
-    LoadingImageView mLoadingImageView;
+    LoadingImageView loadingImageView;
     @Bind(R.id.error_ll)
-    LinearLayout mErrorLinearLayout;
+    LinearLayout errorLinearLayout;
     @Bind(R.id.error_tv)
-    TextView mErrorTextView;
+    TextView errorTextView;
     @Bind(R.id.toolbar)
-    Toolbar mToolbar;
+    Toolbar toolbar;
 
-    private boolean mIsLastPage = false;
-    private int mCurrentPage = 1;
-    private int mSelectedSortByKey = 0;
-    private int mSelectedSortOrderKey = 1;
-    private boolean mIsLoading = false;
-    private String mSortByValue = "date";
-    private String mSortOrderValue = "desc";
-    private VideosAdapter mVideosAdapter;
-    private String mQuery;
-    private LinearLayoutManager mLayoutManager;
-    private VimeoService mVimeoService;
-    private WatchLaterEvent mWatchLaterEvent;
+    private boolean isLastPage = false;
+    private int currentPage = 1;
+    private int selectedSortByKey = 0;
+    private int selectedSortOrderKey = 1;
+    private boolean isLoading = false;
+    private String sortByValue = "date";
+    private String sortOrderValue = "desc";
+    private VideosAdapter videosAdapter;
+    private String query;
+    private LinearLayoutManager layoutManager;
+    private VimeoService vimeoService;
+    private WatchLaterEvent watchLaterEvent;
     // endregion
 
     // region Listeners
-    private RecyclerView.OnScrollListener mRecyclerViewOnScrollListener = new RecyclerView.OnScrollListener() {
+    private RecyclerView.OnScrollListener recyclerViewOnScrollListener = new RecyclerView.OnScrollListener() {
         @Override
         public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
             super.onScrollStateChanged(recyclerView, newState);
@@ -105,11 +105,11 @@ public class WatchLaterVideosFragment extends BaseFragment implements VideosAdap
         @Override
         public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
             super.onScrolled(recyclerView, dx, dy);
-            int visibleItemCount = mLayoutManager.getChildCount();
-            int totalItemCount = mLayoutManager.getItemCount();
-            int firstVisibleItemPosition = mLayoutManager.findFirstVisibleItemPosition();
+            int visibleItemCount = layoutManager.getChildCount();
+            int totalItemCount = layoutManager.getItemCount();
+            int firstVisibleItemPosition = layoutManager.findFirstVisibleItemPosition();
 
-            if (!mIsLoading && !mIsLastPage) {
+            if (!isLoading && !isLastPage) {
                 if ((visibleItemCount + firstVisibleItemPosition) >= totalItemCount) {
                     loadMoreItems();
                 }
@@ -117,37 +117,37 @@ public class WatchLaterVideosFragment extends BaseFragment implements VideosAdap
         }
     };
 
-    private View.OnClickListener mReloadOnClickListener = new View.OnClickListener() {
+    private View.OnClickListener reloadOnClickListener = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
-            mCurrentPage -= 1;
-            mVideosAdapter.addLoading();
+            currentPage -= 1;
+            videosAdapter.addLoading();
             loadMoreItems();
         }
     };
 
     @OnClick(R.id.reload_btn)
     public void onReloadButtonClicked() {
-        mErrorLinearLayout.setVisibility(View.GONE);
-        mLoadingImageView.setVisibility(View.VISIBLE);
+        errorLinearLayout.setVisibility(View.GONE);
+        loadingImageView.setVisibility(View.VISIBLE);
 
-        Call findWatchLaterVideosCall = mVimeoService.findWatchLaterVideos(mQuery,
-                mSortByValue,
-                mSortOrderValue,
-                mCurrentPage,
+        Call findWatchLaterVideosCall = vimeoService.findWatchLaterVideos(query,
+                sortByValue,
+                sortOrderValue,
+                currentPage,
                 PAGE_SIZE);
-        mCalls.add(findWatchLaterVideosCall);
-        findWatchLaterVideosCall.enqueue(mFindVideosFirstFetchCallback);
+        calls.add(findWatchLaterVideosCall);
+        findWatchLaterVideosCall.enqueue(findVideosFirstFetchCallback);
     }
     // endregion
 
     // region Callbacks
-    private Callback<VideosCollection> mFindVideosFirstFetchCallback = new Callback<VideosCollection>() {
+    private Callback<VideosCollection> findVideosFirstFetchCallback = new Callback<VideosCollection>() {
         @Override
         public void onResponse(Response<VideosCollection> response, Retrofit retrofit) {
             Timber.d("onResponse()");
-            mLoadingImageView.setVisibility(View.GONE);
-            mIsLoading = false;
+            loadingImageView.setVisibility(View.GONE);
+            isLoading = false;
 
             if (response != null) {
                 if(response.isSuccess()){
@@ -155,12 +155,12 @@ public class WatchLaterVideosFragment extends BaseFragment implements VideosAdap
                     if (videosCollection != null) {
                         List<Video> videos = videosCollection.getVideos();
                         if (videos != null) {
-                            mVideosAdapter.addAll(videos);
+                            videosAdapter.addAll(videos);
 
                             if(videos.size() >= PAGE_SIZE){
-                                mVideosAdapter.addLoading();
+                                videosAdapter.addLoading();
                             } else {
-                                mIsLastPage = true;
+                                isLastPage = true;
                             }
                         }
                     }
@@ -172,8 +172,8 @@ public class WatchLaterVideosFragment extends BaseFragment implements VideosAdap
                         int code = rawResponse.code();
                         switch (code) {
                             case 500:
-                                mErrorTextView.setText("Can't load data.\nCheck your network connection.");
-                                mErrorLinearLayout.setVisibility(View.VISIBLE);
+                                errorTextView.setText("Can't load data.\nCheck your network connection.");
+                                errorLinearLayout.setVisibility(View.VISIBLE);
                                 break;
                             default:
                                 break;
@@ -182,12 +182,12 @@ public class WatchLaterVideosFragment extends BaseFragment implements VideosAdap
                 }
             }
 
-            if (mVideosAdapter.isEmpty()) {
-                mEmptyTextView.setText(getString(R.string.watch_later_empty_prompt));
+            if (videosAdapter.isEmpty()) {
+                emptyTextView.setText(getString(R.string.watch_later_empty_prompt));
                 Drawable drawable = ContextCompat.getDrawable(getContext(), R.drawable.ic_watch_later_large);
                 DrawableCompat.setTint(drawable, ContextCompat.getColor(getActivity(), R.color.grey_500));
-                mEmptyTextView.setCompoundDrawablesWithIntrinsicBounds(null, drawable, null, null);
-                mEmptyView.setVisibility(View.VISIBLE);
+                emptyTextView.setCompoundDrawablesWithIntrinsicBounds(null, drawable, null, null);
+                emptyView.setVisibility(View.VISIBLE);
             }
         }
 
@@ -199,29 +199,29 @@ public class WatchLaterVideosFragment extends BaseFragment implements VideosAdap
 
                 if (t instanceof SocketTimeoutException || t instanceof UnknownHostException) {
                     Timber.e("Timeout occurred");
-                    mIsLoading = false;
-                    mLoadingImageView.setVisibility(View.GONE);
+                    isLoading = false;
+                    loadingImageView.setVisibility(View.GONE);
 
-                    mErrorTextView.setText("Can't load data.\nCheck your network connection.");
-                    mErrorLinearLayout.setVisibility(View.VISIBLE);
+                    errorTextView.setText("Can't load data.\nCheck your network connection.");
+                    errorLinearLayout.setVisibility(View.VISIBLE);
                 } else if(t instanceof IOException){
                     if(message.equals("Canceled")){
                         Timber.e("onFailure() : Canceled");
                     } else {
-                        mIsLoading = false;
-                        mLoadingImageView.setVisibility(View.GONE);
+                        isLoading = false;
+                        loadingImageView.setVisibility(View.GONE);
                     }
                 }
             }
         }
     };
 
-    private Callback<VideosCollection> mFindVideosNextFetchCallback = new Callback<VideosCollection>() {
+    private Callback<VideosCollection> findVideosNextFetchCallback = new Callback<VideosCollection>() {
         @Override
         public void onResponse(Response<VideosCollection> response, Retrofit retrofit) {
             Timber.d("onResponse()");
-            mVideosAdapter.removeLoading();
-            mIsLoading = false;
+            videosAdapter.removeLoading();
+            isLoading = false;
 
             if (response != null) {
                 if(response.isSuccess()){
@@ -229,12 +229,12 @@ public class WatchLaterVideosFragment extends BaseFragment implements VideosAdap
                     if (videosCollection != null) {
                         List<Video> videos = videosCollection.getVideos();
                         if (videos != null) {
-                            mVideosAdapter.addAll(videos);
+                            videosAdapter.addAll(videos);
 
                             if(videos.size() >= PAGE_SIZE){
-                                mVideosAdapter.addLoading();
+                                videosAdapter.addLoading();
                             } else {
-                                mIsLastPage = true;
+                                isLastPage = true;
                             }
                         }
                     }
@@ -260,7 +260,7 @@ public class WatchLaterVideosFragment extends BaseFragment implements VideosAdap
 
         @Override
         public void onFailure(Throwable t) {
-            mVideosAdapter.removeLoading();
+            videosAdapter.removeLoading();
             if (t != null) {
                 String message = t.getMessage();
                 LogUtility.logFailure(t);
@@ -304,11 +304,11 @@ public class WatchLaterVideosFragment extends BaseFragment implements VideosAdap
         super.onCreate(savedInstanceState);
 
         if (getArguments() != null) {
-            mQuery = getArguments().getString("query");
+            query = getArguments().getString("query");
         }
 
         AccessToken token = PreferencesHelper.getAccessToken(getActivity());
-        mVimeoService = ServiceGenerator.createService(
+        vimeoService = ServiceGenerator.createService(
                 VimeoService.class,
                 VimeoService.BASE_URL,
                 token);
@@ -330,7 +330,7 @@ public class WatchLaterVideosFragment extends BaseFragment implements VideosAdap
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        ((AppCompatActivity) getActivity()).setSupportActionBar(mToolbar);
+        ((AppCompatActivity) getActivity()).setSupportActionBar(toolbar);
 
         final ActionBar ab = ((AppCompatActivity) getActivity()).getSupportActionBar();
         if(ab != null){
@@ -339,33 +339,33 @@ public class WatchLaterVideosFragment extends BaseFragment implements VideosAdap
             ab.setTitle("Watch Later");
         }
 
-        mLayoutManager = new LinearLayoutManager(getActivity());
-        mVideosRecyclerView.setLayoutManager(mLayoutManager);
-        mVideosAdapter = new VideosAdapter();
-        mVideosAdapter.setOnItemClickListener(this);
+        layoutManager = new LinearLayoutManager(getActivity());
+        videosRecyclerView.setLayoutManager(layoutManager);
+        videosAdapter = new VideosAdapter();
+        videosAdapter.setOnItemClickListener(this);
 
-        mVideosRecyclerView.setItemAnimator(new SlideInUpAnimator());
-        mVideosRecyclerView.setAdapter(mVideosAdapter);
+        videosRecyclerView.setItemAnimator(new SlideInUpAnimator());
+        videosRecyclerView.setAdapter(videosAdapter);
 
         // Pagination
-        mVideosRecyclerView.addOnScrollListener(mRecyclerViewOnScrollListener);
+        videosRecyclerView.addOnScrollListener(recyclerViewOnScrollListener);
 
-        Call findWatchLaterVideosCall = mVimeoService.findWatchLaterVideos(mQuery,
-                mSortByValue,
-                mSortOrderValue,
-                mCurrentPage,
+        Call findWatchLaterVideosCall = vimeoService.findWatchLaterVideos(query,
+                sortByValue,
+                sortOrderValue,
+                currentPage,
                 PAGE_SIZE);
-        mCalls.add(findWatchLaterVideosCall);
-        findWatchLaterVideosCall.enqueue(mFindVideosFirstFetchCallback);
+        calls.add(findWatchLaterVideosCall);
+        findWatchLaterVideosCall.enqueue(findVideosFirstFetchCallback);
     }
 
     @Override
     public void onResume() {
         super.onResume();
 
-        if(mWatchLaterEvent != null){
+        if(watchLaterEvent != null){
             refreshAdapter();
-            mWatchLaterEvent = null;
+            watchLaterEvent = null;
         }
     }
 
@@ -416,7 +416,7 @@ public class WatchLaterVideosFragment extends BaseFragment implements VideosAdap
     // region VideosAdapter.OnItemClickListener Methods
     @Override
     public void onItemClick(int position, View view) {
-        Video video = mVideosAdapter.getItem(position);
+        Video video = videosAdapter.getItem(position);
         if (video != null) {
             Intent intent = new Intent(getActivity(), VideoDetailsActivity.class);
 
@@ -450,26 +450,26 @@ public class WatchLaterVideosFragment extends BaseFragment implements VideosAdap
 
         if (isResumed()) {
             refreshAdapter();
-            mWatchLaterEvent = null;
+            watchLaterEvent = null;
         } else {
-            mWatchLaterEvent = event;
+            watchLaterEvent = event;
         }
     }
     // endregion
 
     // region Helper Methods
     private void loadMoreItems() {
-        mIsLoading = true;
+        isLoading = true;
 
-        mCurrentPage += 1;
+        currentPage += 1;
 
-        Call findWatchLaterVideosCall = mVimeoService.findWatchLaterVideos(mQuery,
-                mSortByValue,
-                mSortOrderValue,
-                mCurrentPage,
+        Call findWatchLaterVideosCall = vimeoService.findWatchLaterVideos(query,
+                sortByValue,
+                sortOrderValue,
+                currentPage,
                 PAGE_SIZE);
-        mCalls.add(findWatchLaterVideosCall);
-        findWatchLaterVideosCall.enqueue(mFindVideosNextFetchCallback);
+        calls.add(findWatchLaterVideosCall);
+        findWatchLaterVideosCall.enqueue(findVideosNextFetchCallback);
     }
 
     private void showSortDialog() {
@@ -486,36 +486,36 @@ public class WatchLaterVideosFragment extends BaseFragment implements VideosAdap
         ArrayAdapter<String> sortOrderAdapter = new ArrayAdapter<>(getActivity(), android.R.layout.simple_spinner_dropdown_item, mSortOrderKeysArray);
         sortOrderSpinner.setAdapter(sortOrderAdapter);
 
-        sortBySpinner.setSelection(mSelectedSortByKey);
-        sortOrderSpinner.setSelection(mSelectedSortOrderKey);
+        sortBySpinner.setSelection(selectedSortByKey);
+        sortOrderSpinner.setSelection(selectedSortOrderKey);
 
         AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(getActivity(), R.style.DialogTheme);
         alertDialogBuilder.setView(promptsView);
         alertDialogBuilder.setPositiveButton(getString(android.R.string.ok), new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
-                mSelectedSortByKey = sortBySpinner.getSelectedItemPosition();
-                mSelectedSortOrderKey = sortOrderSpinner.getSelectedItemPosition();
+                selectedSortByKey = sortBySpinner.getSelectedItemPosition();
+                selectedSortOrderKey = sortOrderSpinner.getSelectedItemPosition();
 
                 String[] sortByValues = getResources().getStringArray(R.array.watchlater_sort_by_values);
-                mSortByValue = sortByValues[mSelectedSortByKey];
+                sortByValue = sortByValues[selectedSortByKey];
 
                 String[] sortOrderValues = getResources().getStringArray(R.array.watchlater_sort_order_values);
-                mSortOrderValue = sortOrderValues[mSelectedSortOrderKey];
+                sortOrderValue = sortOrderValues[selectedSortOrderKey];
 
-                mVideosAdapter.clear();
+                videosAdapter.clear();
 
-                mLoadingImageView.setVisibility(View.VISIBLE);
+                loadingImageView.setVisibility(View.VISIBLE);
 
-                mCurrentPage = 1;
+                currentPage = 1;
 
-                Call findWatchLaterVideosCall = mVimeoService.findWatchLaterVideos(mQuery,
-                        mSortByValue,
-                        mSortOrderValue,
-                        mCurrentPage,
+                Call findWatchLaterVideosCall = vimeoService.findWatchLaterVideos(query,
+                        sortByValue,
+                        sortOrderValue,
+                        currentPage,
                         PAGE_SIZE);
-                mCalls.add(findWatchLaterVideosCall);
-                findWatchLaterVideosCall.enqueue(mFindVideosFirstFetchCallback);
+                calls.add(findWatchLaterVideosCall);
+                findWatchLaterVideosCall.enqueue(findVideosFirstFetchCallback);
 
                 dialog.dismiss();
             }
@@ -531,32 +531,32 @@ public class WatchLaterVideosFragment extends BaseFragment implements VideosAdap
     }
 
     private void refreshAdapter(){
-        mVideosAdapter.clear();
+        videosAdapter.clear();
 
-        mLoadingImageView.setVisibility(View.VISIBLE);
+        loadingImageView.setVisibility(View.VISIBLE);
 
-        mCurrentPage = 1;
+        currentPage = 1;
 
-        Call findWatchLaterVideosCall = mVimeoService.findWatchLaterVideos(mQuery,
-                mSortByValue,
-                mSortOrderValue,
-                mCurrentPage,
+        Call findWatchLaterVideosCall = vimeoService.findWatchLaterVideos(query,
+                sortByValue,
+                sortOrderValue,
+                currentPage,
                 PAGE_SIZE);
-        mCalls.add(findWatchLaterVideosCall);
-        findWatchLaterVideosCall.enqueue(mFindVideosFirstFetchCallback);
+        calls.add(findWatchLaterVideosCall);
+        findWatchLaterVideosCall.enqueue(findVideosFirstFetchCallback);
     }
 
     private void showReloadSnackbar(String message){
         Snackbar.make(getActivity().findViewById(android.R.id.content),
                 message,
                 Snackbar.LENGTH_INDEFINITE)
-                .setAction("Reload", mReloadOnClickListener)
+                .setAction("Reload", reloadOnClickListener)
 //                                .setActionTextColor(Color.RED)
                 .show();
     }
 
     private void removeListeners(){
-        mVideosRecyclerView.removeOnScrollListener(mRecyclerViewOnScrollListener);
+        videosRecyclerView.removeOnScrollListener(recyclerViewOnScrollListener);
     }
     // endregion
 }

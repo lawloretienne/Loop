@@ -45,11 +45,11 @@ public class WatchNowFragment extends BaseFragment {
 
     // region Member Variables
     @Bind(R.id.viewpager)
-    ViewPager mViewPager;
+    ViewPager viewPager;
     @Bind(R.id.tabs)
-    TabLayout mTabLayout;
+    TabLayout tabLayout;
     @Bind(R.id.material_sv)
-    MaterialSearchView mMaterialSearchView;
+    MaterialSearchView materialSearchView;
     // endregion
 
     // region Callbacks
@@ -108,12 +108,12 @@ public class WatchNowFragment extends BaseFragment {
 //        ab.setTitle("Watch Now");
 //        ab.setTitle("");
 
-        if (mViewPager != null) {
-            setupViewPager(mViewPager);
+        if (viewPager != null) {
+            setupViewPager(viewPager);
         }
 
-        mTabLayout.setupWithViewPager(mViewPager);
-        mTabLayout.setTabMode(TabLayout.MODE_SCROLLABLE);
+        tabLayout.setupWithViewPager(viewPager);
+        tabLayout.setTabMode(TabLayout.MODE_SCROLLABLE);
     }
 
     @Override
@@ -161,7 +161,7 @@ public class WatchNowFragment extends BaseFragment {
     public void onSearchPerformed(SearchPerformedEvent event) {
         String query = event.getQuery();
         if (!TextUtils.isEmpty(query)) {
-            mMaterialSearchView.setQuery("");
+            materialSearchView.setQuery("");
             launchSearchActivity(query);
         }
     }
@@ -170,7 +170,7 @@ public class WatchNowFragment extends BaseFragment {
     public void onShowSearchSuggestions(ShowSearchSuggestionsEvent event) {
         String query = event.getQuery();
 
-        mMaterialSearchView.addSuggestions(RealmUtility.getSuggestions(query));
+        materialSearchView.addSuggestions(RealmUtility.getSuggestions(query));
     }
 
     @Subscribe
@@ -187,7 +187,7 @@ public class WatchNowFragment extends BaseFragment {
                 String searchWrd = matches.get(0);
                 if (!TextUtils.isEmpty(searchWrd)) {
 //                    mMaterialSearchView.setQuery(searchWrd);
-                    mMaterialSearchView.setQuery("");
+                    materialSearchView.setQuery("");
                     launchSearchActivity(searchWrd);
                 }
             }

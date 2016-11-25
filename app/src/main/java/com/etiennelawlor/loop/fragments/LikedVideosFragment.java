@@ -67,38 +67,38 @@ public class LikedVideosFragment extends BaseFragment implements VideosAdapter.O
 
     // region Member Variables
     @Bind(R.id.videos_rv)
-    RecyclerView mVideosRecyclerView;
+    RecyclerView videosRecyclerView;
     @Bind(android.R.id.empty)
-    View mEmptyView;
+    View emptyView;
     @Bind(R.id.empty_tv)
-    TextView mEmptyTextView;
+    TextView emptyTextView;
     @Bind(R.id.loading_iv)
-    LoadingImageView mLoadingImageView;
+    LoadingImageView loadingImageView;
     @Bind(R.id.error_ll)
-    LinearLayout mErrorLinearLayout;
+    LinearLayout errorLinearLayout;
     @Bind(R.id.error_tv)
-    TextView mErrorTextView;
+    TextView errorTextView;
     @Bind(R.id.toolbar)
-    Toolbar mToolbar;
+    Toolbar toolbar;
 //    @Bind(R.id.search_view_widget)
-//    SearchViewWidget mSearchViewWidget;
+//    SearchViewWidget searchViewWidget;
 
-    private boolean mIsLastPage = false;
-    private int mCurrentPage = 1;
-    private int mSelectedSortByKey = 0;
-    private int mSelectedSortOrderKey = 1;
-    private boolean mIsLoading = false;
-    private String mSortByValue = "date";
-    private String mSortOrderValue = "desc";
-    private VideosAdapter mVideosAdapter;
-    private String mQuery;
-    private LinearLayoutManager mLayoutManager;
-    private VimeoService mVimeoService;
-    private VideoLikedEvent mVideoLikedEvent;
+    private boolean isLastPage = false;
+    private int currentPage = 1;
+    private int selectedSortByKey = 0;
+    private int selectedSortOrderKey = 1;
+    private boolean isLoading = false;
+    private String sortByValue = "date";
+    private String sortOrderValue = "desc";
+    private VideosAdapter videosAdapter;
+    private String query;
+    private LinearLayoutManager layoutManager;
+    private VimeoService vimeoService;
+    private VideoLikedEvent videoLikedEvent;
     // endregion
 
     // region Listeners
-    private RecyclerView.OnScrollListener mRecyclerViewOnScrollListener = new RecyclerView.OnScrollListener() {
+    private RecyclerView.OnScrollListener recyclerViewOnScrollListener = new RecyclerView.OnScrollListener() {
         @Override
         public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
             super.onScrollStateChanged(recyclerView, newState);
@@ -107,11 +107,11 @@ public class LikedVideosFragment extends BaseFragment implements VideosAdapter.O
         @Override
         public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
             super.onScrolled(recyclerView, dx, dy);
-            int visibleItemCount = mLayoutManager.getChildCount();
-            int totalItemCount = mLayoutManager.getItemCount();
-            int firstVisibleItemPosition = mLayoutManager.findFirstVisibleItemPosition();
+            int visibleItemCount = layoutManager.getChildCount();
+            int totalItemCount = layoutManager.getItemCount();
+            int firstVisibleItemPosition = layoutManager.findFirstVisibleItemPosition();
 
-            if (!mIsLoading && !mIsLastPage) {
+            if (!isLoading && !isLastPage) {
                 if ((visibleItemCount + firstVisibleItemPosition) >= totalItemCount) {
                     loadMoreItems();
                 }
@@ -121,35 +121,35 @@ public class LikedVideosFragment extends BaseFragment implements VideosAdapter.O
 
     @OnClick(R.id.reload_btn)
     public void onReloadButtonClicked() {
-        mErrorLinearLayout.setVisibility(View.GONE);
-        mLoadingImageView.setVisibility(View.VISIBLE);
+        errorLinearLayout.setVisibility(View.GONE);
+        loadingImageView.setVisibility(View.VISIBLE);
 
-        Call findLikedVideosCall = mVimeoService.findLikedVideos(mQuery,
-                mSortByValue,
-                mSortOrderValue,
-                mCurrentPage,
+        Call findLikedVideosCall = vimeoService.findLikedVideos(query,
+                sortByValue,
+                sortOrderValue,
+                currentPage,
                 PAGE_SIZE);
-        mCalls.add(findLikedVideosCall);
-        findLikedVideosCall.enqueue(mFindVideosFirstFetchCallback);
+        calls.add(findLikedVideosCall);
+        findLikedVideosCall.enqueue(findVideosFirstFetchCallback);
     }
 
-    private View.OnClickListener mReloadOnClickListener = new View.OnClickListener() {
+    private View.OnClickListener reloadOnClickListener = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
-            mCurrentPage -= 1;
-            mVideosAdapter.addLoading();
+            currentPage -= 1;
+            videosAdapter.addLoading();
             loadMoreItems();
         }
     };
     // endregion
 
     // region Callbacks
-    private Callback<VideosCollection> mFindVideosFirstFetchCallback = new Callback<VideosCollection>() {
+    private Callback<VideosCollection> findVideosFirstFetchCallback = new Callback<VideosCollection>() {
         @Override
         public void onResponse(Response<VideosCollection> response, Retrofit retrofit) {
             Timber.d("onResponse()");
-            mLoadingImageView.setVisibility(View.GONE);
-            mIsLoading = false;
+            loadingImageView.setVisibility(View.GONE);
+            isLoading = false;
 
             if (response != null) {
                 if(response.isSuccess()){
@@ -157,12 +157,12 @@ public class LikedVideosFragment extends BaseFragment implements VideosAdapter.O
                     if (videosCollection != null) {
                         List<Video> videos = videosCollection.getVideos();
                         if (videos != null) {
-                            mVideosAdapter.addAll(videos);
+                            videosAdapter.addAll(videos);
 
                             if(videos.size() >= PAGE_SIZE){
-                                mVideosAdapter.addLoading();
+                                videosAdapter.addLoading();
                             } else {
-                                mIsLastPage = true;
+                                isLastPage = true;
                             }
                         }
                     }
@@ -174,8 +174,8 @@ public class LikedVideosFragment extends BaseFragment implements VideosAdapter.O
                         int code = rawResponse.code();
                         switch (code) {
                             case 500:
-                                mErrorTextView.setText("Can't load data.\nCheck your network connection.");
-                                mErrorLinearLayout.setVisibility(View.VISIBLE);
+                                errorTextView.setText("Can't load data.\nCheck your network connection.");
+                                errorLinearLayout.setVisibility(View.VISIBLE);
                                 break;
                             default:
                                 break;
@@ -184,12 +184,12 @@ public class LikedVideosFragment extends BaseFragment implements VideosAdapter.O
                 }
             }
 
-            if (mVideosAdapter.isEmpty()) {
-                mEmptyTextView.setText(getString(R.string.likes_empty_prompt));
+            if (videosAdapter.isEmpty()) {
+                emptyTextView.setText(getString(R.string.likes_empty_prompt));
                 Drawable drawable = ContextCompat.getDrawable(getActivity(), R.drawable.ic_likes_large);
                 DrawableCompat.setTint(drawable, ContextCompat.getColor(getActivity(), R.color.grey_500));
-                mEmptyTextView.setCompoundDrawablesWithIntrinsicBounds(null, drawable, null, null);
-                mEmptyView.setVisibility(View.VISIBLE);
+                emptyTextView.setCompoundDrawablesWithIntrinsicBounds(null, drawable, null, null);
+                emptyView.setVisibility(View.VISIBLE);
             }
         }
 
@@ -201,29 +201,29 @@ public class LikedVideosFragment extends BaseFragment implements VideosAdapter.O
 
                 if (t instanceof SocketTimeoutException || t instanceof UnknownHostException) {
                     Timber.e("Timeout occurred");
-                    mIsLoading = false;
-                    mLoadingImageView.setVisibility(View.GONE);
+                    isLoading = false;
+                    loadingImageView.setVisibility(View.GONE);
 
-                    mErrorTextView.setText("Can't load data.\nCheck your network connection.");
-                    mErrorLinearLayout.setVisibility(View.VISIBLE);
+                    errorTextView.setText("Can't load data.\nCheck your network connection.");
+                    errorLinearLayout.setVisibility(View.VISIBLE);
                 } else if(t instanceof IOException){
                     if(message.equals("Canceled")){
                         Timber.e("onFailure() : Canceled");
                     } else {
-                        mIsLoading = false;
-                        mLoadingImageView.setVisibility(View.GONE);
+                        isLoading = false;
+                        loadingImageView.setVisibility(View.GONE);
                     }
                 }
             }
         }
     };
 
-    private Callback<VideosCollection> mFindVideosNextFetchCallback = new Callback<VideosCollection>() {
+    private Callback<VideosCollection> findVideosNextFetchCallback = new Callback<VideosCollection>() {
         @Override
         public void onResponse(Response<VideosCollection> response, Retrofit retrofit) {
             Timber.d("onResponse()");
-            mVideosAdapter.removeLoading();
-            mIsLoading = false;
+            videosAdapter.removeLoading();
+            isLoading = false;
 
             if (response != null) {
                 if(response.isSuccess()){
@@ -231,12 +231,12 @@ public class LikedVideosFragment extends BaseFragment implements VideosAdapter.O
                     if (videosCollection != null) {
                         List<Video> videos = videosCollection.getVideos();
                         if (videos != null) {
-                            mVideosAdapter.addAll(videos);
+                            videosAdapter.addAll(videos);
 
                             if(videos.size() >= PAGE_SIZE){
-                                mVideosAdapter.addLoading();
+                                videosAdapter.addLoading();
                             } else {
-                                mIsLastPage = true;
+                                isLastPage = true;
                             }
                         }
                     }
@@ -261,7 +261,7 @@ public class LikedVideosFragment extends BaseFragment implements VideosAdapter.O
 
         @Override
         public void onFailure(Throwable t) {
-            mVideosAdapter.removeLoading();
+            videosAdapter.removeLoading();
             if (t != null) {
                 String message = t.getMessage();
                 LogUtility.logFailure(t);
@@ -305,11 +305,11 @@ public class LikedVideosFragment extends BaseFragment implements VideosAdapter.O
         super.onCreate(savedInstanceState);
 
         if (getArguments() != null) {
-            mQuery = getArguments().getString("query");
+            query = getArguments().getString("query");
         }
 
         AccessToken token = PreferencesHelper.getAccessToken(getActivity());
-        mVimeoService = ServiceGenerator.createService(
+        vimeoService = ServiceGenerator.createService(
                 VimeoService.class,
                 VimeoService.BASE_URL,
                 token);
@@ -331,7 +331,7 @@ public class LikedVideosFragment extends BaseFragment implements VideosAdapter.O
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        ((AppCompatActivity) getActivity()).setSupportActionBar(mToolbar);
+        ((AppCompatActivity) getActivity()).setSupportActionBar(toolbar);
 
         final ActionBar ab = ((AppCompatActivity) getActivity()).getSupportActionBar();
         if(ab != null){
@@ -340,33 +340,33 @@ public class LikedVideosFragment extends BaseFragment implements VideosAdapter.O
             ab.setTitle("Likes");
         }
 
-        mLayoutManager = new LinearLayoutManager(getActivity());
-        mVideosRecyclerView.setLayoutManager(mLayoutManager);
-        mVideosAdapter = new VideosAdapter();
-        mVideosAdapter.setOnItemClickListener(this);
+        layoutManager = new LinearLayoutManager(getActivity());
+        videosRecyclerView.setLayoutManager(layoutManager);
+        videosAdapter = new VideosAdapter();
+        videosAdapter.setOnItemClickListener(this);
 
-        mVideosRecyclerView.setItemAnimator(new SlideInUpAnimator());
-        mVideosRecyclerView.setAdapter(mVideosAdapter);
+        videosRecyclerView.setItemAnimator(new SlideInUpAnimator());
+        videosRecyclerView.setAdapter(videosAdapter);
 
         // Pagination
-        mVideosRecyclerView.addOnScrollListener(mRecyclerViewOnScrollListener);
+        videosRecyclerView.addOnScrollListener(recyclerViewOnScrollListener);
 
-        Call findLikedVideosCall = mVimeoService.findLikedVideos(mQuery,
-                mSortByValue,
-                mSortOrderValue,
-                mCurrentPage,
+        Call findLikedVideosCall = vimeoService.findLikedVideos(query,
+                sortByValue,
+                sortOrderValue,
+                currentPage,
                 PAGE_SIZE);
-        mCalls.add(findLikedVideosCall);
-        findLikedVideosCall.enqueue(mFindVideosFirstFetchCallback);
+        calls.add(findLikedVideosCall);
+        findLikedVideosCall.enqueue(findVideosFirstFetchCallback);
     }
 
     @Override
     public void onResume() {
         super.onResume();
 
-        if(mVideoLikedEvent != null){
+        if(videoLikedEvent != null){
             refreshAdapter();
-            mVideoLikedEvent = null;
+            videoLikedEvent = null;
         }
     }
 
@@ -430,7 +430,7 @@ public class LikedVideosFragment extends BaseFragment implements VideosAdapter.O
     // region VideosAdapter.OnItemClickListener Methods
     @Override
     public void onItemClick(int position, View view) {
-        Video video = mVideosAdapter.getItem(position);
+        Video video = videosAdapter.getItem(position);
         if (video != null) {
             Intent intent = new Intent(getActivity(), VideoDetailsActivity.class);
 
@@ -465,26 +465,26 @@ public class LikedVideosFragment extends BaseFragment implements VideosAdapter.O
 
         if (isResumed()) {
             refreshAdapter();
-            mVideoLikedEvent = null;
+            videoLikedEvent = null;
         } else {
-            mVideoLikedEvent = event;
+            videoLikedEvent = event;
         }
     }
     // endregion
 
     // region Helper Methods
     private void loadMoreItems() {
-        mIsLoading = true;
+        isLoading = true;
 
-        mCurrentPage += 1;
+        currentPage += 1;
 
-        Call findLikedVideosCall = mVimeoService.findLikedVideos(mQuery,
-                mSortByValue,
-                mSortOrderValue,
-                mCurrentPage,
+        Call findLikedVideosCall = vimeoService.findLikedVideos(query,
+                sortByValue,
+                sortOrderValue,
+                currentPage,
                 PAGE_SIZE);
-        mCalls.add(findLikedVideosCall);
-        findLikedVideosCall.enqueue(mFindVideosNextFetchCallback);
+        calls.add(findLikedVideosCall);
+        findLikedVideosCall.enqueue(findVideosNextFetchCallback);
     }
 
     private void showSortDialog() {
@@ -501,36 +501,36 @@ public class LikedVideosFragment extends BaseFragment implements VideosAdapter.O
         ArrayAdapter<String> sortOrderAdapter = new ArrayAdapter<>(getActivity(), android.R.layout.simple_spinner_dropdown_item, mSortOrderKeysArray);
         sortOrderSpinner.setAdapter(sortOrderAdapter);
 
-        sortBySpinner.setSelection(mSelectedSortByKey);
-        sortOrderSpinner.setSelection(mSelectedSortOrderKey);
+        sortBySpinner.setSelection(selectedSortByKey);
+        sortOrderSpinner.setSelection(selectedSortOrderKey);
 
         AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(getActivity(), R.style.DialogTheme);
         alertDialogBuilder.setView(promptsView);
         alertDialogBuilder.setPositiveButton(getString(android.R.string.ok), new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
-                mSelectedSortByKey = sortBySpinner.getSelectedItemPosition();
-                mSelectedSortOrderKey = sortOrderSpinner.getSelectedItemPosition();
+                selectedSortByKey = sortBySpinner.getSelectedItemPosition();
+                selectedSortOrderKey = sortOrderSpinner.getSelectedItemPosition();
 
                 String[] sortByValues = getResources().getStringArray(R.array.likes_sort_by_values);
-                mSortByValue = sortByValues[mSelectedSortByKey];
+                sortByValue = sortByValues[selectedSortByKey];
 
                 String[] sortOrderValues = getResources().getStringArray(R.array.likes_sort_order_values);
-                mSortOrderValue = sortOrderValues[mSelectedSortOrderKey];
+                sortOrderValue = sortOrderValues[selectedSortOrderKey];
 
-                mVideosAdapter.clear();
+                videosAdapter.clear();
 
-                mLoadingImageView.setVisibility(View.VISIBLE);
+                loadingImageView.setVisibility(View.VISIBLE);
 
-                mCurrentPage = 1;
+                currentPage = 1;
 
-                Call findLikedVideosCall = mVimeoService.findLikedVideos(mQuery,
-                        mSortByValue,
-                        mSortOrderValue,
-                        mCurrentPage,
+                Call findLikedVideosCall = vimeoService.findLikedVideos(query,
+                        sortByValue,
+                        sortOrderValue,
+                        currentPage,
                         PAGE_SIZE);
-                mCalls.add(findLikedVideosCall);
-                findLikedVideosCall.enqueue(mFindVideosFirstFetchCallback);
+                calls.add(findLikedVideosCall);
+                findLikedVideosCall.enqueue(findVideosFirstFetchCallback);
 
                 dialog.dismiss();
             }
@@ -546,32 +546,32 @@ public class LikedVideosFragment extends BaseFragment implements VideosAdapter.O
     }
 
     private void refreshAdapter(){
-        mVideosAdapter.clear();
+        videosAdapter.clear();
 
-        mLoadingImageView.setVisibility(View.VISIBLE);
+        loadingImageView.setVisibility(View.VISIBLE);
 
-        mCurrentPage = 1;
+        currentPage = 1;
 
-        Call findLikedVideosCall = mVimeoService.findLikedVideos(mQuery,
-                mSortByValue,
-                mSortOrderValue,
-                mCurrentPage,
+        Call findLikedVideosCall = vimeoService.findLikedVideos(query,
+                sortByValue,
+                sortOrderValue,
+                currentPage,
                 PAGE_SIZE);
-        mCalls.add(findLikedVideosCall);
-        findLikedVideosCall.enqueue(mFindVideosFirstFetchCallback);
+        calls.add(findLikedVideosCall);
+        findLikedVideosCall.enqueue(findVideosFirstFetchCallback);
     }
 
     private void showReloadSnackbar(String message){
         Snackbar.make(getActivity().findViewById(android.R.id.content),
                 message,
                 Snackbar.LENGTH_INDEFINITE)
-                .setAction("Reload", mReloadOnClickListener)
+                .setAction("Reload", reloadOnClickListener)
 //                                .setActionTextColor(Color.RED)
                 .show();
     }
 
     private void removeListeners(){
-        mVideosRecyclerView.removeOnScrollListener(mRecyclerViewOnScrollListener);
+        videosRecyclerView.removeOnScrollListener(recyclerViewOnScrollListener);
     }
     // endregion
 }

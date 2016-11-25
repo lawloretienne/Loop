@@ -81,32 +81,32 @@ public class VideoDetailsFragment extends BaseFragment implements RelatedVideosA
 
     // region Member Variables
     @Bind(R.id.video_thumbnail_iv)
-    ImageView mVideoThumbnailImageView;
+    ImageView videoThumbnailImageView;
     @Bind(R.id.toolbar)
-    Toolbar mToolbar;
+    Toolbar toolbar;
     @Bind(R.id.videos_rv)
-    RecyclerView mVideosRecyclerView;
+    RecyclerView videosRecyclerView;
 
-    private Video mVideo;
-    private String mTransitionName;
-    private RelatedVideosAdapter mRelatedVideosAdapter;
-    private VimeoService mVimeoService;
-    private LinearLayoutManager mLayoutManager;
-    private Long mVideoId = -1L;
-    private boolean mIsLastPage = false;
-    private int mCurrentPage = 1;
-    private boolean mIsLoading = false;
-    private boolean mIsInfoExpanded = false;
+    private Video video;
+    private String transitionName;
+    private RelatedVideosAdapter relatedVideosAdapter;
+    private VimeoService vimeoService;
+    private LinearLayoutManager layoutManager;
+    private Long videoId = -1L;
+    private boolean isLastPage = false;
+    private int currentPage = 1;
+    private boolean isLoading = false;
+    private boolean isInfoExpanded = false;
     // endregion
 
     // region Listeners
     @OnClick(R.id.play_fab)
     public void onPlayFABClicked(final View v) {
-        if (mVideoId != -1L) {
+        if (videoId != -1L) {
             Intent intent = new Intent(getActivity(), VideoPlayerActivity.class);
 
             Bundle bundle = new Bundle();
-            bundle.putLong("video_id", mVideoId);
+            bundle.putLong("video_id", videoId);
             intent.putExtras(bundle);
             startActivity(intent);
 
@@ -115,7 +115,7 @@ public class VideoDetailsFragment extends BaseFragment implements RelatedVideosA
         }
     }
 
-    private RecyclerView.OnScrollListener mRecyclerViewOnScrollListener = new RecyclerView.OnScrollListener() {
+    private RecyclerView.OnScrollListener recyclerViewOnScrollListener = new RecyclerView.OnScrollListener() {
         @Override
         public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
             super.onScrollStateChanged(recyclerView, newState);
@@ -124,11 +124,11 @@ public class VideoDetailsFragment extends BaseFragment implements RelatedVideosA
         @Override
         public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
             super.onScrolled(recyclerView, dx, dy);
-            int visibleItemCount = mLayoutManager.getChildCount();
-            int totalItemCount = mLayoutManager.getItemCount();
-            int firstVisibleItemPosition = mLayoutManager.findFirstVisibleItemPosition();
+            int visibleItemCount = layoutManager.getChildCount();
+            int totalItemCount = layoutManager.getItemCount();
+            int firstVisibleItemPosition = layoutManager.findFirstVisibleItemPosition();
 
-            if (!mIsLoading && !mIsLastPage) {
+            if (!isLoading && !isLastPage) {
                 if ((visibleItemCount + firstVisibleItemPosition) >= totalItemCount
                         && firstVisibleItemPosition >= 0
                         && totalItemCount >= PAGE_SIZE) {
@@ -138,11 +138,11 @@ public class VideoDetailsFragment extends BaseFragment implements RelatedVideosA
         }
     };
 
-    private View.OnClickListener mReloadOnClickListener = new View.OnClickListener() {
+    private View.OnClickListener reloadOnClickListener = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
-            mCurrentPage -= 1;
-            mRelatedVideosAdapter.addLoading();
+            currentPage -= 1;
+            relatedVideosAdapter.addLoading();
             loadMoreItems();
         }
     };
@@ -150,7 +150,7 @@ public class VideoDetailsFragment extends BaseFragment implements RelatedVideosA
 
     // region Callbacks
 
-    private Callback<VideosCollection> mGetRelatedVideosFirstFetchCallback = new Callback<VideosCollection>() {
+    private Callback<VideosCollection> getRelatedVideosFirstFetchCallback = new Callback<VideosCollection>() {
         @Override
         public void onResponse(Response<VideosCollection> response, Retrofit retrofit) {
             if (response != null) {
@@ -159,12 +159,12 @@ public class VideoDetailsFragment extends BaseFragment implements RelatedVideosA
                     if (videosCollection != null) {
                         List<Video> videos = videosCollection.getVideos();
                         if (videos != null) {
-                            mRelatedVideosAdapter.addAll(videos);
+                            relatedVideosAdapter.addAll(videos);
 
                             if (videos.size() >= PAGE_SIZE) {
-                                mRelatedVideosAdapter.addLoading();
+                                relatedVideosAdapter.addLoading();
                             } else {
-                                mIsLastPage = true;
+                                isLastPage = true;
                             }
                         }
                     }
@@ -223,11 +223,11 @@ public class VideoDetailsFragment extends BaseFragment implements RelatedVideosA
         }
     };
 
-    private Callback<VideosCollection> mGetRelatedVideosNextFetchCallback = new Callback<VideosCollection>() {
+    private Callback<VideosCollection> getRelatedVideosNextFetchCallback = new Callback<VideosCollection>() {
         @Override
         public void onResponse(Response<VideosCollection> response, Retrofit retrofit) {
-            mRelatedVideosAdapter.removeLoading();
-            mIsLoading = false;
+            relatedVideosAdapter.removeLoading();
+            isLoading = false;
 
             Timber.d("onResponse()");
             if (response != null) {
@@ -239,12 +239,12 @@ public class VideoDetailsFragment extends BaseFragment implements RelatedVideosA
                         List<Video> videos = videosCollection.getVideos();
                         if (videos != null) {
                             Timber.d("onResponse() : Success : videos.size() - " + videos.size());
-                            mRelatedVideosAdapter.addAll(videos);
+                            relatedVideosAdapter.addAll(videos);
 
                             if (videos.size() >= PAGE_SIZE) {
-                                mRelatedVideosAdapter.addLoading();
+                                relatedVideosAdapter.addLoading();
                             } else {
-                                mIsLastPage = true;
+                                isLastPage = true;
                             }
                         }
                     }
@@ -279,7 +279,7 @@ public class VideoDetailsFragment extends BaseFragment implements RelatedVideosA
 
         @Override
         public void onFailure(Throwable t) {
-            mRelatedVideosAdapter.removeLoading();
+            relatedVideosAdapter.removeLoading();
             if (t != null) {
                 String message = t.getMessage();
                 LogUtility.logFailure(t);
@@ -298,7 +298,7 @@ public class VideoDetailsFragment extends BaseFragment implements RelatedVideosA
         }
     };
 
-    private Callback<Object> mLikeVideoCallback = new Callback<Object>() {
+    private Callback<Object> likeVideoCallback = new Callback<Object>() {
         @Override
         public void onResponse(Response<Object> response, Retrofit retrofit) {
             if (response != null) {
@@ -330,13 +330,13 @@ public class VideoDetailsFragment extends BaseFragment implements RelatedVideosA
                                 // No Content
                                 BusProvider.getInstance().post(new VideoLikedEvent());
 
-                                Timber.d("mLikeVideoCallback() : duration - " + mVideo.getDuration());
-                                Timber.d("mLikeVideoCallback() : mVideoId - " + mVideoId);
+                                Timber.d("mLikeVideoCallback() : duration - " + video.getDuration());
+                                Timber.d("mLikeVideoCallback() : mVideoId - " + videoId);
 
                                 HashMap<String, Object> map = new HashMap<>();
-                                map.put(EventMapKeys.NAME, mVideo.getName());
-                                map.put(EventMapKeys.DURATION, mVideo.getDuration());
-                                map.put(EventMapKeys.VIDEO_ID, mVideoId);
+                                map.put(EventMapKeys.NAME, video.getName());
+                                map.put(EventMapKeys.DURATION, video.getDuration());
+                                map.put(EventMapKeys.VIDEO_ID, videoId);
 
                                 Event event = new Event(EventNames.VIDEO_LIKED, map);
                                 EventLogger.logEvent(event);
@@ -387,7 +387,7 @@ public class VideoDetailsFragment extends BaseFragment implements RelatedVideosA
         }
     };
 
-    private Callback<Object> mUnlikeVideoCallback = new Callback<Object>() {
+    private Callback<Object> unlikeVideoCallback = new Callback<Object>() {
         @Override
         public void onResponse(Response<Object> response, Retrofit retrofit) {
             if (response != null) {
@@ -420,9 +420,9 @@ public class VideoDetailsFragment extends BaseFragment implements RelatedVideosA
                                 BusProvider.getInstance().post(new VideoLikedEvent());
 
                                 HashMap<String, Object> map = new HashMap<>();
-                                map.put(EventMapKeys.NAME, mVideo.getName());
-                                map.put(EventMapKeys.DURATION, mVideo.getDuration());
-                                map.put(EventMapKeys.VIDEO_ID, mVideoId);
+                                map.put(EventMapKeys.NAME, video.getName());
+                                map.put(EventMapKeys.DURATION, video.getDuration());
+                                map.put(EventMapKeys.VIDEO_ID, videoId);
 
                                 Event event = new Event(EventNames.VIDEO_DISLIKED, map);
                                 EventLogger.logEvent(event);
@@ -470,7 +470,7 @@ public class VideoDetailsFragment extends BaseFragment implements RelatedVideosA
         }
     };
 
-    private Callback<Object> mAddVideoToWatchLaterCallback = new Callback<Object>() {
+    private Callback<Object> addVideoToWatchLaterCallback = new Callback<Object>() {
         @Override
         public void onResponse(Response<Object> response, Retrofit retrofit) {
             if (response != null) {
@@ -547,7 +547,7 @@ public class VideoDetailsFragment extends BaseFragment implements RelatedVideosA
         }
     };
 
-    private Callback<Object> mRemoveVideoFromWatchLaterCallback = new Callback<Object>() {
+    private Callback<Object> removeVideoFromWatchLaterCallback = new Callback<Object>() {
         @Override
         public void onResponse(Response<Object> response, Retrofit retrofit) {
             if (response != null) {
@@ -652,12 +652,12 @@ public class VideoDetailsFragment extends BaseFragment implements RelatedVideosA
         setRetainInstance(true);
 
         if (getArguments() != null) {
-            mVideo = (Video) getArguments().get("video");
+            video = (Video) getArguments().get("video");
 //            mTransitionName = getArguments().getString("TRANSITION_KEY");
         }
 
         AccessToken token = PreferencesHelper.getAccessToken(getActivity());
-        mVimeoService = ServiceGenerator.createService(
+        vimeoService = ServiceGenerator.createService(
                 VimeoService.class,
                 VimeoService.BASE_URL,
                 token);
@@ -680,7 +680,7 @@ public class VideoDetailsFragment extends BaseFragment implements RelatedVideosA
 
 //        ViewCompat.setTransitionName(mVideoThumbnailImageView, mTransitionName);
 
-        ((AppCompatActivity) getActivity()).setSupportActionBar(mToolbar);
+        ((AppCompatActivity) getActivity()).setSupportActionBar(toolbar);
 
         ActionBar actionBar = ((AppCompatActivity) getActivity()).getSupportActionBar();
         if (actionBar != null) {
@@ -688,30 +688,30 @@ public class VideoDetailsFragment extends BaseFragment implements RelatedVideosA
             actionBar.setTitle("");
         }
 
-        if (mVideo != null) {
+        if (video != null) {
             setUpVideoThumbnail();
 
-            long id = mVideo.getId();
+            long id = video.getId();
             if (id != -1L) {
-                mVideoId = id;
+                videoId = id;
 
-                mLayoutManager = new LinearLayoutManager(getActivity());
-                mVideosRecyclerView.setLayoutManager(mLayoutManager);
-                mRelatedVideosAdapter = new RelatedVideosAdapter(mVideo);
-                mRelatedVideosAdapter.setOnItemClickListener(this);
-                mRelatedVideosAdapter.setOnLikeClickListener(this);
-                mRelatedVideosAdapter.setOnWatchLaterClickListener(this);
-                mRelatedVideosAdapter.setOnCommentsClickListener(this);
-                mRelatedVideosAdapter.setOnInfoClickListener(this);
-                mRelatedVideosAdapter.addHeader();
-                mVideosRecyclerView.setAdapter(mRelatedVideosAdapter);
+                layoutManager = new LinearLayoutManager(getActivity());
+                videosRecyclerView.setLayoutManager(layoutManager);
+                relatedVideosAdapter = new RelatedVideosAdapter(video);
+                relatedVideosAdapter.setOnItemClickListener(this);
+                relatedVideosAdapter.setOnLikeClickListener(this);
+                relatedVideosAdapter.setOnWatchLaterClickListener(this);
+                relatedVideosAdapter.setOnCommentsClickListener(this);
+                relatedVideosAdapter.setOnInfoClickListener(this);
+                relatedVideosAdapter.addHeader();
+                videosRecyclerView.setAdapter(relatedVideosAdapter);
 
                 // Pagination
-                mVideosRecyclerView.addOnScrollListener(mRecyclerViewOnScrollListener);
+                videosRecyclerView.addOnScrollListener(recyclerViewOnScrollListener);
 
-                Call findRelatedVideosCall = mVimeoService.findRelatedVideos(mVideoId, mCurrentPage, PAGE_SIZE);
-                mCalls.add(findRelatedVideosCall);
-                findRelatedVideosCall.enqueue(mGetRelatedVideosFirstFetchCallback);
+                Call findRelatedVideosCall = vimeoService.findRelatedVideos(videoId, currentPage, PAGE_SIZE);
+                calls.add(findRelatedVideosCall);
+                findRelatedVideosCall.enqueue(getRelatedVideosFirstFetchCallback);
             }
         }
 
@@ -748,13 +748,13 @@ public class VideoDetailsFragment extends BaseFragment implements RelatedVideosA
     public boolean onOptionsItemSelected(final MenuItem item) {
         switch (item.getItemId()) {
             case R.id.share:
-                if (mVideo != null) {
+                if (video != null) {
 //                    EventLogger.fire(ProductShareEvent.start(mProduct.getId()));
 
                     Intent sendIntent = new Intent(Intent.ACTION_SEND);
                     sendIntent.setType("text/plain");
                     sendIntent.putExtra(Intent.EXTRA_TEXT,
-                            String.format("I found this on Loop. Check it out.\n\n%s\n\n%s", mVideo.getName(), mVideo.getLink()));
+                            String.format("I found this on Loop. Check it out.\n\n%s\n\n%s", video.getName(), video.getLink()));
 
                     String title = getResources().getString(R.string.share_this_video);
                     Intent chooser = Intent.createChooser(sendIntent, title);
@@ -778,7 +778,7 @@ public class VideoDetailsFragment extends BaseFragment implements RelatedVideosA
         switch (requestCode) {
             case VIDEO_SHARE_REQUEST_CODE:
                 if (resultCode == Activity.RESULT_OK) {
-                    if (mVideo != null) {
+                    if (video != null) {
 //                        EventLogger.fire(ProductShareEvent.submit(mProduct.getId()));
                     }
                 } else if (resultCode == Activity.RESULT_CANCELED) {
@@ -792,7 +792,7 @@ public class VideoDetailsFragment extends BaseFragment implements RelatedVideosA
     // region RelatedVideosAdapter.OnItemClickListener Methods
     @Override
     public void onItemClick(int position, View view) {
-        Video video = mRelatedVideosAdapter.getItem(position);
+        Video video = relatedVideosAdapter.getItem(position);
         if (video != null) {
             Intent intent = new Intent(getActivity(), VideoDetailsActivity.class);
 
@@ -822,17 +822,17 @@ public class VideoDetailsFragment extends BaseFragment implements RelatedVideosA
     // region RelatedVideosAdapter.OnLikeClickListener Methods
     @Override
     public void onLikeClick(final ImageView imageView) {
-        if (mRelatedVideosAdapter.isLikeOn()) {
+        if (relatedVideosAdapter.isLikeOn()) {
             AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(getActivity(), R.style.DialogTheme);
             alertDialogBuilder.setMessage("Are you sure you want to unlike this video?");
             alertDialogBuilder.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
                 public void onClick(DialogInterface dialog, int whichButton) {
-                    mRelatedVideosAdapter.setIsLikeOn(false);
+                    relatedVideosAdapter.setIsLikeOn(false);
                     imageView.setImageResource(R.drawable.ic_like_off);
 
-                    Call unlikeVideoCall = mVimeoService.unlikeVideo(String.valueOf(mVideoId));
-                    mCalls.add(unlikeVideoCall);
-                    unlikeVideoCall.enqueue(mUnlikeVideoCallback);
+                    Call unlikeVideoCall = vimeoService.unlikeVideo(String.valueOf(videoId));
+                    calls.add(unlikeVideoCall);
+                    unlikeVideoCall.enqueue(unlikeVideoCallback);
                 }
             });
             alertDialogBuilder.setNegativeButton("No", new DialogInterface.OnClickListener() {
@@ -842,12 +842,12 @@ public class VideoDetailsFragment extends BaseFragment implements RelatedVideosA
             });
             alertDialogBuilder.show();
         } else {
-            mRelatedVideosAdapter.setIsLikeOn(true);
+            relatedVideosAdapter.setIsLikeOn(true);
             imageView.setImageResource(R.drawable.ic_like_on);
 
-            Call likeVideoCall = mVimeoService.likeVideo(String.valueOf(mVideoId));
-            mCalls.add(likeVideoCall);
-            likeVideoCall.enqueue(mLikeVideoCallback);
+            Call likeVideoCall = vimeoService.likeVideo(String.valueOf(videoId));
+            calls.add(likeVideoCall);
+            likeVideoCall.enqueue(likeVideoCallback);
         }
     }
     // endregion
@@ -855,17 +855,17 @@ public class VideoDetailsFragment extends BaseFragment implements RelatedVideosA
     // region RelatedVideosAdapter.OnWatchLaterClickListener Methods
     @Override
     public void onWatchLaterClick(final ImageView imageView) {
-        if (mRelatedVideosAdapter.isWatchLaterOn()) {
+        if (relatedVideosAdapter.isWatchLaterOn()) {
             AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(getActivity(), R.style.DialogTheme);
             alertDialogBuilder.setMessage("Are you sure you want to remove this video from your Watch Later collection?");
             alertDialogBuilder.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
                 public void onClick(DialogInterface dialog, int whichButton) {
-                    mRelatedVideosAdapter.setIsWatchLaterOn(false);
+                    relatedVideosAdapter.setIsWatchLaterOn(false);
                     imageView.setImageResource(R.drawable.ic_watch_later_off);
 
-                    Call removeVideoFromWatchLaterCall = mVimeoService.removeVideoFromWatchLater(String.valueOf(mVideoId));
-                    mCalls.add(removeVideoFromWatchLaterCall);
-                    removeVideoFromWatchLaterCall.enqueue(mRemoveVideoFromWatchLaterCallback);
+                    Call removeVideoFromWatchLaterCall = vimeoService.removeVideoFromWatchLater(String.valueOf(videoId));
+                    calls.add(removeVideoFromWatchLaterCall);
+                    removeVideoFromWatchLaterCall.enqueue(removeVideoFromWatchLaterCallback);
                 }
             });
             alertDialogBuilder.setNegativeButton("No", new DialogInterface.OnClickListener() {
@@ -875,12 +875,12 @@ public class VideoDetailsFragment extends BaseFragment implements RelatedVideosA
             });
             alertDialogBuilder.show();
         } else {
-            mRelatedVideosAdapter.setIsWatchLaterOn(true);
+            relatedVideosAdapter.setIsWatchLaterOn(true);
             imageView.setImageResource(R.drawable.ic_watch_later_on);
 
-            Call addVideoToWatchLaterCall = mVimeoService.addVideoToWatchLater(String.valueOf(mVideoId));
-            mCalls.add(addVideoToWatchLaterCall);
-            addVideoToWatchLaterCall.enqueue(mAddVideoToWatchLaterCallback);
+            Call addVideoToWatchLaterCall = vimeoService.addVideoToWatchLater(String.valueOf(videoId));
+            calls.add(addVideoToWatchLaterCall);
+            addVideoToWatchLaterCall.enqueue(addVideoToWatchLaterCallback);
         }
     }
     // endregion
@@ -892,7 +892,7 @@ public class VideoDetailsFragment extends BaseFragment implements RelatedVideosA
         Intent intent = new Intent(getActivity(), VideoCommentsActivity.class);
 
         Bundle bundle = new Bundle();
-        bundle.putParcelable("video", mVideo);
+        bundle.putParcelable("video", video);
         intent.putExtras(bundle);
 
         startActivity(intent);
@@ -902,11 +902,11 @@ public class VideoDetailsFragment extends BaseFragment implements RelatedVideosA
     // region RelatedVideosAdapter.OnInfoClickListener Methods
     @Override
     public void onInfoClick(final ImageView imageView) {
-        if(mIsInfoExpanded){
-            mIsInfoExpanded = false;
+        if(isInfoExpanded){
+            isInfoExpanded = false;
             imageView.setImageResource(R.drawable.ic_keyboard_arrow_down_white_24dp);
         } else {
-            mIsInfoExpanded = true;
+            isInfoExpanded = true;
             imageView.setImageResource(R.drawable.ic_keyboard_arrow_up_white_24dp);
         }
     }
@@ -925,7 +925,7 @@ public class VideoDetailsFragment extends BaseFragment implements RelatedVideosA
     // region Helper Methods
 
     private void setUpVideoThumbnail() {
-        Pictures pictures = mVideo.getPictures();
+        Pictures pictures = video.getPictures();
         if (pictures != null) {
             List<Size> sizes = pictures.getSizes();
             if (sizes != null && sizes.size() > 0) {
@@ -937,7 +937,7 @@ public class VideoDetailsFragment extends BaseFragment implements RelatedVideosA
                                 .load(link)
 //                                .placeholder(R.drawable.ic_placeholder)
 //                                .error(R.drawable.ic_error)
-                                .into(mVideoThumbnailImageView);
+                                .into(videoThumbnailImageView);
                     }
                 }
             }
@@ -945,13 +945,13 @@ public class VideoDetailsFragment extends BaseFragment implements RelatedVideosA
     }
 
     private void loadMoreItems() {
-        mIsLoading = true;
+        isLoading = true;
 
-        mCurrentPage += 1;
+        currentPage += 1;
 
-        Call findRelatedVideosCall = mVimeoService.findRelatedVideos(mVideoId, mCurrentPage, PAGE_SIZE);
-        mCalls.add(findRelatedVideosCall);
-        findRelatedVideosCall.enqueue(mGetRelatedVideosNextFetchCallback);
+        Call findRelatedVideosCall = vimeoService.findRelatedVideos(videoId, currentPage, PAGE_SIZE);
+        calls.add(findRelatedVideosCall);
+        findRelatedVideosCall.enqueue(getRelatedVideosNextFetchCallback);
     }
 
     private void launchSearchActivity(String query) {
@@ -965,13 +965,13 @@ public class VideoDetailsFragment extends BaseFragment implements RelatedVideosA
         Snackbar.make(getActivity().findViewById(android.R.id.content),
                 message,
                 Snackbar.LENGTH_INDEFINITE)
-                .setAction("Reload", mReloadOnClickListener)
+                .setAction("Reload", reloadOnClickListener)
 //                                .setActionTextColor(Color.RED)
                 .show();
     }
 
     private void removeListeners() {
-        mVideosRecyclerView.removeOnScrollListener(mRecyclerViewOnScrollListener);
+        videosRecyclerView.removeOnScrollListener(recyclerViewOnScrollListener);
     }
     // endregion
 }

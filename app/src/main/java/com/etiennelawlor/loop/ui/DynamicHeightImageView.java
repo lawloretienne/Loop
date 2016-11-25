@@ -13,7 +13,7 @@ import android.widget.ImageView;
  */
 public class DynamicHeightImageView extends ImageView {
 
-    private double mHeightRatio;
+    private double heightRatio;
 
     public DynamicHeightImageView(Context context, AttributeSet attrs) {
         super(context, attrs);
@@ -24,22 +24,22 @@ public class DynamicHeightImageView extends ImageView {
     }
 
     public void setHeightRatio(double ratio) {
-        if (ratio != mHeightRatio) {
-            mHeightRatio = ratio;
+        if (ratio != heightRatio) {
+            heightRatio = ratio;
             requestLayout();
         }
     }
 
     public double getHeightRatio() {
-        return mHeightRatio;
+        return heightRatio;
     }
 
     @Override
     protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
-        if (mHeightRatio > 0.0) {
+        if (heightRatio > 0.0) {
             // set the image views size
             int width = MeasureSpec.getSize(widthMeasureSpec);
-            int height = (int) (width * mHeightRatio);
+            int height = (int) (width * heightRatio);
             setMeasuredDimension(width, height);
         }
         else {

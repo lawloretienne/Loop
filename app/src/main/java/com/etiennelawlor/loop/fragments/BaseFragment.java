@@ -22,7 +22,7 @@ import timber.log.Timber;
 public abstract class BaseFragment extends Fragment {
 
     // region Member Variables
-    protected List<Call> mCalls;
+    protected List<Call> calls;
     // endregion
 
     // region Lifecycle Methods
@@ -31,7 +31,7 @@ public abstract class BaseFragment extends Fragment {
         super.onCreate(savedInstanceState);
         Timber.d("onCreate()");
 
-        mCalls = new ArrayList<>();
+        calls = new ArrayList<>();
     }
 
     @Override
@@ -58,9 +58,9 @@ public abstract class BaseFragment extends Fragment {
             Timber.d("onDestroyView() : query - "+ query);
         }
 
-        Timber.d("onDestroyView() : mCalls.size() - " + mCalls.size());
+        Timber.d("onDestroyView() : calls.size() - " + calls.size());
 
-        for(final Call call : mCalls){
+        for(final Call call : calls){
             Timber.d("onDestroyView() : call.cancel() - "+call.toString());
 
             try {
@@ -81,7 +81,7 @@ public abstract class BaseFragment extends Fragment {
 //            });
         }
 
-        mCalls.clear();
+        calls.clear();
     }
 
     @Override

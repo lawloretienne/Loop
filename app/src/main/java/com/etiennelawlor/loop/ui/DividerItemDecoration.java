@@ -16,9 +16,9 @@ import com.etiennelawlor.loop.utilities.DisplayUtility;
 public class DividerItemDecoration extends RecyclerView.ItemDecoration {
 
     // region Member Variables
-    private Drawable mDivider;
-    private boolean mShowFirstDivider = false;
-    private boolean mShowLastDivider = false;
+    private Drawable divider;
+    private boolean showFirstDivider = false;
+    private boolean showLastDivider = false;
     int mOrientation = -1;
     // endregion
 
@@ -26,37 +26,37 @@ public class DividerItemDecoration extends RecyclerView.ItemDecoration {
     public DividerItemDecoration(Context context, AttributeSet attrs) {
         final TypedArray a = context
                 .obtainStyledAttributes(attrs, new int[]{android.R.attr.listDivider});
-        mDivider = a.getDrawable(0);
+        divider = a.getDrawable(0);
         a.recycle();
     }
 
     public DividerItemDecoration(Context context, AttributeSet attrs, boolean showFirstDivider,
                                  boolean showLastDivider) {
         this(context, attrs);
-        mShowFirstDivider = showFirstDivider;
-        mShowLastDivider = showLastDivider;
+        this.showFirstDivider = showFirstDivider;
+        this.showLastDivider = showLastDivider;
     }
 
     public DividerItemDecoration(Context context, int resId) {
-        mDivider = ContextCompat.getDrawable(context, resId);
+        divider = ContextCompat.getDrawable(context, resId);
     }
 
     public DividerItemDecoration(Context context, int resId, boolean showFirstDivider,
                                  boolean showLastDivider) {
         this(context, resId);
-        mShowFirstDivider = showFirstDivider;
-        mShowLastDivider = showLastDivider;
+        this.showFirstDivider = showFirstDivider;
+        this.showLastDivider = showLastDivider;
     }
 
     public DividerItemDecoration(Drawable divider) {
-        mDivider = divider;
+        divider = divider;
     }
 
     public DividerItemDecoration(Drawable divider, boolean showFirstDivider,
                                  boolean showLastDivider) {
         this(divider);
-        mShowFirstDivider = showFirstDivider;
-        mShowLastDivider = showLastDivider;
+        this.showFirstDivider = showFirstDivider;
+        this.showLastDivider = showLastDivider;
     }
     // endregion
 
@@ -64,12 +64,12 @@ public class DividerItemDecoration extends RecyclerView.ItemDecoration {
     public void getItemOffsets(Rect outRect, View view, RecyclerView parent,
                                RecyclerView.State state) {
         super.getItemOffsets(outRect, view, parent, state);
-        if (mDivider == null) {
+        if (divider == null) {
             return;
         }
 
         int position = parent.getChildAdapterPosition(view);
-        if (position == RecyclerView.NO_POSITION || (position == 0 && !mShowFirstDivider)) {
+        if (position == RecyclerView.NO_POSITION || (position == 0 && !showFirstDivider)) {
             return;
         }
 
@@ -77,13 +77,13 @@ public class DividerItemDecoration extends RecyclerView.ItemDecoration {
             getOrientation(parent);
 
         if (mOrientation == LinearLayoutManager.VERTICAL) {
-            outRect.top = mDivider.getIntrinsicHeight();
-            if (mShowLastDivider && position == (state.getItemCount() - 1)) {
+            outRect.top = divider.getIntrinsicHeight();
+            if (showLastDivider && position == (state.getItemCount() - 1)) {
                 outRect.bottom = outRect.top;
             }
         } else {
-            outRect.left = mDivider.getIntrinsicWidth();
-            if (mShowLastDivider && position == (state.getItemCount() - 1)) {
+            outRect.left = divider.getIntrinsicWidth();
+            if (showLastDivider && position == (state.getItemCount() - 1)) {
                 outRect.right = outRect.left;
             }
         }
@@ -91,7 +91,7 @@ public class DividerItemDecoration extends RecyclerView.ItemDecoration {
 
     @Override
     public void onDrawOver(Canvas c, RecyclerView parent, RecyclerView.State state) {
-        if (mDivider == null) {
+        if (divider == null) {
             super.onDrawOver(c, parent, state);
             return;
         }
@@ -102,16 +102,16 @@ public class DividerItemDecoration extends RecyclerView.ItemDecoration {
         int childCount = parent.getChildCount();
 
         if (orientation == LinearLayoutManager.VERTICAL) {
-            size = mDivider.getIntrinsicHeight();
+            size = divider.getIntrinsicHeight();
             left = parent.getPaddingLeft() + DisplayUtility.dp2px(parent.getContext(), 56);
             right = parent.getWidth() - parent.getPaddingRight();
         } else { //horizontal
-            size = mDivider.getIntrinsicWidth();
+            size = divider.getIntrinsicWidth();
             top = parent.getPaddingTop();
             bottom = parent.getHeight() - parent.getPaddingBottom();
         }
 
-        for (int i = mShowFirstDivider ? 0 : 1; i < childCount; i++) {
+        for (int i = showFirstDivider ? 0 : 1; i < childCount; i++) {
             View child = parent.getChildAt(i);
             RecyclerView.LayoutParams params = (RecyclerView.LayoutParams) child.getLayoutParams();
 
@@ -123,12 +123,12 @@ public class DividerItemDecoration extends RecyclerView.ItemDecoration {
                 right = left + size;
             }
 
-            mDivider.setBounds(left, top, right, bottom);
-            mDivider.draw(c);
+            divider.setBounds(left, top, right, bottom);
+            divider.draw(c);
         }
 
         // show last divider
-        if (mShowLastDivider && childCount > 0) {
+        if (showLastDivider && childCount > 0) {
             View child = parent.getChildAt(childCount - 1);
             if (parent.getChildAdapterPosition(child) == (state.getItemCount() - 1)) {
                 RecyclerView.LayoutParams params = (RecyclerView.LayoutParams) child.getLayoutParams();
@@ -139,8 +139,8 @@ public class DividerItemDecoration extends RecyclerView.ItemDecoration {
                     left = child.getRight() + params.rightMargin + DisplayUtility.dp2px(parent.getContext(), 56);
                     right = left + size;
                 }
-                mDivider.setBounds(left, top, right, bottom);
-                mDivider.draw(c);
+                divider.setBounds(left, top, right, bottom);
+                divider.draw(c);
             }
         }
     }

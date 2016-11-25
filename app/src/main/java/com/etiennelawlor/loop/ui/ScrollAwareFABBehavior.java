@@ -21,7 +21,7 @@ public class ScrollAwareFABBehavior extends FloatingActionButton.Behavior {
     // ...
     private static final android.view.animation.Interpolator INTERPOLATOR =
             new FastOutSlowInInterpolator();
-    private boolean mIsAnimatingOut = false;
+    private boolean isAnimatingOut = false;
 
     public ScrollAwareFABBehavior(Context context, AttributeSet attrs) {
         super();
@@ -41,7 +41,7 @@ public class ScrollAwareFABBehavior extends FloatingActionButton.Behavior {
         super.onNestedScroll(coordinatorLayout, child, target, dxConsumed, dyConsumed, dxUnconsumed,
                 dyUnconsumed);
 
-        if (dyConsumed > 0 && !this.mIsAnimatingOut && child.getVisibility() == View.VISIBLE) {
+        if (dyConsumed > 0 && !this.isAnimatingOut && child.getVisibility() == View.VISIBLE) {
             animateOut(child);
         } else if (dyConsumed < 0 && child.getVisibility() != View.VISIBLE) {
             animateIn(child);
@@ -56,15 +56,15 @@ public class ScrollAwareFABBehavior extends FloatingActionButton.Behavior {
                     .setInterpolator(INTERPOLATOR).withLayer()
                     .setListener(new ViewPropertyAnimatorListener() {
                         public void onAnimationStart(View view) {
-                            ScrollAwareFABBehavior.this.mIsAnimatingOut = true;
+                            ScrollAwareFABBehavior.this.isAnimatingOut = true;
                         }
 
                         public void onAnimationCancel(View view) {
-                            ScrollAwareFABBehavior.this.mIsAnimatingOut = false;
+                            ScrollAwareFABBehavior.this.isAnimatingOut = false;
                         }
 
                         public void onAnimationEnd(View view) {
-                            ScrollAwareFABBehavior.this.mIsAnimatingOut = false;
+                            ScrollAwareFABBehavior.this.isAnimatingOut = false;
                             view.setVisibility(View.GONE);
                         }
                     }).start();
@@ -74,11 +74,11 @@ public class ScrollAwareFABBehavior extends FloatingActionButton.Behavior {
             anim.setDuration(200L);
             anim.setAnimationListener(new Animation.AnimationListener() {
                 public void onAnimationStart(Animation animation) {
-                    ScrollAwareFABBehavior.this.mIsAnimatingOut = true;
+                    ScrollAwareFABBehavior.this.isAnimatingOut = true;
                 }
 
                 public void onAnimationEnd(Animation animation) {
-                    ScrollAwareFABBehavior.this.mIsAnimatingOut = false;
+                    ScrollAwareFABBehavior.this.isAnimatingOut = false;
                     button.setVisibility(View.GONE);
                 }
 

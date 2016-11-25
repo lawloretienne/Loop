@@ -8,24 +8,24 @@ import java.util.HashMap;
 public class Event {
 
     // region Member Variables
-    private String mName;
-    private HashMap<String, Object> mMap;
+    private String name;
+    private HashMap<String, Object> map;
     // endregion
 
     // region Constructors
     public Event(String name, HashMap<String, Object> map) {
-        mName = name;
-        mMap = map;
+        this.name = name;
+        this.map = map;
     }
     // endregion
 
     // region Getters
     public String getName(){
-        return mName;
+        return name;
     }
 
     public HashMap<String, Object> getMap(){
-        return mMap;
+        return map;
     }
     // endregion
 
