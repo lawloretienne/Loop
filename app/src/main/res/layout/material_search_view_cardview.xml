@@ -47,7 +47,7 @@
 
             </FrameLayout>
 
-            <EditText
+            <com.etiennelawlor.loop.ui.CustomFontEditText
                 android:id="@+id/search_et"
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
@@ -59,7 +59,8 @@
                 android:singleLine="true"
                 android:textColor="@color/primary_text"
                 android:textColorHint="@color/tertiary_text"
-                android:textSize="@dimen/text_medium" />
+                android:textSize="@dimen/text_medium"
+                app:textFont="ubuntu_medium"/>
 
             <FrameLayout
                 android:layout_width="wrap_content"

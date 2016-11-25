@@ -4,15 +4,18 @@ import android.content.Context;
 import android.graphics.Typeface;
 import android.support.v4.util.LruCache;
 
+import java.util.HashMap;
+import java.util.Map;
+
 /**
  * Created by etiennelawlor on 12/14/15.
  */
 public class FontCache {
 
-    private static LruCache<String, Typeface> sFontCache = new LruCache<>(17);
+    private static Map<String, Typeface> fontCache = new HashMap<>(8);
 
     public static Typeface getTypeface(String fontname, Context context) {
-        Typeface typeface = sFontCache.get(fontname);
+        Typeface typeface = fontCache.get(fontname);
 
         if (typeface == null) {
             try {
@@ -22,7 +25,7 @@ public class FontCache {
                 return null;
             }
 
-            sFontCache.put(fontname, typeface);
+            fontCache.put(fontname, typeface);
         }
 
         return typeface;

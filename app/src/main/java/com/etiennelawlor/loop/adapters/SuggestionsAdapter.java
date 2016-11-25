@@ -12,6 +12,7 @@ import android.widget.TextView;
 
 import com.etiennelawlor.loop.LoopApplication;
 import com.etiennelawlor.loop.R;
+import com.etiennelawlor.loop.utilities.FontCache;
 import com.etiennelawlor.trestle.library.Regex;
 import com.etiennelawlor.trestle.library.Span;
 import com.etiennelawlor.trestle.library.Trestle;
@@ -35,7 +36,7 @@ public class SuggestionsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
 
     // region Member Variables
     private List<String> suggestions;
-    private Typeface blackFont;
+    private Typeface font;
     private OnItemClickListener onItemClickListener;
     private OnItemLongClickListener onItemLongClickListener;
     private OnSearchSuggestionCompleteClickListener onSearchSuggestionCompleteClickListener;
@@ -62,7 +63,7 @@ public class SuggestionsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
     // region Constructors
     public SuggestionsAdapter() {
         suggestions = new ArrayList<>();
-        blackFont = Typeface.createFromAsset(LoopApplication.getInstance().getAssets(), "fonts/Roboto-Black.ttf");
+        font = FontCache.getTypeface("Ubuntu-Bold.ttf", LoopApplication.getInstance().getApplicationContext());
     }
     // endregion
 
@@ -210,7 +211,7 @@ public class SuggestionsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
                         new Span.Builder(suggestion)
                                 .regex(new Regex(currentQuery, Regex.CASE_INSENSITIVE))
                                 .foregroundColor(ContextCompat.getColor(tv.getContext(), R.color.primary)) // Pass resolved color instead of resource id
-                                .typeface(blackFont)
+                                .typeface(font)
                                 .build());
 
                 tv.setText(formattedSuggestion);

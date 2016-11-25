@@ -12,12 +12,14 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
+import com.etiennelawlor.loop.LoopApplication;
 import com.etiennelawlor.loop.R;
 import com.etiennelawlor.loop.network.models.response.Comment;
 import com.etiennelawlor.loop.network.models.response.Pictures;
 import com.etiennelawlor.loop.network.models.response.Size;
 import com.etiennelawlor.loop.network.models.response.User;
 import com.etiennelawlor.loop.utilities.DateUtility;
+import com.etiennelawlor.loop.utilities.FontCache;
 import com.etiennelawlor.trestle.library.Span;
 import com.etiennelawlor.trestle.library.Trestle;
 
@@ -57,8 +59,9 @@ public class VideoCommentsAdapter extends RecyclerView.Adapter<RecyclerView.View
     public VideoCommentsAdapter(Context context) {
         this.context = context;
         comments = new ArrayList<>();
-        boldFont = Typeface.createFromAsset(context.getAssets(), "fonts/Roboto-Bold.ttf");
-        italicFont = Typeface.createFromAsset(context.getAssets(), "fonts/Roboto-Italic.ttf");
+
+        boldFont = FontCache.getTypeface("Ubuntu-Bold.ttf", context);
+        italicFont = FontCache.getTypeface("Ubuntu-Italic.ttf", context);
     }
     // endregion
 

@@ -14,24 +14,14 @@ import com.etiennelawlor.loop.R;
 public class CustomFontUtils {
 
     // region Constants
-    private static final int ROBOTO_BLACK = 0;
-    private static final int ROBOTO_BLACK_ITALIC = 1;
-    private static final int ROBOTO_BOLD = 2;
-    private static final int ROBOTO_BOLD_ITALIC = 3;
-    private static final int ROBOTO_MEDIUM = 4;
-    private static final int ROBOTO_MEDIUM_ITALIC = 5;
-    private static final int ROBOTO_REGULAR = 6;
-    private static final int ROBOTO_ITALIC = 7;
-    private static final int ROBOTO_LIGHT = 8;
-    private static final int ROBOTO_LIGHT_ITALIC = 9;
-    private static final int ROBOTO_THIN = 10;
-    private static final int ROBOTO_THIN_ITALIC = 11;
-    private static final int ROBOTO_CONDENSED_BOLD = 12;
-    private static final int ROBOTO_CONDENSED_BOLD_ITALIC = 13;
-    private static final int ROBOTO_CONDENSED_ITALIC = 14;
-    private static final int ROBOTO_CONDENSED_LIGHT = 15;
-    private static final int ROBOTO_CONDENSED_LIGHT_ITALIC = 16;
-    private static final int ROBOTO_CONDENSED_REGULAR = 17;
+    private static final int UBUNTU_BOLD = 0;
+    private static final int UBUNTU_BOLD_ITALIC = 1;
+    private static final int UBUNTU_MEDIUM = 2;
+    private static final int UBUNTU_MEDIUM_ITALIC = 3;
+    private static final int UBUNTU_REGULAR = 4;
+    private static final int UBUNTU_ITALIC = 5;
+    private static final int UBUNTU_LIGHT = 6;
+    private static final int UBUNTU_LIGHT_ITALIC = 7;
     // endregion
 
     public static void applyCustomFont(TextView customFontTextView, Context context, AttributeSet attrs) {
@@ -40,7 +30,7 @@ public class CustomFontUtils {
                 R.styleable.CustomFontTextView);
 
         try {
-            int font = attributeArray.getInteger(R.styleable.CustomFontTextView_textFont, 6);
+            int font = attributeArray.getInteger(R.styleable.CustomFontTextView_textFont, 4);
             Typeface customFont = getTypeface(context, font);
             customFontTextView.setTypeface(customFont);
         } finally {
@@ -50,42 +40,22 @@ public class CustomFontUtils {
 
     private static Typeface getTypeface(Context context, int font){
         switch (font) {
-            case ROBOTO_BLACK :
-                return FontCache.getTypeface("Roboto-Black.ttf", context);
-            case ROBOTO_BLACK_ITALIC :
-                return FontCache.getTypeface("Roboto-BlackItalic.ttf", context);
-            case ROBOTO_BOLD :
-                return FontCache.getTypeface("Roboto-Bold.ttf", context);
-            case ROBOTO_BOLD_ITALIC :
-                return FontCache.getTypeface("Roboto-BoldItalic.ttf", context);
-            case ROBOTO_MEDIUM :
-                return FontCache.getTypeface("Roboto-Medium.ttf", context);
-            case ROBOTO_MEDIUM_ITALIC :
-                return FontCache.getTypeface("Roboto-MediumItalic.ttf", context);
-            case ROBOTO_REGULAR :
-                return FontCache.getTypeface("Roboto-Regular.ttf", context);
-            case ROBOTO_ITALIC :
-                return FontCache.getTypeface("Roboto-Italic.ttf", context);
-            case ROBOTO_LIGHT :
-                return FontCache.getTypeface("Roboto-Light.ttf", context);
-            case ROBOTO_LIGHT_ITALIC :
-                return FontCache.getTypeface("Roboto-LightItalic.ttf", context);
-            case ROBOTO_THIN :
-                return FontCache.getTypeface("Roboto-Thin.ttf", context);
-            case ROBOTO_THIN_ITALIC :
-                return FontCache.getTypeface("Roboto-ThinItalic.ttf", context);
-            case ROBOTO_CONDENSED_BOLD :
-                return FontCache.getTypeface("RobotoCondensed-Bold.ttf", context);
-            case ROBOTO_CONDENSED_BOLD_ITALIC :
-                return FontCache.getTypeface("RobotoCondensed-BoldItalic.ttf", context);
-            case ROBOTO_CONDENSED_ITALIC :
-                return FontCache.getTypeface("RobotoCondensed-Italic.ttf", context);
-            case ROBOTO_CONDENSED_LIGHT :
-                return FontCache.getTypeface("RobotoCondensed-Light.ttf", context);
-            case ROBOTO_CONDENSED_LIGHT_ITALIC :
-                return FontCache.getTypeface("RobotoCondensed-LightItalic.ttf", context);
-            case ROBOTO_CONDENSED_REGULAR :
-                return FontCache.getTypeface("RobotoCondensed-Regular.ttf", context);
+            case UBUNTU_BOLD :
+                return FontCache.getTypeface("Ubuntu-Bold.ttf", context);
+            case UBUNTU_BOLD_ITALIC :
+                return FontCache.getTypeface("Ubuntu-BoldItalic.ttf", context);
+            case UBUNTU_MEDIUM :
+                return FontCache.getTypeface("Ubuntu-Medium.ttf", context);
+            case UBUNTU_MEDIUM_ITALIC :
+                return FontCache.getTypeface("Ubuntu-MediumItalic.ttf", context);
+            case UBUNTU_REGULAR :
+                return FontCache.getTypeface("Ubuntu-Regular.ttf", context);
+            case UBUNTU_ITALIC :
+                return FontCache.getTypeface("Ubuntu-Italic.ttf", context);
+            case UBUNTU_LIGHT :
+                return FontCache.getTypeface("Ubuntu-Light.ttf", context);
+            case UBUNTU_LIGHT_ITALIC :
+                return FontCache.getTypeface("Ubuntu-LightItalic.ttf", context);
             default:
                 // no matching font found
                 // return null so Android just uses the standard font (Roboto)

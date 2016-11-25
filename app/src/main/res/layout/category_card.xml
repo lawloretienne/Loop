@@ -27,12 +27,12 @@
 
         <View
             android:layout_width="match_parent"
-            android:layout_height="1dp"
+            android:layout_height="2dp"
             android:layout_marginLeft="40dp"
             android:layout_marginRight="40dp"
             android:background="@color/fifty_percent_transparency_white" />
 
-        <TextView
+        <com.etiennelawlor.loop.ui.CustomFontTextView
             android:id="@+id/title_tv"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -46,11 +46,12 @@
             android:textAllCaps="true"
             android:textColor="@color/inverse_primary_text"
             android:textSize="16sp"
-            tools:text="@string/comedy" />
+            tools:text="@string/comedy"
+            app:textFont="ubuntu_bold"/>
 
         <View
             android:layout_width="match_parent"
-            android:layout_height="1dp"
+            android:layout_height="2dp"
             android:layout_marginLeft="40dp"
             android:layout_marginRight="40dp"
             android:background="@color/fifty_percent_transparency_white" />

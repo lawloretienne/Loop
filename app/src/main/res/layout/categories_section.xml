@@ -27,7 +27,7 @@
             android:singleLine="true"
             android:gravity="center"
             android:layout_centerInParent="true"
-            app:textFont="roboto_regular"
+            app:textFont="ubuntu_medium"
             />
 
         <!--android:drawableTop="@drawable/ic_large_track"-->

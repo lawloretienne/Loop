@@ -28,6 +28,7 @@ import com.etiennelawlor.loop.otto.BusProvider;
 import com.etiennelawlor.loop.otto.events.SearchPerformedEvent;
 import com.etiennelawlor.loop.ui.LoadingImageView;
 import com.etiennelawlor.loop.utilities.DateUtility;
+import com.etiennelawlor.loop.utilities.FontCache;
 import com.etiennelawlor.loop.utilities.Transformers;
 import com.greenfrvr.hashtagview.HashtagView;
 
@@ -103,7 +104,7 @@ public class RelatedVideosAdapter extends RecyclerView.Adapter<RecyclerView.View
         this.video = video;
         videos = new ArrayList<>();
 
-        boldFont = Typeface.createFromAsset(LoopApplication.getInstance().getApplicationContext().getAssets(), "fonts/Roboto-Bold.ttf");
+        boldFont = FontCache.getTypeface("Ubuntu-Bold.ttf", LoopApplication.getInstance().getApplicationContext());
     }
     // endregion
 

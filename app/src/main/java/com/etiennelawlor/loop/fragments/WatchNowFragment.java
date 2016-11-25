@@ -3,6 +3,7 @@ package com.etiennelawlor.loop.fragments;
 import android.app.Activity;
 import android.app.SearchManager;
 import android.content.Intent;
+import android.graphics.Typeface;
 import android.os.Bundle;
 import android.speech.RecognizerIntent;
 import android.support.design.widget.TabLayout;
@@ -17,6 +18,7 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 
 import com.etiennelawlor.loop.R;
 import com.etiennelawlor.loop.activities.SearchableActivity;
@@ -26,6 +28,7 @@ import com.etiennelawlor.loop.otto.events.SearchPerformedEvent;
 import com.etiennelawlor.loop.otto.events.ShowSearchSuggestionsEvent;
 import com.etiennelawlor.loop.realm.RealmUtility;
 import com.etiennelawlor.loop.ui.MaterialSearchView;
+import com.etiennelawlor.loop.utilities.FontCache;
 import com.squareup.otto.Subscribe;
 
 import java.util.ArrayList;
@@ -43,13 +46,17 @@ public class WatchNowFragment extends BaseFragment {
     // region Constants
     // endregion
 
-    // region Member Variables
+    // region Views
     @Bind(R.id.viewpager)
     ViewPager viewPager;
     @Bind(R.id.tabs)
     TabLayout tabLayout;
     @Bind(R.id.material_sv)
     MaterialSearchView materialSearchView;
+    // endregion
+
+    // region Member Variables
+    private Typeface font;
     // endregion
 
     // region Callbacks
@@ -83,6 +90,8 @@ public class WatchNowFragment extends BaseFragment {
         }
 
         setHasOptionsMenu(true);
+
+        font = FontCache.getTypeface("Ubuntu-Medium.ttf", getContext());
     }
 
     @Override
@@ -114,6 +123,8 @@ public class WatchNowFragment extends BaseFragment {
 
         tabLayout.setupWithViewPager(viewPager);
         tabLayout.setTabMode(TabLayout.MODE_SCROLLABLE);
+
+        updateTabLayout();
     }
 
     @Override
@@ -225,6 +236,21 @@ public class WatchNowFragment extends BaseFragment {
         intent.setAction(Intent.ACTION_SEARCH);
         intent.putExtra(SearchManager.QUERY, query);
         getContext().startActivity(intent);
+    }
+
+    private void updateTabLayout(){
+        ViewGroup vg = (ViewGroup) tabLayout.getChildAt(0);
+        int tabsCount = vg.getChildCount();
+        for (int j = 0; j < tabsCount; j++) {
+            ViewGroup vgTab = (ViewGroup) vg.getChildAt(j);
+            int tabChildsCount = vgTab.getChildCount();
+            for (int i = 0; i < tabChildsCount; i++) {
+                View tabViewChild = vgTab.getChildAt(i);
+                if (tabViewChild instanceof TextView) {
+                    ((TextView) tabViewChild).setTypeface(font);
+                }
+            }
+        }
     }
     // endregion
 

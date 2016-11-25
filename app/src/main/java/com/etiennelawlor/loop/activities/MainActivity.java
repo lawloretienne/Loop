@@ -1,6 +1,7 @@
 package com.etiennelawlor.loop.activities;
 
 import android.content.Intent;
+import android.graphics.Typeface;
 import android.os.Bundle;
 import android.support.design.widget.NavigationView;
 import android.support.v4.app.Fragment;
@@ -10,7 +11,9 @@ import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
 import android.view.Gravity;
 import android.view.LayoutInflater;
+import android.view.Menu;
 import android.view.MenuItem;
+import android.view.SubMenu;
 import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -27,7 +30,9 @@ import com.etiennelawlor.loop.network.models.response.AuthorizedUser;
 import com.etiennelawlor.loop.network.models.response.Picture;
 import com.etiennelawlor.loop.otto.BusProvider;
 import com.etiennelawlor.loop.otto.events.LeftDrawableClickedEvent;
+import com.etiennelawlor.loop.utilities.FontCache;
 import com.etiennelawlor.loop.utilities.LoopUtility;
+import com.etiennelawlor.loop.utilities.TrestleUtility;
 import com.squareup.otto.Subscribe;
 
 import java.util.List;
@@ -43,6 +48,7 @@ import timber.log.Timber;
  */
 public class MainActivity extends AppCompatActivity {
 
+    // region Views
     @Bind(R.id.drawer_layout)
     DrawerLayout drawerLayout;
     @Bind(R.id.nav_view)
@@ -50,7 +56,10 @@ public class MainActivity extends AppCompatActivity {
 
     private CircleImageView avatarImageView;
     private TextView fullNameTextView;
+    // endregion
 
+    // region Member Variables
+    private Typeface font;
     private AuthorizedUser authorizedUser;
     // endregion
 
@@ -127,6 +136,8 @@ public class MainActivity extends AppCompatActivity {
             }
         }
 
+        font = FontCache.getTypeface("Ubuntu-Medium.ttf", this);
+
         authorizedUser = PreferencesHelper.getAuthorizedUser(this);
 
         View header = LayoutInflater.from(this).inflate(R.layout.nav_header, null);
@@ -136,6 +147,7 @@ public class MainActivity extends AppCompatActivity {
 
         setUpAvatar();
         setUpFullName();
+        formatMenuItems();
 
         // Setup NavigationView
         navigationView.setNavigationItemSelectedListener(mNavigationViewOnNavigationItemSelectedListener);
@@ -234,6 +246,27 @@ public class MainActivity extends AppCompatActivity {
                 fullNameTextView.setText(name);
             }
         }
+    }
+
+    private void formatMenuItems() {
+        Menu menu = navigationView.getMenu();
+        for (int i = 0; i < menu.size(); i++) {
+            MenuItem mi = menu.getItem(i);
+
+            SubMenu subMenu = mi.getSubMenu();
+            if (subMenu != null && subMenu.size() > 0) {
+                for (int j = 0; j < subMenu.size(); j++) {
+                    MenuItem subMenuItem = subMenu.getItem(j);
+                    applyFontToMenuItem(subMenuItem);
+                }
+            }
+
+            applyFontToMenuItem(mi);
+        }
+    }
+
+    private void applyFontToMenuItem(MenuItem mi) {
+        mi.setTitle(TrestleUtility.getFormattedText(mi.getTitle().toString(), font));
     }
     // endregion
 }

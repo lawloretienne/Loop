@@ -2,6 +2,7 @@ package com.etiennelawlor.loop.fragments;
 
 import android.content.DialogInterface;
 import android.content.res.ColorStateList;
+import android.graphics.Typeface;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.content.ContextCompat;
@@ -37,7 +38,9 @@ import com.etiennelawlor.loop.network.models.response.Video;
 import com.etiennelawlor.loop.otto.BusProvider;
 import com.etiennelawlor.loop.ui.LoadingImageView;
 import com.etiennelawlor.loop.utilities.DisplayUtility;
+import com.etiennelawlor.loop.utilities.FontCache;
 import com.etiennelawlor.loop.utilities.LogUtility;
+import com.etiennelawlor.loop.utilities.TrestleUtility;
 import com.google.common.collect.Lists;
 
 import java.io.IOException;
@@ -66,19 +69,7 @@ public class VideoCommentsFragment extends BaseFragment implements VideoComments
     public static final int PAGE_SIZE = 60;
     // endregion
 
-    //region Member Variables
-    private VideoCommentsAdapter videoCommentsAdapter;
-    private VimeoService vimeoService;
-    private Video video;
-    private CommentsCollection commentsCollection;
-    private int currentPage = 1;
-    private Long videoId = -1L;
-    private boolean commentChangeMade = false;
-    private boolean isLoading = false;
-    private boolean isLastPage = false;
-    private String sortByValue = "date";
-    private String sortOrderValue = "desc";
-
+    // region Views
     @Bind(R.id.comment_et)
     EditText commentEditText;
     @Bind(R.id.sumbit_comment_iv)
@@ -93,6 +84,21 @@ public class VideoCommentsFragment extends BaseFragment implements VideoComments
     Toolbar toolbar;
     @Bind(R.id.loading_iv)
     LoadingImageView loadingImageView;
+    // endregion
+
+    //region Member Variables
+    private VideoCommentsAdapter videoCommentsAdapter;
+    private VimeoService vimeoService;
+    private Video video;
+    private CommentsCollection commentsCollection;
+    private int currentPage = 1;
+    private Long videoId = -1L;
+    private boolean commentChangeMade = false;
+    private boolean isLoading = false;
+    private boolean isLastPage = false;
+    private String sortByValue = "date";
+    private String sortOrderValue = "desc";
+    private Typeface font;
     // endregion
 
     // region Listeners
@@ -403,6 +409,8 @@ public class VideoCommentsFragment extends BaseFragment implements VideoComments
                 VimeoService.class,
                 VimeoService.BASE_URL,
                 token);
+
+        font = FontCache.getTypeface("Ubuntu-Medium.ttf", getContext());
     }
 
     @Override
@@ -422,6 +430,7 @@ public class VideoCommentsFragment extends BaseFragment implements VideoComments
         ActionBar actionBar = ((AppCompatActivity) getActivity()).getSupportActionBar();
         if (actionBar != null) {
             actionBar.setDisplayHomeAsUpEnabled(true);
+            actionBar.setTitle(TrestleUtility.getFormattedText(getString(R.string.comments), font));
         }
 
         setUpListeners();

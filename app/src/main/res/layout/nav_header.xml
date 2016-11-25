@@ -54,7 +54,7 @@
                     android:singleLine="true"
                     android:textColor="@color/inverse_primary_text"
                     android:textSize="14sp"
-                    app:textFont="roboto_medium" />
+                    app:textFont="ubuntu_medium" />
 
                 <com.etiennelawlor.loop.ui.CustomFontTextView
                     android:id="@+id/email_tv"
@@ -64,7 +64,7 @@
                     android:singleLine="true"
                     android:textColor="@color/inverse_primary_text"
                     android:textSize="14sp"
-                    app:textFont="roboto_regular" />
+                    app:textFont="ubuntu_medium" />
 
             </LinearLayout>
 
@@ -81,7 +81,7 @@
                 android:textColor="@color/inverse_primary_text"
                 android:textSize="14sp"
                 android:visibility="gone"
-                app:textFont="roboto_medium" />
+                app:textFont="ubuntu_medium" />
 
             <!--android:drawableLeft="@drawable/ic_drawer_profile"-->
 

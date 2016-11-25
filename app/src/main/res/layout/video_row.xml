@@ -36,7 +36,7 @@
             android:textColor="@color/inverse_primary_text"
             tools:text="Duration"
             android:textSize="14sp"
-            app:textFont="roboto_regular"/>
+            app:textFont="ubuntu_regular"/>
 
     </RelativeLayout>
 
@@ -58,19 +58,19 @@
             android:maxLines="2"
             android:ellipsize="end"
             android:textSize="16sp"
-            app:textFont="robotoCondensed_bold"/>
+            app:textFont="ubuntu_bold"/>
 
         <com.etiennelawlor.loop.ui.CustomFontTextView
             android:id="@+id/subtitle_tv"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textColor="@color/secondary_text"
+            android:textColor="@color/primary_text"
             android:transitionName="subtitleTransition"
             tools:text="Video Subtitle"
             android:maxLines="5"
             android:ellipsize="end"
             android:textSize="14sp"
-            app:textFont="roboto_medium"/>
+            app:textFont="ubuntu_medium"/>
 
         <com.etiennelawlor.loop.ui.CustomFontTextView
             android:id="@+id/uploaded_date_tv"
@@ -80,7 +80,7 @@
             android:transitionName="uploadedTransition"
             tools:text="Uploaded date"
             android:textSize="14sp"
-            app:textFont="roboto_regular"/>
+            app:textFont="ubuntu_medium"/>
 
 
     </LinearLayout>

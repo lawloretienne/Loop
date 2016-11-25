@@ -1,5 +1,6 @@
 package com.etiennelawlor.loop.fragments;
 
+import android.graphics.Typeface;
 import android.os.Bundle;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
@@ -25,7 +26,9 @@ import com.etiennelawlor.loop.otto.BusProvider;
 import com.etiennelawlor.loop.ui.GridSpacesItemDecoration;
 import com.etiennelawlor.loop.ui.LoadingImageView;
 import com.etiennelawlor.loop.utilities.DisplayUtility;
+import com.etiennelawlor.loop.utilities.FontCache;
 import com.etiennelawlor.loop.utilities.LogUtility;
+import com.etiennelawlor.loop.utilities.TrestleUtility;
 
 import java.io.IOException;
 import java.net.SocketTimeoutException;
@@ -67,6 +70,7 @@ public class ExploreFragment extends BaseFragment implements CategoriesAdapter.O
     private boolean isLoading = false;
     private CategoriesAdapter categoriesAdapter;
     private VimeoService vimeoService;
+    private Typeface font;
     // endregion
 
     // region Listeners
@@ -176,6 +180,8 @@ public class ExploreFragment extends BaseFragment implements CategoriesAdapter.O
                 token);
 
         BusProvider.getInstance().register(this);
+
+        font = FontCache.getTypeface("Ubuntu-Medium.ttf", getContext());
     }
 
     @Override
@@ -197,7 +203,7 @@ public class ExploreFragment extends BaseFragment implements CategoriesAdapter.O
         if(ab != null){
             ab.setHomeAsUpIndicator(R.drawable.ic_menu);
             ab.setDisplayHomeAsUpEnabled(true);
-            ab.setTitle("Explore");
+            ab.setTitle(TrestleUtility.getFormattedText(getString(R.string.explore), font));
         }
 
         LinearLayoutManager layoutManager = new GridLayoutManager(getActivity(), 2);

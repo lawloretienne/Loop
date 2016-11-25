@@ -26,7 +26,7 @@
             android:textColor="@color/primary_text"
             android:textSize="22sp"
             android:transitionName="titleTransition"
-            app:textFont="robotoCondensed_bold"
+            app:textFont="ubuntu_bold"
             tools:text="Product Title" />
 
         <!--android:layout_toLeftOf="@+id/action_iv"-->
@@ -38,7 +38,7 @@
             android:layout_below="@id/title_tv"
             android:textColor="@color/secondary_text"
             android:textSize="16sp"
-            app:textFont="roboto_regular"
+            app:textFont="ubuntu_medium"
             tools:text="Views" />
 
         <!--<ImageView-->
@@ -120,7 +120,7 @@
             android:paddingBottom="16dp"
             android:autoLink="all"
             android:textColorLink="@color/secondary_text"
-            app:textFont="roboto_regular"
+            app:textFont="ubuntu_medium"
             tools:text="Description" />
 
         <com.greenfrvr.hashtagview.HashtagView
@@ -173,7 +173,7 @@
                 android:textColor="@color/primary_text"
                 android:textSize="18sp"
                 android:transitionName="subtitleTransition"
-                app:textFont="roboto_medium"
+                app:textFont="ubuntu_medium"
                 tools:text="Video Subtitle" />
 
             <com.etiennelawlor.loop.ui.CustomFontTextView
@@ -182,7 +182,7 @@
                 android:layout_height="wrap_content"
                 android:textColor="@color/secondary_text"
                 android:textSize="14sp"
-                app:textFont="roboto_regular"
+                app:textFont="ubuntu_medium"
                 tools:text="Upload date" />
 
         </LinearLayout>

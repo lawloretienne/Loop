@@ -2,6 +2,7 @@ package com.etiennelawlor.loop.fragments;
 
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.graphics.Typeface;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.design.widget.Snackbar;
@@ -38,7 +39,9 @@ import com.etiennelawlor.loop.network.models.response.VideosCollection;
 import com.etiennelawlor.loop.otto.BusProvider;
 import com.etiennelawlor.loop.otto.events.WatchLaterEvent;
 import com.etiennelawlor.loop.ui.LoadingImageView;
+import com.etiennelawlor.loop.utilities.FontCache;
 import com.etiennelawlor.loop.utilities.LogUtility;
+import com.etiennelawlor.loop.utilities.TrestleUtility;
 import com.squareup.otto.Subscribe;
 
 import java.io.IOException;
@@ -93,6 +96,7 @@ public class WatchLaterVideosFragment extends BaseFragment implements VideosAdap
     private LinearLayoutManager layoutManager;
     private VimeoService vimeoService;
     private WatchLaterEvent watchLaterEvent;
+    private Typeface font;
     // endregion
 
     // region Listeners
@@ -315,6 +319,8 @@ public class WatchLaterVideosFragment extends BaseFragment implements VideosAdap
 
         setHasOptionsMenu(true);
         BusProvider.getInstance().register(this);
+
+        font = FontCache.getTypeface("Ubuntu-Medium.ttf", getContext());
     }
 
     @Override
@@ -336,7 +342,7 @@ public class WatchLaterVideosFragment extends BaseFragment implements VideosAdap
         if(ab != null){
             ab.setHomeAsUpIndicator(R.drawable.ic_menu);
             ab.setDisplayHomeAsUpEnabled(true);
-            ab.setTitle("Watch Later");
+            ab.setTitle(TrestleUtility.getFormattedText(getString(R.string.watch_later), font));
         }
 
         layoutManager = new LinearLayoutManager(getActivity());

@@ -54,7 +54,7 @@
                 android:textColor="@color/primary_text"
                 android:textColorHint="@color/tertiary_text"
                 android:textSize="16sp"
-                app:textFont="roboto_regular" />
+                app:textFont="ubuntu_medium" />
 
         </RelativeLayout>
 
