@@ -48,6 +48,16 @@ import timber.log.Timber;
  */
 public class MainActivity extends AppCompatActivity {
 
+    // region Constants
+    private static final String WATCH_NOW = "Watch Now";
+    private static final String LIKES = "Likes";
+    private static final String WATCH_LATER = "Watch Later";
+    private static final String EXPLORE = "Explore";
+    private static final String SETTINGS = "Settings";
+    private static final String HELP_AND_FEEDBACK = "Help and Feedback";
+    private static final String LOGOUT = "Logout";
+    // endregion
+
     // region Views
     @Bind(R.id.drawer_layout)
     DrawerLayout drawerLayout;
@@ -68,42 +78,58 @@ public class MainActivity extends AppCompatActivity {
             = new NavigationView.OnNavigationItemSelectedListener() {
                 @Override
                 public boolean onNavigationItemSelected(MenuItem menuItem) {
-                    menuItem.setChecked(true);
                     drawerLayout.closeDrawers();
 
                     String title = menuItem.getTitle().toString();
                     switch (title) {
-                        case "Watch Now":
-                            getSupportFragmentManager()
-                                    .beginTransaction()
-                                    .replace(R.id.content_fl, WatchNowFragment.newInstance(), "")
-                                    .commit();
+                        case WATCH_NOW:
+                            if(!menuItem.isChecked()){
+                                menuItem.setChecked(true);
+                                getSupportFragmentManager()
+                                        .beginTransaction()
+                                        .setCustomAnimations(android.R.anim.fade_in, android.R.anim.fade_out)
+                                        .replace(R.id.content_fl, WatchNowFragment.newInstance(), "")
+                                        .commit();
+                            }
                             break;
-                        case "Likes":
-                            getSupportFragmentManager()
-                                    .beginTransaction()
-                                    .replace(R.id.content_fl, LikedVideosFragment.newInstance(), "")
-                                    .commit();
+                        case LIKES:
+                            if(!menuItem.isChecked()) {
+                                menuItem.setChecked(true);
+                                getSupportFragmentManager()
+                                        .beginTransaction()
+                                        .setCustomAnimations(android.R.anim.fade_in, android.R.anim.fade_out)
+                                        .replace(R.id.content_fl, LikedVideosFragment.newInstance(), "")
+                                        .commit();
+                            }
                             break;
-                        case "Watch Later":
-                            getSupportFragmentManager()
-                                    .beginTransaction()
-                                    .replace(R.id.content_fl, WatchLaterVideosFragment.newInstance(), "")
-                                    .commit();
+                        case WATCH_LATER:
+                            if(!menuItem.isChecked()) {
+                                menuItem.setChecked(true);
+                                getSupportFragmentManager()
+                                        .beginTransaction()
+                                        .setCustomAnimations(android.R.anim.fade_in, android.R.anim.fade_out)
+                                        .replace(R.id.content_fl, WatchLaterVideosFragment.newInstance(), "")
+                                        .commit();
+                            }
                             break;
-                        case "Explore":
-                            getSupportFragmentManager()
-                                    .beginTransaction()
-                                    .replace(R.id.content_fl, ExploreFragment.newInstance(), "")
-                                    .commit();
+                        case EXPLORE:
+                            if(!menuItem.isChecked()) {
+                                menuItem.setChecked(true);
+                                getSupportFragmentManager()
+                                        .beginTransaction()
+                                        .setCustomAnimations(android.R.anim.fade_in, android.R.anim.fade_out)
+                                        .replace(R.id.content_fl, ExploreFragment.newInstance(), "")
+                                        .commit();
+                            }
                             break;
-                        case "Settings":
+                        case SETTINGS:
                             getSupportFragmentManager()
                                     .beginTransaction()
+                                    .setCustomAnimations(android.R.anim.fade_in, android.R.anim.fade_out)
                                     .replace(R.id.content_fl, PlaceholderFragment.newInstance(), "")
                                     .commit();
                             break;
-                        case "Help and Feedback":
+                        case HELP_AND_FEEDBACK:
                             try {
                                 startActivity(EmailUtility.getEmailIntent(MainActivity.this));
                             } catch (android.content.ActivityNotFoundException ex) {
@@ -113,7 +139,7 @@ public class MainActivity extends AppCompatActivity {
                                         .show();
                             }
                             break;
-                        case "Logout":
+                        case LOGOUT:
                             PreferencesHelper.signOut(MainActivity.this);
                             startActivity(new Intent(MainActivity.this, LauncherActivity.class));
                         default:
