@@ -68,7 +68,7 @@ public class LikedVideosFragment extends BaseFragment implements VideosAdapter.O
     public static final int PAGE_SIZE = 30;
     // endregion
 
-    // region Member Variables
+    // region Views
     @Bind(R.id.videos_rv)
     RecyclerView videosRecyclerView;
     @Bind(android.R.id.empty)
@@ -85,7 +85,9 @@ public class LikedVideosFragment extends BaseFragment implements VideosAdapter.O
     Toolbar toolbar;
 //    @Bind(R.id.search_view_widget)
 //    SearchViewWidget searchViewWidget;
+    // endregion
 
+    // region Member Variables
     private boolean isLastPage = false;
     private int currentPage = 1;
     private int selectedSortByKey = 0;

@@ -170,15 +170,19 @@ public class CategoriesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
     // region Inner Classes
 
     public static class CategoryViewHolder extends RecyclerView.ViewHolder {
+        // region Views
         @Bind(R.id.thumbnail_iv)
         DynamicHeightImageView videoThumbnailImageView;
         @Bind(R.id.title_tv)
         TextView titleTextView;
+        // endregion
 
+        // region Constructors
         public CategoryViewHolder(View view) {
             super(view);
             ButterKnife.bind(this, view);
         }
+        // endregion
     }
     // endregion
 

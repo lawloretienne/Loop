@@ -31,11 +31,13 @@ import timber.log.Timber;
  */
 public class LoginActivity extends AppCompatActivity {
 
-    // region Member Variables
+    // region Views
     @Bind(R.id.wv)
     WebView webView;
+    // endregion
 
-    private WebViewClient mWebViewClient = new WebViewClient() {
+    // region Member Variables
+    private WebViewClient webViewClient = new WebViewClient() {
         public boolean shouldOverrideUrlLoading(WebView view, String url) {
             Timber.i("Processing webview url click..."); // http://localhost/?code=0e4c71d1ed6f61c70b708a6098f37337033082ff
             if (!TextUtils.isEmpty(url) && !url.startsWith(getString(R.string.client_redirect_uri))) {
@@ -65,7 +67,7 @@ public class LoginActivity extends AppCompatActivity {
                     Call exchangeCodeCall = vimeoService.exchangeCode("authorization_code",
                             code,
                             getString(R.string.client_redirect_uri));
-                    exchangeCodeCall.enqueue(mExchangeCodeCallback);
+                    exchangeCodeCall.enqueue(exchangeCodeCallback);
                 }
 
             }
@@ -95,7 +97,7 @@ public class LoginActivity extends AppCompatActivity {
     // endregion
 
     // region Callbacks
-    private Callback<OAuthResponse> mExchangeCodeCallback = new Callback<OAuthResponse>() {
+    private Callback<OAuthResponse> exchangeCodeCallback = new Callback<OAuthResponse>() {
         @Override
         public void onResponse(Response<OAuthResponse> response, Retrofit retrofit) {
             if (response != null) {
@@ -144,7 +146,7 @@ public class LoginActivity extends AppCompatActivity {
         webSettings.setUseWideViewPort(true);
 
         webView.setScrollBarStyle(WebView.SCROLLBARS_OUTSIDE_OVERLAY);
-        webView.setWebViewClient(mWebViewClient);
+        webView.setWebViewClient(webViewClient);
 
         webView.loadUrl(setUpAuthorizeUrl());
     }

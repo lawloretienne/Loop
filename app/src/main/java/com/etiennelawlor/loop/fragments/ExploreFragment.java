@@ -50,10 +50,7 @@ import timber.log.Timber;
  */
 public class ExploreFragment extends BaseFragment implements CategoriesAdapter.OnItemClickListener {
 
-    // region Constants
-    // endregion
-
-    // region Member Variables
+    // region Views
     @Bind(R.id.categories_rv)
     RecyclerView categoriesRecyclerView;
     @Bind(android.R.id.empty)
@@ -66,7 +63,9 @@ public class ExploreFragment extends BaseFragment implements CategoriesAdapter.O
     TextView errorTextView;
     @Bind(R.id.toolbar)
     Toolbar toolbar;
+    // endregion
 
+    // region Member Variables
     private boolean isLoading = false;
     private CategoriesAdapter categoriesAdapter;
     private VimeoService vimeoService;

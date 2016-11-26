@@ -17,9 +17,6 @@ import butterknife.OnClick;
  */
 public class LauncherActivity extends AppCompatActivity {
 
-    // region Member Variables
-    // endregion
-
     // region Listeners
     @OnClick(R.id.login_btn)
     void onLoginClicked() {

@@ -335,7 +335,6 @@ public class VideoCommentsFragment extends BaseFragment implements VideoComments
         }
     };
 
-
 //    private Callback<Response> mDeleteCommentCallback = new Callback<Response>() {
 //        @Override
 //        public void success(Response response, Response response2) {

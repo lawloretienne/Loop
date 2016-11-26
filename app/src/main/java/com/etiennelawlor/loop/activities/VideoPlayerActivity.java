@@ -15,9 +15,6 @@ import butterknife.ButterKnife;
  */
 public class VideoPlayerActivity extends AppCompatActivity {
 
-    // region Member Variables
-    // endregion
-
     // region Lifecycle Methods
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -57,5 +54,4 @@ public class VideoPlayerActivity extends AppCompatActivity {
         }
         return super.onOptionsItemSelected(item);
     }
-
 }

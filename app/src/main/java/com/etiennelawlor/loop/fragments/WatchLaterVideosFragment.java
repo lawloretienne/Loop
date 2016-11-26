@@ -68,7 +68,7 @@ public class WatchLaterVideosFragment extends BaseFragment implements VideosAdap
     public static final int PAGE_SIZE = 30;
     // endregion
 
-    // region Member Variables
+    // region Views
     @Bind(R.id.videos_rv)
     RecyclerView videosRecyclerView;
     @Bind(android.R.id.empty)
@@ -83,7 +83,9 @@ public class WatchLaterVideosFragment extends BaseFragment implements VideosAdap
     TextView errorTextView;
     @Bind(R.id.toolbar)
     Toolbar toolbar;
+    // endregion
 
+    // region Member Variables
     private boolean isLastPage = false;
     private int currentPage = 1;
     private int selectedSortByKey = 0;

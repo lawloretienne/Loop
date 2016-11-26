@@ -358,6 +358,7 @@ public class VideosAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
     }
 
     public static class VideoViewHolder extends RecyclerView.ViewHolder {
+        // region Views
         @Bind(R.id.video_thumbnail_iv)
         ImageView videoThumbnailImageView;
         @Bind(R.id.title_tv)
@@ -370,21 +371,28 @@ public class VideosAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
         TextView subtitleTextView;
         @Bind(R.id.video_row_root_ll)
         LinearLayout videoRowRootLinearLayout;
+        // endregion
 
+        // region Constructors
         public VideoViewHolder(View view) {
             super(view);
             ButterKnife.bind(this, view);
         }
+        // endregion
     }
 
     public static class MoreViewHolder extends RecyclerView.ViewHolder {
+        // region Views
         @Bind(R.id.loading_iv)
         LoadingImageView loadingImageView;
+        // endregion
 
+        // region Constructors
         public MoreViewHolder(View view) {
             super(view);
             ButterKnife.bind(this, view);
         }
+        // endregion
     }
 
     // endregion

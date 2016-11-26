@@ -654,6 +654,7 @@ public class RelatedVideosAdapter extends RecyclerView.Adapter<RecyclerView.View
     // region Inner Classes
 
     public static class HeaderViewHolder extends RecyclerView.ViewHolder {
+        // region Views
         @Bind(R.id.title_tv)
         TextView titleTextView;
         @Bind(R.id.subtitle_tv)
@@ -678,14 +679,18 @@ public class RelatedVideosAdapter extends RecyclerView.Adapter<RecyclerView.View
         TextView descriptionTextView;
         @Bind(R.id.additional_info_ll)
         LinearLayout additionalInfoLinearLayout;
+        // endregion
 
+        // region Constructors
         HeaderViewHolder(View view) {
             super(view);
             ButterKnife.bind(this, view);
         }
+        // endregion
     }
 
     public static class VideoViewHolder extends RecyclerView.ViewHolder {
+        // region Views
         @Bind(R.id.video_thumbnail_iv)
         ImageView videoThumbnailImageView;
         @Bind(R.id.title_tv)
@@ -698,21 +703,28 @@ public class RelatedVideosAdapter extends RecyclerView.Adapter<RecyclerView.View
         TextView subtitleTextView;
         @Bind(R.id.video_row_root_ll)
         LinearLayout videoRowRootLinearLayout;
+        // endregion
 
+        // region Constructors
         VideoViewHolder(View view) {
             super(view);
             ButterKnife.bind(this, view);
         }
+        // endregion
     }
 
     public static class MoreViewHolder extends RecyclerView.ViewHolder {
+        // region Views
         @Bind(R.id.loading_iv)
         LoadingImageView loadingImageView;
+        // endregion
 
+        // region Constructors
         public MoreViewHolder(View view) {
             super(view);
             ButterKnife.bind(this, view);
         }
+        // endregion
     }
 
     // endregion

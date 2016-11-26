@@ -229,15 +229,19 @@ public class SuggestionsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
     // region Inner Classes
 
     public static class SuggestionViewHolder extends RecyclerView.ViewHolder {
+        // region Views
         @Bind(R.id.suggestion_tv)
         TextView suggestionTextView;
         @Bind(R.id.search_suggest_complete_iv)
         ImageView suggestionCompleteImageView;
+        // endregion
 
+        // region Constructors
         public SuggestionViewHolder(View view) {
             super(view);
             ButterKnife.bind(this, view);
         }
+        // endregion
     }
 
     // endregion

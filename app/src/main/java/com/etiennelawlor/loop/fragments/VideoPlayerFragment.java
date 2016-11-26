@@ -52,17 +52,19 @@ public class VideoPlayerFragment extends BaseFragment {
     // region Constants
     // endregion
 
+    // region Views
+    @Bind(R.id.vv)
+    VideoView videoView;
+    @Bind(R.id.loading_iv)
+    LoadingImageView loadingImageView;
+    // endregion
+
     // region Member Variables
     private Long videoId;
     private String videoUrl;
     private MediaController mediaController;
     private VimeoPlayerService vimeoPlayerService;
     private VideoSavedState videoSavedState;
-
-    @Bind(R.id.vv)
-    VideoView videoView;
-    @Bind(R.id.loading_iv)
-    LoadingImageView loadingImageView;
     // endregion
 
     // region Callbacks

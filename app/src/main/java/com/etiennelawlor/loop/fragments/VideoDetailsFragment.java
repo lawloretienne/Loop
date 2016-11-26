@@ -79,14 +79,16 @@ public class VideoDetailsFragment extends BaseFragment implements RelatedVideosA
     private static final int VIDEO_SHARE_REQUEST_CODE = 1002;
     // endregion
 
-    // region Member Variables
+    // region Views
     @Bind(R.id.video_thumbnail_iv)
     ImageView videoThumbnailImageView;
     @Bind(R.id.toolbar)
     Toolbar toolbar;
     @Bind(R.id.videos_rv)
     RecyclerView videosRecyclerView;
+    // endregion
 
+    // region Member Variables
     private Video video;
     private String transitionName;
     private RelatedVideosAdapter relatedVideosAdapter;

@@ -241,15 +241,19 @@ public class VideoCommentsAdapter extends RecyclerView.Adapter<RecyclerView.View
     // region Inner Classes
 
     public static class CommentViewHolder extends RecyclerView.ViewHolder {
+        // region Views
         @Bind(R.id.comment_tv)
         TextView commentTextView;
         @Bind(R.id.comment_iv)
         ImageView commentImageView;
+        // endregion
 
+        // region Constructors
         public CommentViewHolder(View view) {
             super(view);
             ButterKnife.bind(this, view);
         }
+        // endregion
     }
 
     // endregion

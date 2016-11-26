@@ -13,7 +13,6 @@ import java.util.Map;
  */
 public class EventLogger {
 
-
     public static void logEvent(Event event){
         logFabricEvent(event);
         logFlurryEvent(event);

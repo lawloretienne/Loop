@@ -72,7 +72,7 @@ public class SearchableFragment extends BaseFragment implements VideosAdapter.On
     public static final int PAGE_SIZE = 30;
     // endregion
 
-    // region Member Variables
+    // region Views
     @Bind(R.id.videos_rv)
     RecyclerView videosRecyclerView;
     @Bind(android.R.id.empty)
@@ -89,7 +89,9 @@ public class SearchableFragment extends BaseFragment implements VideosAdapter.On
     MaterialSearchView materialSearchView;
 //    @Bind(R.id.toolbar)
 //    Toolbar toolbar;
+    // endregion
 
+    // region Member Variables
     private boolean isLastPage = false;
     private int currentPage = 1;
     private int selectedSortByKey = 0;

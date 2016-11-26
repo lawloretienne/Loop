@@ -63,7 +63,7 @@ public class VideosFragment extends BaseFragment implements VideosAdapter.OnItem
     public static final int PAGE_SIZE = 30;
     // endregion
 
-    // region Member Variables
+    // region Views
     @Bind(R.id.videos_rv)
     RecyclerView videosRecyclerView;
     @Bind(android.R.id.empty)
@@ -76,7 +76,9 @@ public class VideosFragment extends BaseFragment implements VideosAdapter.OnItem
     TextView errorTextView;
     @Bind(R.id.reload_btn)
     Button reloadButton;
+    // endregion
 
+    // region Member Variables
     private boolean isLastPage = false;
     private int currentPage = 1;
     private int selectedSortByKey = 0;
@@ -85,7 +87,6 @@ public class VideosFragment extends BaseFragment implements VideosAdapter.OnItem
     private String sortByValue = "relevant";
     private String sortOrderValue = "desc";
     private VideosAdapter videosAdapter;
-
     private String query;
     private LinearLayoutManager layoutManager;
     private VimeoService vimeoService;
