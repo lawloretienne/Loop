@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.graphics.Typeface;
 import android.os.Bundle;
 import android.support.design.widget.NavigationView;
+import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
@@ -16,7 +17,6 @@ import android.view.MenuItem;
 import android.view.SubMenu;
 import android.view.View;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.etiennelawlor.loop.R;
@@ -30,8 +30,8 @@ import com.etiennelawlor.loop.network.models.response.AuthorizedUser;
 import com.etiennelawlor.loop.network.models.response.Picture;
 import com.etiennelawlor.loop.otto.BusProvider;
 import com.etiennelawlor.loop.otto.events.LeftDrawableClickedEvent;
+import com.etiennelawlor.loop.utilities.EmailUtility;
 import com.etiennelawlor.loop.utilities.FontCache;
-import com.etiennelawlor.loop.utilities.LoopUtility;
 import com.etiennelawlor.loop.utilities.TrestleUtility;
 import com.squareup.otto.Subscribe;
 
@@ -105,9 +105,12 @@ public class MainActivity extends AppCompatActivity {
                             break;
                         case "Help and Feedback":
                             try {
-                                startActivity(LoopUtility.getEmailIntent(MainActivity.this));
+                                startActivity(EmailUtility.getEmailIntent(MainActivity.this));
                             } catch (android.content.ActivityNotFoundException ex) {
-                                Toast.makeText(MainActivity.this, "There are no email clients installed", Toast.LENGTH_SHORT).show();
+                                Snackbar.make(findViewById(android.R.id.content),
+                                        TrestleUtility.getFormattedText("There are no email apps installed on your device", font, 16),
+                                        Snackbar.LENGTH_LONG)
+                                        .show();
                             }
                             break;
                         case "Logout":

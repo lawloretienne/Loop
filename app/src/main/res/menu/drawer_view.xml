@@ -32,6 +32,10 @@
         <item
             android:icon="@drawable/ic_logout"
             android:title="@string/logout" />
+
+        <item
+            android:enabled="false"
+            android:title="" />
     </group>
 
 </menu>
