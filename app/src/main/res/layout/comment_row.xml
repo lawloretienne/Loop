@@ -8,13 +8,13 @@
     android:background="?android:attr/selectableItemBackground"
     android:padding="16dp">
 
-    <de.hdodenhof.circleimageview.CircleImageView
+    <com.etiennelawlor.loop.ui.AvatarView
         android:id="@+id/comment_iv"
-        android:layout_width="28dp"
-        android:layout_height="28dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
         android:layout_alignParentLeft="true"
-        android:background="@drawable/avatar_bg"
-        android:scaleType="centerCrop" />
+        android:scaleType="centerCrop"
+        app:av_radius="@dimen/avatar_radius_small"/>
 
     <com.etiennelawlor.loop.ui.CustomFontTextView
         android:id="@+id/comment_tv"

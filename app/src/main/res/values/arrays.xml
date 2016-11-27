@@ -89,4 +89,44 @@
         <item>interact</item>
     </string-array>
 
+    <string-array name="default_avatar_bg_colors">
+        <item>#e51c23</item>
+        <item>#e91e63</item>
+        <item>#9c27b0</item>
+        <item>#673ab7</item>
+        <item>#3f51b5</item>
+        <item>#5677fc</item>
+        <item>#03a9f4</item>
+        <item>#00bcd4</item>
+        <item>#009688</item>
+        <item>#259b24</item>
+        <item>#8bc34a</item>
+        <item>#cddc39</item>
+        <item>#ffeb3b</item>
+        <item>#ffc107</item>
+        <item>#ff9800</item>
+        <item>#ff5722</item>
+        <item>#795548</item>
+    </string-array>
+
+    <string-array name="pressed_avatar_bg_colors">
+        <item>#d01716</item>
+        <item>#c2185b</item>
+        <item>#7b1fa2</item>
+        <item>#512da8</item>
+        <item>#303f9f</item>
+        <item>#455ede</item>
+        <item>#0288d1</item>
+        <item>#0097a7</item>
+        <item>#00796b</item>
+        <item>#0a7e07</item>
+        <item>#689f38</item>
+        <item>#afb42b</item>
+        <item>#fbc02d</item>
+        <item>#ffa000</item>
+        <item>#f57c00</item>
+        <item>#e64a19</item>
+        <item>#5d4037</item>
+    </string-array>
+
 </resources>

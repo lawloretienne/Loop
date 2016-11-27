@@ -150,12 +150,12 @@
         android:orientation="horizontal"
         android:padding="16dp">
 
-        <de.hdodenhof.circleimageview.CircleImageView
+        <com.etiennelawlor.loop.ui.AvatarView
             android:id="@+id/user_iv"
-            android:layout_width="56dp"
-            android:layout_height="56dp"
-            android:background="@drawable/avatar_bg"
-            android:scaleType="centerCrop" />
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:scaleType="centerCrop"
+            app:av_radius="@dimen/avatar_radius_large"/>
 
         <LinearLayout
             android:layout_width="wrap_content"

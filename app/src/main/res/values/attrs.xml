@@ -58,4 +58,8 @@
         <!--<attr name="android:scaleType" />-->
     <!--</declare-styleable>-->
 
+    <declare-styleable name="AvatarView">
+        <attr name="av_radius" format="dimension" />
+    </declare-styleable>
+
 </resources>

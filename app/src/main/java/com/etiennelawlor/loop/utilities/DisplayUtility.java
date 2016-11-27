@@ -3,12 +3,16 @@ package com.etiennelawlor.loop.utilities;
 import android.app.Activity;
 import android.content.Context;
 import android.content.res.Configuration;
+import android.graphics.Color;
 import android.graphics.Point;
 import android.util.DisplayMetrics;
 import android.view.Display;
 import android.view.View;
 import android.view.WindowManager;
 import android.view.inputmethod.InputMethodManager;
+
+import com.etiennelawlor.loop.R;
+import com.etiennelawlor.loop.network.models.response.User;
 
 /**
  * Created by etiennelawlor on 12/19/15.
@@ -67,6 +71,36 @@ public class DisplayUtility {
         if (inputMethodManager != null) {
             inputMethodManager.showSoftInput(view, InputMethodManager.SHOW_IMPLICIT);
         }
+    }
+
+    public static int getPressedAvatarBackgroundColor(User user, Context context){
+        int avatarBackgroundColor = 0;
+        String name = user.getName();
+        int hash = 7;
+        int firstNameLength = name.length();
+        for (int i = 0; i < firstNameLength; i++) {
+            hash = hash*31 + name.charAt(i);
+        }
+
+        int modulo = Math.abs(hash) % 17;
+        String[] avatarBgColors = context.getResources().getStringArray(R.array.pressed_avatar_bg_colors);
+        avatarBackgroundColor = Color.parseColor(avatarBgColors[modulo]);
+        return avatarBackgroundColor;
+    }
+
+    public static int getDefaultAvatarBackgroundColor(User user, Context context){
+        int avatarBackgroundColor = 0;
+        String name = user.getName();
+        int hash = 7;
+        int firstNameLength = name.length();
+        for (int i = 0; i < firstNameLength; i++) {
+            hash = hash*31 + name.charAt(i);
+        }
+
+        int modulo = Math.abs(hash) % 17;
+        String[] avatarBgColors = context.getResources().getStringArray(R.array.default_avatar_bg_colors);
+        avatarBackgroundColor = Color.parseColor(avatarBgColors[modulo]);
+        return avatarBackgroundColor;
     }
     // endregion
 }

@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<merge xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <com.etiennelawlor.loop.ui.CustomFontTextView
+        android:id="@+id/initials_tv"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:maxLength="2"
+        android:textColor="@android:color/white"
+        android:textSize="16sp"
+        app:textFont="ubuntu_medium" />
+
+    <ImageView
+        android:id="@+id/photo_iv"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:scaleType="centerCrop" />
+
+</merge>

@@ -26,6 +26,7 @@ import com.etiennelawlor.loop.network.models.response.User;
 import com.etiennelawlor.loop.network.models.response.Video;
 import com.etiennelawlor.loop.otto.BusProvider;
 import com.etiennelawlor.loop.otto.events.SearchPerformedEvent;
+import com.etiennelawlor.loop.ui.AvatarView;
 import com.etiennelawlor.loop.ui.LoadingImageView;
 import com.etiennelawlor.loop.utilities.DateUtility;
 import com.etiennelawlor.loop.utilities.FontCache;
@@ -517,34 +518,12 @@ public class RelatedVideosAdapter extends RecyclerView.Adapter<RecyclerView.View
         return formattedViewCount;
     }
 
-    private void setUpUserImage(ImageView iv, Video video) {
-        boolean isPictureAvailable = false;
-
+    private void setUpUserImage(AvatarView av, Video video) {
         User user = video.getUser();
-        if (user != null) {
-
-            Pictures pictures = user.getPictures();
-            if (pictures != null) {
-                List<Size> sizes = pictures.getSizes();
-                if (sizes != null && sizes.size() > 0) {
-                    Size size = sizes.get(sizes.size() - 1);
-                    if (size != null) {
-                        String link = size.getLink();
-                        if (!TextUtils.isEmpty(link)) {
-                            isPictureAvailable = true;
-                            Glide.with(iv.getContext())
-                                    .load(link)
-//                                .placeholder(R.drawable.ic_placeholder)
-//                                .error(R.drawable.ic_error)
-                                    .into(iv);
-                        }
-                    }
-                }
-            }
-        }
-
-        if (!isPictureAvailable) {
-            iv.setImageResource(R.drawable.ic_loop);
+        if(user != null){
+            av.bind(user);
+        } else {
+            av.nullify();
         }
     }
 
@@ -660,7 +639,7 @@ public class RelatedVideosAdapter extends RecyclerView.Adapter<RecyclerView.View
         @Bind(R.id.subtitle_tv)
         TextView subtitleTextView;
         @Bind(R.id.user_iv)
-        CircleImageView userImageView;
+        AvatarView userImageView;
         @Bind(R.id.view_count_tv)
         TextView viewCountTextView;
         @Bind(R.id.upload_date_tv)

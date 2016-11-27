@@ -27,5 +27,9 @@
     <dimen name="card_corner_radius">2dp</dimen>
     <dimen name="card_elevation">2dp</dimen>
 
+    <dimen name="avatar_radius_small">18dp</dimen>
+    <dimen name="avatar_radius_medium">22dp</dimen>
+    <dimen name="avatar_radius_large">26dp</dimen>
+
 
 </resources>

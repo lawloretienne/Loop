@@ -18,6 +18,7 @@ import com.etiennelawlor.loop.network.models.response.Comment;
 import com.etiennelawlor.loop.network.models.response.Pictures;
 import com.etiennelawlor.loop.network.models.response.Size;
 import com.etiennelawlor.loop.network.models.response.User;
+import com.etiennelawlor.loop.ui.AvatarView;
 import com.etiennelawlor.loop.utilities.DateUtility;
 import com.etiennelawlor.loop.utilities.FontCache;
 import com.etiennelawlor.trestle.library.Span;
@@ -206,34 +207,13 @@ public class VideoCommentsAdapter extends RecyclerView.Adapter<RecyclerView.View
         return commentDate;
     }
 
-    private void setUpCommentImage(ImageView iv, Comment comment){
-        boolean isPictureAvailable = false;
-
+    private void setUpCommentImage(AvatarView av, Comment comment){
         User user = comment.getUser();
-        if (user != null) {
 
-            Pictures pictures = user.getPictures();
-            if (pictures != null) {
-                List<Size> sizes = pictures.getSizes();
-                if (sizes != null && sizes.size() > 0) {
-                    Size size = sizes.get(sizes.size() - 1);
-                    if (size != null) {
-                        String link = size.getLink();
-                        if (!TextUtils.isEmpty(link)) {
-                            isPictureAvailable = true;
-                            Glide.with(iv.getContext())
-                                    .load(link)
-//                                .placeholder(R.drawable.ic_placeholder)
-//                                .error(R.drawable.ic_error)
-                                    .into(iv);
-                        }
-                    }
-                }
-            }
-        }
-
-        if (!isPictureAvailable) {
-            iv.setImageResource(R.drawable.ic_loop);
+        if(user != null){
+            av.bind(user);
+        } else {
+            av.nullify();
         }
     }
     // endregion
@@ -245,7 +225,7 @@ public class VideoCommentsAdapter extends RecyclerView.Adapter<RecyclerView.View
         @Bind(R.id.comment_tv)
         TextView commentTextView;
         @Bind(R.id.comment_iv)
-        ImageView commentImageView;
+        AvatarView commentImageView;
         // endregion
 
         // region Constructors
