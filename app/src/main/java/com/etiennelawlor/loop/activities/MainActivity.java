@@ -25,11 +25,11 @@ import com.etiennelawlor.loop.fragments.LikedVideosFragment;
 import com.etiennelawlor.loop.fragments.PlaceholderFragment;
 import com.etiennelawlor.loop.fragments.WatchLaterVideosFragment;
 import com.etiennelawlor.loop.fragments.WatchNowFragment;
-import com.etiennelawlor.loop.helper.PreferencesHelper;
 import com.etiennelawlor.loop.network.models.response.AuthorizedUser;
 import com.etiennelawlor.loop.network.models.response.Picture;
 import com.etiennelawlor.loop.otto.BusProvider;
 import com.etiennelawlor.loop.otto.events.LeftDrawableClickedEvent;
+import com.etiennelawlor.loop.prefs.LoopPrefs;
 import com.etiennelawlor.loop.utilities.EmailUtility;
 import com.etiennelawlor.loop.utilities.FontCache;
 import com.etiennelawlor.loop.utilities.TrestleUtility;
@@ -140,7 +140,7 @@ public class MainActivity extends AppCompatActivity {
                             }
                             break;
                         case LOGOUT:
-                            PreferencesHelper.signOut(MainActivity.this);
+                            LoopPrefs.signOut(MainActivity.this);
                             startActivity(new Intent(MainActivity.this, LauncherActivity.class));
                         default:
                             break;
@@ -167,7 +167,7 @@ public class MainActivity extends AppCompatActivity {
 
         font = FontCache.getTypeface("Ubuntu-Medium.ttf", this);
 
-        authorizedUser = PreferencesHelper.getAuthorizedUser(this);
+        authorizedUser = LoopPrefs.getAuthorizedUser(this);
 
         View header = LayoutInflater.from(this).inflate(R.layout.nav_header, null);
         avatarImageView = (CircleImageView) header.findViewById(R.id.user_avatar_riv);

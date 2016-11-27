@@ -14,7 +14,6 @@ import android.widget.MediaController;
 import android.widget.VideoView;
 
 import com.etiennelawlor.loop.R;
-import com.etiennelawlor.loop.helper.PreferencesHelper;
 import com.etiennelawlor.loop.models.VideoSavedState;
 import com.etiennelawlor.loop.network.ServiceGenerator;
 import com.etiennelawlor.loop.network.VimeoPlayerService;
@@ -28,6 +27,7 @@ import com.etiennelawlor.loop.network.models.response.VP6;
 import com.etiennelawlor.loop.network.models.response.VideoConfig;
 import com.etiennelawlor.loop.network.models.response.VideoFormat;
 import com.etiennelawlor.loop.otto.BusProvider;
+import com.etiennelawlor.loop.prefs.LoopPrefs;
 import com.etiennelawlor.loop.ui.LoadingImageView;
 import com.etiennelawlor.loop.utilities.LogUtility;
 
@@ -155,7 +155,7 @@ public class VideoPlayerFragment extends BaseFragment {
             videoId = getArguments().getLong("video_id");
         }
 
-        AccessToken token = PreferencesHelper.getAccessToken(getActivity());
+        AccessToken token = LoopPrefs.getAccessToken(getActivity());
         vimeoPlayerService = ServiceGenerator.createService(
                 VimeoPlayerService.class,
                 VimeoPlayerService.BASE_URL,

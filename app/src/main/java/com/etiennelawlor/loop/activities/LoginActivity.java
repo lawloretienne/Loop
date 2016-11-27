@@ -10,12 +10,12 @@ import android.webkit.WebView;
 import android.webkit.WebViewClient;
 
 import com.etiennelawlor.loop.R;
-import com.etiennelawlor.loop.helper.PreferencesHelper;
 import com.etiennelawlor.loop.network.ServiceGenerator;
 import com.etiennelawlor.loop.network.VimeoService;
 import com.etiennelawlor.loop.models.AccessToken;
 import com.etiennelawlor.loop.network.models.response.AuthorizedUser;
 import com.etiennelawlor.loop.network.models.response.OAuthResponse;
+import com.etiennelawlor.loop.prefs.LoopPrefs;
 import com.etiennelawlor.loop.utilities.LogUtility;
 
 import butterknife.Bind;
@@ -108,8 +108,8 @@ public class LoginActivity extends AppCompatActivity {
                     AuthorizedUser authorizedUser = oAuthResponse.getUser();
 
                     AccessToken token = new AccessToken(tokenType, accessToken);
-                    PreferencesHelper.saveAccessToken(getApplicationContext(), token);
-                    PreferencesHelper.saveAuthorizedUser(getApplicationContext(), authorizedUser);
+                    LoopPrefs.saveAccessToken(getApplicationContext(), token);
+                    LoopPrefs.saveAuthorizedUser(getApplicationContext(), authorizedUser);
 
                     Intent intent = new Intent(LoginActivity.this, MainActivity.class);
                     intent.putExtra(getString(R.string.authorized_user), authorizedUser);

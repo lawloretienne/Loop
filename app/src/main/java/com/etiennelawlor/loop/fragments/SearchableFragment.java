@@ -31,7 +31,6 @@ import com.etiennelawlor.loop.R;
 import com.etiennelawlor.loop.activities.SearchableActivity;
 import com.etiennelawlor.loop.activities.VideoDetailsActivity;
 import com.etiennelawlor.loop.adapters.VideosAdapter;
-import com.etiennelawlor.loop.helper.PreferencesHelper;
 import com.etiennelawlor.loop.models.AccessToken;
 import com.etiennelawlor.loop.network.ServiceGenerator;
 import com.etiennelawlor.loop.network.VimeoService;
@@ -41,6 +40,7 @@ import com.etiennelawlor.loop.otto.BusProvider;
 import com.etiennelawlor.loop.otto.events.FilterClickedEvent;
 import com.etiennelawlor.loop.otto.events.SearchPerformedEvent;
 import com.etiennelawlor.loop.otto.events.ShowSearchSuggestionsEvent;
+import com.etiennelawlor.loop.prefs.LoopPrefs;
 import com.etiennelawlor.loop.realm.RealmUtility;
 import com.etiennelawlor.loop.ui.LoadingImageView;
 import com.etiennelawlor.loop.ui.MaterialSearchView;
@@ -328,7 +328,7 @@ public class SearchableFragment extends BaseFragment implements VideosAdapter.On
 //            performSearch(query);
         }
 
-        AccessToken token = PreferencesHelper.getAccessToken(getActivity());
+        AccessToken token = LoopPrefs.getAccessToken(getActivity());
         vimeoService = ServiceGenerator.createService(
                 VimeoService.class,
                 VimeoService.BASE_URL,

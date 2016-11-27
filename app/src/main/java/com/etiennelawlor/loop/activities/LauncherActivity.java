@@ -5,9 +5,9 @@ import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 
 import com.etiennelawlor.loop.R;
-import com.etiennelawlor.loop.helper.PreferencesHelper;
 import com.etiennelawlor.loop.models.AccessToken;
 import com.etiennelawlor.loop.network.models.response.AuthorizedUser;
+import com.etiennelawlor.loop.prefs.LoopPrefs;
 
 import butterknife.ButterKnife;
 import butterknife.OnClick;
@@ -34,8 +34,8 @@ public class LauncherActivity extends AppCompatActivity {
         setContentView(R.layout.activity_launcher);
         ButterKnife.bind(this);
 
-        AccessToken token = PreferencesHelper.getAccessToken(this);
-        AuthorizedUser authorizedUser = PreferencesHelper.getAuthorizedUser(this);
+        AccessToken token = LoopPrefs.getAccessToken(this);
+        AuthorizedUser authorizedUser = LoopPrefs.getAuthorizedUser(this);
         if(token != null && authorizedUser != null){
             Intent intent = new Intent(LauncherActivity.this, MainActivity.class);
 //            intent.putExtra(getString(R.string.authorized_user), authorizedUser);

@@ -16,13 +16,13 @@ import android.widget.TextView;
 
 import com.etiennelawlor.loop.R;
 import com.etiennelawlor.loop.adapters.CategoriesAdapter;
-import com.etiennelawlor.loop.helper.PreferencesHelper;
 import com.etiennelawlor.loop.models.AccessToken;
 import com.etiennelawlor.loop.network.ServiceGenerator;
 import com.etiennelawlor.loop.network.VimeoService;
 import com.etiennelawlor.loop.network.models.response.CategoriesCollection;
 import com.etiennelawlor.loop.network.models.response.Category;
 import com.etiennelawlor.loop.otto.BusProvider;
+import com.etiennelawlor.loop.prefs.LoopPrefs;
 import com.etiennelawlor.loop.ui.GridSpacesItemDecoration;
 import com.etiennelawlor.loop.ui.LoadingImageView;
 import com.etiennelawlor.loop.utilities.DisplayUtility;
@@ -172,7 +172,7 @@ public class ExploreFragment extends BaseFragment implements CategoriesAdapter.O
 //            mQuery = getArguments().getString("query");
         }
 
-        AccessToken token = PreferencesHelper.getAccessToken(getActivity());
+        AccessToken token = LoopPrefs.getAccessToken(getActivity());
         vimeoService = ServiceGenerator.createService(
                 VimeoService.class,
                 VimeoService.BASE_URL,

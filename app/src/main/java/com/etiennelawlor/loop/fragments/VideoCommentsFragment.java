@@ -25,7 +25,6 @@ import android.widget.ProgressBar;
 
 import com.etiennelawlor.loop.R;
 import com.etiennelawlor.loop.adapters.VideoCommentsAdapter;
-import com.etiennelawlor.loop.helper.PreferencesHelper;
 import com.etiennelawlor.loop.models.AccessToken;
 import com.etiennelawlor.loop.network.ServiceGenerator;
 import com.etiennelawlor.loop.network.VimeoService;
@@ -36,6 +35,7 @@ import com.etiennelawlor.loop.network.models.response.CommentsCollection;
 import com.etiennelawlor.loop.network.models.response.User;
 import com.etiennelawlor.loop.network.models.response.Video;
 import com.etiennelawlor.loop.otto.BusProvider;
+import com.etiennelawlor.loop.prefs.LoopPrefs;
 import com.etiennelawlor.loop.ui.LoadingImageView;
 import com.etiennelawlor.loop.utilities.DisplayUtility;
 import com.etiennelawlor.loop.utilities.FontCache;
@@ -403,7 +403,7 @@ public class VideoCommentsFragment extends BaseFragment implements VideoComments
             video = (Video) getArguments().get("video");
         }
 
-        AccessToken token = PreferencesHelper.getAccessToken(getActivity());
+        AccessToken token = LoopPrefs.getAccessToken(getActivity());
         vimeoService = ServiceGenerator.createService(
                 VimeoService.class,
                 VimeoService.BASE_URL,
@@ -510,7 +510,7 @@ public class VideoCommentsFragment extends BaseFragment implements VideoComments
         final Comment comment = videoCommentsAdapter.getItem(position);
         if (comment != null) {
             User user = comment.getUser();
-            AuthorizedUser authorizedUser = PreferencesHelper.getAuthorizedUser(getActivity());
+            AuthorizedUser authorizedUser = LoopPrefs.getAuthorizedUser(getActivity());
 
             if (user != null && authorizedUser != null) {
                 long commenterId = user.getId();

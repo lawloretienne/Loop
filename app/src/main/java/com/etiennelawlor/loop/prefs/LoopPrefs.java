@@ -1,4 +1,4 @@
-package com.etiennelawlor.loop.helper;
+package com.etiennelawlor.loop.prefs;
 
 import android.content.Context;
 import android.content.SharedPreferences;
@@ -8,26 +8,27 @@ import com.etiennelawlor.loop.network.models.response.AuthorizedUser;
 import com.google.gson.Gson;
 
 /**
- * Created by etiennelawlor on 6/20/15.
+ * Created by etiennelawlor on 11/26/16.
  */
-public class PreferencesHelper {
+
+public class LoopPrefs {
 
     // region Constants
-    private static final String USER_PREFERENCES = "userPreferences";
-    private static final String PREFERENCE_ACCESS_TOKEN = USER_PREFERENCES + ".accessToken";
-    private static final String PREFERENCE_AUTHORIZED_USER = USER_PREFERENCES + ".authorizedUser";
+    private static final String LOOP_PREF = "LOOP_PREF";
+    private static final String KEY_ACCESS_TOKEN = "KEY_ACCESS_TOKEN";
+    private static final String KEY_AUTHORIZED_USER = "KEY_AUTHORIZED_USER";
     // endregion
 
     // region Constructors
-    private PreferencesHelper() {
+    private LoopPrefs() {
         //no instance
     }
-    // endregion
 
+    // region Getters
     public static AccessToken getAccessToken(Context context) {
         SharedPreferences preferences = getSharedPreferences(context);
         Gson gson = new Gson();
-        String json = preferences.getString(PREFERENCE_ACCESS_TOKEN, "");
+        String json = preferences.getString(KEY_ACCESS_TOKEN, "");
         AccessToken accessToken = gson.fromJson(json, AccessToken.class);
         return accessToken;
     }
@@ -35,32 +36,35 @@ public class PreferencesHelper {
     public static AuthorizedUser getAuthorizedUser(Context context) {
         SharedPreferences preferences = getSharedPreferences(context);
         Gson gson = new Gson();
-        String json = preferences.getString(PREFERENCE_AUTHORIZED_USER, "");
+        String json = preferences.getString(KEY_AUTHORIZED_USER, "");
         AuthorizedUser authorizedUser = gson.fromJson(json, AuthorizedUser.class);
         return authorizedUser;
     }
+    // endregion
 
+    // region Setters
     public static void saveAccessToken(Context context, AccessToken accessToken) {
         SharedPreferences.Editor editor = getEditor(context);
         Gson gson = new Gson();
         String json = gson.toJson(accessToken);
-        editor.putString(PREFERENCE_ACCESS_TOKEN, json);
-        editor.apply();
+        editor.putString(KEY_ACCESS_TOKEN, json)
+            .apply();
     }
 
     public static void saveAuthorizedUser(Context context, AuthorizedUser authorizedUser) {
         SharedPreferences.Editor editor = getEditor(context);
         Gson gson = new Gson();
         String json = gson.toJson(authorizedUser);
-        editor.putString(PREFERENCE_AUTHORIZED_USER, json);
-        editor.apply();
+        editor.putString(KEY_AUTHORIZED_USER, json)
+            .apply();
     }
+    // endregion
 
     public static void signOut(Context context) {
         SharedPreferences.Editor editor = getEditor(context);
-        editor.remove(PREFERENCE_ACCESS_TOKEN);
-        editor.remove(PREFERENCE_AUTHORIZED_USER);
-        editor.apply();
+        editor.remove(KEY_ACCESS_TOKEN)
+            .remove(KEY_AUTHORIZED_USER)
+            .apply();
     }
 
     // region Helper Methods
@@ -70,7 +74,7 @@ public class PreferencesHelper {
     }
 
     private static SharedPreferences getSharedPreferences(Context context) {
-        return context.getSharedPreferences(USER_PREFERENCES, Context.MODE_PRIVATE);
+        return context.getSharedPreferences(LOOP_PREF, Context.MODE_PRIVATE);
     }
     // endregion
 }

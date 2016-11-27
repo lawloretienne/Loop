@@ -35,7 +35,6 @@ import com.etiennelawlor.loop.activities.VideoPlayerActivity;
 import com.etiennelawlor.loop.adapters.RelatedVideosAdapter;
 import com.etiennelawlor.loop.analytics.Event;
 import com.etiennelawlor.loop.analytics.EventLogger;
-import com.etiennelawlor.loop.helper.PreferencesHelper;
 import com.etiennelawlor.loop.models.AccessToken;
 import com.etiennelawlor.loop.network.ServiceGenerator;
 import com.etiennelawlor.loop.network.VimeoService;
@@ -47,6 +46,7 @@ import com.etiennelawlor.loop.otto.BusProvider;
 import com.etiennelawlor.loop.otto.events.SearchPerformedEvent;
 import com.etiennelawlor.loop.otto.events.VideoLikedEvent;
 import com.etiennelawlor.loop.otto.events.WatchLaterEvent;
+import com.etiennelawlor.loop.prefs.LoopPrefs;
 import com.etiennelawlor.loop.utilities.LogUtility;
 import com.squareup.otto.Subscribe;
 
@@ -658,7 +658,7 @@ public class VideoDetailsFragment extends BaseFragment implements RelatedVideosA
 //            mTransitionName = getArguments().getString("TRANSITION_KEY");
         }
 
-        AccessToken token = PreferencesHelper.getAccessToken(getActivity());
+        AccessToken token = LoopPrefs.getAccessToken(getActivity());
         vimeoService = ServiceGenerator.createService(
                 VimeoService.class,
                 VimeoService.BASE_URL,
