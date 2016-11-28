@@ -1,50 +1,52 @@
 <?xml version="1.0" encoding="utf-8"?>
 
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:minWidth="280dp"
     android:orientation="vertical"
     android:padding="16dp">
 
-    <RelativeLayout
+    <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="48dp">
 
-        <TextView
+        <com.etiennelawlor.loop.ui.CustomFontTextView
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:layout_marginRight="48dp"
             android:gravity="center_vertical"
             android:text="@string/sort_by"
             android:textColor="@color/primary_text"
-            android:textSize="16sp" />
+            android:textSize="16sp"
+            app:textFont="ubuntu_medium"/>
 
         <Spinner
             android:id="@+id/sort_by_s"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
-            android:layout_alignParentRight="true" />
-    </RelativeLayout>
+            android:layout_gravity="right" />
+    </FrameLayout>
 
-    <RelativeLayout
+    <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="48dp">
 
-        <TextView
+        <com.etiennelawlor.loop.ui.CustomFontTextView
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:gravity="center_vertical"
             android:text="@string/sort_order"
             android:textColor="@color/primary_text"
-            android:textSize="16sp" />
+            android:textSize="16sp"
+            app:textFont="ubuntu_medium"/>
 
         <Spinner
             android:id="@+id/sort_order_s"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
-            android:layout_alignParentRight="true" />
-    </RelativeLayout>
-
+            android:layout_gravity="right" />
+    </FrameLayout>
 
 </LinearLayout>

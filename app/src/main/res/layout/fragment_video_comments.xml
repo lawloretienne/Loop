@@ -7,74 +7,80 @@
 
     <include layout="@layout/toolbar_without_tabs_no_scroll" />
 
-    <RelativeLayout
+    <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-        <RelativeLayout
-            android:id="@+id/comment_rl"
+        <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="56dp"
-            android:layout_alignParentBottom="true">
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:layout_gravity="bottom">
+
+            <View
+                android:id="@+id/divider_v"
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="@color/grey_300" />
 
             <FrameLayout
-                android:id="@+id/sumbit_comment_fl"
-                android:layout_width="56dp"
-                android:layout_height="match_parent"
-                android:layout_alignParentRight="true"
-                android:background="@color/primary"
-                android:foreground="?android:attr/selectableItemBackground">
+                android:id="@+id/comment_rl"
+                android:layout_width="match_parent"
+                android:layout_height="56dp"
+                android:layout_alignParentBottom="true">
 
-                <ImageView
-                    android:id="@+id/sumbit_comment_iv"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center"
-                    app:srcCompat="@drawable/ic_comment_inactive" />
+                <com.etiennelawlor.loop.ui.CustomFontEditText
+                    android:id="@+id/comment_et"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_marginRight="56dp"
+                    android:background="@null"
+                    android:hint="@string/leave_a_comment"
+                    android:padding="16dp"
+                    android:textColor="@color/primary_text"
+                    android:textColorHint="@color/tertiary_text"
+                    android:textSize="16sp"
+                    app:textFont="ubuntu_medium" />
 
-                <!--android:tint="@color/fifty_percent_transparency_teal_500"-->
+                <FrameLayout
+                    android:id="@+id/sumbit_comment_fl"
+                    android:layout_width="56dp"
+                    android:layout_height="match_parent"
+                    android:background="@color/primary"
+                    android:layout_gravity="right"
+                    android:foreground="?android:attr/selectableItemBackground">
 
-                <ProgressBar
-                    android:id="@+id/sumbit_comment_pb"
-                    android:layout_width="24dp"
-                    android:layout_height="24dp"
-                    android:layout_gravity="center"
-                    android:indeterminate="true"
-                    android:visibility="gone" />
+                    <ImageView
+                        android:id="@+id/sumbit_comment_iv"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        app:srcCompat="@drawable/ic_comment_inactive" />
+
+                    <!--android:tint="@color/fifty_percent_transparency_teal_500"-->
+
+                    <ProgressBar
+                        android:id="@+id/sumbit_comment_pb"
+                        android:layout_width="24dp"
+                        android:layout_height="24dp"
+                        android:layout_gravity="center"
+                        android:indeterminate="true"
+                        android:visibility="gone" />
+                </FrameLayout>
+
             </FrameLayout>
 
-
-            <com.etiennelawlor.loop.ui.CustomFontEditText
-                android:id="@+id/comment_et"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_toLeftOf="@id/sumbit_comment_fl"
-                android:background="@null"
-                android:hint="@string/leave_a_comment"
-                android:padding="16dp"
-                android:textColor="@color/primary_text"
-                android:textColorHint="@color/tertiary_text"
-                android:textSize="16sp"
-                app:textFont="ubuntu_medium" />
-
-        </RelativeLayout>
-
-        <View
-            android:id="@+id/divider_v"
-            android:layout_width="match_parent"
-            android:layout_height="1dp"
-            android:layout_above="@id/comment_rl"
-            android:background="@color/grey_300" />
+        </LinearLayout>
 
         <android.support.v7.widget.RecyclerView
             android:id="@+id/rv"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_above="@id/divider_v"
-            android:layout_marginTop="?attr/actionBarSize" />
+            android:layout_height="match_parent"
+            android:layout_marginTop="?attr/actionBarSize"
+            android:layout_marginBottom="57dp"/>
 
         <include layout="@layout/loading_layout" />
 
-    </RelativeLayout>
+    </FrameLayout>
 
 </android.support.design.widget.CoordinatorLayout>

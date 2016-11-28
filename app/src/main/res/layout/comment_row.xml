@@ -1,18 +1,18 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:background="?android:attr/selectableItemBackground"
+    android:orientation="horizontal"
     android:padding="16dp">
 
     <com.etiennelawlor.loop.ui.AvatarView
         android:id="@+id/comment_iv"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignParentLeft="true"
         android:scaleType="centerCrop"
         app:av_radius="@dimen/avatar_radius_small"/>
 
@@ -22,10 +22,9 @@
         android:layout_height="wrap_content"
         android:layout_marginLeft="16dp"
         android:layout_marginRight="16dp"
-        android:layout_toRightOf="@id/comment_iv"
         android:textColor="@color/primary_text"
         android:textSize="16sp"
         app:textFont="ubuntu_medium"
         tools:text="Thanks for letting me know about this, I was able to pick up 2 new PS4 controllers for the price of 1" />
 
-</RelativeLayout>
+</LinearLayout>

@@ -73,8 +73,8 @@ public class SearchableFragment extends BaseFragment implements VideosAdapter.On
     // endregion
 
     // region Views
-    @Bind(R.id.videos_rv)
-    RecyclerView videosRecyclerView;
+    @Bind(R.id.rv)
+    RecyclerView recyclerView;
     @Bind(android.R.id.empty)
     View emptyView;
     @Bind(R.id.empty_tv)
@@ -416,15 +416,15 @@ public class SearchableFragment extends BaseFragment implements VideosAdapter.On
 //        mSearchViewWidget.setAdapter(mSearchViewAdapter);
 
         layoutManager = new LinearLayoutManager(getActivity());
-        videosRecyclerView.setLayoutManager(layoutManager);
+        recyclerView.setLayoutManager(layoutManager);
         videosAdapter = new VideosAdapter();
         videosAdapter.setOnItemClickListener(this);
 
-        videosRecyclerView.setItemAnimator(new SlideInUpAnimator());
-        videosRecyclerView.setAdapter(videosAdapter);
+        recyclerView.setItemAnimator(new SlideInUpAnimator());
+        recyclerView.setAdapter(videosAdapter);
 
         // Pagination
-        videosRecyclerView.addOnScrollListener(recyclerViewOnScrollListener);
+        recyclerView.addOnScrollListener(recyclerViewOnScrollListener);
 
         Call findVideosCall = vimeoService.findVideos(query,
                 sortByValue,
@@ -655,7 +655,7 @@ public class SearchableFragment extends BaseFragment implements VideosAdapter.On
     }
 
     private void removeListeners(){
-        videosRecyclerView.removeOnScrollListener(recyclerViewOnScrollListener);
+        recyclerView.removeOnScrollListener(recyclerViewOnScrollListener);
     }
     // endregion
 }

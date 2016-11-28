@@ -9,7 +9,7 @@
     android:padding="16dp"
     android:background="?android:attr/selectableItemBackground">
 
-    <RelativeLayout
+    <FrameLayout
         android:layout_width="144dp"
         android:layout_height="96dp">
 
@@ -23,11 +23,9 @@
 
         <!--android:transitionName="videoTransition"-->
 
-
         <com.etiennelawlor.loop.ui.CustomFontTextView
             android:id="@+id/duration_tv"
-            android:layout_alignParentBottom="true"
-            android:layout_alignParentRight="true"
+            android:layout_gravity="right|bottom"
             android:layout_margin="8dp"
             android:background="@drawable/duration_bg"
             android:padding="4dp"
@@ -38,15 +36,13 @@
             android:textSize="14sp"
             app:textFont="ubuntu_regular"/>
 
-    </RelativeLayout>
-
+    </FrameLayout>
 
     <LinearLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:orientation="vertical"
         android:layout_marginLeft="16dp">
-
 
         <com.etiennelawlor.loop.ui.CustomFontTextView
             android:id="@+id/title_tv"
@@ -82,8 +78,6 @@
             android:textSize="14sp"
             app:textFont="ubuntu_medium"/>
 
-
     </LinearLayout>
-
 
 </LinearLayout>

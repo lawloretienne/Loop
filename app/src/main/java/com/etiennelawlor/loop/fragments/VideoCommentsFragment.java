@@ -82,7 +82,7 @@ public class VideoCommentsFragment extends BaseFragment implements VideoComments
     @Bind(R.id.sumbit_comment_fl)
     FrameLayout submitCommentFrameLayout;
     @Bind(R.id.rv)
-    RecyclerView commentsRecyclerView;
+    RecyclerView recyclerView;
     @Bind(R.id.toolbar)
     Toolbar toolbar;
     @Bind(R.id.loading_iv)
@@ -422,7 +422,7 @@ public class VideoCommentsFragment extends BaseFragment implements VideoComments
 
         BusProvider.getInstance().register(this);
         if (getArguments() != null) {
-            video = (Video) getArguments().get("video");
+            video = (Video) getArguments().get(LikedVideosFragment.KEY_VIDEO);
         }
 
         AccessToken token = LoopPrefs.getAccessToken(getActivity());
@@ -456,11 +456,14 @@ public class VideoCommentsFragment extends BaseFragment implements VideoComments
 
         setUpListeners();
 
-        commentsRecyclerView.setItemAnimator(new SlideInUpAnimator());
+        recyclerView.setItemAnimator(new SlideInUpAnimator());
 
         LinearLayoutManager layoutManager = new LinearLayoutManager(getActivity());
+        layoutManager.setStackFromEnd(true);
 //        layoutManager.setReverseLayout(true);
-        commentsRecyclerView.setLayoutManager(layoutManager);
+        recyclerView.setLayoutManager(layoutManager);
+
+        recyclerView.setItemAnimator(new SlideInUpAnimator());
 
         videoCommentsAdapter = new VideoCommentsAdapter(getActivity());
         videoCommentsAdapter.setOnItemLongClickListener(this);
@@ -471,9 +474,9 @@ public class VideoCommentsFragment extends BaseFragment implements VideoComments
 //            mVideoCommentsAdapter.addAll(comments);
 //        }
 
-        commentsRecyclerView.setAdapter(videoCommentsAdapter);
+        recyclerView.setAdapter(videoCommentsAdapter);
 
-        commentsRecyclerView.smoothScrollToPosition(videoCommentsAdapter.getItemCount());
+        recyclerView.smoothScrollToPosition(videoCommentsAdapter.getItemCount());
 
         if (commentsCollection != null) {
             loadComments();
@@ -584,7 +587,7 @@ public class VideoCommentsFragment extends BaseFragment implements VideoComments
 
             Collections.reverse(comments);
             videoCommentsAdapter.addAll(comments);
-            commentsRecyclerView.smoothScrollToPosition(videoCommentsAdapter.getItemCount());
+            recyclerView.smoothScrollToPosition(videoCommentsAdapter.getItemCount());
 //
 //            mVideoCommentsAdapter.addAll(comments);
 

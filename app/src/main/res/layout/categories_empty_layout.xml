@@ -14,7 +14,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:tint="@color/primary"
-        app:srcCompat="@drawable/ic_watch_later" />
+        app:srcCompat="@drawable/ic_explore_large" />
 
     <com.etiennelawlor.loop.ui.CustomFontTextView
         android:id="@+id/empty_tv"

@@ -74,40 +74,42 @@ public class AvatarView extends FrameLayout {
 
     // region Helper Methods
     private void init(Context context, AttributeSet attrs) {
-        LayoutInflater.from(getContext()).inflate(R.layout.avatar_view, this, true);
-        ButterKnife.bind(this);
+        if (!isInEditMode()) {
+            LayoutInflater.from(getContext()).inflate(R.layout.avatar_view, this, true);
+            ButterKnife.bind(this);
 
-        if(attrs != null){
-            TypedArray a = getContext().getTheme().obtainStyledAttributes(attrs, R.styleable.AvatarView, 0, 0);
-            try {
-                radius = a.getDimension(R.styleable.AvatarView_av_radius, 0);
-            } finally {
-                a.recycle();
+            if(attrs != null){
+                TypedArray a = getContext().getTheme().obtainStyledAttributes(attrs, R.styleable.AvatarView, 0, 0);
+                try {
+                    radius = a.getDimension(R.styleable.AvatarView_av_radius, 0);
+                } finally {
+                    a.recycle();
+                }
             }
-        }
 
-        roundedTransformation = new RoundedTransformationBuilder()
-                .cornerRadius(radius)
+            roundedTransformation = new RoundedTransformationBuilder()
+                    .cornerRadius(radius)
 //                .borderWidthDp(1f)
 //                .borderColor(ContextCompat.getColor(getContext(), R.color.grey_400))
-                .oval(false)
-                .build();
+                    .oval(false)
+                    .build();
 
-        // resize ImageView
-        ViewGroup.LayoutParams imageViewLayoutParams = imageView.getLayoutParams();
-        imageViewLayoutParams.width = (int)(radius*2);
-        imageViewLayoutParams.height = (int)(radius*2);
-        imageView.setLayoutParams(imageViewLayoutParams);
+            // resize ImageView
+            ViewGroup.LayoutParams imageViewLayoutParams = imageView.getLayoutParams();
+            imageViewLayoutParams.width = (int)(radius*2);
+            imageViewLayoutParams.height = (int)(radius*2);
+            imageView.setLayoutParams(imageViewLayoutParams);
 
-        // resize TextView
-        ViewGroup.LayoutParams textViewLayoutParams = textView.getLayoutParams();
-        textViewLayoutParams.width = (int)(radius*2);
-        textViewLayoutParams.height = (int)(radius*2);
-        textView.setLayoutParams(textViewLayoutParams);
+            // resize TextView
+            ViewGroup.LayoutParams textViewLayoutParams = textView.getLayoutParams();
+            textViewLayoutParams.width = (int)(radius*2);
+            textViewLayoutParams.height = (int)(radius*2);
+            textView.setLayoutParams(textViewLayoutParams);
 
-        // resize TextView's fontSize
-        int fontSize = (16*(int)radius*2)/ DisplayUtility.dp2px(getContext(), 40);
-        textView.setTextSize(fontSize);
+            // resize TextView's fontSize
+            int fontSize = (16*(int)radius*2)/ DisplayUtility.dp2px(getContext(), 40);
+            textView.setTextSize(fontSize);
+        }
     }
 
     public void bind(@Nullable User user) {
