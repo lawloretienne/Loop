@@ -51,8 +51,8 @@ import timber.log.Timber;
 public class ExploreFragment extends BaseFragment implements CategoriesAdapter.OnItemClickListener {
 
     // region Views
-    @Bind(R.id.categories_rv)
-    RecyclerView categoriesRecyclerView;
+    @Bind(R.id.rv)
+    RecyclerView recyclerView;
     @Bind(android.R.id.empty)
     View emptyView;
     @Bind(R.id.loading_iv)
@@ -206,14 +206,14 @@ public class ExploreFragment extends BaseFragment implements CategoriesAdapter.O
         }
 
         LinearLayoutManager layoutManager = new GridLayoutManager(getActivity(), 2);
-        categoriesRecyclerView.setLayoutManager(layoutManager);
-        categoriesRecyclerView.addItemDecoration(new GridSpacesItemDecoration(DisplayUtility.dp2px(getActivity(), 8)));
+        recyclerView.setLayoutManager(layoutManager);
+        recyclerView.addItemDecoration(new GridSpacesItemDecoration(DisplayUtility.dp2px(getActivity(), 8)));
 
         categoriesAdapter = new CategoriesAdapter();
         categoriesAdapter.setOnItemClickListener(this);
 
-        categoriesRecyclerView.setItemAnimator(new SlideInUpAnimator());
-        categoriesRecyclerView.setAdapter(categoriesAdapter);
+        recyclerView.setItemAnimator(new SlideInUpAnimator());
+        recyclerView.setAdapter(categoriesAdapter);
 
         Call getCategoriesCall = vimeoService.getCategories();
         calls.add(getCategoriesCall);

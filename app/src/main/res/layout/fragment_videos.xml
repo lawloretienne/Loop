@@ -6,16 +6,11 @@
     android:layout_height="match_parent"
     android:background="@color/grey_200">
 
-    <include layout="@layout/videos_section" />
+    <include layout="@layout/content_layout" />
 
-    <com.etiennelawlor.loop.ui.LoadingImageView
-        android:id="@+id/loading_iv"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:src="@drawable/ic_loop_loading"
-        app:anim_auto_start="true"
-        app:mask_color="?colorAccent" />
+    <include layout="@layout/videos_empty_layout" />
+
+    <include layout="@layout/loading_layout" />
 
     <include layout="@layout/error_layout" />
 

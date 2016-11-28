@@ -69,8 +69,8 @@ public class WatchLaterVideosFragment extends BaseFragment implements VideosAdap
     // endregion
 
     // region Views
-    @Bind(R.id.videos_rv)
-    RecyclerView videosRecyclerView;
+    @Bind(R.id.rv)
+    RecyclerView recyclerView;
     @Bind(android.R.id.empty)
     View emptyView;
     @Bind(R.id.empty_tv)
@@ -190,9 +190,9 @@ public class WatchLaterVideosFragment extends BaseFragment implements VideosAdap
 
             if (videosAdapter.isEmpty()) {
                 emptyTextView.setText(getString(R.string.watch_later_empty_prompt));
-                Drawable drawable = ContextCompat.getDrawable(getContext(), R.drawable.ic_watch_later_large);
-                DrawableCompat.setTint(drawable, ContextCompat.getColor(getActivity(), R.color.grey_500));
-                emptyTextView.setCompoundDrawablesWithIntrinsicBounds(null, drawable, null, null);
+//                Drawable drawable = ContextCompat.getDrawable(getContext(), R.drawable.ic_watch_later_large);
+//                DrawableCompat.setTint(drawable, ContextCompat.getColor(getActivity(), R.color.grey_500));
+//                emptyTextView.setCompoundDrawablesWithIntrinsicBounds(null, drawable, null, null);
                 emptyView.setVisibility(View.VISIBLE);
             }
         }
@@ -348,15 +348,15 @@ public class WatchLaterVideosFragment extends BaseFragment implements VideosAdap
         }
 
         layoutManager = new LinearLayoutManager(getActivity());
-        videosRecyclerView.setLayoutManager(layoutManager);
+        recyclerView.setLayoutManager(layoutManager);
         videosAdapter = new VideosAdapter();
         videosAdapter.setOnItemClickListener(this);
 
-        videosRecyclerView.setItemAnimator(new SlideInUpAnimator());
-        videosRecyclerView.setAdapter(videosAdapter);
+        recyclerView.setItemAnimator(new SlideInUpAnimator());
+        recyclerView.setAdapter(videosAdapter);
 
         // Pagination
-        videosRecyclerView.addOnScrollListener(recyclerViewOnScrollListener);
+        recyclerView.addOnScrollListener(recyclerViewOnScrollListener);
 
         Call findWatchLaterVideosCall = vimeoService.findWatchLaterVideos(query,
                 sortByValue,
@@ -564,7 +564,7 @@ public class WatchLaterVideosFragment extends BaseFragment implements VideosAdap
     }
 
     private void removeListeners(){
-        videosRecyclerView.removeOnScrollListener(recyclerViewOnScrollListener);
+        recyclerView.removeOnScrollListener(recyclerViewOnScrollListener);
     }
     // endregion
 }

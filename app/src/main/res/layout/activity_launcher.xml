@@ -6,7 +6,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <RelativeLayout
+    <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="3"
@@ -15,8 +15,8 @@
         <com.etiennelawlor.loop.ui.CustomFontTextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_centerInParent="true"
             android:gravity="center"
+            android:layout_gravity="center"
             android:textColor="@android:color/white"
             android:text="@string/loop"
             android:textSize="34sp"
@@ -24,9 +24,9 @@
             android:drawableTop="@drawable/ic_loop_large"
             app:textFont="ubuntu_bold"/>
 
-    </RelativeLayout>
+    </FrameLayout>
 
-    <RelativeLayout
+    <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="2"
@@ -43,9 +43,9 @@
             android:drawablePadding="16dp"
             android:textColor="@android:color/white"
             android:textAllCaps="false"
-            android:layout_centerInParent="true"
+            android:layout_gravity="center"
             app:textFont="ubuntu_medium"/>
 
-    </RelativeLayout>
+    </FrameLayout>
 
 </LinearLayout>

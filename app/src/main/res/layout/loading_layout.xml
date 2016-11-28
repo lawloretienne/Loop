@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.etiennelawlor.loop.ui.LoadingImageView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/loading_iv"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:layout_gravity="center"
+    android:src="@drawable/ic_loop_loading"
+    app:anim_auto_start="true"
+    app:mask_color="?colorAccent" />

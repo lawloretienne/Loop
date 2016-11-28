@@ -70,8 +70,8 @@ public class LikedVideosFragment extends BaseFragment implements VideosAdapter.O
     // endregion
 
     // region Views
-    @Bind(R.id.videos_rv)
-    RecyclerView videosRecyclerView;
+    @Bind(R.id.rv)
+    RecyclerView recyclerView;
     @Bind(android.R.id.empty)
     View emptyView;
     @Bind(R.id.empty_tv)
@@ -350,15 +350,15 @@ public class LikedVideosFragment extends BaseFragment implements VideosAdapter.O
         }
 
         layoutManager = new LinearLayoutManager(getActivity());
-        videosRecyclerView.setLayoutManager(layoutManager);
+        recyclerView.setLayoutManager(layoutManager);
         videosAdapter = new VideosAdapter();
         videosAdapter.setOnItemClickListener(this);
 
-        videosRecyclerView.setItemAnimator(new SlideInUpAnimator());
-        videosRecyclerView.setAdapter(videosAdapter);
+        recyclerView.setItemAnimator(new SlideInUpAnimator());
+        recyclerView.setAdapter(videosAdapter);
 
         // Pagination
-        videosRecyclerView.addOnScrollListener(recyclerViewOnScrollListener);
+        recyclerView.addOnScrollListener(recyclerViewOnScrollListener);
 
         Call findLikedVideosCall = vimeoService.findLikedVideos(query,
                 sortByValue,
@@ -580,7 +580,7 @@ public class LikedVideosFragment extends BaseFragment implements VideosAdapter.O
     }
 
     private void removeListeners(){
-        videosRecyclerView.removeOnScrollListener(recyclerViewOnScrollListener);
+        recyclerView.removeOnScrollListener(recyclerViewOnScrollListener);
     }
     // endregion
 }
