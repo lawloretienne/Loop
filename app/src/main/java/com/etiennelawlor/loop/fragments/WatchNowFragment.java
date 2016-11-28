@@ -111,7 +111,7 @@ public class WatchNowFragment extends BaseFragment {
 //
 //        final ActionBar ab = ((AppCompatActivity) getActivity()).getSupportActionBar();
 
-//        ab.setHomeAsUpIndicator(R.drawable.ic_menu);
+//        ab.setHomeAsUpIndicator(R.drawable.ic_menu_light);
 //        ab.setHomeAsUpIndicator(R.drawable.ic_menu_black);
 //        ab.setDisplayHomeAsUpEnabled(true);
 //        ab.setTitle("Watch Now");

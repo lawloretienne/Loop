@@ -3,12 +3,15 @@ package com.etiennelawlor.loop.fragments;
 import android.content.DialogInterface;
 import android.content.res.ColorStateList;
 import android.graphics.Typeface;
+import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.content.ContextCompat;
+import android.support.v4.graphics.drawable.DrawableCompat;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.content.res.AppCompatResources;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
@@ -112,11 +115,30 @@ public class VideoCommentsFragment extends BaseFragment implements VideoComments
         public void onTextChanged(CharSequence s, int start, int before, int count) {
             if (s.length() > 0) {
 //                mSubmitCommentImageView.setImageResource(R.drawable.ic_comment_button_highlighted);
-                submitCommentImageView.setImageTintList(ColorStateList.valueOf(ContextCompat.getColor(submitCommentImageView.getContext(), android.R.color.white)));
+
+//                submitCommentImageView.setImageTintList(ColorStateList.valueOf(ContextCompat.getColor(submitCommentImageView.getContext(), android.R.color.white)));
+
+//                ColorStateList csl = AppCompatResources.getColorStateList(submitCommentImageView.getContext(), android.R.color.white);
+//                Drawable drawable = DrawableCompat.wrap(submitCommentImageView.getDrawable());
+//                DrawableCompat.setTintList(drawable, csl);
+//                submitCommentImageView.setImageDrawable(drawable);
+                submitCommentImageView.setImageResource(R.drawable.ic_comment_active);
             } else {
 //                mSubmitCommentImageView.setImageResource(R.drawable.ic_comment_button);
-                submitCommentImageView.setImageTintList(ColorStateList.valueOf(ContextCompat.getColor(submitCommentImageView.getContext(), R.color.fifty_percent_transparency_teal_500)));
 
+//                submitCommentImageView.setImageTintList(ColorStateList.valueOf(ContextCompat.getColor(submitCommentImageView.getContext(), R.color.fifty_percent_transparency_teal_500)));
+
+//                ColorStateList csl = AppCompatResources.getColorStateList(submitCommentImageView.getContext(), R.color.fifty_percent_transparency_teal_500);
+//                Drawable drawable = DrawableCompat.wrap(submitCommentImageView.getDrawable());
+//                DrawableCompat.setTintList(drawable, csl);
+//                submitCommentImageView.setImageDrawable(drawable);
+
+//                mWrappedDrawable = mDrawable.mutate();
+//                mWrappedDrawable = DrawableCompat.wrap(mWrappedDrawable);
+//                DrawableCompat.setTint(mWrappedDrawable, mColor);
+//                DrawableCompat.setTintMode(mWrappedDrawable, PorterDuff.Mode.SRC_IN);
+
+                submitCommentImageView.setImageResource(R.drawable.ic_comment_inactive);
             }
         }
 

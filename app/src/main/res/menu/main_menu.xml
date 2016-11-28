@@ -7,7 +7,7 @@
         android:id="@+id/sort"
         android:title="@string/sort"
         app:showAsAction="always"
-        android:icon="@drawable/ic_filter_list_white_24dp"
+        android:icon="@drawable/ic_filter_list"
         android:orderInCategory="1"/>
 
 </menu>

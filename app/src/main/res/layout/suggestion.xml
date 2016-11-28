@@ -16,8 +16,7 @@
         android:layout_centerVertical="true"
         android:layout_marginLeft="4dp"
         android:contentDescription="@string/content_desc"
-        android:src="@drawable/ic_history"
-        android:tint="@color/grey_400" />
+        app:srcCompat="@drawable/ic_history" />
 
     <com.etiennelawlor.loop.ui.CustomFontTextView
         android:id="@+id/suggestion_tv"
@@ -29,7 +28,7 @@
         android:layout_toLeftOf="@+id/search_suggest_complete_iv"
         android:ellipsize="end"
         android:singleLine="true"
-        android:textColor="@color/tertiary_text"
+        android:textColor="@color/secondary_text"
         android:textSize="16sp"
         app:textFont="ubuntu_medium"
         tools:text="Suggestion" />
@@ -44,6 +43,10 @@
         android:contentDescription="@string/content_desc"
         android:padding="4dp"
         android:src="@drawable/ic_search_suggest_complete"
-        android:tint="@color/grey_400" />
+         />
+
+
+    <!--app:srcCompat="@drawable/ic_up_left"-->
+    <!--android:tint="@color/tertiary_text"-->
 
 </RelativeLayout>

@@ -906,10 +906,10 @@ public class VideoDetailsFragment extends BaseFragment implements RelatedVideosA
     public void onInfoClick(final ImageView imageView) {
         if(isInfoExpanded){
             isInfoExpanded = false;
-            imageView.setImageResource(R.drawable.ic_keyboard_arrow_down_white_24dp);
+            imageView.setImageResource(R.drawable.ic_keyboard_arrow_down);
         } else {
             isInfoExpanded = true;
-            imageView.setImageResource(R.drawable.ic_keyboard_arrow_up_white_24dp);
+            imageView.setImageResource(R.drawable.ic_keyboard_arrow_up);
         }
     }
     // endregion

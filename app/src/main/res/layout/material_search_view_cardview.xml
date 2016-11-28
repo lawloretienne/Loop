@@ -42,8 +42,7 @@
                     android:layout_gravity="center_vertical"
                     android:background="@drawable/ripple"
                     android:padding="4dp"
-                    android:contentDescription="@string/content_desc"
-                    android:tint="@color/grey_700" />
+                    android:contentDescription="@string/content_desc" />
 
             </FrameLayout>
 
@@ -57,7 +56,7 @@
                 android:imeOptions="actionSearch"
                 android:inputType="text"
                 android:singleLine="true"
-                android:textColor="@color/primary_text"
+                android:textColor="@color/secondary_text"
                 android:textColorHint="@color/tertiary_text"
                 android:textSize="@dimen/text_medium"
                 app:textFont="ubuntu_medium"/>
@@ -75,8 +74,8 @@
                     android:background="@drawable/ripple"
                     android:padding="4dp"
                     android:contentDescription="@string/content_desc"
-                    android:src="@drawable/ic_mic_black_24dp"
-                    android:tint="@color/grey_700" />
+                    app:srcCompat="@drawable/ic_mic"
+                    android:tint="@color/active_icon" />
 
                 <ImageView
                     android:id="@+id/clear_iv"
@@ -86,8 +85,8 @@
                     android:background="@drawable/ripple"
                     android:padding="4dp"
                     android:contentDescription="@string/content_desc"
-                    android:src="@drawable/ic_clear_black_24dp"
-                    android:tint="@color/grey_700"
+                    app:srcCompat="@drawable/ic_clear"
+                    android:tint="@color/active_icon"
                     android:visibility="gone" />
 
             </FrameLayout>
@@ -101,8 +100,8 @@
                 android:background="@null"
                 android:padding="4dp"
                 android:contentDescription="@string/content_desc"
-                android:src="@drawable/ic_filter_list_black_24dp"
-                android:tint="@color/grey_300"
+                app:srcCompat="@drawable/ic_filter_list"
+                android:tint="@color/active_icon"
                 android:visibility="gone" />
 
         </LinearLayout>
@@ -111,7 +110,7 @@
             android:id="@+id/divider_v"
             android:layout_width="match_parent"
             android:layout_height="1dp"
-            android:background="@color/grey_300"
+            android:background="@color/divider"
             android:visibility="gone" />
 
         <android.support.v7.widget.RecyclerView

@@ -4,7 +4,7 @@
     android:layout_width="match_parent"
     android:layout_height="168dp"
     android:layout_marginBottom="8dp"
-    android:background="@drawable/md_wallpaper5"
+    android:background="@drawable/nav_header_bg"
     android:paddingTop="40dp">
 
     <LinearLayout

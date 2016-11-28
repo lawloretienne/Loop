@@ -84,8 +84,8 @@
             android:layout_toRightOf="@id/watch_later_iv"
             android:background="@drawable/ripple"
             android:padding="4dp"
-            android:src="@drawable/ic_comment_white_24dp"
-            android:tint="@color/grey_400" />
+            app:srcCompat="@drawable/ic_comment"
+            android:tint="@color/active_icon" />
 
         <ImageView
             android:id="@+id/info_iv"
@@ -95,8 +95,8 @@
             android:layout_marginLeft="16dp"
             android:background="@drawable/ripple"
             android:padding="4dp"
-            android:src="@drawable/ic_keyboard_arrow_down_white_24dp"
-            android:tint="@color/grey_400"
+            app:srcCompat="@drawable/ic_keyboard_arrow_down"
+            android:tint="@color/active_icon"
             android:visibility="gone"/>
 
     </RelativeLayout>
@@ -115,7 +115,7 @@
             android:id="@+id/description_tv"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textColor="@color/grey_600"
+            android:textColor="@color/secondary_text"
             android:textSize="14sp"
             android:paddingBottom="16dp"
             android:autoLink="all"

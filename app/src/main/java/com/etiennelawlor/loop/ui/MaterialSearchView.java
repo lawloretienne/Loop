@@ -7,6 +7,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
+import android.content.res.ColorStateList;
 import android.content.res.TypedArray;
 import android.speech.RecognizerIntent;
 import android.support.v4.content.ContextCompat;
@@ -186,7 +187,7 @@ public class MaterialSearchView extends FrameLayout implements
         }
     }
 
-    private OnClickListener mFilterImageViewOnClickListener = new OnClickListener() {
+    private OnClickListener filterImageViewOnClickListener = new OnClickListener() {
         @Override
         public void onClick(View v) {
             BusProvider.getInstance().post(new FilterClickedEvent());
@@ -330,19 +331,19 @@ public class MaterialSearchView extends FrameLayout implements
 
     private void setUpLeftDrawable(boolean showingSearchSuggestions) {
         if (showingSearchSuggestions) {
-            leftDrawableImageView.setImageDrawable(ContextCompat.getDrawable(getContext(), R.drawable.ic_arrow_back_black_24dp));
+            leftDrawableImageView.setImageDrawable(ContextCompat.getDrawable(getContext(), R.drawable.ic_arrow_back_dark));
             leftDrawableRoundedImageView.setVisibility(View.GONE);
             leftDrawableImageView.setVisibility(View.VISIBLE);
         } else {
             switch (leftDrawableType) {
                 case MENU:
-                    leftDrawableImageView.setImageDrawable(ContextCompat.getDrawable(getContext(), R.drawable.ic_menu_black_24dp));
+                    leftDrawableImageView.setImageDrawable(ContextCompat.getDrawable(getContext(), R.drawable.ic_menu_dark));
                     break;
                 case BACK:
-                    leftDrawableImageView.setImageDrawable(ContextCompat.getDrawable(getContext(), R.drawable.ic_arrow_back_black_24dp));
+                    leftDrawableImageView.setImageDrawable(ContextCompat.getDrawable(getContext(), R.drawable.ic_arrow_back_dark));
                     break;
                 case SEARCH:
-                    leftDrawableImageView.setImageDrawable(ContextCompat.getDrawable(getContext(), R.drawable.ic_search_black_24dp));
+                    leftDrawableImageView.setImageDrawable(ContextCompat.getDrawable(getContext(), R.drawable.ic_search));
                     break;
                 case AVATAR:
                     break;
@@ -453,15 +454,20 @@ public class MaterialSearchView extends FrameLayout implements
     }
 
     public void enableFilter() {
-        filterImageView.setOnClickListener(mFilterImageViewOnClickListener);
+        filterImageView.setOnClickListener(filterImageViewOnClickListener);
         filterImageView.setBackgroundDrawable(ContextCompat.getDrawable(getContext(), R.drawable.ripple));
-        filterImageView.setColorFilter(ContextCompat.getColor(getContext(), R.color.grey_700));
+//        filterImageView.setColorFilter(ContextCompat.getColor(getContext(), R.color.active_icon));
+//        filterImageView.setImageTintList(ColorStateList.valueOf(ContextCompat.getColor(filterImageView.getContext(), R.color.active_icon)));
+        filterImageView.setImageResource(R.drawable.ic_filter_list);
+
     }
 
     public void disableFilter() {
         filterImageView.setOnClickListener(null);
         filterImageView.setBackgroundDrawable(null);
-        filterImageView.setColorFilter(ContextCompat.getColor(getContext(), R.color.grey_300));
+//        filterImageView.setColorFilter(ContextCompat.getColor(getContext(), R.color.inactive_icon));
+//        filterImageView.setImageTintList(ColorStateList.valueOf(ContextCompat.getColor(filterImageView.getContext(), R.color.inactive_icon)));
+        filterImageView.setImageResource(R.drawable.ic_filter_list_inactive);
     }
 
 //    public void setAvatar(Retailer retailer){

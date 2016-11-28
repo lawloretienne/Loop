@@ -30,8 +30,9 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center"
-                    android:src="@drawable/ic_comment_white_24dp"
-                    android:tint="@color/fifty_percent_transparency_teal_500" />
+                    app:srcCompat="@drawable/ic_comment_inactive" />
+
+                <!--android:tint="@color/fifty_percent_transparency_teal_500"-->
 
                 <ProgressBar
                     android:id="@+id/sumbit_comment_pb"

@@ -342,7 +342,7 @@ public class WatchLaterVideosFragment extends BaseFragment implements VideosAdap
 
         final ActionBar ab = ((AppCompatActivity) getActivity()).getSupportActionBar();
         if(ab != null){
-            ab.setHomeAsUpIndicator(R.drawable.ic_menu);
+            ab.setHomeAsUpIndicator(R.drawable.ic_menu_light);
             ab.setDisplayHomeAsUpEnabled(true);
             ab.setTitle(TrestleUtility.getFormattedText(getString(R.string.watch_later), font));
         }

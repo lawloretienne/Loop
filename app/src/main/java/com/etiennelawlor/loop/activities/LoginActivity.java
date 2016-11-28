@@ -39,9 +39,31 @@ public class LoginActivity extends AppCompatActivity {
     // region Member Variables
     private WebViewClient webViewClient = new WebViewClient() {
         public boolean shouldOverrideUrlLoading(WebView view, String url) {
-            Timber.i("Processing webview url click..."); // http://localhost/?code=0e4c71d1ed6f61c70b708a6098f37337033082ff
+            Timber.d("LoginActivity : shouldOverrideUrlLoading() : url - "+url);
+
+            // http://localhost/?code=0e4c71d1ed6f61c70b708a6098f37337033082ff
             if (!TextUtils.isEmpty(url) && !url.startsWith(getString(R.string.client_redirect_uri))) {
                 view.loadUrl(url); // Uri.parse(url).getQueryParameter("code")
+            } else {
+                Uri uri = Uri.parse(url);
+
+                String code = uri.getQueryParameter("code");
+                if(!TextUtils.isEmpty(code)) {
+                    String state = uri.getQueryParameter("state");
+                    if (state.equals(getString(R.string.vimeo_state))) {
+//                        String code = uri.getQueryParameter("code");
+
+                        VimeoService vimeoService = ServiceGenerator.createService(
+                                VimeoService.class,
+                                VimeoService.BASE_URL,
+                                getString(R.string.client_id),
+                                getString(R.string.client_secret));
+                        Call exchangeCodeCall = vimeoService.exchangeCode("authorization_code",
+                                code,
+                                getString(R.string.client_redirect_uri));
+                        exchangeCodeCall.enqueue(exchangeCodeCallback);
+                    }
+                }
             }
 
             return true;
@@ -49,7 +71,8 @@ public class LoginActivity extends AppCompatActivity {
 
         @Override
         public void onPageFinished(WebView view, String url) {
-            Timber.i("Finished loading URL: " + url);
+            Timber.d("LoginActivity : onPageFinished() : url - "+url);
+
 //                setSupportProgressBarIndeterminateVisibility(false);
 //                mSmoothProgressBar.setVisibility(View.GONE);
 
