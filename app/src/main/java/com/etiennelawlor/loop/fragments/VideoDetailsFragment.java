@@ -77,6 +77,7 @@ public class VideoDetailsFragment extends BaseFragment implements RelatedVideosA
     // region Constants
     public static final int PAGE_SIZE = 30;
     private static final int VIDEO_SHARE_REQUEST_CODE = 1002;
+    public static final String KEY_VIDEO_ID = "KEY_VIDEO_ID";
     // endregion
 
     // region Views
@@ -108,7 +109,7 @@ public class VideoDetailsFragment extends BaseFragment implements RelatedVideosA
             Intent intent = new Intent(getActivity(), VideoPlayerActivity.class);
 
             Bundle bundle = new Bundle();
-            bundle.putLong("video_id", videoId);
+            bundle.putLong(KEY_VIDEO_ID, videoId);
             intent.putExtras(bundle);
             startActivity(intent);
 
@@ -654,7 +655,7 @@ public class VideoDetailsFragment extends BaseFragment implements RelatedVideosA
         setRetainInstance(true);
 
         if (getArguments() != null) {
-            video = (Video) getArguments().get("video");
+            video = (Video) getArguments().get(LikedVideosFragment.KEY_VIDEO);
 //            mTransitionName = getArguments().getString("TRANSITION_KEY");
         }
 
@@ -799,7 +800,7 @@ public class VideoDetailsFragment extends BaseFragment implements RelatedVideosA
             Intent intent = new Intent(getActivity(), VideoDetailsActivity.class);
 
             Bundle bundle = new Bundle();
-            bundle.putParcelable("video", video);
+            bundle.putParcelable(LikedVideosFragment.KEY_VIDEO, video);
             intent.putExtras(bundle);
 
             Pair<View, String> p1 = Pair.create(view.findViewById(R.id.video_thumbnail_iv), "videoTransition");
@@ -894,7 +895,7 @@ public class VideoDetailsFragment extends BaseFragment implements RelatedVideosA
         Intent intent = new Intent(getActivity(), VideoCommentsActivity.class);
 
         Bundle bundle = new Bundle();
-        bundle.putParcelable("video", video);
+        bundle.putParcelable(LikedVideosFragment.KEY_VIDEO, video);
         intent.putExtras(bundle);
 
         startActivity(intent);
@@ -959,7 +960,10 @@ public class VideoDetailsFragment extends BaseFragment implements RelatedVideosA
     private void launchSearchActivity(String query) {
         Intent intent = new Intent(getContext(), SearchableActivity.class);
         intent.setAction(Intent.ACTION_SEARCH);
-        intent.putExtra(SearchManager.QUERY, query);
+//        intent.putExtra(SearchManager.QUERY, query);
+        Bundle bundle = new Bundle();
+        bundle.putString(SearchManager.QUERY, query);
+        intent.putExtras(bundle);
         getContext().startActivity(intent);
     }
 

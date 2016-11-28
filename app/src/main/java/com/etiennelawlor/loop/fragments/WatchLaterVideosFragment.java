@@ -94,7 +94,7 @@ public class WatchLaterVideosFragment extends BaseFragment implements VideosAdap
     private String sortByValue = "date";
     private String sortOrderValue = "desc";
     private VideosAdapter videosAdapter;
-    private String query;
+    private String query = "";
     private LinearLayoutManager layoutManager;
     private VimeoService vimeoService;
     private WatchLaterEvent watchLaterEvent;
@@ -309,9 +309,9 @@ public class WatchLaterVideosFragment extends BaseFragment implements VideosAdap
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        if (getArguments() != null) {
-            query = getArguments().getString("query");
-        }
+//        if (getArguments() != null) {
+//            query = getArguments().getString("query");
+//        }
 
         AccessToken token = LoopPrefs.getAccessToken(getActivity());
         vimeoService = ServiceGenerator.createService(

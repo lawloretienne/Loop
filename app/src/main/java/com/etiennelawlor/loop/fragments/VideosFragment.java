@@ -61,6 +61,7 @@ public class VideosFragment extends BaseFragment implements VideosAdapter.OnItem
 
     // region Constants
     public static final int PAGE_SIZE = 30;
+    public static final String KEY_TRANSITION = "KEY_TRANSITION";
     // endregion
 
     // region Views
@@ -299,7 +300,7 @@ public class VideosFragment extends BaseFragment implements VideosAdapter.OnItem
         super.onCreate(savedInstanceState);
 
         if (getArguments() != null) {
-            query = getArguments().getString("query");
+            query = getArguments().getString(WatchNowFragment.KEY_QUERY);
         }
 
         AccessToken token = LoopPrefs.getAccessToken(getActivity());
@@ -398,10 +399,11 @@ public class VideosFragment extends BaseFragment implements VideosAdapter.OnItem
             Intent intent = new Intent(getActivity(), VideoDetailsActivity.class);
 
             Bundle bundle = new Bundle();
-            bundle.putParcelable("video", video);
+            bundle.putParcelable(LikedVideosFragment.KEY_VIDEO, video);
             ImageView iv = (ImageView)view.findViewById(R.id.video_thumbnail_iv);
 
-            intent.putExtra("TRANSITION_KEY", ViewCompat.getTransitionName(iv));
+//            intent.putExtra("TRANSITION_KEY", ViewCompat.getTransitionName(iv));
+            bundle.putString(KEY_TRANSITION, ViewCompat.getTransitionName(iv));
 
             intent.putExtras(bundle);
 

@@ -7,8 +7,8 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
-import android.content.res.ColorStateList;
 import android.content.res.TypedArray;
+import android.os.Bundle;
 import android.speech.RecognizerIntent;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
@@ -111,9 +111,14 @@ public class MaterialSearchView extends FrameLayout implements
             hideSearchSuggestions();
 
             Intent intent = new Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH);
-            intent.putExtra(RecognizerIntent.EXTRA_PROMPT, voicePrompt);
-            intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL, RecognizerIntent.LANGUAGE_MODEL_WEB_SEARCH);
-            intent.putExtra(RecognizerIntent.EXTRA_MAX_RESULTS, 1);
+//            intent.putExtra(RecognizerIntent.EXTRA_PROMPT, voicePrompt);
+//            intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL, RecognizerIntent.LANGUAGE_MODEL_WEB_SEARCH);
+//            intent.putExtra(RecognizerIntent.EXTRA_MAX_RESULTS, 1);
+            Bundle bundle = new Bundle();
+            bundle.putString(RecognizerIntent.EXTRA_PROMPT, voicePrompt);
+            bundle.putString(RecognizerIntent.EXTRA_LANGUAGE_MODEL, RecognizerIntent.LANGUAGE_MODEL_WEB_SEARCH);
+            bundle.putInt(RecognizerIntent.EXTRA_MAX_RESULTS, 1);
+            intent.putExtras(bundle);
 
             ((Activity) ((ContextWrapper) microphoneImageView.getContext()).getBaseContext()).startActivityForResult(intent, REQUEST_VOICE);
         } else {
@@ -458,7 +463,7 @@ public class MaterialSearchView extends FrameLayout implements
         filterImageView.setBackgroundDrawable(ContextCompat.getDrawable(getContext(), R.drawable.ripple));
 //        filterImageView.setColorFilter(ContextCompat.getColor(getContext(), R.color.active_icon));
 //        filterImageView.setImageTintList(ColorStateList.valueOf(ContextCompat.getColor(filterImageView.getContext(), R.color.active_icon)));
-        filterImageView.setImageResource(R.drawable.ic_filter_list);
+        filterImageView.setImageResource(R.drawable.ic_filter_list_active);
 
     }
 

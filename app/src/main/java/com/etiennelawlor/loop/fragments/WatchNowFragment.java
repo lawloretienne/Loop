@@ -44,6 +44,7 @@ import butterknife.ButterKnife;
 public class WatchNowFragment extends BaseFragment {
 
     // region Constants
+    public static final String KEY_QUERY = "KEY_QUERY";
     // endregion
 
     // region Views
@@ -225,7 +226,7 @@ public class WatchNowFragment extends BaseFragment {
 
     private Fragment setUpFragment(String query) {
         Bundle bundle = new Bundle();
-        bundle.putString("query", query);
+        bundle.putString(KEY_QUERY, query);
 
         return VideosFragment.newInstance(bundle);
 //        return PlaceholderFragment.newInstance();
@@ -234,7 +235,10 @@ public class WatchNowFragment extends BaseFragment {
     private void launchSearchActivity(String query) {
         Intent intent = new Intent(getContext(), SearchableActivity.class);
         intent.setAction(Intent.ACTION_SEARCH);
-        intent.putExtra(SearchManager.QUERY, query);
+//        intent.putExtra(SearchManager.QUERY, query);
+        Bundle bundle = new Bundle();
+        bundle.putString(SearchManager.QUERY, query);
+        intent.putExtras(bundle);
         getContext().startActivity(intent);
     }
 

@@ -511,7 +511,7 @@ public class SearchableFragment extends BaseFragment implements VideosAdapter.On
             Intent intent = new Intent(getActivity(), VideoDetailsActivity.class);
 
             Bundle bundle = new Bundle();
-            bundle.putParcelable("video", video);
+            bundle.putParcelable(LikedVideosFragment.KEY_VIDEO, video);
             intent.putExtras(bundle);
 
             Pair<View, String> p1 = Pair.create(view.findViewById(R.id.video_thumbnail_iv), "videoTransition");
@@ -633,7 +633,10 @@ public class SearchableFragment extends BaseFragment implements VideosAdapter.On
     private void launchSearchActivity(String query){
         Intent intent = new Intent(getContext(), SearchableActivity.class);
         intent.setAction(Intent.ACTION_SEARCH);
-        intent.putExtra(SearchManager.QUERY, query);
+//        intent.putExtra(SearchManager.QUERY, query);
+        Bundle bundle = new Bundle();
+        bundle.putString(SearchManager.QUERY, query);
+        intent.putExtras(bundle);
         getContext().startActivity(intent);
         getActivity().overridePendingTransition(0, 0);
     }

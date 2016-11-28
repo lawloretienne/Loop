@@ -135,7 +135,6 @@ public class LoginActivity extends AppCompatActivity {
                     LoopPrefs.saveAuthorizedUser(getApplicationContext(), authorizedUser);
 
                     Intent intent = new Intent(LoginActivity.this, MainActivity.class);
-                    intent.putExtra(getString(R.string.authorized_user), authorizedUser);
                     startActivity(intent);
                     finish();
                 }

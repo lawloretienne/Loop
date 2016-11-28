@@ -100,7 +100,7 @@
                 android:background="@null"
                 android:padding="4dp"
                 android:contentDescription="@string/content_desc"
-                app:srcCompat="@drawable/ic_filter_list"
+                app:srcCompat="@drawable/ic_filter_list_active"
                 android:tint="@color/active_icon"
                 android:visibility="gone" />
 

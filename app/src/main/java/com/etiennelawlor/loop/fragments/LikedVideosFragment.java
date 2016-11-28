@@ -66,6 +66,7 @@ public class LikedVideosFragment extends BaseFragment implements VideosAdapter.O
 
     // region Constants
     public static final int PAGE_SIZE = 30;
+    public static final String KEY_VIDEO = "KEY_VIDEO";
     // endregion
 
     // region Views
@@ -443,7 +444,7 @@ public class LikedVideosFragment extends BaseFragment implements VideosAdapter.O
             Intent intent = new Intent(getActivity(), VideoDetailsActivity.class);
 
             Bundle bundle = new Bundle();
-            bundle.putParcelable("video", video);
+            bundle.putParcelable(KEY_VIDEO, video);
             intent.putExtras(bundle);
 
             Pair<View, String> p1 = Pair.create(view.findViewById(R.id.video_thumbnail_iv), "videoTransition");

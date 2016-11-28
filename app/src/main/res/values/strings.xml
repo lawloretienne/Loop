@@ -27,8 +27,6 @@
 
 
     <string name="token_type">token_type</string>
-    <string name="access_token">access_token</string>
-    <string name="authorized_user">authorized_user</string>
 
     <string name="watch_later_empty_prompt">Watch Later is a handy way to bookmark videos you don\'t have time to watch right now.
         When you click the Watch Later icon on any video screen, it will be added here.</string>

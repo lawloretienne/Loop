@@ -157,14 +157,6 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         ButterKnife.bind(this);
 
-        Intent intent = getIntent();
-        if(intent != null) {
-            Bundle extras = intent.getExtras();
-            if (extras != null) {
-//                mAuthorizedUser = (AuthorizedUser) extras.get(getString(R.string.authorized_user));
-            }
-        }
-
         font = FontCache.getTypeface("Ubuntu-Medium.ttf", this);
 
         authorizedUser = LoopPrefs.getAuthorizedUser(this);
