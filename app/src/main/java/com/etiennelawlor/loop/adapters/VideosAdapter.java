@@ -179,7 +179,7 @@ public class VideosAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
 
         final VideoViewHolder holder = new VideoViewHolder(v);
 
-        holder.videoRowRootLinearLayout.setOnClickListener(new View.OnClickListener() {
+        holder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 int adapterPos = holder.getAdapterPosition();
@@ -369,8 +369,6 @@ public class VideosAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
         TextView durationTextView;
         @Bind(R.id.subtitle_tv)
         TextView subtitleTextView;
-        @Bind(R.id.video_row_root_ll)
-        LinearLayout videoRowRootLinearLayout;
         // endregion
 
         // region Constructors

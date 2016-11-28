@@ -93,7 +93,6 @@ public class VideoCommentsFragment extends BaseFragment implements VideoComments
     private VideoCommentsAdapter videoCommentsAdapter;
     private VimeoService vimeoService;
     private Video video;
-    private CommentsCollection commentsCollection;
     private int currentPage = 1;
     private Long videoId = -1L;
     private boolean commentChangeMade = false;
@@ -176,9 +175,23 @@ public class VideoCommentsFragment extends BaseFragment implements VideoComments
 
             if (response != null) {
                 if (response.isSuccess()) {
-                    commentsCollection = response.body();
+                    CommentsCollection commentsCollection = response.body();
                     if (commentsCollection != null) {
-                        loadComments();
+                        List<Comment> comments = commentsCollection.getComments();
+                        if (comments != null && comments.size() > 0) {
+
+                            Collections.reverse(comments);
+                            videoCommentsAdapter.addAll(comments);
+                            recyclerView.scrollToPosition(videoCommentsAdapter.getItemCount() - 1);
+//
+//            mVideoCommentsAdapter.addAll(comments);
+
+                            if (comments.size() >= PAGE_SIZE) {
+//                            mVideoCommentsAdapter.addLoading();
+                            } else {
+                                isLastPage = true;
+                            }
+                        }
                     }
                 } else {
                     com.squareup.okhttp.Response rawResponse = response.raw();
@@ -251,7 +264,8 @@ public class VideoCommentsFragment extends BaseFragment implements VideoComments
             if (response != null) {
                 if (response.isSuccess()) {
                     Comment comment = response.body();
-                    videoCommentsAdapter.add(comment, videoCommentsAdapter.getItemCount()-1);
+                    videoCommentsAdapter.add(comment);
+                    recyclerView.scrollToPosition(videoCommentsAdapter.getItemCount()-1);
                 } else {
                     com.squareup.okhttp.Response rawResponse = response.raw();
                     if (rawResponse != null) {
@@ -458,7 +472,7 @@ public class VideoCommentsFragment extends BaseFragment implements VideoComments
 
         recyclerView.setItemAnimator(new SlideInUpAnimator());
 
-        LinearLayoutManager layoutManager = new LinearLayoutManager(getActivity());
+        LinearLayoutManager layoutManager = new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false);
         layoutManager.setStackFromEnd(true);
 //        layoutManager.setReverseLayout(true);
         recyclerView.setLayoutManager(layoutManager);
@@ -476,25 +490,43 @@ public class VideoCommentsFragment extends BaseFragment implements VideoComments
 
         recyclerView.setAdapter(videoCommentsAdapter);
 
-        recyclerView.smoothScrollToPosition(videoCommentsAdapter.getItemCount());
+        recyclerView.scrollToPosition(videoCommentsAdapter.getItemCount() - 1);
 
-        if (commentsCollection != null) {
-            loadComments();
-        } else {
-            long id = video.getId();
-            if (id != -1L) {
-                loadingImageView.setVisibility(View.VISIBLE);
+//        if (commentsCollection != null) {
+////            loadComments();
+//
+//            List<Comment> comments = commentsCollection.getComments();
+//            if (comments != null && comments.size() > 0) {
+//
+//                Collections.reverse(comments);
+//                videoCommentsAdapter.addAll(comments);
+//                recyclerView.scrollToPosition(videoCommentsAdapter.getItemCount() - 1);
+////
+////            mVideoCommentsAdapter.addAll(comments);
+//
+//                if (comments.size() >= PAGE_SIZE) {
+////                            mVideoCommentsAdapter.addLoading();
+//                } else {
+//                    isLastPage = true;
+//                }
+//            }
+//        } else {
+//
+//        }
 
-                videoId = id;
+        long id = video.getId();
+        if (id != -1L) {
+            loadingImageView.setVisibility(View.VISIBLE);
 
-                Call getCommentsCall = vimeoService.getComments(videoId,
-                        sortByValue,
-                        sortOrderValue,
-                        currentPage,
-                        PAGE_SIZE);
-                calls.add(getCommentsCall);
-                getCommentsCall.enqueue(getCommentsFirstFetchCallback);
-            }
+            videoId = id;
+
+            Call getCommentsCall = vimeoService.getComments(videoId,
+                    sortByValue,
+                    sortOrderValue,
+                    currentPage,
+                    PAGE_SIZE);
+            calls.add(getCommentsCall);
+            getCommentsCall.enqueue(getCommentsFirstFetchCallback);
         }
     }
 
@@ -581,22 +613,22 @@ public class VideoCommentsFragment extends BaseFragment implements VideoComments
         commentEditText.removeTextChangedListener(commentEditTextTextWatcher);
     }
 
-    private void loadComments() {
-        List<Comment> comments = commentsCollection.getComments();
-        if (comments != null && comments.size() > 0) {
-
-            Collections.reverse(comments);
-            videoCommentsAdapter.addAll(comments);
-            recyclerView.smoothScrollToPosition(videoCommentsAdapter.getItemCount());
+//    private void loadComments() {
+//        List<Comment> comments = commentsCollection.getComments();
+//        if (comments != null && comments.size() > 0) {
 //
-//            mVideoCommentsAdapter.addAll(comments);
-
-            if (comments.size() >= PAGE_SIZE) {
-//                            mVideoCommentsAdapter.addLoading();
-            } else {
-                isLastPage = true;
-            }
-        }
-    }
+//            Collections.reverse(comments);
+//            videoCommentsAdapter.addAll(comments);
+//            recyclerView.scrollToPosition(videoCommentsAdapter.getItemCount() - 1);
+////
+////            mVideoCommentsAdapter.addAll(comments);
+//
+//            if (comments.size() >= PAGE_SIZE) {
+////                            mVideoCommentsAdapter.addLoading();
+//            } else {
+//                isLastPage = true;
+//            }
+//        }
+//    }
     // endregion
 }

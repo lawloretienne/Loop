@@ -105,51 +105,6 @@ public class SuggestionsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
     }
 
     // region Helper Methods
-    private void add(String item) {
-        suggestions.add(item);
-        notifyItemInserted(suggestions.size()-1);
-    }
-
-    public void addAll(List<String> suggestions) {
-        for (String suggestion : suggestions) {
-            add(suggestion);
-        }
-    }
-
-    public void remove(String item) {
-        int position = suggestions.indexOf(item);
-        if (position > -1) {
-            suggestions.remove(position);
-            notifyItemRemoved(position);
-        }
-    }
-
-    public void clear() {
-        while (getItemCount() > 0) {
-            remove(getItem(0));
-        }
-    }
-
-    public boolean isEmpty() {
-        return getItemCount() == 0;
-    }
-
-    public String getItem(int position) {
-        return suggestions.get(position);
-    }
-
-    public void setOnItemClickListener(OnItemClickListener onItemClickListener) {
-        this.onItemClickListener = onItemClickListener;
-    }
-
-    public void setOnItemLongClickListener(OnItemLongClickListener onItemLongClickListener) {
-        this.onItemLongClickListener = onItemLongClickListener;
-    }
-
-    public void setOnSearchSuggestionCompleteClickListener(OnSearchSuggestionCompleteClickListener onSearchSuggestionCompleteClickListener) {
-        this.onSearchSuggestionCompleteClickListener = onSearchSuggestionCompleteClickListener;
-    }
-
     private RecyclerView.ViewHolder createSuggestionViewHolder(ViewGroup parent){
         View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.suggestion, parent, false);
 
@@ -202,6 +157,51 @@ public class SuggestionsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
         if (!TextUtils.isEmpty(suggestion)) {
             setUpSuggestion(holder.suggestionTextView, suggestion);
         }
+    }
+
+    private void add(String item) {
+        suggestions.add(item);
+        notifyItemInserted(suggestions.size()-1);
+    }
+
+    public void addAll(List<String> suggestions) {
+        for (String suggestion : suggestions) {
+            add(suggestion);
+        }
+    }
+
+    public void remove(String item) {
+        int position = suggestions.indexOf(item);
+        if (position > -1) {
+            suggestions.remove(position);
+            notifyItemRemoved(position);
+        }
+    }
+
+    public void clear() {
+        while (getItemCount() > 0) {
+            remove(getItem(0));
+        }
+    }
+
+    public boolean isEmpty() {
+        return getItemCount() == 0;
+    }
+
+    public String getItem(int position) {
+        return suggestions.get(position);
+    }
+
+    public void setOnItemClickListener(OnItemClickListener onItemClickListener) {
+        this.onItemClickListener = onItemClickListener;
+    }
+
+    public void setOnItemLongClickListener(OnItemLongClickListener onItemLongClickListener) {
+        this.onItemLongClickListener = onItemLongClickListener;
+    }
+
+    public void setOnSearchSuggestionCompleteClickListener(OnSearchSuggestionCompleteClickListener onSearchSuggestionCompleteClickListener) {
+        this.onSearchSuggestionCompleteClickListener = onSearchSuggestionCompleteClickListener;
     }
 
     private void setUpSuggestion(TextView tv, String suggestion){

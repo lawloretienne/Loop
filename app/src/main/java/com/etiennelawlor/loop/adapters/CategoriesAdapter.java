@@ -20,6 +20,7 @@ import java.util.List;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
+import timber.log.Timber;
 
 /**
  * Created by etiennelawlor on 5/23/15.
@@ -27,9 +28,16 @@ import butterknife.ButterKnife;
 
 public class CategoriesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
+    // region Constants
+    private static final int HEADER = 0;
+    private static final int ITEM = 1;
+    private static final int LOADING = 2;
+    // endregion
+
     // region Member Variables
     private List<Category> categories;
     private OnItemClickListener onItemClickListener;
+    private boolean isLoadingFooterAdded = false;
     // endregion
 
     // region Listeners
@@ -49,12 +57,38 @@ public class CategoriesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
 
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        return createCategoryViewHolder(parent);
+        RecyclerView.ViewHolder viewHolder = null;
+
+        switch (viewType) {
+            case HEADER:
+                break;
+            case ITEM:
+                viewHolder = createCategoryViewHolder(parent);
+                break;
+            case LOADING:
+                viewHolder = createLoadingViewHolder(parent);
+                break;
+            default:
+                Timber.e("[ERR] type is not supported!!! type is %d", viewType);
+                break;
+        }
+
+        return viewHolder;
     }
 
     @Override
     public void onBindViewHolder(RecyclerView.ViewHolder viewHolder, int position) {
-        bindCategoryViewHolder(viewHolder, position);
+        switch (getItemViewType(position)) {
+            case HEADER:
+                break;
+            case ITEM:
+                bindCategoryViewHolder(viewHolder, position);
+                break;
+            case LOADING:
+                bindLoadingViewHolder(viewHolder);
+            default:
+                break;
+        }
     }
 
     @Override
@@ -62,44 +96,13 @@ public class CategoriesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
         return categories.size();
     }
 
+    @Override
+    public int getItemViewType(int position) {
+//        return (position == mEvents.size()-1 && isLoadingFooterAdded) ? LOADING : ITEM;
+        return ITEM;
+    }
+
     // region Helper Methods
-    private void add(Category item) {
-        categories.add(item);
-        notifyItemInserted(categories.size());
-    }
-
-    public void addAll(List<Category> categories) {
-        for (Category category : categories) {
-            add(category);
-        }
-    }
-
-    public void remove(Category item) {
-        int position = categories.indexOf(item);
-        if (position > -1) {
-            categories.remove(position);
-            notifyItemRemoved(position);
-        }
-    }
-
-    public void clear() {
-        while (getItemCount() > 0) {
-            remove(getItem(0));
-        }
-    }
-
-    public boolean isEmpty() {
-        return getItemCount() == 0;
-    }
-
-    public Category getItem(int position) {
-        return categories.get(position);
-    }
-
-    public void setOnItemClickListener(OnItemClickListener onItemClickListener) {
-        this.onItemClickListener = onItemClickListener;
-    }
-
     private RecyclerView.ViewHolder createCategoryViewHolder(ViewGroup parent) {
         View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.category_card, parent, false);
 
@@ -120,6 +123,12 @@ public class CategoriesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
         return holder;
     }
 
+    private RecyclerView.ViewHolder createLoadingViewHolder(ViewGroup parent) {
+        View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.load_more, parent, false);
+
+        return new MoreViewHolder(v);
+    }
+
     private void bindCategoryViewHolder(RecyclerView.ViewHolder viewHolder, int position) {
         final CategoryViewHolder holder = (CategoryViewHolder) viewHolder;
 
@@ -128,6 +137,65 @@ public class CategoriesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
             setUpThumbnail(holder.videoThumbnailImageView, category);
             setUpTitle(holder.titleTextView, category);
         }
+    }
+
+    private void bindLoadingViewHolder(RecyclerView.ViewHolder viewHolder) {
+        MoreViewHolder holder = (MoreViewHolder) viewHolder;
+    }
+
+    private void add(Category item) {
+        categories.add(item);
+        notifyItemInserted(categories.size() - 1);
+    }
+
+    public void addAll(List<Category> categories) {
+        for (Category category : categories) {
+            add(category);
+        }
+    }
+
+    public void remove(Category item) {
+        int position = categories.indexOf(item);
+        if (position > -1) {
+            categories.remove(position);
+            notifyItemRemoved(position);
+        }
+    }
+
+    public void clear() {
+        isLoadingFooterAdded = false;
+        while (getItemCount() > 0) {
+            remove(getItem(0));
+        }
+    }
+
+    public boolean isEmpty() {
+        return getItemCount() == 0;
+    }
+
+    public void addLoading() {
+        isLoadingFooterAdded = true;
+        add(new Category());
+    }
+
+    public void removeLoading() {
+        isLoadingFooterAdded = false;
+
+        int position = categories.size() - 1;
+        Category item = getItem(position);
+
+        if (item != null) {
+            categories.remove(position);
+            notifyItemRemoved(position);
+        }
+    }
+
+    public Category getItem(int position) {
+        return categories.get(position);
+    }
+
+    public void setOnItemClickListener(OnItemClickListener onItemClickListener) {
+        this.onItemClickListener = onItemClickListener;
     }
 
     private void setUpThumbnail(DynamicHeightImageView iv, Category category){
@@ -179,6 +247,18 @@ public class CategoriesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
 
         // region Constructors
         public CategoryViewHolder(View view) {
+            super(view);
+            ButterKnife.bind(this, view);
+        }
+        // endregion
+    }
+
+    public static class MoreViewHolder extends RecyclerView.ViewHolder {
+        // region Views
+        // endregion
+
+        // region Constructors
+        public MoreViewHolder(View view) {
             super(view);
             ButterKnife.bind(this, view);
         }

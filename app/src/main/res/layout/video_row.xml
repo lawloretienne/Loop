@@ -3,7 +3,6 @@
     xmlns:tools="http://schemas.android.com/tools"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="horizontal"
-    android:id="@+id/video_row_root_ll"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:padding="16dp"

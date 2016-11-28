@@ -27,6 +27,14 @@ public class DateUtility {
             if (relativeTime.toString().equals("0 minutes ago")
                     || relativeTime.toString().equals("in 0 minutes")) {
                 relativeDate = "Just now";
+            } else if(relativeTime.toString().contains("sec.")){
+                if(relativeTime.toString().equals("0 sec. ago") || relativeTime.toString().equals("In 0 sec.")){
+                    relativeDate = "Just now";
+                } else {
+                    relativeDate = relativeTime.toString().replace("sec. ", "seconds ");
+                }
+            } else if(relativeTime.toString().contains("min.")){
+                relativeDate = relativeTime.toString().replace("min. ", "minutes ");
             } else if(relativeTime.toString().contains("hr. ")){
                 if(relativeTime.toString().equals("1 hr. ago")){
                     relativeDate = "1 hour ago";

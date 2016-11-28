@@ -162,92 +162,6 @@ public class RelatedVideosAdapter extends RecyclerView.Adapter<RecyclerView.View
     }
 
     // region Helper Methods
-    private void add(Video item) {
-        videos.add(item);
-        notifyItemInserted(getItemCount()-1);
-    }
-
-    public void addAll(List<Video> videos) {
-        for (Video video : videos) {
-            add(video);
-        }
-    }
-
-    public void remove(Video item) {
-        int position = videos.indexOf(item);
-        if (position > -1) {
-            videos.remove(position);
-            notifyItemRemoved(position);
-        }
-    }
-
-    public void clear() {
-        isLoadingFooterAdded = false;
-        while (getItemCount() > 0) {
-            remove(getItem(0));
-        }
-    }
-
-    public boolean isEmpty() {
-        return getItemCount() == 0;
-    }
-
-    public void addHeader(){
-        add(new Video());
-    }
-
-    public void addLoading(){
-        if(!isLoadingFooterAdded){
-            isLoadingFooterAdded = true;
-            add(new Video());
-        }
-    }
-
-    public void removeLoading() {
-        if(isLoadingFooterAdded){
-            isLoadingFooterAdded = false;
-
-            int itemCount = getItemCount();
-            if(itemCount > 0){
-                int position = itemCount - 1;
-                Video item = getItem(position);
-
-                if (item != null) {
-                    videos.remove(position);
-                    notifyItemRemoved(position);
-                }
-            }
-        }
-    }
-
-    public Video getItem(int position) {
-        if(position>=0)
-            return videos.get(position);
-        else
-            return null;
-    }
-
-    public void setOnItemClickListener(OnItemClickListener onItemClickListener) {
-        this.onItemClickListener = onItemClickListener;
-    }
-
-
-    public void setOnLikeClickListener(OnLikeClickListener onLikeClickListener) {
-        this.onLikeClickListener = onLikeClickListener;
-    }
-
-    public void setOnWatchLaterClickListener(OnWatchLaterClickListener onWatchLaterClickListener) {
-        this.onWatchLaterClickListener = onWatchLaterClickListener;
-    }
-
-    public void setOnCommentsClickListener(OnCommentsClickListener onCommentsClickListener) {
-        this.onCommentsClickListener = onCommentsClickListener;
-    }
-
-    public void setOnInfoClickListener(OnInfoClickListener onInfoClickListener) {
-        this.onInfoClickListener = onInfoClickListener;
-    }
-
     private RecyclerView.ViewHolder createHeaderViewHolder(ViewGroup parent){
         View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.video_info, parent, false);
         final HeaderViewHolder holder = new HeaderViewHolder(v);
@@ -301,7 +215,7 @@ public class RelatedVideosAdapter extends RecyclerView.Adapter<RecyclerView.View
         View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.video_row, parent, false);
         final VideoViewHolder holder = new VideoViewHolder(v);
 
-        holder.videoRowRootLinearLayout.setOnClickListener(new View.OnClickListener() {
+        holder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 int adapterPos = holder.getAdapterPosition();
@@ -355,6 +269,107 @@ public class RelatedVideosAdapter extends RecyclerView.Adapter<RecyclerView.View
         MoreViewHolder holder = (MoreViewHolder) viewHolder;
 
         holder.loadingImageView.setMaskOrientation(LoadingImageView.MaskOrientation.LeftToRight);
+    }
+
+    private void add(Video item) {
+        videos.add(item);
+        notifyItemInserted(getItemCount()-1);
+    }
+
+    public void addAll(List<Video> videos) {
+        for (Video video : videos) {
+            add(video);
+        }
+    }
+
+    public void remove(Video item) {
+        int position = videos.indexOf(item);
+        if (position > -1) {
+            videos.remove(position);
+            notifyItemRemoved(position);
+        }
+    }
+
+    public void clear() {
+        isLoadingFooterAdded = false;
+        while (getItemCount() > 0) {
+            remove(getItem(0));
+        }
+    }
+
+    public boolean isEmpty() {
+        return getItemCount() == 0;
+    }
+
+    public void addHeader(){
+        add(new Video());
+    }
+
+    public void addLoading(){
+//        if(!isLoadingFooterAdded){
+//            isLoadingFooterAdded = true;
+//            add(new Video());
+//        }
+
+        isLoadingFooterAdded = true;
+        add(new Video());
+    }
+
+    public void removeLoading() {
+//        if(isLoadingFooterAdded){
+//            isLoadingFooterAdded = false;
+//
+//            int itemCount = getItemCount();
+//            if(itemCount > 0){
+//                int position = itemCount - 1;
+//                Video item = getItem(position);
+//
+//                if (item != null) {
+//                    videos.remove(position);
+//                    notifyItemRemoved(position);
+//                }
+//            }
+//        }
+
+        isLoadingFooterAdded = false;
+
+        int position = videos.size() - 1;
+        Video item = getItem(position);
+
+        if (item != null) {
+            videos.remove(position);
+            notifyItemRemoved(position);
+        }
+    }
+
+    public Video getItem(int position) {
+//        if(position>=0)
+//            return videos.get(position);
+//        else
+//            return null;
+
+        return videos.get(position);
+    }
+
+    public void setOnItemClickListener(OnItemClickListener onItemClickListener) {
+        this.onItemClickListener = onItemClickListener;
+    }
+
+
+    public void setOnLikeClickListener(OnLikeClickListener onLikeClickListener) {
+        this.onLikeClickListener = onLikeClickListener;
+    }
+
+    public void setOnWatchLaterClickListener(OnWatchLaterClickListener onWatchLaterClickListener) {
+        this.onWatchLaterClickListener = onWatchLaterClickListener;
+    }
+
+    public void setOnCommentsClickListener(OnCommentsClickListener onCommentsClickListener) {
+        this.onCommentsClickListener = onCommentsClickListener;
+    }
+
+    public void setOnInfoClickListener(OnInfoClickListener onInfoClickListener) {
+        this.onInfoClickListener = onInfoClickListener;
     }
 
     private void setUpTitle(TextView tv, Video video) {
@@ -680,8 +695,6 @@ public class RelatedVideosAdapter extends RecyclerView.Adapter<RecyclerView.View
         TextView durationTextView;
         @Bind(R.id.subtitle_tv)
         TextView subtitleTextView;
-        @Bind(R.id.video_row_root_ll)
-        LinearLayout videoRowRootLinearLayout;
         // endregion
 
         // region Constructors

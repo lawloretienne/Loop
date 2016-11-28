@@ -106,14 +106,14 @@ public class VideoCommentsAdapter extends RecyclerView.Adapter<RecyclerView.View
     }
 
     // region Helper Methods
-    public void add(Comment item, int position) {
+    public void add(Comment item) {
         comments.add(item);
-        notifyItemInserted(position);
+        notifyItemInserted(comments.size() - 1);
     }
 
     public void addAll(List<Comment> comments) {
         for (Comment comment : comments) {
-            add(comment, getItemCount()-1);
+            add(comment);
         }
     }
 
