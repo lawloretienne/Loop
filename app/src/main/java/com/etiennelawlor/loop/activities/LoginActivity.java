@@ -38,6 +38,8 @@ public class LoginActivity extends AppCompatActivity {
     // endregion
 
     // region Member Variables
+    private VimeoService vimeoService;
+
     private WebViewClient webViewClient = new WebViewClient() {
         public boolean shouldOverrideUrlLoading(WebView view, String url) {
             Timber.d("LoginActivity : shouldOverrideUrlLoading() : url - "+url);
@@ -54,11 +56,6 @@ public class LoginActivity extends AppCompatActivity {
                     if (state.equals(getString(R.string.vimeo_state))) {
 //                        String code = uri.getQueryParameter("code");
 
-                        VimeoService vimeoService = ServiceGenerator.createService(
-                                VimeoService.class,
-                                VimeoService.BASE_URL,
-                                getString(R.string.client_id),
-                                getString(R.string.client_secret));
                         Call exchangeCodeCall = vimeoService.exchangeCode("authorization_code",
                                 code,
                                 getString(R.string.client_redirect_uri));
@@ -83,11 +80,6 @@ public class LoginActivity extends AppCompatActivity {
                 if (state.equals(getString(R.string.vimeo_state))) {
                     String code = uri.getQueryParameter("code");
 
-                    VimeoService vimeoService = ServiceGenerator.createService(
-                            VimeoService.class,
-                            VimeoService.BASE_URL,
-                            getString(R.string.client_id),
-                            getString(R.string.client_secret));
                     Call exchangeCodeCall = vimeoService.exchangeCode("authorization_code",
                             code,
                             getString(R.string.client_redirect_uri));
@@ -170,6 +162,12 @@ public class LoginActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
         ButterKnife.bind(this);
+
+        vimeoService = ServiceGenerator.createService(
+                VimeoService.class,
+                VimeoService.BASE_URL,
+                getString(R.string.client_id),
+                getString(R.string.client_secret));
 
         WebSettings webSettings = webView.getSettings();
         webSettings.setJavaScriptEnabled(true);
