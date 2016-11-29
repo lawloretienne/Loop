@@ -3,23 +3,25 @@
 
     <style name="Theme.Loop" parent="Base.Theme.Loop">
         <item name="android:windowDrawsSystemBarBackgrounds">true</item>
-        <item name="android:windowContentTransitions">true</item>
-        <item name="android:windowAllowReturnTransitionOverlap">false</item>
+        <!--<item name="android:windowContentTransitions">true</item>-->
+        <!--<item name="android:windowAllowReturnTransitionOverlap">false</item>-->
     </style>
 
     <style name="Theme.Loop.MainActivity" parent="@style/Theme.Loop">
-        <item name="android:statusBarColor">@android:color/transparent</item>
+        <!--<item name="android:statusBarColor">@android:color/transparent</item>-->
+        <item name="android:windowDrawsSystemBarBackgrounds">true</item>
+        <item name="android:statusBarColor">@color/five_percent_transparency_black</item>
     </style>
 
     <style name="Theme.Loop.VideoDetailsActivity" parent="Theme.Loop">
         <item name="android:windowDrawsSystemBarBackgrounds">true</item>
-        <item name="android:statusBarColor">@color/ten_percent_transparency_black</item>
+        <item name="android:statusBarColor">@color/five_percent_transparency_black</item>
         <item name="colorButtonNormal">@color/accent</item>
     </style>
 
     <style name="Theme.Loop.VideoPlayerActivity" parent="Theme.Loop">
         <item name="android:windowDrawsSystemBarBackgrounds">true</item>
-        <item name="android:statusBarColor">@color/ten_percent_transparency_black</item>
+        <item name="android:statusBarColor">@color/five_percent_transparency_black</item>
     </style>
 
 </resources>
