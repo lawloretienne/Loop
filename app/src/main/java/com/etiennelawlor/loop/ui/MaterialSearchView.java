@@ -13,6 +13,7 @@ import android.speech.RecognizerIntent;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.CardView;
+import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
 import android.util.AttributeSet;
@@ -388,10 +389,10 @@ public class MaterialSearchView extends FrameLayout implements
 
         dividerItemDecoration = new DividerItemDecoration(ContextCompat.getDrawable(getContext(), R.drawable.divider));
         recyclerView.addItemDecoration(dividerItemDecoration);
-//        mRecyclerView.setItemAnimator(new SlideInUpAnimator());
+//        recyclerView.setItemAnimator(new SlideInUpAnimator());
         recyclerView.setAdapter(suggestionsAdapter);
 
-        if (suggestionsAdapter.getItemCount() > 0) {
+        if (!(suggestionsAdapter.isEmpty())) {
             recyclerView.setVisibility(View.VISIBLE);
             dividerView.setVisibility(View.VISIBLE);
         } else {
@@ -447,7 +448,7 @@ public class MaterialSearchView extends FrameLayout implements
         suggestionsAdapter.clear();
         suggestionsAdapter.addAll(suggestions);
 
-        if (suggestionsAdapter.getItemCount() > 0) {
+        if (!(suggestionsAdapter.isEmpty())) {
             recyclerView.setVisibility(View.VISIBLE);
             dividerView.setVisibility(View.VISIBLE);
         } else {
@@ -461,17 +462,12 @@ public class MaterialSearchView extends FrameLayout implements
     public void enableFilter() {
         filterImageView.setOnClickListener(filterImageViewOnClickListener);
         filterImageView.setBackgroundDrawable(ContextCompat.getDrawable(getContext(), R.drawable.ripple));
-//        filterImageView.setColorFilter(ContextCompat.getColor(getContext(), R.color.active_icon));
-//        filterImageView.setImageTintList(ColorStateList.valueOf(ContextCompat.getColor(filterImageView.getContext(), R.color.active_icon)));
         filterImageView.setImageResource(R.drawable.ic_filter_list_active);
-
     }
 
     public void disableFilter() {
         filterImageView.setOnClickListener(null);
         filterImageView.setBackgroundDrawable(null);
-//        filterImageView.setColorFilter(ContextCompat.getColor(getContext(), R.color.inactive_icon));
-//        filterImageView.setImageTintList(ColorStateList.valueOf(ContextCompat.getColor(filterImageView.getContext(), R.color.inactive_icon)));
         filterImageView.setImageResource(R.drawable.ic_filter_list_inactive);
     }
 

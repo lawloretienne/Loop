@@ -74,8 +74,7 @@
                     android:background="@drawable/ripple"
                     android:padding="4dp"
                     android:contentDescription="@string/content_desc"
-                    app:srcCompat="@drawable/ic_mic"
-                    android:tint="@color/active_icon" />
+                    app:srcCompat="@drawable/ic_mic" />
 
                 <ImageView
                     android:id="@+id/clear_iv"
@@ -86,7 +85,6 @@
                     android:padding="4dp"
                     android:contentDescription="@string/content_desc"
                     app:srcCompat="@drawable/ic_clear"
-                    android:tint="@color/active_icon"
                     android:visibility="gone" />
 
             </FrameLayout>
@@ -101,7 +99,6 @@
                 android:padding="4dp"
                 android:contentDescription="@string/content_desc"
                 app:srcCompat="@drawable/ic_filter_list_active"
-                android:tint="@color/active_icon"
                 android:visibility="gone" />
 
         </LinearLayout>

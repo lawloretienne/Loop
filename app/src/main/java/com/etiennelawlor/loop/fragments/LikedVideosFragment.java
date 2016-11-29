@@ -172,9 +172,9 @@ public class LikedVideosFragment extends BaseFragment implements VideosAdapter.O
 
             if (videosAdapter.isEmpty()) {
                 emptyTextView.setText(getString(R.string.likes_empty_prompt));
-                Drawable drawable = ContextCompat.getDrawable(getActivity(), R.drawable.ic_likes_large);
-                DrawableCompat.setTint(drawable, ContextCompat.getColor(getActivity(), R.color.grey_500));
-                emptyTextView.setCompoundDrawablesWithIntrinsicBounds(null, drawable, null, null);
+//                Drawable drawable = ContextCompat.getDrawable(getActivity(), R.drawable.ic_likes_large);
+//                DrawableCompat.setTint(drawable, ContextCompat.getColor(getActivity(), R.color.grey_500));
+//                emptyTextView.setCompoundDrawablesWithIntrinsicBounds(null, drawable, null, null);
                 emptyView.setVisibility(View.VISIBLE);
             }
         }

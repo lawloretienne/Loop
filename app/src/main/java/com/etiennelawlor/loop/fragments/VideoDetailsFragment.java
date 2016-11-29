@@ -269,7 +269,7 @@ public class VideoDetailsFragment extends BaseFragment implements RelatedVideosA
 
                         relatedVideosAdapter.setIsLikeOn(true);
                         ImageView imageView = (ImageView) videosRecyclerView.getLayoutManager().findViewByPosition(0).findViewById(R.id.like_iv);
-                        imageView.setImageResource(R.drawable.ic_like_on);
+                        imageView.setImageResource(R.drawable.ic_likes_on);
                         break;
                     case 400:
                         // If the video is owned by the authenticated user
@@ -327,7 +327,7 @@ public class VideoDetailsFragment extends BaseFragment implements RelatedVideosA
 
                         relatedVideosAdapter.setIsLikeOn(false);
                         ImageView imageView = (ImageView) videosRecyclerView.getLayoutManager().findViewByPosition(0).findViewById(R.id.like_iv);
-                        imageView.setImageResource(R.drawable.ic_like_off);
+                        imageView.setImageResource(R.drawable.ic_likes_off);
                         break;
                     case 403:
                         // If the authenticated user is not allowed to like videos
@@ -730,10 +730,10 @@ public class VideoDetailsFragment extends BaseFragment implements RelatedVideosA
     public void onInfoClick(final ImageView imageView) {
         if(isInfoExpanded){
             isInfoExpanded = false;
-            imageView.setImageResource(R.drawable.ic_keyboard_arrow_down);
+            imageView.animate().rotation(0.0f).setDuration(300).start();
         } else {
             isInfoExpanded = true;
-            imageView.setImageResource(R.drawable.ic_keyboard_arrow_up);
+            imageView.animate().rotation(180.0f).setDuration(300).start();
         }
     }
     // endregion

@@ -413,7 +413,7 @@ public class RelatedVideosAdapter extends RecyclerView.Adapter<RecyclerView.View
                 if (likeInteraction != null) {
                     if (likeInteraction.getAdded()) {
                         setIsLikeOn(true);
-                        iv.setImageResource(R.drawable.ic_like_on);
+                        iv.setImageResource(R.drawable.ic_likes_on);
                     }
                 }
             }

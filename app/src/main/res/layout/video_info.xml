@@ -68,7 +68,7 @@
                 android:layout_height="wrap_content"
                 android:background="@drawable/ripple"
                 android:padding="4dp"
-                android:src="@drawable/ic_like_off" />
+                app:srcCompat="@drawable/ic_likes_off" />
 
             <ImageView
                 android:id="@+id/watch_later_iv"
@@ -77,7 +77,7 @@
                 android:layout_marginLeft="16dp"
                 android:background="@drawable/ripple"
                 android:padding="4dp"
-                android:src="@drawable/ic_watch_later_off" />
+                app:srcCompat="@drawable/ic_watch_later_off" />
 
             <ImageView
                 android:id="@+id/comments_iv"
@@ -86,8 +86,7 @@
                 android:layout_marginLeft="16dp"
                 android:background="@drawable/ripple"
                 android:padding="4dp"
-                app:srcCompat="@drawable/ic_comment"
-                android:tint="@color/active_icon" />
+                app:srcCompat="@drawable/ic_comment" />
 
         </LinearLayout>
 
@@ -100,7 +99,6 @@
             android:background="@drawable/ripple"
             android:padding="4dp"
             app:srcCompat="@drawable/ic_keyboard_arrow_down"
-            android:tint="@color/active_icon"
             android:visibility="gone"/>
 
     </FrameLayout>

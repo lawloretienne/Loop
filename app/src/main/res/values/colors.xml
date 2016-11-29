@@ -140,17 +140,14 @@
     <color name="inverse_disabled_text">#80FFFFFF</color>
 
     <!-- Dark icons on light backgrounds -->
-    <color name="active_icon">#8A000000</color>
-    <color name="inactive_icon">#61000000</color>
+    <color name="active_icon">#61000000</color>
+    <color name="inactive_icon">#33000000</color>
 
     <!-- White icons on dark backgrounds -->
     <color name="inverse_active_icon">#FFFFFFFF</color>
     <color name="inverse_inactive_icon">#80FFFFFF</color>
 
-    <color name="inactive_icon2">#33000000</color>
-
-
-
+    <!--<color name="inactive_icon2">#33000000</color>-->
 
 
 

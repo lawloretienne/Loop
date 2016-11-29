@@ -13,7 +13,7 @@
     <ImageView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        app:srcCompat="@drawable/ic_watch_later_large" />
+        app:srcCompat="@drawable/ic_likes_large" />
 
     <com.etiennelawlor.loop.ui.CustomFontTextView
         android:id="@+id/empty_tv"
