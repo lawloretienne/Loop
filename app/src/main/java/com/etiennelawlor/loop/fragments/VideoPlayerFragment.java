@@ -10,7 +10,9 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.LinearLayout;
 import android.widget.MediaController;
+import android.widget.TextView;
 import android.widget.VideoView;
 
 import com.etiennelawlor.loop.R;
@@ -37,6 +39,7 @@ import java.util.List;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
+import butterknife.OnClick;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -55,6 +58,10 @@ public class VideoPlayerFragment extends BaseFragment {
     VideoView videoView;
     @Bind(R.id.loading_iv)
     LoadingImageView loadingImageView;
+    @Bind(R.id.error_ll)
+    LinearLayout errorLinearLayout;
+    @Bind(R.id.error_tv)
+    TextView errorTextView;
     // endregion
 
     // region Member Variables
@@ -65,6 +72,18 @@ public class VideoPlayerFragment extends BaseFragment {
     private VideoSavedState videoSavedState;
     // endregion
 
+    // region Listeners
+    @OnClick(R.id.reload_btn)
+    public void onReloadButtonClicked() {
+        errorLinearLayout.setVisibility(View.GONE);
+        loadingImageView.setVisibility(View.VISIBLE);
+
+        Call getVideoConfigCall = vimeoPlayerService.getVideoConfig(videoId);
+        calls.add(getVideoConfigCall);
+        getVideoConfigCall.enqueue(getVideoConfigCallback);
+    }
+    // endregion
+
     // region Callbacks
     private Callback<VideoConfig> getVideoConfigCallback = new Callback<VideoConfig>() {
         @Override
@@ -72,8 +91,8 @@ public class VideoPlayerFragment extends BaseFragment {
             if (!response.isSuccessful()) {
                 int responseCode = response.code();
                 if(responseCode == 504) { // 504 Unsatisfiable Request (only-if-cached)
-//                    errorTextView.setText("Can't load data.\nCheck your network connection.");
-//                    errorLinearLayout.setVisibility(View.VISIBLE);
+                    errorTextView.setText("Can't load data.\nCheck your network connection.");
+                    errorLinearLayout.setVisibility(View.VISIBLE);
                 }
                 return;
             }
@@ -91,9 +110,11 @@ public class VideoPlayerFragment extends BaseFragment {
         public void onFailure(Call<VideoConfig> call, Throwable t) {
             NetworkLogUtility.logFailure(call, t);
 
+            loadingImageView.setVisibility(View.GONE);
+
             if(t instanceof ConnectException || t instanceof UnknownHostException){
-//                errorTextView.setText("Can't load data.\nCheck your network connection.");
-//                errorLinearLayout.setVisibility(View.VISIBLE);
+                errorTextView.setText("Can't load data.\nCheck your network connection.");
+                errorLinearLayout.setVisibility(View.VISIBLE);
             }
         }
     };
@@ -415,6 +436,7 @@ public class VideoPlayerFragment extends BaseFragment {
     }
 
     private void playVideo(String videoUrl, int currentPosition) {
+
         videoView.setVideoPath(videoUrl);
 
         videoView.requestFocus();

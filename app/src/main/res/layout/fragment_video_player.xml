@@ -20,4 +20,6 @@
 
     <include layout="@layout/loading_layout" />
 
+    <include layout="@layout/inverse_error_layout" />
+
 </FrameLayout>
