@@ -63,6 +63,7 @@
     <string name="leave_a_comment">Leave a comment here</string>
 
     <string name="check_your_network_connection">Can\'t load data. Check your network connection.</string>
+    <string name="no_available_categories">No available categories.</string>
 
 
 </resources>

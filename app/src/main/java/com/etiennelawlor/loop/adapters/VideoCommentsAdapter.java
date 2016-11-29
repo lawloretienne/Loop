@@ -39,7 +39,6 @@ public class VideoCommentsAdapter extends RecyclerView.Adapter<RecyclerView.View
 
     // region Member Variables
     private List<Comment> comments;
-    private Context context;
     private Typeface boldFont;
     private OnItemLongClickListener onItemLongClickListener;
     private Typeface italicFont;
@@ -53,7 +52,6 @@ public class VideoCommentsAdapter extends RecyclerView.Adapter<RecyclerView.View
 
     // region Constructors
     public VideoCommentsAdapter(Context context) {
-        this.context = context;
         comments = new ArrayList<>();
 
         boldFont = FontCache.getTypeface("Ubuntu-Bold.ttf", context);

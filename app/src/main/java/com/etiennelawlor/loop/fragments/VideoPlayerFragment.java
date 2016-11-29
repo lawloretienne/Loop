@@ -452,7 +452,7 @@ public class VideoPlayerFragment extends BaseFragment {
     }
 
     public void setVideoSavedState(VideoSavedState videoSavedState) {
-        videoSavedState = videoSavedState;
+        this.videoSavedState = videoSavedState;
     }
 
     public VideoSavedState getVideoSavedState() {

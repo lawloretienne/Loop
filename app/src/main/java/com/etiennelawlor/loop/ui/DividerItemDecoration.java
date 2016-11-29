@@ -49,7 +49,7 @@ public class DividerItemDecoration extends RecyclerView.ItemDecoration {
     }
 
     public DividerItemDecoration(Drawable divider) {
-        divider = divider;
+        this.divider = divider;
     }
 
     public DividerItemDecoration(Drawable divider, boolean showFirstDivider,

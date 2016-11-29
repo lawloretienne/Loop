@@ -20,7 +20,6 @@
             android:id="@+id/title_tv"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_alignParentLeft="true"
             android:layout_marginRight="72dp"
             android:ellipsize="end"
             android:maxLines="2"
@@ -76,7 +75,6 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="16dp"
-                android:layout_toRightOf="@id/like_iv"
                 android:background="@drawable/ripple"
                 android:padding="4dp"
                 android:src="@drawable/ic_watch_later_off" />
@@ -86,7 +84,6 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="16dp"
-                android:layout_toRightOf="@id/watch_later_iv"
                 android:background="@drawable/ripple"
                 android:padding="4dp"
                 app:srcCompat="@drawable/ic_comment"

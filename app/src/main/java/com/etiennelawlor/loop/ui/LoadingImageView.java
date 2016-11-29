@@ -40,6 +40,7 @@ public class LoadingImageView extends ImageView {
     private float scaleX,scaleY;
     private boolean autoStart = true;
     private long animDuration = 800;
+    private float[] f = new float[9];
     // endregion
 
     // region Constructors
@@ -61,9 +62,8 @@ public class LoadingImageView extends ImageView {
     @Override
     protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
         super.onMeasure(widthMeasureSpec, heightMeasureSpec);
-        float[] f = new float[9];
-        getImageMatrix().getValues(f);
 
+        getImageMatrix().getValues(f);
         scaleX = f[Matrix.MSCALE_X];
         scaleY = f[Matrix.MSCALE_Y];
     }
