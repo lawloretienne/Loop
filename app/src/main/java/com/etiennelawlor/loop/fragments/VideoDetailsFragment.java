@@ -35,6 +35,10 @@ import com.etiennelawlor.loop.activities.VideoPlayerActivity;
 import com.etiennelawlor.loop.adapters.RelatedVideosAdapter;
 import com.etiennelawlor.loop.analytics.Event;
 import com.etiennelawlor.loop.analytics.EventLogger;
+import com.etiennelawlor.loop.bus.RxBus;
+import com.etiennelawlor.loop.bus.events.LikeVideoClickedEvent;
+import com.etiennelawlor.loop.bus.events.SearchPerformedEvent;
+import com.etiennelawlor.loop.bus.events.WatchLaterClickedEvent;
 import com.etiennelawlor.loop.models.AccessToken;
 import com.etiennelawlor.loop.network.ServiceGenerator;
 import com.etiennelawlor.loop.network.VimeoService;
@@ -42,15 +46,10 @@ import com.etiennelawlor.loop.network.models.response.Pictures;
 import com.etiennelawlor.loop.network.models.response.Size;
 import com.etiennelawlor.loop.network.models.response.Video;
 import com.etiennelawlor.loop.network.models.response.VideosCollection;
-import com.etiennelawlor.loop.otto.BusProvider;
-import com.etiennelawlor.loop.otto.events.SearchPerformedEvent;
-import com.etiennelawlor.loop.otto.events.VideoLikedEvent;
-import com.etiennelawlor.loop.otto.events.WatchLaterEvent;
 import com.etiennelawlor.loop.prefs.LoopPrefs;
 import com.etiennelawlor.loop.utilities.FontCache;
 import com.etiennelawlor.loop.utilities.NetworkLogUtility;
 import com.etiennelawlor.loop.utilities.TrestleUtility;
-import com.squareup.otto.Subscribe;
 
 import java.net.ConnectException;
 import java.net.UnknownHostException;
@@ -65,6 +64,10 @@ import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
+import rx.Subscription;
+import rx.android.schedulers.AndroidSchedulers;
+import rx.functions.Action1;
+import rx.subscriptions.CompositeSubscription;
 import timber.log.Timber;
 
 /**
@@ -104,6 +107,7 @@ public class VideoDetailsFragment extends BaseFragment implements RelatedVideosA
     private boolean isLoading = false;
     private boolean isInfoExpanded = false;
     private Typeface font;
+    private CompositeSubscription compositeSubscription;
     // endregion
 
     // region Listeners
@@ -249,7 +253,7 @@ public class VideoDetailsFragment extends BaseFragment implements RelatedVideosA
                 switch (code) {
                     case 204:
                         // No Content
-                        BusProvider.getInstance().post(new VideoLikedEvent());
+                        RxBus.getInstance().send(new LikeVideoClickedEvent());
 
                         HashMap<String, Object> map = new HashMap<>();
                         map.put(EventMapKeys.NAME, video.getName());
@@ -305,7 +309,7 @@ public class VideoDetailsFragment extends BaseFragment implements RelatedVideosA
                 switch (code) {
                     case 204:
                         // No Content
-                        BusProvider.getInstance().post(new VideoLikedEvent());
+                        RxBus.getInstance().send(new LikeVideoClickedEvent());
 
                         HashMap<String, Object> map = new HashMap<>();
                         map.put(EventMapKeys.NAME, video.getName());
@@ -357,7 +361,7 @@ public class VideoDetailsFragment extends BaseFragment implements RelatedVideosA
                 switch (code) {
                     case 204:
                         // No Content
-                        BusProvider.getInstance().post(new WatchLaterEvent());
+                        RxBus.getInstance().send(new WatchLaterClickedEvent());
 
                         relatedVideosAdapter.setIsWatchLaterOn(true);
                         ImageView imageView = (ImageView) videosRecyclerView.getLayoutManager().findViewByPosition(0).findViewById(R.id.watch_later_iv);
@@ -404,7 +408,7 @@ public class VideoDetailsFragment extends BaseFragment implements RelatedVideosA
                 switch (code) {
                     case 204:
                         // No Content
-                        BusProvider.getInstance().post(new WatchLaterEvent());
+                        RxBus.getInstance().send(new WatchLaterClickedEvent());
 
                         relatedVideosAdapter.setIsWatchLaterOn(false);
                         ImageView imageView = (ImageView) videosRecyclerView.getLayoutManager().findViewByPosition(0).findViewById(R.id.watch_later_iv);
@@ -474,6 +478,7 @@ public class VideoDetailsFragment extends BaseFragment implements RelatedVideosA
         setHasOptionsMenu(true);
 
         font = FontCache.getTypeface("Ubuntu-Medium.ttf", getContext());
+        compositeSubscription = new CompositeSubscription();
     }
 
     @Override
@@ -498,6 +503,8 @@ public class VideoDetailsFragment extends BaseFragment implements RelatedVideosA
             actionBar.setDisplayHomeAsUpEnabled(true);
             actionBar.setTitle("");
         }
+
+        setUpRxBusSubscription();
 
         if (video != null) {
             setUpVideoThumbnail();
@@ -527,19 +534,6 @@ public class VideoDetailsFragment extends BaseFragment implements RelatedVideosA
                 findRelatedVideosCall.enqueue(getRelatedVideosFirstFetchCallback);
             }
         }
-
-    }
-
-    @Override
-    public void onResume() {
-        super.onResume();
-        BusProvider.getInstance().register(this);
-    }
-
-    @Override
-    public void onPause() {
-        super.onPause();
-        BusProvider.getInstance().unregister(this);
     }
 
     @Override
@@ -547,6 +541,12 @@ public class VideoDetailsFragment extends BaseFragment implements RelatedVideosA
         super.onDestroyView();
         removeListeners();
         ButterKnife.unbind(this);
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        compositeSubscription.unsubscribe();
     }
 
     // endregion
@@ -726,16 +726,6 @@ public class VideoDetailsFragment extends BaseFragment implements RelatedVideosA
     }
     // endregion
 
-    // region Otto Methods
-    @Subscribe
-    public void onSearchPerformed(SearchPerformedEvent event) {
-        String query = event.getQuery();
-        if (!TextUtils.isEmpty(query)) {
-            launchSearchActivity(query);
-        }
-    }
-    // endregion
-
     // region Helper Methods
 
     private void setUpVideoThumbnail() {
@@ -771,24 +761,40 @@ public class VideoDetailsFragment extends BaseFragment implements RelatedVideosA
     private void launchSearchActivity(String query) {
         Intent intent = new Intent(getContext(), SearchableActivity.class);
         intent.setAction(Intent.ACTION_SEARCH);
-//        intent.putExtra(SearchManager.QUERY, query);
         Bundle bundle = new Bundle();
         bundle.putString(SearchManager.QUERY, query);
         intent.putExtras(bundle);
         getContext().startActivity(intent);
     }
 
-//    private void showReloadSnackbar(String message) {
-//        Snackbar.make(getActivity().findViewById(android.R.id.content),
-//                message,
-//                Snackbar.LENGTH_INDEFINITE)
-//                .setAction("Reload", reloadOnClickListener)
-////                                .setActionTextColor(Color.RED)
-//                .show();
-//    }
-
     private void removeListeners() {
         videosRecyclerView.removeOnScrollListener(recyclerViewOnScrollListener);
+    }
+
+    private void setUpRxBusSubscription(){
+        Subscription rxBusSubscription = RxBus.getInstance().toObserverable()
+                .observeOn(AndroidSchedulers.mainThread()) // UI Thread
+                .subscribe(new Action1<Object>() {
+                    @Override
+                    public void call(Object event) {
+//                        if (event == null || !isResumed()) {
+//                            return;
+//                        }
+
+                        if (event == null) {
+                            return;
+                        }
+
+                        if(event instanceof SearchPerformedEvent) {
+                            String query = ((SearchPerformedEvent)event).getQuery();
+                            if (!TextUtils.isEmpty(query)) {
+                                launchSearchActivity(query);
+                            }
+                        }
+                    }
+                });
+
+        compositeSubscription.add(rxBusSubscription);
     }
     // endregion
 }

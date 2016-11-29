@@ -28,7 +28,6 @@ import com.etiennelawlor.loop.network.models.response.Request;
 import com.etiennelawlor.loop.network.models.response.VP6;
 import com.etiennelawlor.loop.network.models.response.VideoConfig;
 import com.etiennelawlor.loop.network.models.response.VideoFormat;
-import com.etiennelawlor.loop.otto.BusProvider;
 import com.etiennelawlor.loop.prefs.LoopPrefs;
 import com.etiennelawlor.loop.ui.LoadingImageView;
 import com.etiennelawlor.loop.utilities.NetworkLogUtility;
@@ -146,9 +145,6 @@ public class VideoPlayerFragment extends BaseFragment {
 
         // Retain this fragment across configuration changes.
         setRetainInstance(true);
-
-
-        BusProvider.getInstance().register(this);
 
         if(getArguments() != null){
             videoId = getArguments().getLong(VideoDetailsFragment.KEY_VIDEO_ID);

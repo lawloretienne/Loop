@@ -30,21 +30,20 @@ import com.etiennelawlor.loop.R;
 import com.etiennelawlor.loop.activities.SearchableActivity;
 import com.etiennelawlor.loop.activities.VideoDetailsActivity;
 import com.etiennelawlor.loop.adapters.VideosAdapter;
+import com.etiennelawlor.loop.bus.RxBus;
+import com.etiennelawlor.loop.bus.events.FilterClickedEvent;
+import com.etiennelawlor.loop.bus.events.SearchPerformedEvent;
+import com.etiennelawlor.loop.bus.events.ShowSearchSuggestionsEvent;
 import com.etiennelawlor.loop.models.AccessToken;
 import com.etiennelawlor.loop.network.ServiceGenerator;
 import com.etiennelawlor.loop.network.VimeoService;
 import com.etiennelawlor.loop.network.models.response.Video;
 import com.etiennelawlor.loop.network.models.response.VideosCollection;
-import com.etiennelawlor.loop.otto.BusProvider;
-import com.etiennelawlor.loop.otto.events.FilterClickedEvent;
-import com.etiennelawlor.loop.otto.events.SearchPerformedEvent;
-import com.etiennelawlor.loop.otto.events.ShowSearchSuggestionsEvent;
 import com.etiennelawlor.loop.prefs.LoopPrefs;
 import com.etiennelawlor.loop.realm.RealmUtility;
 import com.etiennelawlor.loop.ui.LoadingImageView;
 import com.etiennelawlor.loop.ui.MaterialSearchView;
 import com.etiennelawlor.loop.utilities.NetworkLogUtility;
-import com.squareup.otto.Subscribe;
 
 import java.net.ConnectException;
 import java.net.UnknownHostException;
@@ -58,6 +57,10 @@ import jp.wasabeef.recyclerview.animators.SlideInUpAnimator;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
+import rx.Subscription;
+import rx.android.schedulers.AndroidSchedulers;
+import rx.functions.Action1;
+import rx.subscriptions.CompositeSubscription;
 
 /**
  * Created by etiennelawlor on 5/23/15.
@@ -99,6 +102,7 @@ public class SearchableFragment extends BaseFragment implements VideosAdapter.On
     private String query;
     private LinearLayoutManager layoutManager;
     private VimeoService vimeoService;
+    private CompositeSubscription compositeSubscription;
     // endregion
 
     // region Listeners
@@ -280,6 +284,8 @@ public class SearchableFragment extends BaseFragment implements VideosAdapter.On
                 token);
 
         setHasOptionsMenu(true);
+
+        compositeSubscription = new CompositeSubscription();
     }
 
     @Override
@@ -302,6 +308,9 @@ public class SearchableFragment extends BaseFragment implements VideosAdapter.On
 //        ab.setTitle("");
 
         setupSearchView();
+
+        setUpRxBusSubscription();
+
 
 //        mSearchViewWidget.setQuery(mQuery, false);
 //
@@ -384,15 +393,7 @@ public class SearchableFragment extends BaseFragment implements VideosAdapter.On
     @Override
     public void onResume() {
         super.onResume();
-        BusProvider.getInstance().register(this);
-
         setupSearchView();
-    }
-
-    @Override
-    public void onPause() {
-        super.onPause();
-        BusProvider.getInstance().unregister(this);
     }
 
     @Override
@@ -400,6 +401,12 @@ public class SearchableFragment extends BaseFragment implements VideosAdapter.On
         super.onDestroyView();
         removeListeners();
         ButterKnife.unbind(this);
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        compositeSubscription.unsubscribe();
     }
     // endregion
 
@@ -496,28 +503,6 @@ public class SearchableFragment extends BaseFragment implements VideosAdapter.On
 
     // endregion
 
-    // region Otto Methods
-    @Subscribe
-    public void onFilterClicked(FilterClickedEvent event) {
-        showSortDialog();
-    }
-
-    @Subscribe
-    public void onSearchPerformed(SearchPerformedEvent event) {
-        String query = event.getQuery();
-        if (!TextUtils.isEmpty(query)) {
-            launchSearchActivity(query);
-        }
-    }
-
-    @Subscribe
-    public void onShowSearchSuggestions(ShowSearchSuggestionsEvent event) {
-        String query = event.getQuery();
-
-        materialSearchView.addSuggestions(RealmUtility.getSuggestions(query));
-    }
-    // endregion
-
     // region Helper Methods
     private void loadMoreItems() {
         isLoading = true;
@@ -609,6 +594,38 @@ public class SearchableFragment extends BaseFragment implements VideosAdapter.On
 
     private void removeListeners(){
         recyclerView.removeOnScrollListener(recyclerViewOnScrollListener);
+    }
+
+    private void setUpRxBusSubscription(){
+        Subscription rxBusSubscription = RxBus.getInstance().toObserverable()
+                .observeOn(AndroidSchedulers.mainThread()) // UI Thread
+                .subscribe(new Action1<Object>() {
+                    @Override
+                    public void call(Object event) {
+//                        if (event == null || !isResumed()) {
+//                            return;
+//                        }
+
+                        if (event == null) {
+                            return;
+                        }
+
+                        if(event instanceof FilterClickedEvent) {
+                            showSortDialog();
+                        } else if(event instanceof SearchPerformedEvent) {
+                            String query = ((SearchPerformedEvent)event).getQuery();
+                            if (!TextUtils.isEmpty(query)) {
+                                launchSearchActivity(query);
+                            }
+                        } else if(event instanceof ShowSearchSuggestionsEvent) {
+                            String query = ((ShowSearchSuggestionsEvent)event).getQuery();
+
+                            materialSearchView.addSuggestions(RealmUtility.getSuggestions(query));
+                        }
+                    }
+                });
+
+        compositeSubscription.add(rxBusSubscription);
     }
     // endregion
 }

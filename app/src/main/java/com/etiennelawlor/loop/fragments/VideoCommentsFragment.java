@@ -35,7 +35,6 @@ import com.etiennelawlor.loop.network.models.response.Comment;
 import com.etiennelawlor.loop.network.models.response.CommentsCollection;
 import com.etiennelawlor.loop.network.models.response.User;
 import com.etiennelawlor.loop.network.models.response.Video;
-import com.etiennelawlor.loop.otto.BusProvider;
 import com.etiennelawlor.loop.prefs.LoopPrefs;
 import com.etiennelawlor.loop.ui.LoadingImageView;
 import com.etiennelawlor.loop.utilities.DisplayUtility;
@@ -339,7 +338,6 @@ public class VideoCommentsFragment extends BaseFragment implements VideoComments
         // Retain this fragment across configuration changes.
         setRetainInstance(true);
 
-        BusProvider.getInstance().register(this);
         if (getArguments() != null) {
             video = (Video) getArguments().get(LikedVideosFragment.KEY_VIDEO);
         }
@@ -450,16 +448,12 @@ public class VideoCommentsFragment extends BaseFragment implements VideoComments
 
     @Override
     public void onDestroy() {
-        BusProvider.getInstance().unregister(this);
-
         if (commentChangeMade) {
             List<Comment> comments = new ArrayList<>();
             for (int i = videoCommentsAdapter.getItemCount() - 1; i >= 0; i--) {
                 Comment comment = videoCommentsAdapter.getItem(i);
                 comments.add(comment);
             }
-
-//            BusProvider.getInstance().post(new CommentChangeEvent(comments));
         }
 
         super.onDestroy();

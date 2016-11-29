@@ -7,19 +7,26 @@ import android.support.v7.app.AppCompatActivity;
 import android.view.MenuItem;
 
 import com.etiennelawlor.loop.R;
+import com.etiennelawlor.loop.bus.RxBus;
+import com.etiennelawlor.loop.bus.events.LeftDrawableClickedEvent;
 import com.etiennelawlor.loop.fragments.SearchableFragment;
-import com.etiennelawlor.loop.otto.BusProvider;
-import com.etiennelawlor.loop.otto.events.LeftDrawableClickedEvent;
 import com.google.android.gms.actions.SearchIntents;
-import com.squareup.otto.Subscribe;
 
 import butterknife.ButterKnife;
+import rx.Subscription;
+import rx.android.schedulers.AndroidSchedulers;
+import rx.functions.Action1;
+import rx.subscriptions.CompositeSubscription;
 import timber.log.Timber;
 
 /**
  * Created by etiennelawlor on 9/23/15.
  */
 public class SearchableActivity extends AppCompatActivity {
+
+    // region Member Variables
+    private CompositeSubscription compositeSubscription;
+    // endregion
 
     // region Lifecycle Methods
     @Override
@@ -45,13 +52,15 @@ public class SearchableActivity extends AppCompatActivity {
             }
         }
 
-        BusProvider.getInstance().register(this);
+        compositeSubscription = new CompositeSubscription();
+
+        setUpRxBusSubscription();
     }
 
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        BusProvider.getInstance().unregister(this);
+        compositeSubscription.unsubscribe();
     }
     // endregion
 
@@ -75,15 +84,28 @@ public class SearchableActivity extends AppCompatActivity {
         }
     }
 
-    // region Otto Methods
-    @Subscribe
-    public void onLeftDrawableClicked(LeftDrawableClickedEvent event) {
-        Timber.d("onLeftDrawableClickedEvent");
-        LeftDrawableClickedEvent.Type type = event.getType();
+    // region Helper Methods
+    private void setUpRxBusSubscription(){
+        Subscription rxBusSubscription = RxBus.getInstance().toObserverable()
+                .observeOn(AndroidSchedulers.mainThread()) // UI Thread
+                .subscribe(new Action1<Object>() {
+                    @Override
+                    public void call(Object event) {
+                        if (event == null) {
+                            return;
+                        }
 
-        if(type == LeftDrawableClickedEvent.Type.BACK)
-            finish();
+                        if(event instanceof LeftDrawableClickedEvent){
+                            LeftDrawableClickedEvent.Type type = ((LeftDrawableClickedEvent)event).getType();
+
+                            if(type == LeftDrawableClickedEvent.Type.BACK)
+                                finish();
 //            onBackPressed();
+                        }
+                    }
+                });
+
+        compositeSubscription.add(rxBusSubscription);
     }
     // endregion
 }

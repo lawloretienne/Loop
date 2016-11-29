@@ -9,7 +9,6 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.etiennelawlor.loop.R;
-import com.etiennelawlor.loop.otto.BusProvider;
 
 import butterknife.ButterKnife;
 
@@ -55,7 +54,6 @@ public class PlaceholderFragment extends BaseFragment {
         }
 
         setHasOptionsMenu(true);
-        BusProvider.getInstance().register(this);
     }
 
     @Override

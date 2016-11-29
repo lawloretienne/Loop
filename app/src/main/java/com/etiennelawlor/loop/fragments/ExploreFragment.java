@@ -21,7 +21,6 @@ import com.etiennelawlor.loop.network.ServiceGenerator;
 import com.etiennelawlor.loop.network.VimeoService;
 import com.etiennelawlor.loop.network.models.response.CategoriesCollection;
 import com.etiennelawlor.loop.network.models.response.Category;
-import com.etiennelawlor.loop.otto.BusProvider;
 import com.etiennelawlor.loop.prefs.LoopPrefs;
 import com.etiennelawlor.loop.ui.GridSpacesItemDecoration;
 import com.etiennelawlor.loop.ui.LoadingImageView;
@@ -149,8 +148,6 @@ public class ExploreFragment extends BaseFragment implements CategoriesAdapter.O
                 VimeoService.BASE_URL,
                 token);
 
-        BusProvider.getInstance().register(this);
-
         font = FontCache.getTypeface("Ubuntu-Medium.ttf", getContext());
     }
 
@@ -195,14 +192,6 @@ public class ExploreFragment extends BaseFragment implements CategoriesAdapter.O
     public void onDestroyView() {
         super.onDestroyView();
         ButterKnife.unbind(this);
-    }
-
-    @Override
-    public void onDestroy() {
-        super.onDestroy();
-
-        // Unregister Otto Bus
-        BusProvider.getInstance().unregister(this);
     }
     // endregion
 

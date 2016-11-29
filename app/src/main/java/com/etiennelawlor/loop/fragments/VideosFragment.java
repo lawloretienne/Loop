@@ -28,7 +28,6 @@ import com.etiennelawlor.loop.network.ServiceGenerator;
 import com.etiennelawlor.loop.network.VimeoService;
 import com.etiennelawlor.loop.network.models.response.Video;
 import com.etiennelawlor.loop.network.models.response.VideosCollection;
-import com.etiennelawlor.loop.otto.BusProvider;
 import com.etiennelawlor.loop.prefs.LoopPrefs;
 import com.etiennelawlor.loop.ui.LoadingImageView;
 import com.etiennelawlor.loop.utilities.NetworkLogUtility;
@@ -256,7 +255,6 @@ public class VideosFragment extends BaseFragment implements VideosAdapter.OnItem
                 token);
 
         setHasOptionsMenu(true);
-        BusProvider.getInstance().register(this);
     }
 
     @Override
@@ -306,14 +304,6 @@ public class VideosFragment extends BaseFragment implements VideosAdapter.OnItem
         removeListeners();
         currentPage = 1;
         ButterKnife.unbind(this);
-    }
-
-    @Override
-    public void onDestroy() {
-        super.onDestroy();
-
-        // Unregister Otto Bus
-        BusProvider.getInstance().unregister(this);
     }
     // endregion
 
@@ -480,15 +470,6 @@ public class VideosFragment extends BaseFragment implements VideosAdapter.OnItem
     public String getQuery() {
         return query;
     }
-
-//    private void showReloadSnackbar(String message){
-//        Snackbar.make(getActivity().findViewById(android.R.id.content),
-//                message,
-//                Snackbar.LENGTH_INDEFINITE)
-//                .setAction("Reload", reloadOnClickListener)
-////                                .setActionTextColor(Color.RED)
-//                .show();
-//    }
 
     private void removeListeners(){
         recyclerView.removeOnScrollListener(recyclerViewOnScrollListener);

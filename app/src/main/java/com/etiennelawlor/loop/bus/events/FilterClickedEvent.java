@@ -1,4 +1,4 @@
-package com.etiennelawlor.loop.otto.events;
+package com.etiennelawlor.loop.bus.events;
 
 /**
  * Created by etiennelawlor on 9/20/15.

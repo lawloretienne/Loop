@@ -1,22 +1,22 @@
-package com.etiennelawlor.loop.otto.events;
+package com.etiennelawlor.loop.bus.events;
 
 /**
  * Created by etiennelawlor on 9/20/15.
  */
 public class LeftDrawableClickedEvent {
 
-    private Type mType;
+    private Type type;
 
     public LeftDrawableClickedEvent(Type type){
-        mType = type;
+        this.type = type;
     }
 
     public Type getType() {
-        return mType;
+        return type;
     }
 
     public void setType(Type type) {
-        mType = type;
+        this.type = type;
     }
 
     public enum Type {

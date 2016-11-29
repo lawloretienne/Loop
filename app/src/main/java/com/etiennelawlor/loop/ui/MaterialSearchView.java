@@ -28,12 +28,12 @@ import android.widget.Toast;
 
 import com.etiennelawlor.loop.R;
 import com.etiennelawlor.loop.adapters.SuggestionsAdapter;
-import com.etiennelawlor.loop.otto.BusProvider;
-import com.etiennelawlor.loop.otto.events.FilterClickedEvent;
-import com.etiennelawlor.loop.otto.events.HideSearchSuggestionsEvent;
-import com.etiennelawlor.loop.otto.events.LeftDrawableClickedEvent;
-import com.etiennelawlor.loop.otto.events.SearchPerformedEvent;
-import com.etiennelawlor.loop.otto.events.ShowSearchSuggestionsEvent;
+import com.etiennelawlor.loop.bus.RxBus;
+import com.etiennelawlor.loop.bus.events.FilterClickedEvent;
+import com.etiennelawlor.loop.bus.events.HideSearchSuggestionsEvent;
+import com.etiennelawlor.loop.bus.events.LeftDrawableClickedEvent;
+import com.etiennelawlor.loop.bus.events.SearchPerformedEvent;
+import com.etiennelawlor.loop.bus.events.ShowSearchSuggestionsEvent;
 import com.etiennelawlor.loop.realm.RealmUtility;
 import com.etiennelawlor.loop.utilities.DisplayUtility;
 
@@ -146,7 +146,7 @@ public class MaterialSearchView extends FrameLayout implements
                     break;
             }
 
-            BusProvider.getInstance().post(new LeftDrawableClickedEvent(type));
+            RxBus.getInstance().send(new LeftDrawableClickedEvent(type));
         }
     }
 
@@ -167,7 +167,7 @@ public class MaterialSearchView extends FrameLayout implements
 
         if (isSearchEditTextFocused) {
             suggestionsAdapter.setCurrentQuery(text.toString());
-            BusProvider.getInstance().post(new ShowSearchSuggestionsEvent(text.toString()));
+            RxBus.getInstance().send(new ShowSearchSuggestionsEvent(text.toString()));
         }
 
         filterImageView.setVisibility(View.GONE);
@@ -195,7 +195,7 @@ public class MaterialSearchView extends FrameLayout implements
     private OnClickListener filterImageViewOnClickListener = new OnClickListener() {
         @Override
         public void onClick(View v) {
-            BusProvider.getInstance().post(new FilterClickedEvent());
+            RxBus.getInstance().send(new FilterClickedEvent());
         }
     };
     // endregion
@@ -238,7 +238,7 @@ public class MaterialSearchView extends FrameLayout implements
         String suggestion = suggestionTextView.getText().toString();
 
         hideSearchSuggestions();
-        BusProvider.getInstance().post(new SearchPerformedEvent(suggestion));
+        RxBus.getInstance().send(new SearchPerformedEvent(suggestion));
     }
     // endregion
 
@@ -255,7 +255,7 @@ public class MaterialSearchView extends FrameLayout implements
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 RealmUtility.deleteQuery(suggestion);
-                BusProvider.getInstance().post(new ShowSearchSuggestionsEvent(getQuery()));
+                RxBus.getInstance().send(new ShowSearchSuggestionsEvent(getQuery()));
                 dialog.dismiss();
             }
         });
@@ -325,7 +325,7 @@ public class MaterialSearchView extends FrameLayout implements
 
                 if (actionId == EditorInfo.IME_ACTION_SEARCH) {
                     hideSearchSuggestions();
-                    BusProvider.getInstance().post(new SearchPerformedEvent(getQuery()));
+                    RxBus.getInstance().send(new SearchPerformedEvent(getQuery()));
                     return true;
                 } else {
                     return false;
@@ -376,7 +376,7 @@ public class MaterialSearchView extends FrameLayout implements
     }
 
     private void showSearchSuggestions() {
-        BusProvider.getInstance().post(new ShowSearchSuggestionsEvent(getQuery()));
+        RxBus.getInstance().send(new ShowSearchSuggestionsEvent(getQuery()));
 
         suggestionsAdapter.setOnItemClickListener(this);
         suggestionsAdapter.setOnItemLongClickListener(this);
@@ -418,7 +418,7 @@ public class MaterialSearchView extends FrameLayout implements
         searchEditText.clearFocus();
         areSearchSuggestionsVisible = false;
 
-        BusProvider.getInstance().post(new HideSearchSuggestionsEvent());
+        RxBus.getInstance().send(new HideSearchSuggestionsEvent());
     }
 
     private boolean isVoiceAvailable() {

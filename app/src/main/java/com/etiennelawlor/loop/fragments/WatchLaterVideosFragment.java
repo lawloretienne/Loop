@@ -26,19 +26,18 @@ import android.widget.TextView;
 import com.etiennelawlor.loop.R;
 import com.etiennelawlor.loop.activities.VideoDetailsActivity;
 import com.etiennelawlor.loop.adapters.VideosAdapter;
+import com.etiennelawlor.loop.bus.RxBus;
+import com.etiennelawlor.loop.bus.events.WatchLaterClickedEvent;
 import com.etiennelawlor.loop.models.AccessToken;
 import com.etiennelawlor.loop.network.ServiceGenerator;
 import com.etiennelawlor.loop.network.VimeoService;
 import com.etiennelawlor.loop.network.models.response.Video;
 import com.etiennelawlor.loop.network.models.response.VideosCollection;
-import com.etiennelawlor.loop.otto.BusProvider;
-import com.etiennelawlor.loop.otto.events.WatchLaterEvent;
 import com.etiennelawlor.loop.prefs.LoopPrefs;
 import com.etiennelawlor.loop.ui.LoadingImageView;
 import com.etiennelawlor.loop.utilities.FontCache;
 import com.etiennelawlor.loop.utilities.NetworkLogUtility;
 import com.etiennelawlor.loop.utilities.TrestleUtility;
-import com.squareup.otto.Subscribe;
 
 import java.net.ConnectException;
 import java.net.UnknownHostException;
@@ -51,7 +50,10 @@ import jp.wasabeef.recyclerview.animators.SlideInUpAnimator;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
-import timber.log.Timber;
+import rx.Subscription;
+import rx.android.schedulers.AndroidSchedulers;
+import rx.functions.Action1;
+import rx.subscriptions.CompositeSubscription;
 
 /**
  * Created by etiennelawlor on 5/23/15.
@@ -91,8 +93,8 @@ public class WatchLaterVideosFragment extends BaseFragment implements VideosAdap
     private String query = "";
     private LinearLayoutManager layoutManager;
     private VimeoService vimeoService;
-    private WatchLaterEvent watchLaterEvent;
     private Typeface font;
+    private CompositeSubscription compositeSubscription;
     // endregion
 
     // region Listeners
@@ -259,9 +261,9 @@ public class WatchLaterVideosFragment extends BaseFragment implements VideosAdap
                 token);
 
         setHasOptionsMenu(true);
-        BusProvider.getInstance().register(this);
 
         font = FontCache.getTypeface("Ubuntu-Medium.ttf", getContext());
+        compositeSubscription = new CompositeSubscription();
     }
 
     @Override
@@ -286,6 +288,8 @@ public class WatchLaterVideosFragment extends BaseFragment implements VideosAdap
             ab.setTitle(TrestleUtility.getFormattedText(getString(R.string.watch_later), font));
         }
 
+        setUpRxBusSubscription();
+
         layoutManager = new LinearLayoutManager(getActivity());
         recyclerView.setLayoutManager(layoutManager);
         videosAdapter = new VideosAdapter();
@@ -308,16 +312,6 @@ public class WatchLaterVideosFragment extends BaseFragment implements VideosAdap
     }
 
     @Override
-    public void onResume() {
-        super.onResume();
-
-        if(watchLaterEvent != null){
-            refreshAdapter();
-            watchLaterEvent = null;
-        }
-    }
-
-    @Override
     public void onDestroyView() {
         super.onDestroyView();
         removeListeners();
@@ -328,8 +322,7 @@ public class WatchLaterVideosFragment extends BaseFragment implements VideosAdap
     public void onDestroy() {
         super.onDestroy();
 
-        // Unregister Otto Bus
-        BusProvider.getInstance().unregister(this);
+        compositeSubscription.unsubscribe();
     }
     // endregion
 
@@ -369,7 +362,7 @@ public class WatchLaterVideosFragment extends BaseFragment implements VideosAdap
             Intent intent = new Intent(getActivity(), VideoDetailsActivity.class);
 
             Bundle bundle = new Bundle();
-            bundle.putParcelable("video", video);
+            bundle.putParcelable(LikedVideosFragment.KEY_VIDEO, video);
             intent.putExtras(bundle);
 
             Pair<View, String> p1 = Pair.create(view.findViewById(R.id.video_thumbnail_iv), "videoTransition");
@@ -406,20 +399,6 @@ public class WatchLaterVideosFragment extends BaseFragment implements VideosAdap
         findWatchLaterVideosCall.enqueue(findVideosNextFetchCallback);
     }
 
-    // endregion
-
-    // region Otto Methods
-    @Subscribe
-    public void onWatchLater(WatchLaterEvent event) {
-        Timber.d("onWatchLaterEvent");
-
-        if (isResumed()) {
-            refreshAdapter();
-            watchLaterEvent = null;
-        } else {
-            watchLaterEvent = event;
-        }
-    }
     // endregion
 
     // region Helper Methods
@@ -513,6 +492,29 @@ public class WatchLaterVideosFragment extends BaseFragment implements VideosAdap
 
     private void removeListeners(){
         recyclerView.removeOnScrollListener(recyclerViewOnScrollListener);
+    }
+
+    private void setUpRxBusSubscription(){
+        Subscription rxBusSubscription = RxBus.getInstance().toObserverable()
+                .observeOn(AndroidSchedulers.mainThread()) // UI Thread
+                .subscribe(new Action1<Object>() {
+                    @Override
+                    public void call(Object event) {
+//                        if (event == null || !isResumed()) {
+//                            return;
+//                        }
+
+                        if (event == null) {
+                            return;
+                        }
+
+                        if(event instanceof WatchLaterClickedEvent) {
+                            refreshAdapter();
+                        }
+                    }
+                });
+
+        compositeSubscription.add(rxBusSubscription);
     }
     // endregion
 }

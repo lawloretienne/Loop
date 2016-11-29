@@ -22,20 +22,23 @@ import android.widget.TextView;
 
 import com.etiennelawlor.loop.R;
 import com.etiennelawlor.loop.activities.SearchableActivity;
-import com.etiennelawlor.loop.otto.BusProvider;
-import com.etiennelawlor.loop.otto.events.HideSearchSuggestionsEvent;
-import com.etiennelawlor.loop.otto.events.SearchPerformedEvent;
-import com.etiennelawlor.loop.otto.events.ShowSearchSuggestionsEvent;
+import com.etiennelawlor.loop.bus.RxBus;
+import com.etiennelawlor.loop.bus.events.HideSearchSuggestionsEvent;
+import com.etiennelawlor.loop.bus.events.SearchPerformedEvent;
+import com.etiennelawlor.loop.bus.events.ShowSearchSuggestionsEvent;
 import com.etiennelawlor.loop.realm.RealmUtility;
 import com.etiennelawlor.loop.ui.MaterialSearchView;
 import com.etiennelawlor.loop.utilities.FontCache;
-import com.squareup.otto.Subscribe;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
+import rx.Subscription;
+import rx.android.schedulers.AndroidSchedulers;
+import rx.functions.Action1;
+import rx.subscriptions.CompositeSubscription;
 
 
 /**
@@ -58,6 +61,7 @@ public class WatchNowFragment extends BaseFragment {
 
     // region Member Variables
     private Typeface font;
+    private CompositeSubscription compositeSubscription;
     // endregion
 
     // region Callbacks
@@ -93,6 +97,7 @@ public class WatchNowFragment extends BaseFragment {
         setHasOptionsMenu(true);
 
         font = FontCache.getTypeface("Ubuntu-Medium.ttf", getContext());
+        compositeSubscription = new CompositeSubscription();
     }
 
     @Override
@@ -126,24 +131,20 @@ public class WatchNowFragment extends BaseFragment {
         tabLayout.setTabMode(TabLayout.MODE_SCROLLABLE);
 
         updateTabLayout();
-    }
 
-    @Override
-    public void onResume() {
-        super.onResume();
-        BusProvider.getInstance().register(this);
-    }
-
-    @Override
-    public void onPause() {
-        super.onPause();
-        BusProvider.getInstance().unregister(this);
+        setUpRxBusSubscription();
     }
 
     @Override
     public void onDestroyView() {
         super.onDestroyView();
         ButterKnife.unbind(this);
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        compositeSubscription.unsubscribe();
     }
     // endregion
 
@@ -167,29 +168,6 @@ public class WatchNowFragment extends BaseFragment {
     public boolean onOptionsItemSelected(MenuItem item) {
         return super.onOptionsItemSelected(item);
     }
-
-    // region Otto Methods
-    @Subscribe
-    public void onSearchPerformed(SearchPerformedEvent event) {
-        String query = event.getQuery();
-        if (!TextUtils.isEmpty(query)) {
-            materialSearchView.setQuery("");
-            launchSearchActivity(query);
-        }
-    }
-
-    @Subscribe
-    public void onShowSearchSuggestions(ShowSearchSuggestionsEvent event) {
-        String query = event.getQuery();
-
-        materialSearchView.addSuggestions(RealmUtility.getSuggestions(query));
-    }
-
-    @Subscribe
-    public void onHideSearchSuggestions(HideSearchSuggestionsEvent event) {
-//        showFAB();
-    }
-    // endregion
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -255,6 +233,39 @@ public class WatchNowFragment extends BaseFragment {
                 }
             }
         }
+    }
+
+    private void setUpRxBusSubscription(){
+        Subscription rxBusSubscription = RxBus.getInstance().toObserverable()
+                .observeOn(AndroidSchedulers.mainThread()) // UI Thread
+                .subscribe(new Action1<Object>() {
+                    @Override
+                    public void call(Object event) {
+//                        if (event == null || !isResumed()) {
+//                            return;
+//                        }
+
+                        if (event == null || !isResumed()) {
+                            return;
+                        }
+
+                        if(event instanceof SearchPerformedEvent) {
+                            String query = ((SearchPerformedEvent)event).getQuery();
+                            if (!TextUtils.isEmpty(query)) {
+                                materialSearchView.setQuery("");
+                                launchSearchActivity(query);
+                            }
+                        } else if(event instanceof ShowSearchSuggestionsEvent) {
+                            String query = ((ShowSearchSuggestionsEvent)event).getQuery();
+
+                            materialSearchView.addSuggestions(RealmUtility.getSuggestions(query));
+                        } else if(event instanceof HideSearchSuggestionsEvent) {
+//                            showFAB();
+                        }
+                    }
+                });
+
+        compositeSubscription.add(rxBusSubscription);
     }
     // endregion
 

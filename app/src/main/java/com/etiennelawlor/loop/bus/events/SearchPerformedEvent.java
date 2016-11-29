@@ -1,4 +1,4 @@
-package com.etiennelawlor.loop.otto.events;
+package com.etiennelawlor.loop.bus.events;
 
 /**
  * Created by etiennelawlor on 9/20/15.
@@ -6,20 +6,20 @@ package com.etiennelawlor.loop.otto.events;
 public class SearchPerformedEvent {
 
     // region Member Variables
-    private String mQuery;
+    private String query;
     // endregion
 
     // region Constructors
     public SearchPerformedEvent(String query){
-        mQuery = query;
+        this.query = query;
     }
     // endregion
 
     public String getQuery() {
-        return mQuery;
+        return query;
     }
 
     public void setQuery(String query) {
-        mQuery = query;
+        this.query = query;
     }
 }

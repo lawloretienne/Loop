@@ -15,6 +15,8 @@ import android.widget.TextView;
 import com.bumptech.glide.Glide;
 import com.etiennelawlor.loop.LoopApplication;
 import com.etiennelawlor.loop.R;
+import com.etiennelawlor.loop.bus.RxBus;
+import com.etiennelawlor.loop.bus.events.SearchPerformedEvent;
 import com.etiennelawlor.loop.network.models.response.Interaction;
 import com.etiennelawlor.loop.network.models.response.Interactions;
 import com.etiennelawlor.loop.network.models.response.Metadata;
@@ -24,8 +26,6 @@ import com.etiennelawlor.loop.network.models.response.Stats;
 import com.etiennelawlor.loop.network.models.response.Tag;
 import com.etiennelawlor.loop.network.models.response.User;
 import com.etiennelawlor.loop.network.models.response.Video;
-import com.etiennelawlor.loop.otto.BusProvider;
-import com.etiennelawlor.loop.otto.events.SearchPerformedEvent;
 import com.etiennelawlor.loop.ui.AvatarView;
 import com.etiennelawlor.loop.ui.LoadingImageView;
 import com.etiennelawlor.loop.utilities.DateUtility;
@@ -628,7 +628,8 @@ public class RelatedVideosAdapter extends RecyclerView.Adapter<RecyclerView.View
                         String tag = (String) item;
                         Timber.d("setUpTags() : tag - " + tag);
 
-                        BusProvider.getInstance().post(new SearchPerformedEvent(tag));
+                        // TODO this triggers two events somehow
+                        RxBus.getInstance().send(new SearchPerformedEvent(tag));
                     }
                 });
                 htv.setVisibility(View.VISIBLE);

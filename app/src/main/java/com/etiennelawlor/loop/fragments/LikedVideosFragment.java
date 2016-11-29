@@ -29,19 +29,18 @@ import android.widget.TextView;
 import com.etiennelawlor.loop.R;
 import com.etiennelawlor.loop.activities.VideoDetailsActivity;
 import com.etiennelawlor.loop.adapters.VideosAdapter;
+import com.etiennelawlor.loop.bus.RxBus;
+import com.etiennelawlor.loop.bus.events.LikeVideoClickedEvent;
 import com.etiennelawlor.loop.models.AccessToken;
 import com.etiennelawlor.loop.network.ServiceGenerator;
 import com.etiennelawlor.loop.network.VimeoService;
 import com.etiennelawlor.loop.network.models.response.Video;
 import com.etiennelawlor.loop.network.models.response.VideosCollection;
-import com.etiennelawlor.loop.otto.BusProvider;
-import com.etiennelawlor.loop.otto.events.VideoLikedEvent;
 import com.etiennelawlor.loop.prefs.LoopPrefs;
 import com.etiennelawlor.loop.ui.LoadingImageView;
 import com.etiennelawlor.loop.utilities.FontCache;
 import com.etiennelawlor.loop.utilities.NetworkLogUtility;
 import com.etiennelawlor.loop.utilities.TrestleUtility;
-import com.squareup.otto.Subscribe;
 
 import java.net.ConnectException;
 import java.net.UnknownHostException;
@@ -54,7 +53,10 @@ import jp.wasabeef.recyclerview.animators.SlideInUpAnimator;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
-import timber.log.Timber;
+import rx.Subscription;
+import rx.android.schedulers.AndroidSchedulers;
+import rx.functions.Action1;
+import rx.subscriptions.CompositeSubscription;
 
 /**
  * Created by etiennelawlor on 5/23/15.
@@ -97,8 +99,8 @@ public class LikedVideosFragment extends BaseFragment implements VideosAdapter.O
     private String query;
     private LinearLayoutManager layoutManager;
     private VimeoService vimeoService;
-    private VideoLikedEvent videoLikedEvent;
     private Typeface font;
+    private CompositeSubscription compositeSubscription;
     // endregion
 
     // region Listeners
@@ -269,9 +271,10 @@ public class LikedVideosFragment extends BaseFragment implements VideosAdapter.O
                 token);
 
         setHasOptionsMenu(true);
-        BusProvider.getInstance().register(this);
 
         font = FontCache.getTypeface("Ubuntu-Medium.ttf", getContext());
+
+        compositeSubscription = new CompositeSubscription();
     }
 
     @Override
@@ -296,6 +299,8 @@ public class LikedVideosFragment extends BaseFragment implements VideosAdapter.O
             ab.setTitle(TrestleUtility.getFormattedText(getString(R.string.likes), font));
         }
 
+        setUpRxBusSubscription();
+
         layoutManager = new LinearLayoutManager(getActivity());
         recyclerView.setLayoutManager(layoutManager);
         videosAdapter = new VideosAdapter();
@@ -318,16 +323,6 @@ public class LikedVideosFragment extends BaseFragment implements VideosAdapter.O
     }
 
     @Override
-    public void onResume() {
-        super.onResume();
-
-        if(videoLikedEvent != null){
-            refreshAdapter();
-            videoLikedEvent = null;
-        }
-    }
-
-    @Override
     public void onDestroyView() {
         super.onDestroyView();
         removeListeners();
@@ -338,8 +333,7 @@ public class LikedVideosFragment extends BaseFragment implements VideosAdapter.O
     public void onDestroy() {
         super.onDestroy();
 
-        // Unregister Otto Bus
-        BusProvider.getInstance().unregister(this);
+        compositeSubscription.unsubscribe();
     }
     // endregion
 
@@ -430,20 +424,6 @@ public class LikedVideosFragment extends BaseFragment implements VideosAdapter.O
         findLikedVideosCall.enqueue(findVideosNextFetchCallback);
     }
 
-    // endregion
-
-    // region Otto Methods
-    @Subscribe
-    public void onVideoLikedEvent(VideoLikedEvent event) {
-        Timber.d("onVideoLikedEvent");
-
-        if (isResumed()) {
-            refreshAdapter();
-            videoLikedEvent = null;
-        } else {
-            videoLikedEvent = event;
-        }
-    }
     // endregion
 
     // region Helper Methods
@@ -537,6 +517,29 @@ public class LikedVideosFragment extends BaseFragment implements VideosAdapter.O
 
     private void removeListeners(){
         recyclerView.removeOnScrollListener(recyclerViewOnScrollListener);
+    }
+
+    private void setUpRxBusSubscription(){
+        Subscription rxBusSubscription = RxBus.getInstance().toObserverable()
+                .observeOn(AndroidSchedulers.mainThread()) // UI Thread
+                .subscribe(new Action1<Object>() {
+                    @Override
+                    public void call(Object event) {
+//                        if (event == null || !isResumed()) {
+//                            return;
+//                        }
+
+                        if (event == null) {
+                            return;
+                        }
+
+                        if(event instanceof LikeVideoClickedEvent) {
+                            refreshAdapter();
+                        }
+                    }
+                });
+
+        compositeSubscription.add(rxBusSubscription);
     }
     // endregion
 }

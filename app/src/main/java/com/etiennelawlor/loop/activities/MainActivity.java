@@ -20,6 +20,8 @@ import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 import com.etiennelawlor.loop.R;
+import com.etiennelawlor.loop.bus.RxBus;
+import com.etiennelawlor.loop.bus.events.LeftDrawableClickedEvent;
 import com.etiennelawlor.loop.fragments.ExploreFragment;
 import com.etiennelawlor.loop.fragments.LikedVideosFragment;
 import com.etiennelawlor.loop.fragments.PlaceholderFragment;
@@ -27,19 +29,20 @@ import com.etiennelawlor.loop.fragments.WatchLaterVideosFragment;
 import com.etiennelawlor.loop.fragments.WatchNowFragment;
 import com.etiennelawlor.loop.network.models.response.AuthorizedUser;
 import com.etiennelawlor.loop.network.models.response.Picture;
-import com.etiennelawlor.loop.otto.BusProvider;
-import com.etiennelawlor.loop.otto.events.LeftDrawableClickedEvent;
 import com.etiennelawlor.loop.prefs.LoopPrefs;
 import com.etiennelawlor.loop.utilities.EmailUtility;
 import com.etiennelawlor.loop.utilities.FontCache;
 import com.etiennelawlor.loop.utilities.TrestleUtility;
-import com.squareup.otto.Subscribe;
 
 import java.util.List;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
 import de.hdodenhof.circleimageview.CircleImageView;
+import rx.Subscription;
+import rx.android.schedulers.AndroidSchedulers;
+import rx.functions.Action1;
+import rx.subscriptions.CompositeSubscription;
 import timber.log.Timber;
 
 
@@ -71,6 +74,7 @@ public class MainActivity extends AppCompatActivity {
     // region Member Variables
     private Typeface font;
     private AuthorizedUser authorizedUser;
+    private CompositeSubscription compositeSubscription;
     // endregion
 
     // region Listeners
@@ -178,7 +182,9 @@ public class MainActivity extends AppCompatActivity {
                 .replace(R.id.content_fl, WatchNowFragment.newInstance(), "")
                 .commit();
 
-        BusProvider.getInstance().register(this);
+        compositeSubscription = new CompositeSubscription();
+
+        setUpRxBusSubscription();
     }
 
     @Override
@@ -189,7 +195,7 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        BusProvider.getInstance().unregister(this);
+        compositeSubscription.unsubscribe();
     }
     // endregion
 
@@ -226,19 +232,6 @@ public class MainActivity extends AppCompatActivity {
             fragment.onActivityResult(requestCode, resultCode, data);
         }
     }
-
-    // region Otto Methods
-    @Subscribe
-    public void onLeftDrawableClicked(LeftDrawableClickedEvent event) {
-        Timber.d("onLeftDrawableClickedEvent");
-
-        LeftDrawableClickedEvent.Type type = event.getType();
-
-        if(type == LeftDrawableClickedEvent.Type.MENU)
-            drawerLayout.openDrawer(GravityCompat.START);
-
-    }
-    // endregion
 
     // region Helper Methods
     private void setUpAvatar(){
@@ -288,6 +281,28 @@ public class MainActivity extends AppCompatActivity {
 
     private void applyFontToMenuItem(MenuItem mi) {
         mi.setTitle(TrestleUtility.getFormattedText(mi.getTitle().toString(), font));
+    }
+
+    private void setUpRxBusSubscription(){
+        Subscription rxBusSubscription = RxBus.getInstance().toObserverable()
+                .observeOn(AndroidSchedulers.mainThread()) // UI Thread
+                .subscribe(new Action1<Object>() {
+                    @Override
+                    public void call(Object event) {
+                        if (event == null) {
+                            return;
+                        }
+
+                        if(event instanceof LeftDrawableClickedEvent){
+                            LeftDrawableClickedEvent.Type type = ((LeftDrawableClickedEvent)event).getType();
+
+                            if(type == LeftDrawableClickedEvent.Type.MENU)
+                                drawerLayout.openDrawer(GravityCompat.START);
+                        }
+                    }
+                });
+
+        compositeSubscription.add(rxBusSubscription);
     }
     // endregion
 }
