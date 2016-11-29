@@ -16,6 +16,7 @@ import com.etiennelawlor.loop.network.VimeoService;
 import com.etiennelawlor.loop.network.models.response.AuthorizedUser;
 import com.etiennelawlor.loop.network.models.response.OAuthResponse;
 import com.etiennelawlor.loop.prefs.LoopPrefs;
+import com.etiennelawlor.loop.utilities.NetworkLogUtility;
 
 import java.net.ConnectException;
 
@@ -151,9 +152,13 @@ public class LoginActivity extends AppCompatActivity {
 
         @Override
         public void onFailure(Call<OAuthResponse> call, Throwable t) {
-            if(t instanceof ConnectException){
+            NetworkLogUtility.logFailure(call, t);
+
+            if (!call.isCanceled()){
+                if(t instanceof ConnectException){
 //                errorTextView.setText("Can't load data.\nCheck your network connection.");
 //                errorLinearLayout.setVisibility(View.VISIBLE);
+                }
             }
         }
     };

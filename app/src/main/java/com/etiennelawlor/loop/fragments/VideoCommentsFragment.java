@@ -224,12 +224,14 @@ public class VideoCommentsFragment extends BaseFragment implements VideoComments
         public void onFailure(Call<CommentsCollection> call, Throwable t) {
             NetworkLogUtility.logFailure(call, t);
 
-            loadingImageView.setVisibility(View.GONE);
-            isLoading = false;
+            if (!call.isCanceled()){
+                loadingImageView.setVisibility(View.GONE);
+                isLoading = false;
 
-            if(t instanceof ConnectException || t instanceof UnknownHostException){
-                errorTextView.setText("Can't load data.\nCheck your network connection.");
-                errorLinearLayout.setVisibility(View.VISIBLE);
+                if(t instanceof ConnectException || t instanceof UnknownHostException){
+                    errorTextView.setText("Can't load data.\nCheck your network connection.");
+                    errorLinearLayout.setVisibility(View.VISIBLE);
+                }
             }
         }
     };
@@ -265,17 +267,19 @@ public class VideoCommentsFragment extends BaseFragment implements VideoComments
         public void onFailure(Call<Comment> call, Throwable t) {
             NetworkLogUtility.logFailure(call, t);
 
-            submitCommentFrameLayout.setBackgroundColor(ContextCompat.getColor(getContext(), R.color.primary));
-            submitCommentProgressBar.setVisibility(View.GONE);
-            submitCommentImageView.setVisibility(View.VISIBLE);
+            if (!call.isCanceled()){
+                submitCommentFrameLayout.setBackgroundColor(ContextCompat.getColor(getContext(), R.color.primary));
+                submitCommentProgressBar.setVisibility(View.GONE);
+                submitCommentImageView.setVisibility(View.VISIBLE);
 
-            DisplayUtility.hideKeyboard(getActivity(), commentEditText);
+                DisplayUtility.hideKeyboard(getActivity(), commentEditText);
 
-            if(t instanceof ConnectException || t instanceof UnknownHostException){
-                Snackbar.make(getActivity().findViewById(R.id.main_content),
-                        TrestleUtility.getFormattedText("Network connection is unavailable.", font, 16),
-                        Snackbar.LENGTH_LONG)
-                        .show();
+                if(t instanceof ConnectException || t instanceof UnknownHostException){
+                    Snackbar.make(getActivity().findViewById(R.id.main_content),
+                            TrestleUtility.getFormattedText("Network connection is unavailable.", font, 16),
+                            Snackbar.LENGTH_LONG)
+                            .show();
+                }
             }
         }
     };
@@ -303,11 +307,13 @@ public class VideoCommentsFragment extends BaseFragment implements VideoComments
         public void onFailure(Call<ResponseBody> call, Throwable t) {
             NetworkLogUtility.logFailure(call, t);
 
-            if(t instanceof ConnectException || t instanceof UnknownHostException){
-                Snackbar.make(getActivity().findViewById(R.id.main_content),
-                        TrestleUtility.getFormattedText("Network connection is unavailable.", font, 16),
-                        Snackbar.LENGTH_LONG)
-                        .show();
+            if (!call.isCanceled()){
+                if(t instanceof ConnectException || t instanceof UnknownHostException){
+                    Snackbar.make(getActivity().findViewById(R.id.main_content),
+                            TrestleUtility.getFormattedText("Network connection is unavailable.", font, 16),
+                            Snackbar.LENGTH_LONG)
+                            .show();
+                }
             }
         }
     };

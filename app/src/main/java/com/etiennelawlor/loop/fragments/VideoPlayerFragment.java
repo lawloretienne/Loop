@@ -109,11 +109,13 @@ public class VideoPlayerFragment extends BaseFragment {
         public void onFailure(Call<VideoConfig> call, Throwable t) {
             NetworkLogUtility.logFailure(call, t);
 
-            loadingImageView.setVisibility(View.GONE);
+            if (!call.isCanceled()){
+                loadingImageView.setVisibility(View.GONE);
 
-            if(t instanceof ConnectException || t instanceof UnknownHostException){
-                errorTextView.setText("Can't load data.\nCheck your network connection.");
-                errorLinearLayout.setVisibility(View.VISIBLE);
+                if(t instanceof ConnectException || t instanceof UnknownHostException){
+                    errorTextView.setText("Can't load data.\nCheck your network connection.");
+                    errorLinearLayout.setVisibility(View.VISIBLE);
+                }
             }
         }
     };

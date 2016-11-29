@@ -183,9 +183,11 @@ public class VideoDetailsFragment extends BaseFragment implements RelatedVideosA
         public void onFailure(Call<VideosCollection> call, Throwable t) {
             NetworkLogUtility.logFailure(call, t);
 
-            if(t instanceof ConnectException || t instanceof UnknownHostException){
+            if (!call.isCanceled()){
+                if(t instanceof ConnectException || t instanceof UnknownHostException){
 //                errorTextView.setText("Can't load data.\nCheck your network connection.");
 //                errorLinearLayout.setVisibility(View.VISIBLE);
+                }
             }
         }
     };
@@ -228,8 +230,10 @@ public class VideoDetailsFragment extends BaseFragment implements RelatedVideosA
         public void onFailure(Call<VideosCollection> call, Throwable t) {
             NetworkLogUtility.logFailure(call, t);
 
-            if(t instanceof ConnectException || t instanceof UnknownHostException){
-                relatedVideosAdapter.updateFooter(RelatedVideosAdapter.FooterType.ERROR);
+            if (!call.isCanceled()){
+                if(t instanceof ConnectException || t instanceof UnknownHostException){
+                    relatedVideosAdapter.updateFooter(RelatedVideosAdapter.FooterType.ERROR);
+                }
             }
         }
     };
@@ -281,11 +285,13 @@ public class VideoDetailsFragment extends BaseFragment implements RelatedVideosA
         public void onFailure(Call<ResponseBody> call, Throwable t) {
             NetworkLogUtility.logFailure(call, t);
 
-            if(t instanceof ConnectException || t instanceof UnknownHostException){
-                Snackbar.make(getActivity().findViewById(R.id.main_content),
-                        TrestleUtility.getFormattedText("Network connection is unavailable.", font, 16),
-                        Snackbar.LENGTH_LONG)
-                        .show();
+            if (!call.isCanceled()){
+                if(t instanceof ConnectException || t instanceof UnknownHostException){
+                    Snackbar.make(getActivity().findViewById(R.id.main_content),
+                            TrestleUtility.getFormattedText("Network connection is unavailable.", font, 16),
+                            Snackbar.LENGTH_LONG)
+                            .show();
+                }
             }
         }
     };
@@ -334,11 +340,13 @@ public class VideoDetailsFragment extends BaseFragment implements RelatedVideosA
         public void onFailure(Call<ResponseBody> call, Throwable t) {
             NetworkLogUtility.logFailure(call, t);
 
-            if(t instanceof ConnectException || t instanceof UnknownHostException){
-                Snackbar.make(getActivity().findViewById(R.id.main_content),
-                        TrestleUtility.getFormattedText("Network connection is unavailable.", font, 16),
-                        Snackbar.LENGTH_LONG)
-                        .show();
+            if (!call.isCanceled()){
+                if(t instanceof ConnectException || t instanceof UnknownHostException){
+                    Snackbar.make(getActivity().findViewById(R.id.main_content),
+                            TrestleUtility.getFormattedText("Network connection is unavailable.", font, 16),
+                            Snackbar.LENGTH_LONG)
+                            .show();
+                }
             }
         }
     };
@@ -381,11 +389,13 @@ public class VideoDetailsFragment extends BaseFragment implements RelatedVideosA
         public void onFailure(Call<ResponseBody> call, Throwable t) {
             NetworkLogUtility.logFailure(call, t);
 
-            if(t instanceof ConnectException || t instanceof UnknownHostException){
-                Snackbar.make(getActivity().findViewById(R.id.main_content),
-                        TrestleUtility.getFormattedText("Network connection is unavailable.", font, 16),
-                        Snackbar.LENGTH_LONG)
-                        .show();
+            if (!call.isCanceled()){
+                if(t instanceof ConnectException || t instanceof UnknownHostException){
+                    Snackbar.make(getActivity().findViewById(R.id.main_content),
+                            TrestleUtility.getFormattedText("Network connection is unavailable.", font, 16),
+                            Snackbar.LENGTH_LONG)
+                            .show();
+                }
             }
         }
     };
@@ -425,11 +435,13 @@ public class VideoDetailsFragment extends BaseFragment implements RelatedVideosA
         public void onFailure(Call<ResponseBody> call, Throwable t) {
             NetworkLogUtility.logFailure(call, t);
 
-            if(t instanceof ConnectException || t instanceof UnknownHostException){
-                Snackbar.make(getActivity().findViewById(R.id.main_content),
-                        TrestleUtility.getFormattedText("Network connection is unavailable.", font, 16),
-                        Snackbar.LENGTH_LONG)
-                        .show();
+            if (!call.isCanceled()){
+                if(t instanceof ConnectException || t instanceof UnknownHostException){
+                    Snackbar.make(getActivity().findViewById(R.id.main_content),
+                            TrestleUtility.getFormattedText("Network connection is unavailable.", font, 16),
+                            Snackbar.LENGTH_LONG)
+                            .show();
+                }
             }
         }
     };

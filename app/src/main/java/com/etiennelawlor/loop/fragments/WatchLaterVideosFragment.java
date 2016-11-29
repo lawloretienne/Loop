@@ -177,12 +177,14 @@ public class WatchLaterVideosFragment extends BaseFragment implements VideosAdap
         public void onFailure(Call<VideosCollection> call, Throwable t) {
             NetworkLogUtility.logFailure(call, t);
 
-            isLoading = false;
-            loadingImageView.setVisibility(View.GONE);
+            if (!call.isCanceled()){
+                isLoading = false;
+                loadingImageView.setVisibility(View.GONE);
 
-            if(t instanceof ConnectException || t instanceof UnknownHostException){
-                errorTextView.setText("Can't load data.\nCheck your network connection.");
-                errorLinearLayout.setVisibility(View.VISIBLE);
+                if(t instanceof ConnectException || t instanceof UnknownHostException){
+                    errorTextView.setText("Can't load data.\nCheck your network connection.");
+                    errorLinearLayout.setVisibility(View.VISIBLE);
+                }
             }
         }
     };
@@ -224,8 +226,10 @@ public class WatchLaterVideosFragment extends BaseFragment implements VideosAdap
         public void onFailure(Call<VideosCollection> call, Throwable t) {
             NetworkLogUtility.logFailure(call, t);
 
-            if(t instanceof ConnectException || t instanceof UnknownHostException){
-                videosAdapter.updateFooter(VideosAdapter.FooterType.ERROR);
+            if (!call.isCanceled()){
+                if(t instanceof ConnectException || t instanceof UnknownHostException){
+                    videosAdapter.updateFooter(VideosAdapter.FooterType.ERROR);
+                }
             }
         }
     };

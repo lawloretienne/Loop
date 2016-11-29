@@ -106,14 +106,16 @@ public class ExploreFragment extends BaseFragment implements CategoriesAdapter.O
         public void onFailure(Call<CategoriesCollection> call, Throwable t) {
             NetworkLogUtility.logFailure(call, t);
 
-            loadingImageView.setVisibility(View.GONE);
+            if (!call.isCanceled()){
+                loadingImageView.setVisibility(View.GONE);
 
 //            t instanceof SocketTimeoutException
 //            t instanceof IOException
 
-            if(t instanceof ConnectException || t instanceof UnknownHostException){
-                errorTextView.setText("Can't load data.\nCheck your network connection.");
-                errorLinearLayout.setVisibility(View.VISIBLE);
+                if(t instanceof ConnectException || t instanceof UnknownHostException){
+                    errorTextView.setText("Can't load data.\nCheck your network connection.");
+                    errorLinearLayout.setVisibility(View.VISIBLE);
+                }
             }
         }
     };
