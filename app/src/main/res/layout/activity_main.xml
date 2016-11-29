@@ -21,6 +21,9 @@
         android:layout_width="wrap_content"
         android:layout_gravity="start"
         android:fitsSystemWindows="true"
+        app:itemBackground="@drawable/drawer_list_activated_bg"
+        app:itemIconTint="@color/state_list"
+        app:itemTextColor="@color/state_list"
         app:menu="@menu/drawer_view"/>
 
 </android.support.v4.widget.DrawerLayout>
