@@ -5,7 +5,6 @@ import com.crashlytics.android.answers.CustomEvent;
 import com.flurry.android.FlurryAgent;
 
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.Map;
 
 /**

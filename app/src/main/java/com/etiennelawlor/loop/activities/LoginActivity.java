@@ -10,20 +10,20 @@ import android.webkit.WebView;
 import android.webkit.WebViewClient;
 
 import com.etiennelawlor.loop.R;
+import com.etiennelawlor.loop.models.AccessToken;
 import com.etiennelawlor.loop.network.ServiceGenerator;
 import com.etiennelawlor.loop.network.VimeoService;
-import com.etiennelawlor.loop.models.AccessToken;
 import com.etiennelawlor.loop.network.models.response.AuthorizedUser;
 import com.etiennelawlor.loop.network.models.response.OAuthResponse;
 import com.etiennelawlor.loop.prefs.LoopPrefs;
-import com.etiennelawlor.loop.utilities.LogUtility;
+
+import java.net.ConnectException;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
-import retrofit.Call;
-import retrofit.Callback;
-import retrofit.Response;
-import retrofit.Retrofit;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 import timber.log.Timber;
 
 /**
@@ -122,31 +122,38 @@ public class LoginActivity extends AppCompatActivity {
     // region Callbacks
     private Callback<OAuthResponse> exchangeCodeCallback = new Callback<OAuthResponse>() {
         @Override
-        public void onResponse(Response<OAuthResponse> response, Retrofit retrofit) {
-            if (response != null) {
-                OAuthResponse oAuthResponse = response.body();
-                if (oAuthResponse != null) {
-                    String accessToken = oAuthResponse.getAccessToken();
-                    String tokenType = oAuthResponse.getTokenType();
-                    AuthorizedUser authorizedUser = oAuthResponse.getUser();
+        public void onResponse(Call<OAuthResponse> call, Response<OAuthResponse> response) {
 
-                    AccessToken token = new AccessToken(tokenType, accessToken);
-                    LoopPrefs.saveAccessToken(getApplicationContext(), token);
-                    LoopPrefs.saveAuthorizedUser(getApplicationContext(), authorizedUser);
-
-                    Intent intent = new Intent(LoginActivity.this, MainActivity.class);
-                    startActivity(intent);
-                    finish();
+            if (!response.isSuccessful()) {
+                int responseCode = response.code();
+                if(responseCode == 504) { // 504 Unsatisfiable Request (only-if-cached)
+//                    errorTextView.setText("Can't load data.\nCheck your network connection.");
+//                    errorLinearLayout.setVisibility(View.VISIBLE);
                 }
+                return;
+            }
+
+            OAuthResponse oAuthResponse = response.body();
+            if (oAuthResponse != null) {
+                String accessToken = oAuthResponse.getAccessToken();
+                String tokenType = oAuthResponse.getTokenType();
+                AuthorizedUser authorizedUser = oAuthResponse.getUser();
+
+                AccessToken token = new AccessToken(tokenType, accessToken);
+                LoopPrefs.saveAccessToken(getApplicationContext(), token);
+                LoopPrefs.saveAuthorizedUser(getApplicationContext(), authorizedUser);
+
+                Intent intent = new Intent(LoginActivity.this, MainActivity.class);
+                startActivity(intent);
+                finish();
             }
         }
 
         @Override
-        public void onFailure(Throwable t) {
-            Timber.e("");
-
-            if(t != null){
-                LogUtility.logFailure(t);
+        public void onFailure(Call<OAuthResponse> call, Throwable t) {
+            if(t instanceof ConnectException){
+//                errorTextView.setText("Can't load data.\nCheck your network connection.");
+//                errorLinearLayout.setVisibility(View.VISIBLE);
             }
         }
     };

@@ -7,17 +7,17 @@ import com.etiennelawlor.loop.network.models.response.CommentsCollection;
 import com.etiennelawlor.loop.network.models.response.OAuthResponse;
 import com.etiennelawlor.loop.network.models.response.VideosCollection;
 
-import retrofit.Call;
-//import retrofit.Response;
-import retrofit.http.Body;
-import retrofit.http.DELETE;
-import retrofit.http.Field;
-import retrofit.http.FormUrlEncoded;
-import retrofit.http.GET;
-import retrofit.http.POST;
-import retrofit.http.PUT;
-import retrofit.http.Path;
-import retrofit.http.Query;
+import okhttp3.ResponseBody;
+import retrofit2.Call;
+import retrofit2.http.Body;
+import retrofit2.http.DELETE;
+import retrofit2.http.Field;
+import retrofit2.http.FormUrlEncoded;
+import retrofit2.http.GET;
+import retrofit2.http.POST;
+import retrofit2.http.PUT;
+import retrofit2.http.Path;
+import retrofit2.http.Query;
 
 /**
  * Created by etiennelawlor on 6/14/15.
@@ -28,10 +28,10 @@ public interface VimeoService {
 
     @GET("/videos")
     Call<VideosCollection> findVideos(@Query("query") String query,
-                    @Query("sort") String sort,
-                    @Query("direction") String direction,
-                    @Query("page") Integer page,
-                    @Query("per_page") Integer perPage);
+                                      @Query("sort") String sort,
+                                      @Query("direction") String direction,
+                                      @Query("page") Integer page,
+                                      @Query("per_page") Integer perPage);
 
     @GET("/me/likes")
     Call<VideosCollection> findLikedVideos(@Query("query") String query,
@@ -59,7 +59,7 @@ public interface VimeoService {
                              @Body CommentPost commentPost);
 
     @DELETE("/videos/{videoId}/comments/{commentId}")
-    Call<Object> deleteComment(@Path("videoId") Long videoId,
+    Call<ResponseBody> deleteComment(@Path("videoId") Long videoId,
                                @Path("commentId") Long commentId);
 
     @GET("/videos/{videoId}/videos?filter=related")
@@ -77,17 +77,17 @@ public interface VimeoService {
                       @Field("redirect_uri") String redirectUri);
 
     @PUT("/me/likes/{videoId}")
-    Call<Object> likeVideo(@Path("videoId") String videoId);
+    Call<ResponseBody> likeVideo(@Path("videoId") String videoId);
 
 
     @DELETE("/me/likes/{videoId}")
-    Call<Object> unlikeVideo(@Path("videoId") String videoId);
+    Call<ResponseBody> unlikeVideo(@Path("videoId") String videoId);
 
     @PUT("/me/watchlater/{videoId}")
-    Call<Object> addVideoToWatchLater(@Path("videoId") String videoId);
+    Call<ResponseBody> addVideoToWatchLater(@Path("videoId") String videoId);
 
 
     @DELETE("/me/watchlater/{videoId}")
-    Call<Object> removeVideoFromWatchLater(@Path("videoId") String videoId);
+    Call<ResponseBody> removeVideoFromWatchLater(@Path("videoId") String videoId);
 
 }

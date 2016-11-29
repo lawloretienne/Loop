@@ -42,11 +42,7 @@
         android:background="@drawable/ripple"
         android:contentDescription="@string/content_desc"
         android:padding="4dp"
-        android:src="@drawable/ic_search_suggest_complete"
+        app:srcCompat="@drawable/ic_search_suggest_complete"
          />
-
-
-    <!--app:srcCompat="@drawable/ic_up_left"-->
-    <!--android:tint="@color/tertiary_text"-->
 
 </RelativeLayout>

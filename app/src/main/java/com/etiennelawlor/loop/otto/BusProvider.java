@@ -1,7 +1,6 @@
 package com.etiennelawlor.loop.otto;
 
 import com.squareup.otto.Bus;
-import com.squareup.otto.ThreadEnforcer;
 
 public final class BusProvider {
 

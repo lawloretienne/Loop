@@ -2,8 +2,7 @@ package com.etiennelawlor.loop.utilities;
 
 import android.text.TextUtils;
 
-import com.squareup.okhttp.Response;
-
+import retrofit2.Response;
 import timber.log.Timber;
 
 /**

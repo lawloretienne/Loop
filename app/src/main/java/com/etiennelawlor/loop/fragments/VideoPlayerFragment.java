@@ -14,10 +14,10 @@ import android.widget.MediaController;
 import android.widget.VideoView;
 
 import com.etiennelawlor.loop.R;
+import com.etiennelawlor.loop.models.AccessToken;
 import com.etiennelawlor.loop.models.VideoSavedState;
 import com.etiennelawlor.loop.network.ServiceGenerator;
 import com.etiennelawlor.loop.network.VimeoPlayerService;
-import com.etiennelawlor.loop.models.AccessToken;
 import com.etiennelawlor.loop.network.models.response.Files;
 import com.etiennelawlor.loop.network.models.response.H264;
 import com.etiennelawlor.loop.network.models.response.HLS;
@@ -29,19 +29,17 @@ import com.etiennelawlor.loop.network.models.response.VideoFormat;
 import com.etiennelawlor.loop.otto.BusProvider;
 import com.etiennelawlor.loop.prefs.LoopPrefs;
 import com.etiennelawlor.loop.ui.LoadingImageView;
-import com.etiennelawlor.loop.utilities.LogUtility;
+import com.etiennelawlor.loop.utilities.NetworkLogUtility;
 
-import java.io.IOException;
-import java.net.SocketTimeoutException;
+import java.net.ConnectException;
 import java.net.UnknownHostException;
 import java.util.List;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
-import retrofit.Call;
-import retrofit.Callback;
-import retrofit.Response;
-import retrofit.Retrofit;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 import timber.log.Timber;
 
 /**
@@ -70,53 +68,32 @@ public class VideoPlayerFragment extends BaseFragment {
     // region Callbacks
     private Callback<VideoConfig> getVideoConfigCallback = new Callback<VideoConfig>() {
         @Override
-        public void onResponse(Response<VideoConfig> response, Retrofit retrofit) {
-            if (response != null) {
-                if(response.isSuccess()){
-                    VideoConfig videoConfig = response.body();
-                    if (videoConfig != null) {
-                        videoUrl = getVideoUrl(videoConfig);
-                        Timber.d("onResponse() : videoUrl - " + videoUrl);
+        public void onResponse(Call<VideoConfig> call, Response<VideoConfig> response) {
+            if (!response.isSuccessful()) {
+                int responseCode = response.code();
+                if(responseCode == 504) { // 504 Unsatisfiable Request (only-if-cached)
+//                    errorTextView.setText("Can't load data.\nCheck your network connection.");
+//                    errorLinearLayout.setVisibility(View.VISIBLE);
+                }
+                return;
+            }
 
-                        if (!TextUtils.isEmpty(videoUrl)) {
-                            Timber.d("playVideo()");
-
-                            playVideo(videoUrl, 0);
-                        }
-                    }
-                } else {
-                    com.squareup.okhttp.Response rawResponse = response.raw();
-                    if (rawResponse != null) {
-                        LogUtility.logFailedResponse(rawResponse);
-
-                        int code = rawResponse.code();
-                        switch (code) {
-                            case 500:
-                                Timber.e("Display error message in place of load more");
-//                                mErrorTextView.setText("Can't load data.\nCheck your network connection.");
-//                                mErrorLinearLayout.setVisibility(View.VISIBLE);
-                                break;
-                            default:
-                                break;
-                        }
-                    }
+            VideoConfig videoConfig = response.body();
+            if (videoConfig != null) {
+                videoUrl = getVideoUrl(videoConfig);
+                if (!TextUtils.isEmpty(videoUrl)) {
+                    playVideo(videoUrl, 0);
                 }
             }
         }
 
         @Override
-        public void onFailure(Throwable t) {
-            if (t != null) {
-                String message = t.getMessage();
-                LogUtility.logFailure(t);
+        public void onFailure(Call<VideoConfig> call, Throwable t) {
+            NetworkLogUtility.logFailure(call, t);
 
-                if (t instanceof SocketTimeoutException || t instanceof UnknownHostException) {
-                    Timber.e("Timeout occurred");
-                } else if(t instanceof IOException){
-                    if(message.equals("Canceled")){
-                        Timber.e("onFailure() : Canceled");
-                    }
-                }
+            if(t instanceof ConnectException || t instanceof UnknownHostException){
+//                errorTextView.setText("Can't load data.\nCheck your network connection.");
+//                errorLinearLayout.setVisibility(View.VISIBLE);
             }
         }
     };
@@ -149,10 +126,11 @@ public class VideoPlayerFragment extends BaseFragment {
         // Retain this fragment across configuration changes.
         setRetainInstance(true);
 
+
         BusProvider.getInstance().register(this);
 
         if(getArguments() != null){
-            videoId = getArguments().getLong("video_id");
+            videoId = getArguments().getLong(VideoDetailsFragment.KEY_VIDEO_ID);
         }
 
         AccessToken token = LoopPrefs.getAccessToken(getActivity());

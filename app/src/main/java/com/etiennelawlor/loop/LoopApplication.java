@@ -11,9 +11,9 @@ import com.flurry.android.FlurryAgent;
 import com.squareup.leakcanary.LeakCanary;
 import com.squareup.leakcanary.RefWatcher;
 
-import io.fabric.sdk.android.Fabric;
 import java.io.File;
 
+import io.fabric.sdk.android.Fabric;
 import timber.log.Timber;
 
 /**
@@ -30,7 +30,7 @@ public class LoopApplication extends Application {
     // endregion
 
     // region Member Variables
-    private RefWatcher mRefWatcher;
+    private RefWatcher refWatcher;
     // endregion
 
     // region Lifecycle Methods
@@ -64,7 +64,7 @@ public class LoopApplication extends Application {
 
     public static RefWatcher getRefWatcher(Context context) {
         LoopApplication application = (LoopApplication) context.getApplicationContext();
-        return application.mRefWatcher;
+        return application.refWatcher;
     }
 
     private void initializeFabric(){
@@ -78,8 +78,13 @@ public class LoopApplication extends Application {
         }
     }
 
-    private void initializeLeakCanary(){
-        mRefWatcher = LeakCanary.install(this);
+    private void initializeLeakCanary() {
+        if (LeakCanary.isInAnalyzerProcess(this)) {
+            // This process is dedicated to LeakCanary for heap analysis.
+            // You should not init your app in this process.
+            return;
+        }
+        refWatcher = LeakCanary.install(this);
     }
 
     private void initializeTimber(){

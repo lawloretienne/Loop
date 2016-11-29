@@ -1,17 +1,13 @@
 package com.etiennelawlor.loop.fragments;
 
 import android.content.DialogInterface;
-import android.content.res.ColorStateList;
 import android.graphics.Typeface;
-import android.graphics.drawable.Drawable;
-import android.net.Uri;
 import android.os.Bundle;
+import android.support.design.widget.Snackbar;
 import android.support.v4.content.ContextCompat;
-import android.support.v4.graphics.drawable.DrawableCompat;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.content.res.AppCompatResources;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
@@ -24,7 +20,9 @@ import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.ProgressBar;
+import android.widget.TextView;
 
 import com.etiennelawlor.loop.R;
 import com.etiennelawlor.loop.adapters.VideoCommentsAdapter;
@@ -42,12 +40,10 @@ import com.etiennelawlor.loop.prefs.LoopPrefs;
 import com.etiennelawlor.loop.ui.LoadingImageView;
 import com.etiennelawlor.loop.utilities.DisplayUtility;
 import com.etiennelawlor.loop.utilities.FontCache;
-import com.etiennelawlor.loop.utilities.LogUtility;
+import com.etiennelawlor.loop.utilities.NetworkLogUtility;
 import com.etiennelawlor.loop.utilities.TrestleUtility;
-import com.google.common.collect.Lists;
 
-import java.io.IOException;
-import java.net.SocketTimeoutException;
+import java.net.ConnectException;
 import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -57,11 +53,10 @@ import butterknife.Bind;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import jp.wasabeef.recyclerview.animators.SlideInUpAnimator;
-import retrofit.Call;
-import retrofit.Callback;
-import retrofit.Response;
-import retrofit.Retrofit;
-import timber.log.Timber;
+import okhttp3.ResponseBody;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 /**
  * Created by etiennelawlor on 12/20/15.
@@ -87,6 +82,10 @@ public class VideoCommentsFragment extends BaseFragment implements VideoComments
     Toolbar toolbar;
     @Bind(R.id.loading_iv)
     LoadingImageView loadingImageView;
+    @Bind(R.id.error_ll)
+    LinearLayout errorLinearLayout;
+    @Bind(R.id.error_tv)
+    TextView errorTextView;
     // endregion
 
     //region Member Variables
@@ -101,6 +100,7 @@ public class VideoCommentsFragment extends BaseFragment implements VideoComments
     private String sortByValue = "date";
     private String sortOrderValue = "desc";
     private Typeface font;
+    private Comment deletedComment;
     // endregion
 
     // region Listeners
@@ -163,50 +163,51 @@ public class VideoCommentsFragment extends BaseFragment implements VideoComments
             addCommentCall.enqueue(addCommentCallback);
         }
     }
+
+    @OnClick(R.id.reload_btn)
+    public void onReloadButtonClicked() {
+        errorLinearLayout.setVisibility(View.GONE);
+        loadingImageView.setVisibility(View.VISIBLE);
+
+        Call getCommentsCall = vimeoService.getComments(videoId,
+                sortByValue,
+                sortOrderValue,
+                currentPage,
+                PAGE_SIZE);
+        calls.add(getCommentsCall);
+        getCommentsCall.enqueue(getCommentsFirstFetchCallback);
+    }
     // endregion
 
     // region Callbacks
     private Callback<CommentsCollection> getCommentsFirstFetchCallback = new Callback<CommentsCollection>() {
         @Override
-        public void onResponse(Response<CommentsCollection> response, Retrofit retrofit) {
-            Timber.d("onResponse()");
+        public void onResponse(Call<CommentsCollection> call, Response<CommentsCollection> response) {
             loadingImageView.setVisibility(View.GONE);
             isLoading = false;
 
-            if (response != null) {
-                if (response.isSuccess()) {
-                    CommentsCollection commentsCollection = response.body();
-                    if (commentsCollection != null) {
-                        List<Comment> comments = commentsCollection.getComments();
-                        if (comments != null && comments.size() > 0) {
+            if (!response.isSuccessful()) {
+                int responseCode = response.code();
+                if(responseCode == 504) { // 504 Unsatisfiable Request (only-if-cached)
+//                    errorTextView.setText("Can't load data.\nCheck your network connection.");
+//                    errorLinearLayout.setVisibility(View.VISIBLE);
+                }
+                return;
+            }
 
-                            Collections.reverse(comments);
-                            videoCommentsAdapter.addAll(comments);
-                            recyclerView.scrollToPosition(videoCommentsAdapter.getItemCount() - 1);
-//
-//            mVideoCommentsAdapter.addAll(comments);
+            CommentsCollection commentsCollection = response.body();
+            if (commentsCollection != null) {
+                List<Comment> comments = commentsCollection.getComments();
+                if (comments != null && comments.size() > 0) {
 
-                            if (comments.size() >= PAGE_SIZE) {
+                    Collections.reverse(comments);
+                    videoCommentsAdapter.addAll(comments);
+                    recyclerView.scrollToPosition(videoCommentsAdapter.getItemCount() - 1);
+
+                    if (comments.size() >= PAGE_SIZE) {
 //                            mVideoCommentsAdapter.addLoading();
-                            } else {
-                                isLastPage = true;
-                            }
-                        }
-                    }
-                } else {
-                    com.squareup.okhttp.Response rawResponse = response.raw();
-                    if (rawResponse != null) {
-                        LogUtility.logFailedResponse(rawResponse);
-
-                        int code = rawResponse.code();
-                        switch (code) {
-                            case 500:
-//                                mErrorTextView.setText("Can't load data.\nCheck your network connection.");
-//                                mErrorLinearLayout.setVisibility(View.VISIBLE);
-                                break;
-                            default:
-                                break;
-                        }
+                    } else {
+                        isLastPage = true;
                     }
                 }
             }
@@ -221,26 +222,15 @@ public class VideoCommentsFragment extends BaseFragment implements VideoComments
         }
 
         @Override
-        public void onFailure(Throwable t) {
-            if (t != null) {
-                String message = t.getMessage();
-                LogUtility.logFailure(t);
+        public void onFailure(Call<CommentsCollection> call, Throwable t) {
+            NetworkLogUtility.logFailure(call, t);
 
-                if (t instanceof SocketTimeoutException || t instanceof UnknownHostException) {
-                    Timber.e("Timeout occurred");
-                    isLoading = false;
-                    loadingImageView.setVisibility(View.GONE);
-//
-//                    mErrorTextView.setText("Can't load data.\nCheck your network connection.");
-//                    mErrorLinearLayout.setVisibility(View.VISIBLE);
-                } else if (t instanceof IOException) {
-                    if (message.equals("Canceled")) {
-                        Timber.e("onFailure() : Canceled");
-                    } else {
-                        isLoading = false;
-//                        mLoadingImageView.setVisibility(View.GONE);
-                    }
-                }
+            loadingImageView.setVisibility(View.GONE);
+            isLoading = false;
+
+            if(t instanceof ConnectException || t instanceof UnknownHostException){
+                errorTextView.setText("Can't load data.\nCheck your network connection.");
+                errorLinearLayout.setVisibility(View.VISIBLE);
             }
         }
     };
@@ -248,11 +238,8 @@ public class VideoCommentsFragment extends BaseFragment implements VideoComments
 
     private Callback<Comment> addCommentCallback = new Callback<Comment>() {
         @Override
-        public void onResponse(Response<Comment> response, Retrofit retrofit) {
+        public void onResponse(Call<Comment> call, Response<Comment> response) {
             commentChangeMade = true;
-
-            Timber.d("onResponse()");
-//            mLoadingImageView.setVisibility(View.GONE);
 
             submitCommentFrameLayout.setBackgroundColor(ContextCompat.getColor(getContext(), R.color.primary));
             submitCommentProgressBar.setVisibility(View.GONE);
@@ -261,152 +248,70 @@ public class VideoCommentsFragment extends BaseFragment implements VideoComments
             commentEditText.setText("");
             DisplayUtility.hideKeyboard(getActivity(), commentEditText);
 
-            if (response != null) {
-                if (response.isSuccess()) {
-                    Comment comment = response.body();
-                    videoCommentsAdapter.add(comment);
-                    recyclerView.scrollToPosition(videoCommentsAdapter.getItemCount()-1);
-                } else {
-                    com.squareup.okhttp.Response rawResponse = response.raw();
-                    if (rawResponse != null) {
-                        LogUtility.logFailedResponse(rawResponse);
-
-                        int code = rawResponse.code();
-                        switch (code) {
-                            case 500:
-//                                mErrorTextView.setText("Can't load data.\nCheck your network connection.");
-//                                mErrorLinearLayout.setVisibility(View.VISIBLE);
-                                break;
-                            default:
-                                break;
-                        }
-                    }
+            if (!response.isSuccessful()) {
+                int responseCode = response.code();
+                if(responseCode == 504) { // 504 Unsatisfiable Request (only-if-cached)
+//                    errorTextView.setText("Can't load data.\nCheck your network connection.");
+//                    errorLinearLayout.setVisibility(View.VISIBLE);
                 }
+                return;
             }
+
+            Comment comment = response.body();
+            videoCommentsAdapter.add(comment);
+            recyclerView.scrollToPosition(videoCommentsAdapter.getItemCount()-1);
         }
 
         @Override
-        public void onFailure(Throwable t) {
-            if (t != null) {
-                String message = t.getMessage();
-                LogUtility.logFailure(t);
+        public void onFailure(Call<Comment> call, Throwable t) {
+            NetworkLogUtility.logFailure(call, t);
 
-                submitCommentFrameLayout.setBackgroundColor(ContextCompat.getColor(getContext(), R.color.primary));
-                submitCommentProgressBar.setVisibility(View.GONE);
-                submitCommentImageView.setVisibility(View.VISIBLE);
+            submitCommentFrameLayout.setBackgroundColor(ContextCompat.getColor(getContext(), R.color.primary));
+            submitCommentProgressBar.setVisibility(View.GONE);
+            submitCommentImageView.setVisibility(View.VISIBLE);
 
-                commentEditText.setText("");
-                DisplayUtility.hideKeyboard(getActivity(), commentEditText);
+            DisplayUtility.hideKeyboard(getActivity(), commentEditText);
 
-                if (t instanceof SocketTimeoutException || t instanceof UnknownHostException) {
-                    Timber.e("Timeout occurred");
-                    isLoading = false;
-//                    mLoadingImageView.setVisibility(View.GONE);
-//
-//                    mErrorTextView.setText("Can't load data.\nCheck your network connection.");
-//                    mErrorLinearLayout.setVisibility(View.VISIBLE);
-                } else if (t instanceof IOException) {
-                    if (message.equals("Canceled")) {
-                        Timber.e("onFailure() : Canceled");
-                    } else {
-                        isLoading = false;
-//                        mLoadingImageView.setVisibility(View.GONE);
-                    }
-                }
+            if(t instanceof ConnectException || t instanceof UnknownHostException){
+                Snackbar.make(getActivity().findViewById(R.id.main_content),
+                        TrestleUtility.getFormattedText("Network connection is unavailable.", font, 16),
+                        Snackbar.LENGTH_LONG)
+                        .show();
             }
         }
     };
 
-    private Callback<Object> deleteCommentCallback = new Callback<Object>() {
+    private Callback<ResponseBody> deleteCommentCallback = new Callback<ResponseBody>() {
         @Override
-        public void onResponse(Response<Object> response, Retrofit retrofit) {
+        public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
             commentChangeMade = true;
 
-            if (response != null) {
-                if (response.isSuccess()) {
-                    Object object = response.body();
-                    Timber.d("");
-//                    mVideoCommentsAdapter.add(comment, mVideoCommentsAdapter.getItemCount()-1);
-                } else {
-                    com.squareup.okhttp.Response rawResponse = response.raw();
-                    if (rawResponse != null) {
-                        LogUtility.logFailedResponse(rawResponse);
-
-                        int code = rawResponse.code();
-                        switch (code) {
-                            case 500:
-//                                mErrorTextView.setText("Can't load data.\nCheck your network connection.");
-//                                mErrorLinearLayout.setVisibility(View.VISIBLE);
-                                break;
-                            default:
-                                break;
-                        }
-                    }
+            if (!response.isSuccessful()) {
+                int responseCode = response.code();
+                if(responseCode == 504) { // 504 Unsatisfiable Request (only-if-cached)
+//                    errorTextView.setText("Can't load data.\nCheck your network connection.");
+//                    errorLinearLayout.setVisibility(View.VISIBLE);
                 }
+                return;
             }
+
+            // Response 204 No Content
+
+            videoCommentsAdapter.remove(deletedComment);
         }
 
         @Override
-        public void onFailure(Throwable t) {
-            if (t != null) {
-                String message = t.getMessage();
-                LogUtility.logFailure(t);
+        public void onFailure(Call<ResponseBody> call, Throwable t) {
+            NetworkLogUtility.logFailure(call, t);
 
-                if (t instanceof SocketTimeoutException || t instanceof UnknownHostException) {
-                    Timber.e("Timeout occurred");
-                    isLoading = false;
-//                    mLoadingImageView.setVisibility(View.GONE);
-//
-//                    mErrorTextView.setText("Can't load data.\nCheck your network connection.");
-//                    mErrorLinearLayout.setVisibility(View.VISIBLE);
-                } else if (t instanceof IOException) {
-                    if (message.equals("Canceled")) {
-                        Timber.e("onFailure() : Canceled");
-                    } else {
-                        isLoading = false;
-//                        mLoadingImageView.setVisibility(View.GONE);
-                    }
-                }
+            if(t instanceof ConnectException || t instanceof UnknownHostException){
+                Snackbar.make(getActivity().findViewById(R.id.main_content),
+                        TrestleUtility.getFormattedText("Network connection is unavailable.", font, 16),
+                        Snackbar.LENGTH_LONG)
+                        .show();
             }
         }
     };
-
-//    private Callback<Response> mDeleteCommentCallback = new Callback<Response>() {
-//        @Override
-//        public void success(Response response, Response response2) {
-//            if (isAdded() && isResumed()) {
-//                if (response != null) {
-//                    int status = response.getStatus();
-//                    if (status == 200) {
-//                        mCommentChangeMade = true;
-//
-//                        Timber.d("mDeleteCommentCallback : success()");
-//                    } else {
-//                        Timber.d("mDeleteCommentCallback : success() : status != 200 : status - " + status);
-//                    }
-//                } else {
-//                    Timber.d("mDeleteCommentCallback : success() : response == null");
-//                }
-//            }
-//        }
-//
-//        @Override
-//        public void failure(RetrofitError error) {
-//            if (isAdded() && isResumed()) {
-//                Timber.d("mDeleteCommentCallback : failure()");
-//
-//                if (error != null) {
-//                    Response response = error.getResponse();
-//                    if (response != null) {
-//                        Timber.d("mDeleteCommentCallback : failure() : response.getStatus() - " + response.getStatus());
-//                        Timber.d("mDeleteCommentCallback : failure() : response.getReason() - " + response.getReason());
-//                    }
-//                    Timber.d("mDeleteCommentCallback : failure() : error.getMessage() - " + error.getMessage());
-//                    Timber.d("mDeleteCommentCallback : failure() : error.getCause() - " + error.getCause());
-//                }
-//            }
-//        }
-//    };
     // endregion
 
     // region Constructors
@@ -566,6 +471,7 @@ public class VideoCommentsFragment extends BaseFragment implements VideoComments
     public void onItemLongClick(final int position) {
         final Comment comment = videoCommentsAdapter.getItem(position);
         if (comment != null) {
+            deletedComment = comment;
             User user = comment.getUser();
             AuthorizedUser authorizedUser = LoopPrefs.getAuthorizedUser(getActivity());
 
@@ -580,8 +486,8 @@ public class VideoCommentsFragment extends BaseFragment implements VideoComments
 
                     deleteCommentAlert.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
                         public void onClick(DialogInterface dialog, int whichButton) {
-                            videoCommentsAdapter.remove(comment);
-                            videoCommentsAdapter.notifyDataSetChanged();
+//                            videoCommentsAdapter.remove(comment);
+//                            videoCommentsAdapter.notifyDataSetChanged();
 
                             Call deleteCommentCall = vimeoService.deleteComment(videoId,
                                     comment.getId());

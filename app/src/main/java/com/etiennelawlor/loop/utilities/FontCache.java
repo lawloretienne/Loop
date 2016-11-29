@@ -2,7 +2,6 @@ package com.etiennelawlor.loop.utilities;
 
 import android.content.Context;
 import android.graphics.Typeface;
-import android.support.v4.util.LruCache;
 
 import java.util.HashMap;
 import java.util.Map;

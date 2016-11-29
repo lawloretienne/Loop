@@ -4,7 +4,7 @@ import android.app.Activity;
 import android.app.SearchManager;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.net.Uri;
+import android.graphics.Typeface;
 import android.os.Bundle;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityOptionsCompat;
@@ -28,8 +28,8 @@ import com.bumptech.glide.Glide;
 import com.etiennelawlor.loop.EventMapKeys;
 import com.etiennelawlor.loop.EventNames;
 import com.etiennelawlor.loop.R;
-import com.etiennelawlor.loop.activities.VideoCommentsActivity;
 import com.etiennelawlor.loop.activities.SearchableActivity;
+import com.etiennelawlor.loop.activities.VideoCommentsActivity;
 import com.etiennelawlor.loop.activities.VideoDetailsActivity;
 import com.etiennelawlor.loop.activities.VideoPlayerActivity;
 import com.etiennelawlor.loop.adapters.RelatedVideosAdapter;
@@ -47,11 +47,12 @@ import com.etiennelawlor.loop.otto.events.SearchPerformedEvent;
 import com.etiennelawlor.loop.otto.events.VideoLikedEvent;
 import com.etiennelawlor.loop.otto.events.WatchLaterEvent;
 import com.etiennelawlor.loop.prefs.LoopPrefs;
-import com.etiennelawlor.loop.utilities.LogUtility;
+import com.etiennelawlor.loop.utilities.FontCache;
+import com.etiennelawlor.loop.utilities.NetworkLogUtility;
+import com.etiennelawlor.loop.utilities.TrestleUtility;
 import com.squareup.otto.Subscribe;
 
-import java.io.IOException;
-import java.net.SocketTimeoutException;
+import java.net.ConnectException;
 import java.net.UnknownHostException;
 import java.util.HashMap;
 import java.util.List;
@@ -59,16 +60,18 @@ import java.util.List;
 import butterknife.Bind;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
-import retrofit.Call;
-import retrofit.Callback;
-import retrofit.Response;
-import retrofit.Retrofit;
+import jp.wasabeef.recyclerview.animators.SlideInUpAnimator;
+import okhttp3.ResponseBody;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 import timber.log.Timber;
 
 /**
  * Created by etiennelawlor on 5/23/15.
  */
 public class VideoDetailsFragment extends BaseFragment implements RelatedVideosAdapter.OnItemClickListener,
+        RelatedVideosAdapter.OnReloadClickListener,
         RelatedVideosAdapter.OnLikeClickListener,
         RelatedVideosAdapter.OnWatchLaterClickListener,
         RelatedVideosAdapter.OnCommentsClickListener,
@@ -100,6 +103,7 @@ public class VideoDetailsFragment extends BaseFragment implements RelatedVideosA
     private int currentPage = 1;
     private boolean isLoading = false;
     private boolean isInfoExpanded = false;
+    private Typeface font;
     // endregion
 
     // region Listeners
@@ -140,486 +144,288 @@ public class VideoDetailsFragment extends BaseFragment implements RelatedVideosA
             }
         }
     };
-
-    private View.OnClickListener reloadOnClickListener = new View.OnClickListener() {
-        @Override
-        public void onClick(View v) {
-            currentPage -= 1;
-            relatedVideosAdapter.addLoading();
-            loadMoreItems();
-        }
-    };
     // endregion
 
     // region Callbacks
 
     private Callback<VideosCollection> getRelatedVideosFirstFetchCallback = new Callback<VideosCollection>() {
         @Override
-        public void onResponse(Response<VideosCollection> response, Retrofit retrofit) {
-            if (response != null) {
-                if (response.isSuccess()) {
-                    VideosCollection videosCollection = response.body();
-                    if (videosCollection != null) {
-                        List<Video> videos = videosCollection.getVideos();
-                        if (videos != null) {
-                            relatedVideosAdapter.addAll(videos);
+        public void onResponse(Call<VideosCollection> call, Response<VideosCollection> response) {
+            if (!response.isSuccessful()) {
+                int responseCode = response.code();
+                if(responseCode == 504) { // 504 Unsatisfiable Request (only-if-cached)
+//                    errorTextView.setText("Can't load data.\nCheck your network connection.");
+//                    errorLinearLayout.setVisibility(View.VISIBLE);
+                }
+                return;
+            }
 
-                            if (videos.size() >= PAGE_SIZE) {
-                                relatedVideosAdapter.addLoading();
-                            } else {
-                                isLastPage = true;
-                            }
-                        }
-                    }
-                } else {
-                    com.squareup.okhttp.Response rawResponse = response.raw();
-                    if (rawResponse != null) {
-                        LogUtility.logFailedResponse(rawResponse);
+            VideosCollection videosCollection = response.body();
+            if (videosCollection != null) {
+                List<Video> videos = videosCollection.getVideos();
+                if (videos != null) {
+                    relatedVideosAdapter.addAll(videos);
 
-                        String message = rawResponse.message();
-                        int code = rawResponse.code();
-
-                        Snackbar.make(getActivity().findViewById(android.R.id.content),
-                                String.format("message - %s : code - %d", message, code),
-                                Snackbar.LENGTH_INDEFINITE)
-//                                .setAction("Undo", mOnClickListener)
-//                                .setActionTextColor(Color.RED)
-                                .show();
-
-                        switch (code) {
-                            case 500:
-                                Timber.e("Display error message in place of load more");
-//                                mErrorTextView.setText("Can't load data.\nCheck your network connection.");
-//                                mErrorLinearLayout.setVisibility(View.VISIBLE);
-                                break;
-                            default:
-                                break;
-                        }
+                    if (videos.size() >= PAGE_SIZE) {
+                        relatedVideosAdapter.addFooter();
+                    } else {
+                        isLastPage = true;
                     }
                 }
             }
         }
 
         @Override
-        public void onFailure(Throwable t) {
-            if (t != null) {
-                String message = t.getMessage();
-                LogUtility.logFailure(t);
+        public void onFailure(Call<VideosCollection> call, Throwable t) {
+            NetworkLogUtility.logFailure(call, t);
 
-                if (isAdded() && isResumed()) {
-                    Snackbar.make(getActivity().findViewById(android.R.id.content),
-                            String.format("message - %s", message),
-                            Snackbar.LENGTH_INDEFINITE)
-//                                .setAction("Undo", mOnClickListener)
-//                                .setActionTextColor(Color.RED)
-                            .show();
-                }
-
-                if (t instanceof SocketTimeoutException || t instanceof UnknownHostException) {
-                    Timber.e("Timeout occurred");
-                } else if (t instanceof IOException) {
-                    if (message.equals("Canceled")) {
-                        Timber.e("onFailure() : Canceled");
-                    }
-                }
+            if(t instanceof ConnectException || t instanceof UnknownHostException){
+//                errorTextView.setText("Can't load data.\nCheck your network connection.");
+//                errorLinearLayout.setVisibility(View.VISIBLE);
             }
         }
     };
 
     private Callback<VideosCollection> getRelatedVideosNextFetchCallback = new Callback<VideosCollection>() {
         @Override
-        public void onResponse(Response<VideosCollection> response, Retrofit retrofit) {
-            relatedVideosAdapter.removeLoading();
+        public void onResponse(Call<VideosCollection> call, Response<VideosCollection> response) {
+            relatedVideosAdapter.removeFooter();
             isLoading = false;
 
-            Timber.d("onResponse()");
-            if (response != null) {
-                if (response.isSuccess()) {
-                    Timber.d("onResponse() : Success");
+            if (!response.isSuccessful()) {
+                int responseCode = response.code();
+                switch (responseCode){
+                    case 504: // 504 Unsatisfiable Request (only-if-cached)
+                        break;
+                    case 400:
+                        isLastPage = true;
+                        break;
+                }
+                return;
+            }
 
-                    VideosCollection videosCollection = response.body();
-                    if (videosCollection != null) {
-                        List<Video> videos = videosCollection.getVideos();
-                        if (videos != null) {
-                            Timber.d("onResponse() : Success : videos.size() - " + videos.size());
-                            relatedVideosAdapter.addAll(videos);
+            VideosCollection videosCollection = response.body();
+            if (videosCollection != null) {
+                List<Video> videos = videosCollection.getVideos();
+                if (videos != null) {
+                    Timber.d("onResponse() : Success : videos.size() - " + videos.size());
+                    relatedVideosAdapter.addAll(videos);
 
-                            if (videos.size() >= PAGE_SIZE) {
-                                relatedVideosAdapter.addLoading();
-                            } else {
-                                isLastPage = true;
-                            }
-                        }
-                    }
-                } else {
-                    com.squareup.okhttp.Response rawResponse = response.raw();
-                    if (rawResponse != null) {
-                        LogUtility.logFailedResponse(rawResponse);
-
-                        String message = rawResponse.message();
-                        int code = rawResponse.code();
-
-                        Snackbar.make(getActivity().findViewById(android.R.id.content),
-                                String.format("message - %s : code - %d", message, code),
-                                Snackbar.LENGTH_INDEFINITE)
-//                                .setAction("Undo", mOnClickListener)
-//                                .setActionTextColor(Color.RED)
-                                .show();
-
-                        switch (code) {
-                            case 500:
-                                Timber.e("Display error message in place of load more");
-//                                mErrorTextView.setText("Can't load data.\nCheck your network connection.");
-//                                mErrorLinearLayout.setVisibility(View.VISIBLE);
-                                break;
-                            default:
-                                break;
-                        }
+                    if (videos.size() >= PAGE_SIZE) {
+                        relatedVideosAdapter.addFooter();
+                    } else {
+                        isLastPage = true;
                     }
                 }
             }
         }
 
         @Override
-        public void onFailure(Throwable t) {
-            relatedVideosAdapter.removeLoading();
-            if (t != null) {
-                String message = t.getMessage();
-                LogUtility.logFailure(t);
+        public void onFailure(Call<VideosCollection> call, Throwable t) {
+            NetworkLogUtility.logFailure(call, t);
 
-                if (t instanceof SocketTimeoutException) {
-                    showReloadSnackbar(String.format("message - %s", message));
-                } else if (t instanceof UnknownHostException) {
-                    Timber.e("Timeout occurred");
-                    showReloadSnackbar("Can't load data. Check your network connection.");
-                } else if (t instanceof IOException) {
-                    if (message.equals("Canceled")) {
-                        Timber.e("onFailure() : Canceled");
-                    }
-                }
+            if(t instanceof ConnectException || t instanceof UnknownHostException){
+                relatedVideosAdapter.updateFooter(RelatedVideosAdapter.FooterType.ERROR);
             }
         }
     };
 
-    private Callback<Object> likeVideoCallback = new Callback<Object>() {
+    private Callback<ResponseBody> likeVideoCallback = new Callback<ResponseBody>() {
         @Override
-        public void onResponse(Response<Object> response, Retrofit retrofit) {
-            if (response != null) {
-                if (response.isSuccess()) {
-                    Timber.d("callbackResponse");
+        public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
 
-//                    Response callbackResponse = response.body();
-//                    if(callbackResponse != null){
-//                        Timber.d("callbackResponse");
-//                    }
+            if (!response.isSuccessful()) {
+                int responseCode = response.code();
+                if(responseCode == 504) { // 504 Unsatisfiable Request (only-if-cached)
+//                    errorTextView.setText("Can't load data.\nCheck your network connection.");
+//                    errorLinearLayout.setVisibility(View.VISIBLE);
+                }
+                return;
+            }
 
-//                    VideosCollection videosCollection = response.body();
-//                    if (videosCollection != null) {
-//                        List<Video> videos = videosCollection.getVideos();
-//                        if (videos != null) {
-//                            mRelatedVideosAdapter.addAll(videos);
-//                            mRelatedVideosAdapter.addLoading();
-//                        }
-//                    }
-                    com.squareup.okhttp.Response rawResponse = response.raw();
-                    if (rawResponse != null) {
-                        String message = rawResponse.message();
-                        int code = rawResponse.code();
-                        Timber.d("onResponse() : message - " + message);
-                        Timber.d("onResponse() : code - " + code);
+            okhttp3.Response rawResponse = response.raw();
+            if (rawResponse != null) {
+                int code = rawResponse.code();
+                switch (code) {
+                    case 204:
+                        // No Content
+                        BusProvider.getInstance().post(new VideoLikedEvent());
 
-                        switch (code) {
-                            case 204:
-                                // No Content
-                                BusProvider.getInstance().post(new VideoLikedEvent());
+                        HashMap<String, Object> map = new HashMap<>();
+                        map.put(EventMapKeys.NAME, video.getName());
+                        map.put(EventMapKeys.DURATION, video.getDuration());
+                        map.put(EventMapKeys.VIDEO_ID, videoId);
 
-                                Timber.d("mLikeVideoCallback() : duration - " + video.getDuration());
-                                Timber.d("mLikeVideoCallback() : mVideoId - " + videoId);
+                        Event event = new Event(EventNames.VIDEO_LIKED, map);
+                        EventLogger.logEvent(event);
 
-                                HashMap<String, Object> map = new HashMap<>();
-                                map.put(EventMapKeys.NAME, video.getName());
-                                map.put(EventMapKeys.DURATION, video.getDuration());
-                                map.put(EventMapKeys.VIDEO_ID, videoId);
-
-                                Event event = new Event(EventNames.VIDEO_LIKED, map);
-                                EventLogger.logEvent(event);
-
-                                break;
-                            case 400:
-                                // If the video is owned by the authenticated user
-                                break;
-                            case 403:
-                                // If the authenticated user is not allowed to like videos
-                                break;
-                        }
-                    }
-                } else {
-                    com.squareup.okhttp.Response rawResponse = response.raw();
-                    if (rawResponse != null) {
-                        LogUtility.logFailedResponse(rawResponse);
-
-                        int code = rawResponse.code();
-                        switch (code) {
-                            case 500:
-                                Timber.e("Display error message in place of load more");
-//                                mErrorTextView.setText("Can't load data.\nCheck your network connection.");
-//                                mErrorLinearLayout.setVisibility(View.VISIBLE);
-                                break;
-                            default:
-                                break;
-                        }
-                    }
+                        relatedVideosAdapter.setIsLikeOn(true);
+                        ImageView imageView = (ImageView) videosRecyclerView.getLayoutManager().findViewByPosition(0).findViewById(R.id.like_iv);
+                        imageView.setImageResource(R.drawable.ic_like_on);
+                        break;
+                    case 400:
+                        // If the video is owned by the authenticated user
+                        break;
+                    case 403:
+                        // If the authenticated user is not allowed to like videos
+                        break;
                 }
             }
         }
 
         @Override
-        public void onFailure(Throwable t) {
-            if (t != null) {
-                String message = t.getMessage();
-                LogUtility.logFailure(t);
+        public void onFailure(Call<ResponseBody> call, Throwable t) {
+            NetworkLogUtility.logFailure(call, t);
 
-                if (t instanceof SocketTimeoutException || t instanceof UnknownHostException) {
-                    Timber.e("Timeout occurred");
-                } else if (t instanceof IOException) {
-                    if (message.equals("Canceled")) {
-                        Timber.e("onFailure() : Canceled");
-                    }
-                }
+            if(t instanceof ConnectException || t instanceof UnknownHostException){
+                Snackbar.make(getActivity().findViewById(R.id.main_content),
+                        TrestleUtility.getFormattedText("Network connection is unavailable.", font, 16),
+                        Snackbar.LENGTH_LONG)
+                        .show();
             }
         }
     };
 
-    private Callback<Object> unlikeVideoCallback = new Callback<Object>() {
+    private Callback<ResponseBody> unlikeVideoCallback = new Callback<ResponseBody>() {
         @Override
-        public void onResponse(Response<Object> response, Retrofit retrofit) {
-            if (response != null) {
-                if (response.isSuccess()) {
-                    Timber.d("callbackResponse");
+        public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
 
-//                    Response callbackResponse = response.body();
-//                    if(callbackResponse != null){
-//                        Timber.d("callbackResponse");
-//                    }
+            if (!response.isSuccessful()) {
+                int responseCode = response.code();
+                if(responseCode == 504) { // 504 Unsatisfiable Request (only-if-cached)
+//                    errorTextView.setText("Can't load data.\nCheck your network connection.");
+//                    errorLinearLayout.setVisibility(View.VISIBLE);
+                }
+                return;
+            }
 
-//                    VideosCollection videosCollection = response.body();
-//                    if (videosCollection != null) {
-//                        List<Video> videos = videosCollection.getVideos();
-//                        if (videos != null) {
-//                            mRelatedVideosAdapter.addAll(videos);
-//                            mRelatedVideosAdapter.addLoading();
-//                        }
-//                    }
-                    com.squareup.okhttp.Response rawResponse = response.raw();
-                    if (rawResponse != null) {
-                        String message = rawResponse.message();
-                        int code = rawResponse.code();
-                        Timber.d("onResponse() : message - " + message);
-                        Timber.d("onResponse() : code - " + code);
+            okhttp3.Response rawResponse = response.raw();
+            if (rawResponse != null) {
+                int code = rawResponse.code();
+                switch (code) {
+                    case 204:
+                        // No Content
+                        BusProvider.getInstance().post(new VideoLikedEvent());
 
-                        switch (code) {
-                            case 204:
-                                // No Content
-                                BusProvider.getInstance().post(new VideoLikedEvent());
+                        HashMap<String, Object> map = new HashMap<>();
+                        map.put(EventMapKeys.NAME, video.getName());
+                        map.put(EventMapKeys.DURATION, video.getDuration());
+                        map.put(EventMapKeys.VIDEO_ID, videoId);
 
-                                HashMap<String, Object> map = new HashMap<>();
-                                map.put(EventMapKeys.NAME, video.getName());
-                                map.put(EventMapKeys.DURATION, video.getDuration());
-                                map.put(EventMapKeys.VIDEO_ID, videoId);
+                        Event event = new Event(EventNames.VIDEO_DISLIKED, map);
+                        EventLogger.logEvent(event);
 
-                                Event event = new Event(EventNames.VIDEO_DISLIKED, map);
-                                EventLogger.logEvent(event);
-
-                                break;
-                            case 403:
-                                // If the authenticated user is not allowed to like videos
-                                break;
-                        }
-                    }
-                } else {
-                    com.squareup.okhttp.Response rawResponse = response.raw();
-                    if (rawResponse != null) {
-                        LogUtility.logFailedResponse(rawResponse);
-
-                        int code = rawResponse.code();
-                        switch (code) {
-                            case 500:
-                                Timber.e("Display error message in place of load more");
-//                                mErrorTextView.setText("Can't load data.\nCheck your network connection.");
-//                                mErrorLinearLayout.setVisibility(View.VISIBLE);
-                                break;
-                            default:
-                                break;
-                        }
-                    }
+                        relatedVideosAdapter.setIsLikeOn(false);
+                        ImageView imageView = (ImageView) videosRecyclerView.getLayoutManager().findViewByPosition(0).findViewById(R.id.like_iv);
+                        imageView.setImageResource(R.drawable.ic_like_off);
+                        break;
+                    case 403:
+                        // If the authenticated user is not allowed to like videos
+                        break;
                 }
             }
         }
 
         @Override
-        public void onFailure(Throwable t) {
-            if (t != null) {
-                String message = t.getMessage();
-                LogUtility.logFailure(t);
+        public void onFailure(Call<ResponseBody> call, Throwable t) {
+            NetworkLogUtility.logFailure(call, t);
 
-                if (t instanceof SocketTimeoutException || t instanceof UnknownHostException) {
-                    Timber.e("Timeout occurred");
-                } else if (t instanceof IOException) {
-                    if (message.equals("Canceled")) {
-                        Timber.e("onFailure() : Canceled");
-                    }
-                }
+            if(t instanceof ConnectException || t instanceof UnknownHostException){
+                Snackbar.make(getActivity().findViewById(R.id.main_content),
+                        TrestleUtility.getFormattedText("Network connection is unavailable.", font, 16),
+                        Snackbar.LENGTH_LONG)
+                        .show();
             }
         }
     };
 
-    private Callback<Object> addVideoToWatchLaterCallback = new Callback<Object>() {
+    private Callback<ResponseBody> addVideoToWatchLaterCallback = new Callback<ResponseBody>() {
         @Override
-        public void onResponse(Response<Object> response, Retrofit retrofit) {
-            if (response != null) {
-                if (response.isSuccess()) {
-                    Timber.d("callbackResponse");
+        public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+            if (!response.isSuccessful()) {
+                int responseCode = response.code();
+                if(responseCode == 504) { // 504 Unsatisfiable Request (only-if-cached)
+//                    errorTextView.setText("Can't load data.\nCheck your network connection.");
+//                    errorLinearLayout.setVisibility(View.VISIBLE);
+                }
+                return;
+            }
 
-//                    Response callbackResponse = response.body();
-//                    if(callbackResponse != null){
-//                        Timber.d("callbackResponse");
-//                    }
+            okhttp3.Response rawResponse = response.raw();
+            if (rawResponse != null) {
+                int code = rawResponse.code();
+                switch (code) {
+                    case 204:
+                        // No Content
+                        BusProvider.getInstance().post(new WatchLaterEvent());
 
-//                    VideosCollection videosCollection = response.body();
-//                    if (videosCollection != null) {
-//                        List<Video> videos = videosCollection.getVideos();
-//                        if (videos != null) {
-//                            mRelatedVideosAdapter.addAll(videos);
-//                            mRelatedVideosAdapter.addLoading();
-//                        }
-//                    }
-                    com.squareup.okhttp.Response rawResponse = response.raw();
-                    if (rawResponse != null) {
-                        String message = rawResponse.message();
-                        int code = rawResponse.code();
-                        Timber.d("onResponse() : message - " + message);
-                        Timber.d("onResponse() : code - " + code);
-
-                        switch (code) {
-                            case 204:
-                                // No Content
-                                BusProvider.getInstance().post(new WatchLaterEvent());
-                                break;
+                        relatedVideosAdapter.setIsWatchLaterOn(true);
+                        ImageView imageView = (ImageView) videosRecyclerView.getLayoutManager().findViewByPosition(0).findViewById(R.id.watch_later_iv);
+                        imageView.setImageResource(R.drawable.ic_watch_later_on);
+                        break;
 //                            case 400:
 //                                // If the video is owned by the authenticated user
 //                                break;
 //                            case 403:
 //                                // If the authenticated user is not allowed to like videos
 //                                break;
-                        }
-                    }
-                } else {
-                    com.squareup.okhttp.Response rawResponse = response.raw();
-                    if (rawResponse != null) {
-                        LogUtility.logFailedResponse(rawResponse);
-
-                        int code = rawResponse.code();
-                        switch (code) {
-                            case 500:
-                                Timber.e("Display error message in place of load more");
-//                                mErrorTextView.setText("Can't load data.\nCheck your network connection.");
-//                                mErrorLinearLayout.setVisibility(View.VISIBLE);
-                                break;
-                            default:
-                                break;
-                        }
-                    }
                 }
             }
         }
 
         @Override
-        public void onFailure(Throwable t) {
-            if (t != null) {
-                String message = t.getMessage();
-                LogUtility.logFailure(t);
+        public void onFailure(Call<ResponseBody> call, Throwable t) {
+            NetworkLogUtility.logFailure(call, t);
 
-                if (t instanceof SocketTimeoutException || t instanceof UnknownHostException) {
-                    Timber.e("Timeout occurred");
-                } else if (t instanceof IOException) {
-                    if (message.equals("Canceled")) {
-                        Timber.e("onFailure() : Canceled");
-                    }
-                }
+            if(t instanceof ConnectException || t instanceof UnknownHostException){
+                Snackbar.make(getActivity().findViewById(R.id.main_content),
+                        TrestleUtility.getFormattedText("Network connection is unavailable.", font, 16),
+                        Snackbar.LENGTH_LONG)
+                        .show();
             }
         }
     };
 
-    private Callback<Object> removeVideoFromWatchLaterCallback = new Callback<Object>() {
+    private Callback<ResponseBody> removeVideoFromWatchLaterCallback = new Callback<ResponseBody>() {
         @Override
-        public void onResponse(Response<Object> response, Retrofit retrofit) {
-            if (response != null) {
-                if (response.isSuccess()) {
-                    Timber.d("callbackResponse");
+        public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+            if (!response.isSuccessful()) {
+                int responseCode = response.code();
+                if(responseCode == 504) { // 504 Unsatisfiable Request (only-if-cached)
+//                    errorTextView.setText("Can't load data.\nCheck your network connection.");
+//                    errorLinearLayout.setVisibility(View.VISIBLE);
+                }
+                return;
+            }
 
-//                    Response callbackResponse = response.body();
-//                    if(callbackResponse != null){
-//                        Timber.d("callbackResponse");
-//                    }
+            okhttp3.Response rawResponse = response.raw();
+            if (rawResponse != null) {
+                int code = rawResponse.code();
+                switch (code) {
+                    case 204:
+                        // No Content
+                        BusProvider.getInstance().post(new WatchLaterEvent());
 
-//                    VideosCollection videosCollection = response.body();
-//                    if (videosCollection != null) {
-//                        List<Video> videos = videosCollection.getVideos();
-//                        if (videos != null) {
-//                            mRelatedVideosAdapter.addAll(videos);
-//                            mRelatedVideosAdapter.addLoading();
-//                        }
-//                    }
-                    com.squareup.okhttp.Response rawResponse = response.raw();
-                    if (rawResponse != null) {
-                        String message = rawResponse.message();
-                        int code = rawResponse.code();
-                        Timber.d("onResponse() : message - " + message);
-                        Timber.d("onResponse() : code - " + code);
-
-                        switch (code) {
-                            case 204:
-                                // No Content
-                                BusProvider.getInstance().post(new WatchLaterEvent());
-                                break;
+                        relatedVideosAdapter.setIsWatchLaterOn(false);
+                        ImageView imageView = (ImageView) videosRecyclerView.getLayoutManager().findViewByPosition(0).findViewById(R.id.watch_later_iv);
+                        imageView.setImageResource(R.drawable.ic_watch_later_off);
+                        break;
 //                            case 403:
 //                                // If the authenticated user is not allowed to like videos
 //                                break;
-                        }
-                    }
-                } else {
-                    com.squareup.okhttp.Response rawResponse = response.raw();
-                    if (rawResponse != null) {
-                        LogUtility.logFailedResponse(rawResponse);
-
-                        int code = rawResponse.code();
-                        switch (code) {
-                            case 500:
-                                Timber.e("Display error message in place of load more");
-//                                mErrorTextView.setText("Can't load data.\nCheck your network connection.");
-//                                mErrorLinearLayout.setVisibility(View.VISIBLE);
-                                break;
-                            default:
-                                break;
-                        }
-                    }
                 }
             }
         }
 
         @Override
-        public void onFailure(Throwable t) {
-            if (t != null) {
-                String message = t.getMessage();
-                LogUtility.logFailure(t);
+        public void onFailure(Call<ResponseBody> call, Throwable t) {
+            NetworkLogUtility.logFailure(call, t);
 
-                if (t instanceof SocketTimeoutException || t instanceof UnknownHostException) {
-                    Timber.e("Timeout occurred");
-                } else if (t instanceof IOException) {
-                    if (message.equals("Canceled")) {
-                        Timber.e("onFailure() : Canceled");
-                    }
-                }
+            if(t instanceof ConnectException || t instanceof UnknownHostException){
+                Snackbar.make(getActivity().findViewById(R.id.main_content),
+                        TrestleUtility.getFormattedText("Network connection is unavailable.", font, 16),
+                        Snackbar.LENGTH_LONG)
+                        .show();
             }
         }
     };
@@ -666,6 +472,8 @@ public class VideoDetailsFragment extends BaseFragment implements RelatedVideosA
                 token);
 
         setHasOptionsMenu(true);
+
+        font = FontCache.getTypeface("Ubuntu-Medium.ttf", getContext());
     }
 
     @Override
@@ -702,11 +510,13 @@ public class VideoDetailsFragment extends BaseFragment implements RelatedVideosA
                 videosRecyclerView.setLayoutManager(layoutManager);
                 relatedVideosAdapter = new RelatedVideosAdapter(video);
                 relatedVideosAdapter.setOnItemClickListener(this);
+                relatedVideosAdapter.setOnReloadClickListener(this);
                 relatedVideosAdapter.setOnLikeClickListener(this);
                 relatedVideosAdapter.setOnWatchLaterClickListener(this);
                 relatedVideosAdapter.setOnCommentsClickListener(this);
                 relatedVideosAdapter.setOnInfoClickListener(this);
                 relatedVideosAdapter.addHeader();
+                videosRecyclerView.setItemAnimator(new SlideInUpAnimator());
                 videosRecyclerView.setAdapter(relatedVideosAdapter);
 
                 // Pagination
@@ -822,6 +632,19 @@ public class VideoDetailsFragment extends BaseFragment implements RelatedVideosA
     }
     // endregion
 
+    // region RelatedVideosAdapter.OnReloadClickListener Methods
+
+    @Override
+    public void onReloadClick() {
+        relatedVideosAdapter.updateFooter(RelatedVideosAdapter.FooterType.LOAD_MORE);
+
+        Call findRelatedVideosCall = vimeoService.findRelatedVideos(videoId, currentPage, PAGE_SIZE);
+        calls.add(findRelatedVideosCall);
+        findRelatedVideosCall.enqueue(getRelatedVideosNextFetchCallback);
+    }
+
+    // endregion
+
     // region RelatedVideosAdapter.OnLikeClickListener Methods
     @Override
     public void onLikeClick(final ImageView imageView) {
@@ -830,9 +653,6 @@ public class VideoDetailsFragment extends BaseFragment implements RelatedVideosA
             alertDialogBuilder.setMessage("Are you sure you want to unlike this video?");
             alertDialogBuilder.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
                 public void onClick(DialogInterface dialog, int whichButton) {
-                    relatedVideosAdapter.setIsLikeOn(false);
-                    imageView.setImageResource(R.drawable.ic_like_off);
-
                     Call unlikeVideoCall = vimeoService.unlikeVideo(String.valueOf(videoId));
                     calls.add(unlikeVideoCall);
                     unlikeVideoCall.enqueue(unlikeVideoCallback);
@@ -845,9 +665,6 @@ public class VideoDetailsFragment extends BaseFragment implements RelatedVideosA
             });
             alertDialogBuilder.show();
         } else {
-            relatedVideosAdapter.setIsLikeOn(true);
-            imageView.setImageResource(R.drawable.ic_like_on);
-
             Call likeVideoCall = vimeoService.likeVideo(String.valueOf(videoId));
             calls.add(likeVideoCall);
             likeVideoCall.enqueue(likeVideoCallback);
@@ -863,9 +680,6 @@ public class VideoDetailsFragment extends BaseFragment implements RelatedVideosA
             alertDialogBuilder.setMessage("Are you sure you want to remove this video from your Watch Later collection?");
             alertDialogBuilder.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
                 public void onClick(DialogInterface dialog, int whichButton) {
-                    relatedVideosAdapter.setIsWatchLaterOn(false);
-                    imageView.setImageResource(R.drawable.ic_watch_later_off);
-
                     Call removeVideoFromWatchLaterCall = vimeoService.removeVideoFromWatchLater(String.valueOf(videoId));
                     calls.add(removeVideoFromWatchLaterCall);
                     removeVideoFromWatchLaterCall.enqueue(removeVideoFromWatchLaterCallback);
@@ -878,9 +692,6 @@ public class VideoDetailsFragment extends BaseFragment implements RelatedVideosA
             });
             alertDialogBuilder.show();
         } else {
-            relatedVideosAdapter.setIsWatchLaterOn(true);
-            imageView.setImageResource(R.drawable.ic_watch_later_on);
-
             Call addVideoToWatchLaterCall = vimeoService.addVideoToWatchLater(String.valueOf(videoId));
             calls.add(addVideoToWatchLaterCall);
             addVideoToWatchLaterCall.enqueue(addVideoToWatchLaterCallback);
@@ -967,14 +778,14 @@ public class VideoDetailsFragment extends BaseFragment implements RelatedVideosA
         getContext().startActivity(intent);
     }
 
-    private void showReloadSnackbar(String message) {
-        Snackbar.make(getActivity().findViewById(android.R.id.content),
-                message,
-                Snackbar.LENGTH_INDEFINITE)
-                .setAction("Reload", reloadOnClickListener)
-//                                .setActionTextColor(Color.RED)
-                .show();
-    }
+//    private void showReloadSnackbar(String message) {
+//        Snackbar.make(getActivity().findViewById(android.R.id.content),
+//                message,
+//                Snackbar.LENGTH_INDEFINITE)
+//                .setAction("Reload", reloadOnClickListener)
+////                                .setActionTextColor(Color.RED)
+//                .show();
+//    }
 
     private void removeListeners() {
         videosRecyclerView.removeOnScrollListener(recyclerViewOnScrollListener);

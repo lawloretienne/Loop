@@ -6,8 +6,9 @@ import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
@@ -41,13 +42,15 @@ public class VideosAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
     // region Constants
     public static final int HEADER = 0;
     public static final int ITEM = 1;
-    public static final int LOADING = 2;
+    public static final int FOOTER = 2;
     // endregion
 
     // region Member Variables
     private List<Video> videos;
     private OnItemClickListener onItemClickListener;
-    private boolean isLoadingFooterAdded = false;
+    private OnReloadClickListener onReloadClickListener;
+    private boolean isFooterAdded = false;
+    private FooterViewHolder footerViewHolder;
     // endregion
 
     // region Listeners
@@ -56,6 +59,10 @@ public class VideosAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
     // region Interfaces
     public interface OnItemClickListener {
         void onItemClick(int position, View view);
+    }
+
+    public interface OnReloadClickListener {
+        void onReloadClick();
     }
     // endregion
 
@@ -75,8 +82,8 @@ public class VideosAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
             case ITEM:
                 viewHolder = createVideoViewHolder(parent);
                 break;
-            case LOADING:
-                viewHolder = createLoadingViewHolder(parent);
+            case FOOTER:
+                viewHolder = createFooterViewHolder(parent);
                 break;
             default:
                 Timber.e("[ERR] type is not supported!!! type is %d", viewType);
@@ -94,8 +101,8 @@ public class VideosAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
             case ITEM:
                 bindVideoViewHolder(viewHolder, position);
                 break;
-            case LOADING:
-                bindLoadingViewHolder(viewHolder);
+            case FOOTER:
+                bindFooterViewHolder(viewHolder);
             default:
                 break;
         }
@@ -108,65 +115,10 @@ public class VideosAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
 
     @Override
     public int getItemViewType(int position) {
-        return (position == videos.size()-1 && isLoadingFooterAdded) ? LOADING : ITEM;
+        return (position == videos.size()-1 && isFooterAdded) ? FOOTER : ITEM;
     }
 
     // region Helper Methods
-    private void add(Video item) {
-        videos.add(item);
-        notifyItemInserted(videos.size()-1);
-    }
-
-    public void addAll(List<Video> videos) {
-        for (Video video : videos) {
-            add(video);
-        }
-    }
-
-    public void remove(Video item) {
-        int position = videos.indexOf(item);
-        if (position > -1) {
-            videos.remove(position);
-            notifyItemRemoved(position);
-        }
-    }
-
-    public void clear() {
-        isLoadingFooterAdded = false;
-        while (getItemCount() > 0) {
-            remove(getItem(0));
-        }
-    }
-
-    public boolean isEmpty() {
-        return getItemCount() == 0;
-    }
-
-    public void addLoading(){
-        isLoadingFooterAdded = true;
-        add(new Video());
-    }
-
-    public void removeLoading() {
-        isLoadingFooterAdded = false;
-
-        int position = videos.size() - 1;
-        Video item = getItem(position);
-
-        if (item != null) {
-            videos.remove(position);
-            notifyItemRemoved(position);
-        }
-    }
-
-    public Video getItem(int position) {
-        return videos.get(position);
-    }
-
-    public void setOnItemClickListener(OnItemClickListener onItemClickListener) {
-        this.onItemClickListener = onItemClickListener;
-    }
-
     private RecyclerView.ViewHolder createHeaderViewHolder(ViewGroup parent){
         View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.video_info, parent, false);
 
@@ -194,10 +146,20 @@ public class VideosAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
         return holder;
     }
 
-    private RecyclerView.ViewHolder createLoadingViewHolder(ViewGroup parent) {
-        View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.load_more, parent, false);
+    private RecyclerView.ViewHolder createFooterViewHolder(ViewGroup parent) {
+        View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.adapter_footer, parent, false);
 
-        return new MoreViewHolder(v);
+        final FooterViewHolder holder = new FooterViewHolder(v);
+        holder.reloadButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(onReloadClickListener != null){
+                    onReloadClickListener.onReloadClick();
+                }
+            }
+        });
+
+        return holder;
     }
 
     private void bindVideoViewHolder(RecyclerView.ViewHolder viewHolder, int position) {
@@ -216,10 +178,89 @@ public class VideosAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
         }
     }
 
-    private void bindLoadingViewHolder(RecyclerView.ViewHolder viewHolder){
-        MoreViewHolder holder = (MoreViewHolder) viewHolder;
+    private void bindFooterViewHolder(RecyclerView.ViewHolder viewHolder) {
+        FooterViewHolder holder = (FooterViewHolder) viewHolder;
+        footerViewHolder = holder;
 
         holder.loadingImageView.setMaskOrientation(LoadingImageView.MaskOrientation.LeftToRight);
+    }
+
+    private void add(Video item) {
+        videos.add(item);
+        notifyItemInserted(videos.size()-1);
+    }
+
+    public void addAll(List<Video> videos) {
+        for (Video video : videos) {
+            add(video);
+        }
+    }
+
+    public void remove(Video item) {
+        int position = videos.indexOf(item);
+        if (position > -1) {
+            videos.remove(position);
+            notifyItemRemoved(position);
+        }
+    }
+
+    public void clear() {
+        isFooterAdded = false;
+        while (getItemCount() > 0) {
+            remove(getItem(0));
+        }
+    }
+
+    public boolean isEmpty() {
+        return getItemCount() == 0;
+    }
+
+    public void addFooter(){
+        isFooterAdded = true;
+        add(new Video());
+    }
+
+    public void removeFooter() {
+        isFooterAdded = false;
+
+        int position = videos.size() - 1;
+        Video item = getItem(position);
+
+        if (item != null) {
+            videos.remove(position);
+            notifyItemRemoved(position);
+        }
+    }
+
+    public void updateFooter(FooterType footerType){
+        switch (footerType) {
+            case LOAD_MORE:
+                if(footerViewHolder!= null){
+                    footerViewHolder.errorRelativeLayout.setVisibility(View.GONE);
+                    footerViewHolder.loadingRelativeLayout.setVisibility(View.VISIBLE);
+                }
+                break;
+            case ERROR:
+                if(footerViewHolder!= null){
+                    footerViewHolder.loadingRelativeLayout.setVisibility(View.GONE);
+                    footerViewHolder.errorRelativeLayout.setVisibility(View.VISIBLE);
+                }
+                break;
+            default:
+                break;
+        }
+    }
+
+    public Video getItem(int position) {
+        return videos.get(position);
+    }
+
+    public void setOnItemClickListener(OnItemClickListener onItemClickListener) {
+        this.onItemClickListener = onItemClickListener;
+    }
+
+    public void setOnReloadClickListener(OnReloadClickListener onReloadClickListener) {
+        this.onReloadClickListener = onReloadClickListener;
     }
 
     private void setUpTitle(TextView tv, Video video) {
@@ -379,18 +420,30 @@ public class VideosAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
         // endregion
     }
 
-    public static class MoreViewHolder extends RecyclerView.ViewHolder {
+    public static class FooterViewHolder extends RecyclerView.ViewHolder {
         // region Views
+        @Bind(R.id.loading_rl)
+        RelativeLayout loadingRelativeLayout;
+        @Bind(R.id.error_rl)
+        RelativeLayout errorRelativeLayout;
         @Bind(R.id.loading_iv)
         LoadingImageView loadingImageView;
+        @Bind(R.id.reload_btn)
+        Button reloadButton;
         // endregion
 
         // region Constructors
-        public MoreViewHolder(View view) {
+        public FooterViewHolder(View view) {
             super(view);
             ButterKnife.bind(this, view);
         }
         // endregion
+    }
+
+
+    public enum FooterType {
+        LOAD_MORE,
+        ERROR
     }
 
     // endregion

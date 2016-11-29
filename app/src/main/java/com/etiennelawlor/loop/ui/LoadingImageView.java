@@ -1,5 +1,7 @@
 package com.etiennelawlor.loop.ui;
 
+import android.animation.ObjectAnimator;
+import android.animation.ValueAnimator;
 import android.content.Context;
 import android.content.res.TypedArray;
 import android.graphics.Bitmap;
@@ -18,8 +20,6 @@ import android.view.Gravity;
 import android.widget.ImageView;
 
 import com.etiennelawlor.loop.R;
-import com.nineoldandroids.animation.ObjectAnimator;
-import com.nineoldandroids.animation.ValueAnimator;
 
 /**
  * Created by chiemy on 15/8/19.

@@ -7,7 +7,6 @@ import android.view.MenuItem;
 
 import com.etiennelawlor.loop.R;
 import com.etiennelawlor.loop.fragments.VideoCommentsFragment;
-import com.etiennelawlor.loop.fragments.VideoPlayerFragment;
 
 import butterknife.ButterKnife;
 

@@ -1,15 +1,15 @@
 package com.etiennelawlor.loop.adapters;
 
-import android.content.res.ColorStateList;
 import android.graphics.Typeface;
-import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
@@ -44,7 +44,6 @@ import java.util.Locale;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
-import de.hdodenhof.circleimageview.CircleImageView;
 import timber.log.Timber;
 
 /**
@@ -56,7 +55,7 @@ public class RelatedVideosAdapter extends RecyclerView.Adapter<RecyclerView.View
     // region Constants
     public static final int HEADER = 0;
     public static final int ITEM = 1;
-    public static final int LOADING = 2;
+    public static final int FOOTER = 2;
     // endregion
 
     // region Member Variables
@@ -67,7 +66,9 @@ public class RelatedVideosAdapter extends RecyclerView.Adapter<RecyclerView.View
     private OnWatchLaterClickListener onWatchLaterClickListener;
     private OnCommentsClickListener onCommentsClickListener;
     private OnInfoClickListener onInfoClickListener;
-    private boolean isLoadingFooterAdded = false;
+    private OnReloadClickListener onReloadClickListener;
+    private FooterViewHolder footerViewHolder;
+    private boolean isFooterAdded = false;
     private Typeface boldFont;
     private boolean isLikeOn = false;
     private boolean isWatchLaterOn = false;
@@ -81,6 +82,10 @@ public class RelatedVideosAdapter extends RecyclerView.Adapter<RecyclerView.View
     // region Interfaces
     public interface OnItemClickListener {
         void onItemClick(int position, View view);
+    }
+
+    public interface OnReloadClickListener {
+        void onReloadClick();
     }
 
     public interface OnLikeClickListener {
@@ -120,8 +125,8 @@ public class RelatedVideosAdapter extends RecyclerView.Adapter<RecyclerView.View
             case ITEM:
                 viewHolder = createVideoViewHolder(parent);
                 break;
-            case LOADING:
-                viewHolder = createLoadingViewHolder(parent);
+            case FOOTER:
+                viewHolder = createFooterViewHolder(parent);
                 break;
             default:
                 Timber.e("[ERR] type is not supported!!! type is %d", viewType);
@@ -140,8 +145,8 @@ public class RelatedVideosAdapter extends RecyclerView.Adapter<RecyclerView.View
             case ITEM:
                 bindVideoViewHolder(viewHolder, position);
                 break;
-            case LOADING:
-                bindLoadingViewHolder(viewHolder);
+            case FOOTER:
+                bindFooterViewHolder(viewHolder);
                 break;
             default:
                 break;
@@ -158,7 +163,7 @@ public class RelatedVideosAdapter extends RecyclerView.Adapter<RecyclerView.View
         if(position == 0)
             return HEADER;
         else
-            return (position == getItemCount()-1 && isLoadingFooterAdded) ? LOADING : ITEM;
+            return (position == getItemCount()-1 && isFooterAdded) ? FOOTER : ITEM;
     }
 
     // region Helper Methods
@@ -230,9 +235,20 @@ public class RelatedVideosAdapter extends RecyclerView.Adapter<RecyclerView.View
         return holder;
     }
 
-    private RecyclerView.ViewHolder createLoadingViewHolder(ViewGroup parent) {
-        View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.load_more, parent, false);
-        return new MoreViewHolder(v);
+    private RecyclerView.ViewHolder createFooterViewHolder(ViewGroup parent) {
+        View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.adapter_footer, parent, false);
+
+        final FooterViewHolder holder = new FooterViewHolder(v);
+        holder.reloadButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(onReloadClickListener != null){
+                    onReloadClickListener.onReloadClick();
+                }
+            }
+        });
+
+        return holder;
     }
 
     private void bindHeaderViewHolder(RecyclerView.ViewHolder viewHolder) {
@@ -265,8 +281,9 @@ public class RelatedVideosAdapter extends RecyclerView.Adapter<RecyclerView.View
         }
     }
 
-    private void bindLoadingViewHolder(RecyclerView.ViewHolder viewHolder){
-        MoreViewHolder holder = (MoreViewHolder) viewHolder;
+    private void bindFooterViewHolder(RecyclerView.ViewHolder viewHolder) {
+        FooterViewHolder holder = (FooterViewHolder) viewHolder;
+        footerViewHolder = holder;
 
         holder.loadingImageView.setMaskOrientation(LoadingImageView.MaskOrientation.LeftToRight);
     }
@@ -291,7 +308,7 @@ public class RelatedVideosAdapter extends RecyclerView.Adapter<RecyclerView.View
     }
 
     public void clear() {
-        isLoadingFooterAdded = false;
+        isFooterAdded = false;
         while (getItemCount() > 0) {
             remove(getItem(0));
         }
@@ -305,33 +322,13 @@ public class RelatedVideosAdapter extends RecyclerView.Adapter<RecyclerView.View
         add(new Video());
     }
 
-    public void addLoading(){
-//        if(!isLoadingFooterAdded){
-//            isLoadingFooterAdded = true;
-//            add(new Video());
-//        }
-
-        isLoadingFooterAdded = true;
+    public void addFooter(){
+        isFooterAdded = true;
         add(new Video());
     }
 
-    public void removeLoading() {
-//        if(isLoadingFooterAdded){
-//            isLoadingFooterAdded = false;
-//
-//            int itemCount = getItemCount();
-//            if(itemCount > 0){
-//                int position = itemCount - 1;
-//                Video item = getItem(position);
-//
-//                if (item != null) {
-//                    videos.remove(position);
-//                    notifyItemRemoved(position);
-//                }
-//            }
-//        }
-
-        isLoadingFooterAdded = false;
+    public void removeFooter() {
+        isFooterAdded = false;
 
         int position = videos.size() - 1;
         Video item = getItem(position);
@@ -342,12 +339,26 @@ public class RelatedVideosAdapter extends RecyclerView.Adapter<RecyclerView.View
         }
     }
 
-    public Video getItem(int position) {
-//        if(position>=0)
-//            return videos.get(position);
-//        else
-//            return null;
+    public void updateFooter(FooterType footerType){
+        switch (footerType) {
+            case LOAD_MORE:
+                if(footerViewHolder!= null){
+                    footerViewHolder.errorRelativeLayout.setVisibility(View.GONE);
+                    footerViewHolder.loadingRelativeLayout.setVisibility(View.VISIBLE);
+                }
+                break;
+            case ERROR:
+                if(footerViewHolder!= null){
+                    footerViewHolder.loadingRelativeLayout.setVisibility(View.GONE);
+                    footerViewHolder.errorRelativeLayout.setVisibility(View.VISIBLE);
+                }
+                break;
+            default:
+                break;
+        }
+    }
 
+    public Video getItem(int position) {
         return videos.get(position);
     }
 
@@ -355,6 +366,9 @@ public class RelatedVideosAdapter extends RecyclerView.Adapter<RecyclerView.View
         this.onItemClickListener = onItemClickListener;
     }
 
+    public void setOnReloadClickListener(OnReloadClickListener onReloadClickListener) {
+        this.onReloadClickListener = onReloadClickListener;
+    }
 
     public void setOnLikeClickListener(OnLikeClickListener onLikeClickListener) {
         this.onLikeClickListener = onLikeClickListener;
@@ -425,11 +439,11 @@ public class RelatedVideosAdapter extends RecyclerView.Adapter<RecyclerView.View
 
     public boolean isLikeOn() {return isLikeOn; }
 
-    public void setIsLikeOn(boolean isLikeOn) { isLikeOn = isLikeOn; }
+    public void setIsLikeOn(boolean isLikeOn) { this.isLikeOn = isLikeOn; }
 
     public boolean isWatchLaterOn() {return isWatchLaterOn; }
 
-    public void setIsWatchLaterOn(boolean isWatchLaterOn) { isWatchLaterOn = isWatchLaterOn; }
+    public void setIsWatchLaterOn(boolean isWatchLaterOn) { this.isWatchLaterOn = isWatchLaterOn; }
 
     private void setUpVideoThumbnail(ImageView iv, Video video) {
         Pictures pictures = video.getPictures();
@@ -705,18 +719,29 @@ public class RelatedVideosAdapter extends RecyclerView.Adapter<RecyclerView.View
         // endregion
     }
 
-    public static class MoreViewHolder extends RecyclerView.ViewHolder {
+    public static class FooterViewHolder extends RecyclerView.ViewHolder {
         // region Views
+        @Bind(R.id.loading_rl)
+        RelativeLayout loadingRelativeLayout;
+        @Bind(R.id.error_rl)
+        RelativeLayout errorRelativeLayout;
         @Bind(R.id.loading_iv)
         LoadingImageView loadingImageView;
+        @Bind(R.id.reload_btn)
+        Button reloadButton;
         // endregion
 
         // region Constructors
-        public MoreViewHolder(View view) {
+        public FooterViewHolder(View view) {
             super(view);
             ButterKnife.bind(this, view);
         }
         // endregion
+    }
+
+    public enum FooterType {
+        LOAD_MORE,
+        ERROR
     }
 
     // endregion

@@ -81,6 +81,8 @@
 
         <include layout="@layout/loading_layout" />
 
+        <include layout="@layout/error_layout" />
+
     </FrameLayout>
 
 </android.support.design.widget.CoordinatorLayout>

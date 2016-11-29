@@ -27,11 +27,10 @@ import com.etiennelawlor.loop.ui.GridSpacesItemDecoration;
 import com.etiennelawlor.loop.ui.LoadingImageView;
 import com.etiennelawlor.loop.utilities.DisplayUtility;
 import com.etiennelawlor.loop.utilities.FontCache;
-import com.etiennelawlor.loop.utilities.LogUtility;
+import com.etiennelawlor.loop.utilities.NetworkLogUtility;
 import com.etiennelawlor.loop.utilities.TrestleUtility;
 
-import java.io.IOException;
-import java.net.SocketTimeoutException;
+import java.net.ConnectException;
 import java.net.UnknownHostException;
 import java.util.List;
 
@@ -39,10 +38,9 @@ import butterknife.Bind;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import jp.wasabeef.recyclerview.animators.SlideInUpAnimator;
-import retrofit.Call;
-import retrofit.Callback;
-import retrofit.Response;
-import retrofit.Retrofit;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 import timber.log.Timber;
 
 /**
@@ -66,7 +64,6 @@ public class ExploreFragment extends BaseFragment implements CategoriesAdapter.O
     // endregion
 
     // region Member Variables
-    private boolean isLoading = false;
     private CategoriesAdapter categoriesAdapter;
     private VimeoService vimeoService;
     private Typeface font;
@@ -87,59 +84,37 @@ public class ExploreFragment extends BaseFragment implements CategoriesAdapter.O
     // region Callbacks
     private Callback<CategoriesCollection> getCategoriesCallback = new Callback<CategoriesCollection>() {
         @Override
-        public void onResponse(Response<CategoriesCollection> response, Retrofit retrofit) {
-            Timber.d("onResponse()");
-
+        public void onResponse(Call<CategoriesCollection> call, Response<CategoriesCollection> response) {
             loadingImageView.setVisibility(View.GONE);
-            isLoading = false;
 
-            if (response != null) {
-                if(response.isSuccess()){
-                    CategoriesCollection categoriesCollection = response.body();
-                    if (categoriesCollection != null) {
-                        List<Category> categories = categoriesCollection.getCategories();
-                        categoriesAdapter.addAll(categories);
-                    }
-                } else {
-                    com.squareup.okhttp.Response rawResponse = response.raw();
-                    if (rawResponse != null) {
-                        LogUtility.logFailedResponse(rawResponse);
-
-                        int code = rawResponse.code();
-                        switch (code) {
-                            case 500:
-                                errorTextView.setText("Can't load data.\nCheck your network connection.");
-                                errorLinearLayout.setVisibility(View.VISIBLE);
-                                break;
-                            default:
-                                break;
-                        }
-                    }
+            if (!response.isSuccessful()) {
+                int responseCode = response.code();
+                if(responseCode == 504) { // 504 Unsatisfiable Request (only-if-cached)
+                    errorTextView.setText("Can't load data.\nCheck your network connection.");
+                    errorLinearLayout.setVisibility(View.VISIBLE);
                 }
+                return;
+            }
+
+            CategoriesCollection categoriesCollection = response.body();
+            if (categoriesCollection != null) {
+                List<Category> categories = categoriesCollection.getCategories();
+                categoriesAdapter.addAll(categories);
             }
         }
 
         @Override
-        public void onFailure(Throwable t) {
-            if (t != null) {
-                String message = t.getMessage();
-                LogUtility.logFailure(t);
+        public void onFailure(Call<CategoriesCollection> call, Throwable t) {
+            NetworkLogUtility.logFailure(call, t);
 
-                if (t instanceof SocketTimeoutException || t instanceof UnknownHostException) {
-                    Timber.e("Timeout occurred");
-                    isLoading = false;
-                    loadingImageView.setVisibility(View.GONE);
+            loadingImageView.setVisibility(View.GONE);
 
-                    errorTextView.setText("Can't load data.\nCheck your network connection.");
-                    errorLinearLayout.setVisibility(View.VISIBLE);
-                } else if(t instanceof IOException){
-                    if(message.equals("Canceled")){
-                        Timber.e("onFailure() : Canceled");
-                    } else {
-                        isLoading = false;
-                        loadingImageView.setVisibility(View.GONE);
-                    }
-                }
+//            t instanceof SocketTimeoutException
+//            t instanceof IOException
+
+            if(t instanceof ConnectException || t instanceof UnknownHostException){
+                errorTextView.setText("Can't load data.\nCheck your network connection.");
+                errorLinearLayout.setVisibility(View.VISIBLE);
             }
         }
     };
@@ -167,10 +142,6 @@ public class ExploreFragment extends BaseFragment implements CategoriesAdapter.O
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
-        if (getArguments() != null) {
-//            mQuery = getArguments().getString("query");
-        }
 
         AccessToken token = LoopPrefs.getAccessToken(getActivity());
         vimeoService = ServiceGenerator.createService(

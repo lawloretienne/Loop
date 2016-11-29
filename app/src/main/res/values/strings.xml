@@ -62,4 +62,7 @@
     <string name="voice_prompt">What video are you looking for?</string>
     <string name="leave_a_comment">Leave a comment here</string>
 
+    <string name="check_your_network_connection">Can\'t load data. Check your network connection.</string>
+
+
 </resources>

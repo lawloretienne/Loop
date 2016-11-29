@@ -8,15 +8,10 @@ import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.bumptech.glide.Glide;
-import com.etiennelawlor.loop.LoopApplication;
 import com.etiennelawlor.loop.R;
 import com.etiennelawlor.loop.network.models.response.Comment;
-import com.etiennelawlor.loop.network.models.response.Pictures;
-import com.etiennelawlor.loop.network.models.response.Size;
 import com.etiennelawlor.loop.network.models.response.User;
 import com.etiennelawlor.loop.ui.AvatarView;
 import com.etiennelawlor.loop.utilities.DateUtility;
