@@ -1,8 +1,10 @@
 package com.etiennelawlor.loop.fragments;
 
+import android.graphics.Typeface;
 import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.os.Handler;
+import android.support.design.widget.Snackbar;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -30,8 +32,10 @@ import com.etiennelawlor.loop.network.models.response.VideoConfig;
 import com.etiennelawlor.loop.network.models.response.VideoFormat;
 import com.etiennelawlor.loop.prefs.LoopPrefs;
 import com.etiennelawlor.loop.ui.LoadingImageView;
+import com.etiennelawlor.loop.utilities.FontCache;
 import com.etiennelawlor.loop.utilities.NetworkLogUtility;
 import com.etiennelawlor.loop.utilities.NetworkUtility;
+import com.etiennelawlor.loop.utilities.TrestleUtility;
 
 import java.net.ConnectException;
 import java.net.UnknownHostException;
@@ -70,6 +74,7 @@ public class VideoPlayerFragment extends BaseFragment {
     private MediaController mediaController;
     private VimeoPlayerService vimeoPlayerService;
     private VideoSavedState videoSavedState;
+    private Typeface font;
     // endregion
 
     // region Listeners
@@ -89,10 +94,21 @@ public class VideoPlayerFragment extends BaseFragment {
         @Override
         public void onResponse(Call<VideoConfig> call, Response<VideoConfig> response) {
             if (!response.isSuccessful()) {
+                loadingImageView.setVisibility(View.GONE);
+
                 int responseCode = response.code();
-                if(responseCode == 504) { // 504 Unsatisfiable Request (only-if-cached)
-                    errorTextView.setText("Can't load data.\nCheck your network connection.");
-                    errorLinearLayout.setVisibility(View.VISIBLE);
+                switch (responseCode){
+                    case 504: // 504 Unsatisfiable Request (only-if-cached)
+                        errorTextView.setText("Can't load data.\nCheck your network connection.");
+                        errorLinearLayout.setVisibility(View.VISIBLE);
+                        break;
+                    case 403: // Forbidden
+                        // TODO show UI for "Cannot play this video"
+//                        Snackbar.make(getActivity().findViewById(R.id.main_content),
+//                                TrestleUtility.getFormattedText("Cannot play this video.", font, 16),
+//                                Snackbar.LENGTH_LONG)
+//                                .show();
+                        break;
                 }
                 return;
             }
@@ -152,6 +168,8 @@ public class VideoPlayerFragment extends BaseFragment {
         if(getArguments() != null){
             videoId = getArguments().getLong(VideoDetailsFragment.KEY_VIDEO_ID);
         }
+
+        font = FontCache.getTypeface("Ubuntu-Medium.ttf", getContext());
 
         AccessToken token = LoopPrefs.getAccessToken(getActivity());
         vimeoPlayerService = ServiceGenerator.createService(

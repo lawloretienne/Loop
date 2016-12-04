@@ -1,5 +1,5 @@
 apply plugin: 'com.android.application'
-apply plugin: 'io.fabric'
+//apply plugin: 'io.fabric'
 
 android {
     compileSdkVersion 25
@@ -11,7 +11,7 @@ android {
         targetSdkVersion 25
         versionCode 1
         versionName "1.0"
-        manifestPlaceholders = [fabricApiKey: FABRIC_API_KEY]
+//        manifestPlaceholders = [fabricApiKey: FABRIC_API_KEY]
         // Enabling multidex support.
         multiDexEnabled true
 //        multiDexKeepProguard file('multidex-keep.txt')
@@ -93,9 +93,9 @@ dependencies {
     compile 'jp.wasabeef:recyclerview-animators:2.0.0'
     compile 'com.github.greenfrvr:hashtag-view:1.2.1'
     compile 'com.github.lawloretienne:trestle:0.0.7'
-    compile('com.crashlytics.sdk.android:crashlytics:2.6.4@aar') {
-        transitive = true;
-    }
+//    compile('com.crashlytics.sdk.android:crashlytics:2.6.4@aar') {
+//        transitive = true;
+//    }
     compile 'com.flurry.android:analytics:6.4.2'
 
     compile 'com.android.support:multidex:1.0.1' //
