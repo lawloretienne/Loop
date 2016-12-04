@@ -121,15 +121,6 @@ public class VideosFragment extends BaseFragment implements VideosAdapter.OnItem
         calls.add(findVideosCall);
         findVideosCall.enqueue(findVideosFirstFetchCallback);
     }
-
-//    private View.OnClickListener reloadOnClickListener = new View.OnClickListener() {
-//        @Override
-//        public void onClick(View v) {
-//            currentPage -= 1;
-//            videosAdapter.addFooter();
-//            loadMoreItems();
-//        }
-//    };
     // endregion
 
     // region Callbacks
@@ -295,9 +286,6 @@ public class VideosFragment extends BaseFragment implements VideosAdapter.OnItem
                 sortOrderValue,
                 currentPage,
                 PAGE_SIZE);
-        Timber.d("mCalls.add() : query - " + query);
-        Timber.d("onViewCreated() : calls.add() : currentPage - " + currentPage);
-
         calls.add(findVideosCall);
         findVideosCall.enqueue(findVideosFirstFetchCallback);
     }
@@ -406,9 +394,6 @@ public class VideosFragment extends BaseFragment implements VideosAdapter.OnItem
                 sortOrderValue,
                 currentPage,
                 PAGE_SIZE);
-        Timber.d("mCalls.add() : query - " + query);
-        Timber.d("loadMoreItems() : calls.add() : currentPage - " + currentPage);
-
         calls.add(findVideosCall);
         findVideosCall.enqueue(findVideosNextFetchCallback);
     }

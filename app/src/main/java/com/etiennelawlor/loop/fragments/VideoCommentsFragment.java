@@ -11,9 +11,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
-import android.text.Editable;
 import android.text.TextUtils;
-import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -39,8 +37,10 @@ import com.etiennelawlor.loop.prefs.LoopPrefs;
 import com.etiennelawlor.loop.ui.LoadingImageView;
 import com.etiennelawlor.loop.utilities.DisplayUtility;
 import com.etiennelawlor.loop.utilities.FontCache;
+import com.etiennelawlor.loop.utilities.FormValidationUtility;
 import com.etiennelawlor.loop.utilities.NetworkLogUtility;
 import com.etiennelawlor.loop.utilities.TrestleUtility;
+import com.jakewharton.rxbinding.widget.RxTextView;
 
 import java.net.ConnectException;
 import java.net.UnknownHostException;
@@ -56,6 +56,11 @@ import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
+import rx.Observable;
+import rx.Subscriber;
+import rx.Subscription;
+import rx.android.schedulers.AndroidSchedulers;
+import rx.subscriptions.CompositeSubscription;
 
 /**
  * Created by etiennelawlor on 12/20/15.
@@ -91,6 +96,8 @@ public class VideoCommentsFragment extends BaseFragment implements VideoComments
     private VideoCommentsAdapter videoCommentsAdapter;
     private VimeoService vimeoService;
     private Video video;
+    private CompositeSubscription compositeSubscription;
+    private Observable<CharSequence> commentChangeObservable;
     private int currentPage = 1;
     private Long videoId = -1L;
     private boolean commentChangeMade = false;
@@ -103,49 +110,6 @@ public class VideoCommentsFragment extends BaseFragment implements VideoComments
     // endregion
 
     // region Listeners
-    private TextWatcher commentEditTextTextWatcher = new TextWatcher() {
-        @Override
-        public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-
-        }
-
-        @Override
-        public void onTextChanged(CharSequence s, int start, int before, int count) {
-            if (s.length() > 0) {
-//                mSubmitCommentImageView.setImageResource(R.drawable.ic_comment_button_highlighted);
-
-//                submitCommentImageView.setImageTintList(ColorStateList.valueOf(ContextCompat.getColor(submitCommentImageView.getContext(), android.R.color.white)));
-
-//                ColorStateList csl = AppCompatResources.getColorStateList(submitCommentImageView.getContext(), android.R.color.white);
-//                Drawable drawable = DrawableCompat.wrap(submitCommentImageView.getDrawable());
-//                DrawableCompat.setTintList(drawable, csl);
-//                submitCommentImageView.setImageDrawable(drawable);
-                submitCommentImageView.setImageResource(R.drawable.ic_comment_active);
-            } else {
-//                mSubmitCommentImageView.setImageResource(R.drawable.ic_comment_button);
-
-//                submitCommentImageView.setImageTintList(ColorStateList.valueOf(ContextCompat.getColor(submitCommentImageView.getContext(), R.color.fifty_percent_transparency_teal_500)));
-
-//                ColorStateList csl = AppCompatResources.getColorStateList(submitCommentImageView.getContext(), R.color.fifty_percent_transparency_teal_500);
-//                Drawable drawable = DrawableCompat.wrap(submitCommentImageView.getDrawable());
-//                DrawableCompat.setTintList(drawable, csl);
-//                submitCommentImageView.setImageDrawable(drawable);
-
-//                mWrappedDrawable = mDrawable.mutate();
-//                mWrappedDrawable = DrawableCompat.wrap(mWrappedDrawable);
-//                DrawableCompat.setTint(mWrappedDrawable, mColor);
-//                DrawableCompat.setTintMode(mWrappedDrawable, PorterDuff.Mode.SRC_IN);
-
-                submitCommentImageView.setImageResource(R.drawable.ic_comment_inactive);
-            }
-        }
-
-        @Override
-        public void afterTextChanged(Editable s) {
-
-        }
-    };
-
     @OnClick(R.id.sumbit_comment_fl)
     public void submitComment() {
         String comment = commentEditText.getText().toString();
@@ -355,6 +319,8 @@ public class VideoCommentsFragment extends BaseFragment implements VideoComments
                 token);
 
         font = FontCache.getTypeface("Ubuntu-Medium.ttf", getContext());
+
+        compositeSubscription = new CompositeSubscription();
     }
 
     @Override
@@ -423,6 +389,13 @@ public class VideoCommentsFragment extends BaseFragment implements VideoComments
 //
 //        }
 
+
+
+        commentChangeObservable = RxTextView.textChanges(commentEditText);
+
+        // Checks for validity of the comment input field
+        setUpCommentSubscription();
+
         long id = video.getId();
         if (id != -1L) {
             loadingImageView.setVisibility(View.VISIBLE);
@@ -461,8 +434,9 @@ public class VideoCommentsFragment extends BaseFragment implements VideoComments
                 comments.add(comment);
             }
         }
-
         super.onDestroy();
+
+        compositeSubscription.unsubscribe();
     }
     // endregion
 
@@ -512,11 +486,9 @@ public class VideoCommentsFragment extends BaseFragment implements VideoComments
 
     // region Helper Methods
     private void setUpListeners() {
-        commentEditText.addTextChangedListener(commentEditTextTextWatcher);
     }
 
     private void removeListeners() {
-        commentEditText.removeTextChangedListener(commentEditTextTextWatcher);
     }
 
 //    private void loadComments() {
@@ -536,5 +508,43 @@ public class VideoCommentsFragment extends BaseFragment implements VideoComments
 //            }
 //        }
 //    }
+
+    private void setUpCommentSubscription(){
+        Subscription commentSubscription = commentChangeObservable
+                .observeOn(AndroidSchedulers.mainThread()) // UI Thread
+                .subscribe(new Subscriber<CharSequence>() {
+                    @Override
+                    public void onCompleted() {
+
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+                        e.printStackTrace();
+                    }
+
+                    @Override
+                    public void onNext(CharSequence charSequence) {
+                        boolean isCommentValid = FormValidationUtility.validateComment(charSequence.toString());
+                        if (!isCommentValid) {
+                            disableSubmitComment();
+                        } else {
+                            enableSubmitComment();
+                        }
+                    }
+                });
+
+        compositeSubscription.add(commentSubscription);
+    }
+
+    private void enableSubmitComment(){
+        submitCommentImageView.setImageResource(R.drawable.ic_comment_active);
+        submitCommentFrameLayout.setEnabled(true);
+    }
+
+    private void disableSubmitComment(){
+        submitCommentImageView.setImageResource(R.drawable.ic_comment_inactive);
+        submitCommentFrameLayout.setEnabled(false);
+    }
     // endregion
 }
