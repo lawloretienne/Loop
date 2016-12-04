@@ -7,6 +7,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
@@ -50,25 +51,15 @@ import timber.log.Timber;
  * Created by etiennelawlor on 5/23/15.
  */
 
-public class RelatedVideosAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
-
-    // region Constants
-    public static final int HEADER = 0;
-    public static final int ITEM = 1;
-    public static final int FOOTER = 2;
-    // endregion
+public class RelatedVideosAdapter extends BaseAdapter<Video> {
 
     // region Member Variables
     private Video video;
-    private List<Video> videos;
-    private OnItemClickListener onItemClickListener;
     private OnLikeClickListener onLikeClickListener;
     private OnWatchLaterClickListener onWatchLaterClickListener;
     private OnCommentsClickListener onCommentsClickListener;
     private OnInfoClickListener onInfoClickListener;
-    private OnReloadClickListener onReloadClickListener;
     private FooterViewHolder footerViewHolder;
-    private boolean isFooterAdded = false;
     private Typeface boldFont;
     private boolean isLikeOn = false;
     private boolean isWatchLaterOn = false;
@@ -76,18 +67,7 @@ public class RelatedVideosAdapter extends RecyclerView.Adapter<RecyclerView.View
     private boolean hasTags = false;
     // endregion
 
-    // region Listeners
-    // endregion
-
     // region Interfaces
-    public interface OnItemClickListener {
-        void onItemClick(int position, View view);
-    }
-
-    public interface OnReloadClickListener {
-        void onReloadClick();
-    }
-
     public interface OnLikeClickListener {
         void onLikeClick(ImageView imageView);
     }
@@ -107,67 +87,22 @@ public class RelatedVideosAdapter extends RecyclerView.Adapter<RecyclerView.View
 
     // region Constructors
     public RelatedVideosAdapter(Video video) {
+        super();
         this.video = video;
-        videos = new ArrayList<>();
-
         boldFont = FontCache.getTypeface("Ubuntu-Bold.ttf", LoopApplication.getInstance().getApplicationContext());
     }
     // endregion
-
-    @Override
-    public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        RecyclerView.ViewHolder viewHolder = null;
-
-        switch (viewType) {
-            case HEADER:
-                viewHolder = createHeaderViewHolder(parent);
-                break;
-            case ITEM:
-                viewHolder = createVideoViewHolder(parent);
-                break;
-            case FOOTER:
-                viewHolder = createFooterViewHolder(parent);
-                break;
-            default:
-                Timber.e("[ERR] type is not supported!!! type is %d", viewType);
-                break;
-        }
-
-        return viewHolder;
-    }
-
-    @Override
-    public void onBindViewHolder(RecyclerView.ViewHolder viewHolder, int position) {
-        switch (getItemViewType(position)) {
-            case HEADER:
-                bindHeaderViewHolder(viewHolder);
-                break;
-            case ITEM:
-                bindVideoViewHolder(viewHolder, position);
-                break;
-            case FOOTER:
-                bindFooterViewHolder(viewHolder);
-                break;
-            default:
-                break;
-        }
-    }
-
-    @Override
-    public int getItemCount() {
-        return videos.size();
-    }
 
     @Override
     public int getItemViewType(int position) {
         if(position == 0)
             return HEADER;
         else
-            return (position == getItemCount()-1 && isFooterAdded) ? FOOTER : ITEM;
+            return (isLastPosition(position) && isFooterAdded) ? FOOTER : ITEM;
     }
 
-    // region Helper Methods
-    private RecyclerView.ViewHolder createHeaderViewHolder(ViewGroup parent){
+    @Override
+    protected RecyclerView.ViewHolder createHeaderViewHolder(ViewGroup parent) {
         View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.video_info, parent, false);
         final HeaderViewHolder holder = new HeaderViewHolder(v);
 
@@ -216,7 +151,8 @@ public class RelatedVideosAdapter extends RecyclerView.Adapter<RecyclerView.View
         return holder;
     }
 
-    private RecyclerView.ViewHolder createVideoViewHolder(ViewGroup parent) {
+    @Override
+    protected RecyclerView.ViewHolder createItemViewHolder(ViewGroup parent) {
         View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.video_row, parent, false);
         final VideoViewHolder holder = new VideoViewHolder(v);
 
@@ -235,7 +171,8 @@ public class RelatedVideosAdapter extends RecyclerView.Adapter<RecyclerView.View
         return holder;
     }
 
-    private RecyclerView.ViewHolder createFooterViewHolder(ViewGroup parent) {
+    @Override
+    protected RecyclerView.ViewHolder createFooterViewHolder(ViewGroup parent) {
         View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.adapter_footer, parent, false);
 
         final FooterViewHolder holder = new FooterViewHolder(v);
@@ -251,7 +188,8 @@ public class RelatedVideosAdapter extends RecyclerView.Adapter<RecyclerView.View
         return holder;
     }
 
-    private void bindHeaderViewHolder(RecyclerView.ViewHolder viewHolder) {
+    @Override
+    protected void bindHeaderViewHolder(RecyclerView.ViewHolder viewHolder) {
         HeaderViewHolder holder = (HeaderViewHolder) viewHolder;
 
         if(video != null){
@@ -268,10 +206,11 @@ public class RelatedVideosAdapter extends RecyclerView.Adapter<RecyclerView.View
         }
     }
 
-    private void bindVideoViewHolder(RecyclerView.ViewHolder viewHolder, int position) {
+    @Override
+    protected void bindItemViewHolder(RecyclerView.ViewHolder viewHolder, int position) {
         final VideoViewHolder holder = (VideoViewHolder) viewHolder;
 
-        final Video video = videos.get(position);
+        final Video video = getItem(position);
         if (video != null) {
             setUpTitle(holder.titleTextView, video);
             setUpSubtitle(holder.subtitleTextView, video);
@@ -281,93 +220,39 @@ public class RelatedVideosAdapter extends RecyclerView.Adapter<RecyclerView.View
         }
     }
 
-    private void bindFooterViewHolder(RecyclerView.ViewHolder viewHolder) {
+    @Override
+    protected void bindFooterViewHolder(RecyclerView.ViewHolder viewHolder) {
         FooterViewHolder holder = (FooterViewHolder) viewHolder;
         footerViewHolder = holder;
 
         holder.loadingImageView.setMaskOrientation(LoadingImageView.MaskOrientation.LeftToRight);
     }
 
-    private void add(Video item) {
-        videos.add(item);
-        notifyItemInserted(getItemCount()-1);
-    }
-
-    public void addAll(List<Video> videos) {
-        for (Video video : videos) {
-            add(video);
+    @Override
+    protected void displayLoadMoreFooter() {
+        if(footerViewHolder!= null){
+            footerViewHolder.errorRelativeLayout.setVisibility(View.GONE);
+            footerViewHolder.loadingFrameLayout.setVisibility(View.VISIBLE);
         }
     }
 
-    public void remove(Video item) {
-        int position = videos.indexOf(item);
-        if (position > -1) {
-            videos.remove(position);
-            notifyItemRemoved(position);
+    @Override
+    protected void displayErrorFooter() {
+        if(footerViewHolder!= null){
+            footerViewHolder.loadingFrameLayout.setVisibility(View.GONE);
+            footerViewHolder.errorRelativeLayout.setVisibility(View.VISIBLE);
         }
     }
 
-    public void clear() {
-        isFooterAdded = false;
-        while (getItemCount() > 0) {
-            remove(getItem(0));
-        }
-    }
-
-    public boolean isEmpty() {
-        return getItemCount() == 0;
-    }
-
-    public void addHeader(){
-        add(new Video());
-    }
-
-    public void addFooter(){
+    @Override
+    public void addFooter() {
         isFooterAdded = true;
         add(new Video());
     }
 
-    public void removeFooter() {
-        isFooterAdded = false;
-
-        int position = videos.size() - 1;
-        Video item = getItem(position);
-
-        if (item != null) {
-            videos.remove(position);
-            notifyItemRemoved(position);
-        }
-    }
-
-    public void updateFooter(FooterType footerType){
-        switch (footerType) {
-            case LOAD_MORE:
-                if(footerViewHolder!= null){
-                    footerViewHolder.errorRelativeLayout.setVisibility(View.GONE);
-                    footerViewHolder.loadingRelativeLayout.setVisibility(View.VISIBLE);
-                }
-                break;
-            case ERROR:
-                if(footerViewHolder!= null){
-                    footerViewHolder.loadingRelativeLayout.setVisibility(View.GONE);
-                    footerViewHolder.errorRelativeLayout.setVisibility(View.VISIBLE);
-                }
-                break;
-            default:
-                break;
-        }
-    }
-
-    public Video getItem(int position) {
-        return videos.get(position);
-    }
-
-    public void setOnItemClickListener(OnItemClickListener onItemClickListener) {
-        this.onItemClickListener = onItemClickListener;
-    }
-
-    public void setOnReloadClickListener(OnReloadClickListener onReloadClickListener) {
-        this.onReloadClickListener = onReloadClickListener;
+    // region Helper Methods
+    public void addHeader(){
+        add(new Video());
     }
 
     public void setOnLikeClickListener(OnLikeClickListener onLikeClickListener) {
@@ -497,37 +382,24 @@ public class RelatedVideosAdapter extends RecyclerView.Adapter<RecyclerView.View
     }
 
     private void setUpUploadedDate(TextView tv, Video video) {
-        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'hh:mm:ssZ", Locale.ENGLISH);
-        String uploadDate = "";
-
-        String createdTime = video.getCreatedTime();
-        try {
-            Date date = sdf.parse(createdTime);
-
-            Calendar futureCalendar = Calendar.getInstance();
-            futureCalendar.setTime(date);
-
-            uploadDate = DateUtility.getRelativeDate(futureCalendar);
-        } catch (ParseException e) {
-            Timber.e("");
-        }
-
         int viewCount = 0;
         Stats stats = video.getStats();
         if (stats != null) {
             viewCount = stats.getPlays();
         }
 
+        String createdTime = video.getCreatedTime();
+        String formattedCreatedTime = DateUtility.getFormattedDate(createdTime);
+
         if (viewCount > 0) {
-//                String formattedViewCount = NumberFormat.getNumberInstance(Locale.US).format(viewCount);
             String formattedViewCount = formatViewCount(viewCount);
-            if(!TextUtils.isEmpty(uploadDate))
-                tv.setText(String.format("%s \u2022 %s", formattedViewCount, uploadDate));
+            if(!TextUtils.isEmpty(createdTime))
+                tv.setText(String.format("%s \u2022 %s", formattedViewCount, formattedCreatedTime));
             else
                 tv.setText(formattedViewCount);
 
         } else {
-            tv.setText(String.format("%s", uploadDate));
+            tv.setText(formattedCreatedTime);
         }
     }
 
@@ -565,7 +437,6 @@ public class RelatedVideosAdapter extends RecyclerView.Adapter<RecyclerView.View
 
         if (viewCount > 0) {
             String formattedViewCount = NumberFormat.getNumberInstance(Locale.US).format(viewCount);
-//                String formattedViewCount = formatViewCount(viewCount);
             if (viewCount > 1) {
                 tv.setText(String.format("%s views", formattedViewCount));
             } else {
@@ -578,24 +449,11 @@ public class RelatedVideosAdapter extends RecyclerView.Adapter<RecyclerView.View
     }
 
     private void setUpUploadedDate2(TextView tv, Video video) {
-        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'hh:mm:ssZ", Locale.ENGLISH);
-        String uploadDate = "";
-
         String createdTime = video.getCreatedTime();
 
-        try {
-            Date date = sdf.parse(createdTime);
-
-            Calendar futureCalendar = Calendar.getInstance();
-            futureCalendar.setTime(date);
-
-            uploadDate = DateUtility.getRelativeDate(futureCalendar);
-        } catch (ParseException e) {
-            Timber.e("");
-        }
-
-        if (!TextUtils.isEmpty(uploadDate)) {
-            tv.setText(String.format("Uploaded %s", uploadDate));
+        String formattedCreatedTime = DateUtility.getFormattedDate(createdTime);
+        if (!TextUtils.isEmpty(formattedCreatedTime)) {
+            tv.setText(String.format("Uploaded %s", formattedCreatedTime));
             tv.setVisibility(View.VISIBLE);
         } else {
             tv.setVisibility(View.GONE);
@@ -606,17 +464,13 @@ public class RelatedVideosAdapter extends RecyclerView.Adapter<RecyclerView.View
         List<Tag> tags = video.getTags();
         if (tags != null && tags.size() > 0) {
             ArrayList<String> canonicalTags = new ArrayList<>();
-            Timber.d("setUpTags() : tags.size() - " + tags.size());
 
             for (Tag tag : tags) {
                 String canonicalTag = tag.getCanonical();
                 if(canonicalTag.length() > 0) {
-                    Timber.d("setUpTags() : canonicalTag - " + canonicalTag);
                     canonicalTags.add(canonicalTag);
                 }
             }
-
-            Timber.d("setUpTags() : canonicalTags.size() - " + canonicalTags.size());
 
             if(canonicalTags.size() > 0){
                 hasTags = true;
@@ -626,7 +480,6 @@ public class RelatedVideosAdapter extends RecyclerView.Adapter<RecyclerView.View
                     @Override
                     public void onItemClicked(Object item) {
                         String tag = (String) item;
-                        Timber.d("setUpTags() : tag - " + tag);
 
                         // TODO this triggers two events somehow
                         RxBus.getInstance().send(new SearchPerformedEvent(tag));
@@ -638,7 +491,6 @@ public class RelatedVideosAdapter extends RecyclerView.Adapter<RecyclerView.View
             }
         }
     }
-
 
     private void setUpDescription(TextView tv, Video video) {
         String description = video.getDescription();
@@ -722,8 +574,8 @@ public class RelatedVideosAdapter extends RecyclerView.Adapter<RecyclerView.View
 
     public static class FooterViewHolder extends RecyclerView.ViewHolder {
         // region Views
-        @Bind(R.id.loading_rl)
-        RelativeLayout loadingRelativeLayout;
+        @Bind(R.id.loading_fl)
+        FrameLayout loadingFrameLayout;
         @Bind(R.id.error_rl)
         RelativeLayout errorRelativeLayout;
         @Bind(R.id.loading_iv)
@@ -738,11 +590,6 @@ public class RelatedVideosAdapter extends RecyclerView.Adapter<RecyclerView.View
             ButterKnife.bind(this, view);
         }
         // endregion
-    }
-
-    public enum FooterType {
-        LOAD_MORE,
-        ERROR
     }
 
     // endregion

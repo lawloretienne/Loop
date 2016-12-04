@@ -35,6 +35,7 @@ import timber.log.Timber;
  * Created by etiennelawlor on 12/20/15.
  */
 
+// Setup ReverseBaseAdapter for pagination
 public class VideoCommentsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
     // region Member Variables
@@ -182,22 +183,25 @@ public class VideoCommentsAdapter extends RecyclerView.Adapter<RecyclerView.View
     }
 
     private String getCommentDate(Comment comment){
-        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'hh:mm:ssZ", Locale.ENGLISH);
-        String commentDate = "";
+//        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'hh:mm:ssZ", Locale.ENGLISH);
+//        String commentDate = "";
 
         String createdOn = comment.getCreatedOn();
-        try {
-            Date date = sdf.parse(createdOn);
 
-            Calendar futureCalendar = Calendar.getInstance();
-            futureCalendar.setTime(date);
+        String formattedCreatedOn = DateUtility.getFormattedDate(createdOn);
 
-            commentDate = DateUtility.getRelativeDate(futureCalendar);
-        } catch (ParseException e) {
-            Timber.e("");
-        }
+//        try {
+//            Date date = sdf.parse(createdOn);
+//
+//            Calendar futureCalendar = Calendar.getInstance();
+//            futureCalendar.setTime(date);
+//
+//            commentDate = DateUtility.getRelativeDate(futureCalendar);
+//        } catch (ParseException e) {
+//            Timber.e("");
+//        }
 
-        return commentDate;
+        return formattedCreatedOn;
     }
 
     private void setUpCommentImage(AvatarView av, Comment comment){

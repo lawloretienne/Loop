@@ -5,6 +5,10 @@ import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.FrameLayout;
+import android.widget.ProgressBar;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
@@ -13,6 +17,7 @@ import com.etiennelawlor.loop.network.models.response.Category;
 import com.etiennelawlor.loop.network.models.response.Pictures;
 import com.etiennelawlor.loop.network.models.response.Size;
 import com.etiennelawlor.loop.ui.DynamicHeightImageView;
+import com.etiennelawlor.loop.ui.LoadingImageView;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -25,84 +30,30 @@ import timber.log.Timber;
  * Created by etiennelawlor on 5/23/15.
  */
 
-public class CategoriesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
-
-    // region Constants
-    private static final int HEADER = 0;
-    private static final int ITEM = 1;
-    private static final int LOADING = 2;
-    // endregion
+public class CategoriesAdapter extends BaseAdapter<Category> {
 
     // region Member Variables
-    private List<Category> categories;
-    private OnItemClickListener onItemClickListener;
-    private boolean isLoadingFooterAdded = false;
-    // endregion
-
-    // region Listeners
-    // endregion
-
-    // region Interfaces
-    public interface OnItemClickListener {
-        void onItemClick(int position, View view);
-    }
+    private FooterViewHolder footerViewHolder;
     // endregion
 
     // region Constructors
     public CategoriesAdapter() {
-        categories = new ArrayList<>();
+        super();
     }
     // endregion
 
     @Override
-    public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        RecyclerView.ViewHolder viewHolder = null;
-
-        switch (viewType) {
-            case HEADER:
-                break;
-            case ITEM:
-                viewHolder = createCategoryViewHolder(parent);
-                break;
-            case LOADING:
-                viewHolder = createLoadingViewHolder(parent);
-                break;
-            default:
-                Timber.e("[ERR] type is not supported!!! type is %d", viewType);
-                break;
-        }
-
-        return viewHolder;
-    }
-
-    @Override
-    public void onBindViewHolder(RecyclerView.ViewHolder viewHolder, int position) {
-        switch (getItemViewType(position)) {
-            case HEADER:
-                break;
-            case ITEM:
-                bindCategoryViewHolder(viewHolder, position);
-                break;
-            case LOADING:
-                bindLoadingViewHolder(viewHolder);
-            default:
-                break;
-        }
-    }
-
-    @Override
-    public int getItemCount() {
-        return categories.size();
-    }
-
-    @Override
     public int getItemViewType(int position) {
-//        return (position == mEvents.size()-1 && isLoadingFooterAdded) ? LOADING : ITEM;
-        return ITEM;
+        return (isLastPosition(position) && isFooterAdded) ? FOOTER : ITEM;
     }
 
-    // region Helper Methods
-    private RecyclerView.ViewHolder createCategoryViewHolder(ViewGroup parent) {
+    @Override
+    protected RecyclerView.ViewHolder createHeaderViewHolder(ViewGroup parent) {
+        return null;
+    }
+
+    @Override
+    protected RecyclerView.ViewHolder createItemViewHolder(ViewGroup parent) {
         View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.category_card, parent, false);
 
         final CategoryViewHolder holder = new CategoryViewHolder(v);
@@ -122,80 +73,68 @@ public class CategoriesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
         return holder;
     }
 
-    private RecyclerView.ViewHolder createLoadingViewHolder(ViewGroup parent) {
-        View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.load_more, parent, false);
+    @Override
+    protected RecyclerView.ViewHolder createFooterViewHolder(ViewGroup parent) {
+        View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.adapter_footer, parent, false);
 
-        return new MoreViewHolder(v);
+        final FooterViewHolder holder = new FooterViewHolder(v);
+        holder.reloadButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(onReloadClickListener != null){
+                    onReloadClickListener.onReloadClick();
+                }
+            }
+        });
+
+        return holder;
     }
 
-    private void bindCategoryViewHolder(RecyclerView.ViewHolder viewHolder, int position) {
+    @Override
+    protected void bindHeaderViewHolder(RecyclerView.ViewHolder viewHolder) {
+
+    }
+
+    @Override
+    protected void bindItemViewHolder(RecyclerView.ViewHolder viewHolder, int position) {
         final CategoryViewHolder holder = (CategoryViewHolder) viewHolder;
 
-        Category category = categories.get(position);
+        Category category = getItem(position);
         if (category != null) {
             setUpThumbnail(holder.videoThumbnailImageView, category);
             setUpTitle(holder.titleTextView, category);
         }
     }
 
-    private void bindLoadingViewHolder(RecyclerView.ViewHolder viewHolder) {
-        MoreViewHolder holder = (MoreViewHolder) viewHolder;
+    @Override
+    protected void bindFooterViewHolder(RecyclerView.ViewHolder viewHolder) {
+        FooterViewHolder holder = (FooterViewHolder) viewHolder;
+        footerViewHolder = holder;
     }
 
-    private void add(Category item) {
-        categories.add(item);
-        notifyItemInserted(categories.size() - 1);
-    }
-
-    public void addAll(List<Category> categories) {
-        for (Category category : categories) {
-            add(category);
+    @Override
+    protected void displayLoadMoreFooter() {
+        if(footerViewHolder!= null){
+            footerViewHolder.errorRelativeLayout.setVisibility(View.GONE);
+            footerViewHolder.loadingFrameLayout.setVisibility(View.VISIBLE);
         }
     }
 
-    public void remove(Category item) {
-        int position = categories.indexOf(item);
-        if (position > -1) {
-            categories.remove(position);
-            notifyItemRemoved(position);
+    @Override
+    protected void displayErrorFooter() {
+        if(footerViewHolder!= null){
+            footerViewHolder.loadingFrameLayout.setVisibility(View.GONE);
+            footerViewHolder.errorRelativeLayout.setVisibility(View.VISIBLE);
         }
     }
 
-    public void clear() {
-        isLoadingFooterAdded = false;
-        while (getItemCount() > 0) {
-            remove(getItem(0));
-        }
-    }
-
-    public boolean isEmpty() {
-        return getItemCount() == 0;
-    }
-
-    public void addLoading() {
-        isLoadingFooterAdded = true;
+    @Override
+    public void addFooter() {
+        isFooterAdded = true;
         add(new Category());
     }
 
-    public void removeLoading() {
-        isLoadingFooterAdded = false;
-
-        int position = categories.size() - 1;
-        Category item = getItem(position);
-
-        if (item != null) {
-            categories.remove(position);
-            notifyItemRemoved(position);
-        }
-    }
-
-    public Category getItem(int position) {
-        return categories.get(position);
-    }
-
-    public void setOnItemClickListener(OnItemClickListener onItemClickListener) {
-        this.onItemClickListener = onItemClickListener;
-    }
+    // region Helper Methods
 
     private void setUpThumbnail(DynamicHeightImageView iv, Category category){
 //            holder.mVideoThumbnailImageView.setHeightRatio(9.0D/16.0D);
@@ -252,12 +191,20 @@ public class CategoriesAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
         // endregion
     }
 
-    public static class MoreViewHolder extends RecyclerView.ViewHolder {
+    public static class FooterViewHolder extends RecyclerView.ViewHolder {
         // region Views
+        @Bind(R.id.loading_fl)
+        FrameLayout loadingFrameLayout;
+        @Bind(R.id.error_rl)
+        RelativeLayout errorRelativeLayout;
+        @Bind(R.id.loading_iv)
+        LoadingImageView loadingImageView;
+        @Bind(R.id.reload_btn)
+        Button reloadButton;
         // endregion
 
         // region Constructors
-        public MoreViewHolder(View view) {
+        public FooterViewHolder(View view) {
             super(view);
             ButterKnife.bind(this, view);
         }

@@ -4,8 +4,8 @@
     android:layout_width="match_parent"
     android:layout_height="80dp">
 
-    <RelativeLayout
-        android:id="@+id/loading_rl"
+    <FrameLayout
+        android:id="@+id/loading_fl"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
@@ -14,12 +14,11 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
-            android:layout_centerInParent="true"
             android:src="@drawable/ic_loop_loading"
             app:anim_auto_start="true"
             app:mask_color="?colorAccent" />
 
-    </RelativeLayout>
+    </FrameLayout>
 
     <RelativeLayout
         android:id="@+id/error_rl"

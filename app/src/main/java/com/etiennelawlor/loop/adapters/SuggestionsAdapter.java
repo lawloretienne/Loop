@@ -28,29 +28,16 @@ import timber.log.Timber;
  * Created by etiennelawlor on 5/23/15.
  */
 
-public class SuggestionsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
-
-    // region Constants
-    public static final int ITEM = 0;
-    // endregion
+public class SuggestionsAdapter extends BaseAdapter<String> {
 
     // region Member Variables
-    private List<String> suggestions;
     private Typeface font;
-    private OnItemClickListener onItemClickListener;
     private OnItemLongClickListener onItemLongClickListener;
     private OnSearchSuggestionCompleteClickListener onSearchSuggestionCompleteClickListener;
     private String currentQuery = "";
     // endregion
 
-    // region Listeners
-    // endregion
-
     // region Interfaces
-    public interface OnItemClickListener {
-        void onItemClick(int position, View view);
-    }
-
     public interface OnItemLongClickListener {
         void onItemLongClick(int position, View view);
     }
@@ -62,50 +49,23 @@ public class SuggestionsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
 
     // region Constructors
     public SuggestionsAdapter() {
-        suggestions = new ArrayList<>();
+        super();
         font = FontCache.getTypeface("Ubuntu-Bold.ttf", LoopApplication.getInstance().getApplicationContext());
     }
     // endregion
-
-    @Override
-    public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        RecyclerView.ViewHolder viewHolder = null;
-
-        switch (viewType) {
-            case ITEM:
-                viewHolder = createSuggestionViewHolder(parent);
-                break;
-            default:
-                Timber.e("[ERR] type is not supported!!! type is %d", viewType);
-                break;
-        }
-
-        return viewHolder;
-    }
-
-    @Override
-    public void onBindViewHolder(RecyclerView.ViewHolder viewHolder, int position) {
-        switch (getItemViewType(position)) {
-            case ITEM:
-                bindSuggestionViewHolder(viewHolder, position);
-                break;
-            default:
-                break;
-        }
-    }
-
-    @Override
-    public int getItemCount() {
-        return suggestions.size();
-    }
 
     @Override
     public int getItemViewType(int position) {
         return ITEM;
     }
 
-    // region Helper Methods
-    private RecyclerView.ViewHolder createSuggestionViewHolder(ViewGroup parent){
+    @Override
+    protected RecyclerView.ViewHolder createHeaderViewHolder(ViewGroup parent) {
+        return null;
+    }
+
+    @Override
+    protected RecyclerView.ViewHolder createItemViewHolder(ViewGroup parent) {
         View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.suggestion, parent, false);
 
         final SuggestionViewHolder holder = new SuggestionViewHolder(v);
@@ -150,52 +110,47 @@ public class SuggestionsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
         return holder;
     }
 
-    private void bindSuggestionViewHolder(RecyclerView.ViewHolder viewHolder, int position) {
+    @Override
+    protected RecyclerView.ViewHolder createFooterViewHolder(ViewGroup parent) {
+        return null;
+    }
+
+    @Override
+    protected void bindHeaderViewHolder(RecyclerView.ViewHolder viewHolder) {
+
+    }
+
+    @Override
+    protected void bindItemViewHolder(RecyclerView.ViewHolder viewHolder, int position) {
         final SuggestionViewHolder holder = (SuggestionViewHolder) viewHolder;
 
-        final String suggestion = suggestions.get(position);
+        final String suggestion = getItem(position);
         if (!TextUtils.isEmpty(suggestion)) {
             setUpSuggestion(holder.suggestionTextView, suggestion);
         }
     }
 
-    private void add(String item) {
-        suggestions.add(item);
-        notifyItemInserted(suggestions.size()-1);
+    @Override
+    protected void bindFooterViewHolder(RecyclerView.ViewHolder viewHolder) {
+
     }
 
-    public void addAll(List<String> suggestions) {
-        for (String suggestion : suggestions) {
-            add(suggestion);
-        }
+    @Override
+    protected void displayLoadMoreFooter() {
+
     }
 
-    public void remove(String item) {
-        int position = suggestions.indexOf(item);
-        if (position > -1) {
-            suggestions.remove(position);
-            notifyItemRemoved(position);
-        }
+    @Override
+    protected void displayErrorFooter() {
+
     }
 
-    public void clear() {
-        while (getItemCount() > 0) {
-            remove(getItem(0));
-        }
+    @Override
+    public void addFooter() {
+
     }
 
-    public boolean isEmpty() {
-        return getItemCount() == 0;
-    }
-
-    public String getItem(int position) {
-        return suggestions.get(position);
-    }
-
-    public void setOnItemClickListener(OnItemClickListener onItemClickListener) {
-        this.onItemClickListener = onItemClickListener;
-    }
-
+    // region Helper Methods
     public void setOnItemLongClickListener(OnItemLongClickListener onItemLongClickListener) {
         this.onItemLongClickListener = onItemLongClickListener;
     }
