@@ -40,6 +40,7 @@ import com.etiennelawlor.loop.prefs.LoopPrefs;
 import com.etiennelawlor.loop.ui.LoadingImageView;
 import com.etiennelawlor.loop.utilities.FontCache;
 import com.etiennelawlor.loop.utilities.NetworkLogUtility;
+import com.etiennelawlor.loop.utilities.NetworkUtility;
 import com.etiennelawlor.loop.utilities.TrestleUtility;
 
 import java.net.ConnectException;
@@ -187,7 +188,7 @@ public class LikedVideosFragment extends BaseFragment implements VideosAdapter.O
                 isLoading = false;
                 loadingImageView.setVisibility(View.GONE);
 
-                if(t instanceof ConnectException || t instanceof UnknownHostException){
+                if(NetworkUtility.isKnownException(t)){
                     errorTextView.setText("Can't load data.\nCheck your network connection.");
                     errorLinearLayout.setVisibility(View.VISIBLE);
                 }
@@ -233,7 +234,7 @@ public class LikedVideosFragment extends BaseFragment implements VideosAdapter.O
             NetworkLogUtility.logFailure(call, t);
 
             if (!call.isCanceled()){
-                if(t instanceof ConnectException || t instanceof UnknownHostException){
+                if(NetworkUtility.isKnownException(t)){
                     videosAdapter.updateFooter(VideosAdapter.FooterType.ERROR);
                 }
             }

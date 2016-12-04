@@ -49,10 +49,9 @@ import com.etiennelawlor.loop.network.models.response.VideosCollection;
 import com.etiennelawlor.loop.prefs.LoopPrefs;
 import com.etiennelawlor.loop.utilities.FontCache;
 import com.etiennelawlor.loop.utilities.NetworkLogUtility;
+import com.etiennelawlor.loop.utilities.NetworkUtility;
 import com.etiennelawlor.loop.utilities.TrestleUtility;
 
-import java.net.ConnectException;
-import java.net.UnknownHostException;
 import java.util.HashMap;
 import java.util.List;
 
@@ -184,7 +183,7 @@ public class VideoDetailsFragment extends BaseFragment implements RelatedVideosA
             NetworkLogUtility.logFailure(call, t);
 
             if (!call.isCanceled()){
-                if(t instanceof ConnectException || t instanceof UnknownHostException){
+                if(NetworkUtility.isKnownException(t)){
 //                errorTextView.setText("Can't load data.\nCheck your network connection.");
 //                errorLinearLayout.setVisibility(View.VISIBLE);
                 }
@@ -231,7 +230,7 @@ public class VideoDetailsFragment extends BaseFragment implements RelatedVideosA
             NetworkLogUtility.logFailure(call, t);
 
             if (!call.isCanceled()){
-                if(t instanceof ConnectException || t instanceof UnknownHostException){
+                if(NetworkUtility.isKnownException(t)){
                     relatedVideosAdapter.updateFooter(RelatedVideosAdapter.FooterType.ERROR);
                 }
             }
@@ -286,7 +285,7 @@ public class VideoDetailsFragment extends BaseFragment implements RelatedVideosA
             NetworkLogUtility.logFailure(call, t);
 
             if (!call.isCanceled()){
-                if(t instanceof ConnectException || t instanceof UnknownHostException){
+                if(NetworkUtility.isKnownException(t)){
                     Snackbar.make(getActivity().findViewById(R.id.main_content),
                             TrestleUtility.getFormattedText("Network connection is unavailable.", font, 16),
                             Snackbar.LENGTH_LONG)
@@ -341,7 +340,7 @@ public class VideoDetailsFragment extends BaseFragment implements RelatedVideosA
             NetworkLogUtility.logFailure(call, t);
 
             if (!call.isCanceled()){
-                if(t instanceof ConnectException || t instanceof UnknownHostException){
+                if(NetworkUtility.isKnownException(t)){
                     Snackbar.make(getActivity().findViewById(R.id.main_content),
                             TrestleUtility.getFormattedText("Network connection is unavailable.", font, 16),
                             Snackbar.LENGTH_LONG)
@@ -390,7 +389,7 @@ public class VideoDetailsFragment extends BaseFragment implements RelatedVideosA
             NetworkLogUtility.logFailure(call, t);
 
             if (!call.isCanceled()){
-                if(t instanceof ConnectException || t instanceof UnknownHostException){
+                if(NetworkUtility.isKnownException(t)){
                     Snackbar.make(getActivity().findViewById(R.id.main_content),
                             TrestleUtility.getFormattedText("Network connection is unavailable.", font, 16),
                             Snackbar.LENGTH_LONG)
@@ -436,7 +435,7 @@ public class VideoDetailsFragment extends BaseFragment implements RelatedVideosA
             NetworkLogUtility.logFailure(call, t);
 
             if (!call.isCanceled()){
-                if(t instanceof ConnectException || t instanceof UnknownHostException){
+                if(NetworkUtility.isKnownException(t)){
                     Snackbar.make(getActivity().findViewById(R.id.main_content),
                             TrestleUtility.getFormattedText("Network connection is unavailable.", font, 16),
                             Snackbar.LENGTH_LONG)

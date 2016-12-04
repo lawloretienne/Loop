@@ -27,6 +27,7 @@ import com.etiennelawlor.loop.ui.LoadingImageView;
 import com.etiennelawlor.loop.utilities.DisplayUtility;
 import com.etiennelawlor.loop.utilities.FontCache;
 import com.etiennelawlor.loop.utilities.NetworkLogUtility;
+import com.etiennelawlor.loop.utilities.NetworkUtility;
 import com.etiennelawlor.loop.utilities.TrestleUtility;
 
 import java.net.ConnectException;
@@ -109,10 +110,7 @@ public class ExploreFragment extends BaseFragment implements CategoriesAdapter.O
             if (!call.isCanceled()){
                 loadingImageView.setVisibility(View.GONE);
 
-//            t instanceof SocketTimeoutException
-//            t instanceof IOException
-
-                if(t instanceof ConnectException || t instanceof UnknownHostException){
+                if(NetworkUtility.isKnownException(t)){
                     errorTextView.setText("Can't load data.\nCheck your network connection.");
                     errorLinearLayout.setVisibility(View.VISIBLE);
                 }

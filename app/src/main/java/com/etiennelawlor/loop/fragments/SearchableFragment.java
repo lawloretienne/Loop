@@ -44,9 +44,8 @@ import com.etiennelawlor.loop.realm.RealmUtility;
 import com.etiennelawlor.loop.ui.LoadingImageView;
 import com.etiennelawlor.loop.ui.MaterialSearchView;
 import com.etiennelawlor.loop.utilities.NetworkLogUtility;
+import com.etiennelawlor.loop.utilities.NetworkUtility;
 
-import java.net.ConnectException;
-import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -193,7 +192,7 @@ public class SearchableFragment extends BaseFragment implements VideosAdapter.On
                 isLoading = false;
                 loadingImageView.setVisibility(View.GONE);
 
-                if(t instanceof ConnectException || t instanceof UnknownHostException){
+                if(NetworkUtility.isKnownException(t)){
                     errorTextView.setText("Can't load data.\nCheck your network connection.");
                     errorLinearLayout.setVisibility(View.VISIBLE);
                 }
@@ -239,7 +238,7 @@ public class SearchableFragment extends BaseFragment implements VideosAdapter.On
             NetworkLogUtility.logFailure(call, t);
 
             if (!call.isCanceled()){
-                if(t instanceof ConnectException || t instanceof UnknownHostException){
+                if(NetworkUtility.isKnownException(t)){
                     videosAdapter.updateFooter(VideosAdapter.FooterType.ERROR);
                 }
             }

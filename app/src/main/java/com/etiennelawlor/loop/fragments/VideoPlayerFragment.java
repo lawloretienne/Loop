@@ -31,6 +31,7 @@ import com.etiennelawlor.loop.network.models.response.VideoFormat;
 import com.etiennelawlor.loop.prefs.LoopPrefs;
 import com.etiennelawlor.loop.ui.LoadingImageView;
 import com.etiennelawlor.loop.utilities.NetworkLogUtility;
+import com.etiennelawlor.loop.utilities.NetworkUtility;
 
 import java.net.ConnectException;
 import java.net.UnknownHostException;
@@ -112,7 +113,7 @@ public class VideoPlayerFragment extends BaseFragment {
             if (!call.isCanceled()){
                 loadingImageView.setVisibility(View.GONE);
 
-                if(t instanceof ConnectException || t instanceof UnknownHostException){
+                if(NetworkUtility.isKnownException(t)){
                     errorTextView.setText("Can't load data.\nCheck your network connection.");
                     errorLinearLayout.setVisibility(View.VISIBLE);
                 }

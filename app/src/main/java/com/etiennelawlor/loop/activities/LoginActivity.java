@@ -17,6 +17,7 @@ import com.etiennelawlor.loop.network.models.response.AuthorizedUser;
 import com.etiennelawlor.loop.network.models.response.OAuthResponse;
 import com.etiennelawlor.loop.prefs.LoopPrefs;
 import com.etiennelawlor.loop.utilities.NetworkLogUtility;
+import com.etiennelawlor.loop.utilities.NetworkUtility;
 
 import java.net.ConnectException;
 
@@ -147,7 +148,7 @@ public class LoginActivity extends AppCompatActivity {
             NetworkLogUtility.logFailure(call, t);
 
             if (!call.isCanceled()){
-                if(t instanceof ConnectException){
+                if(NetworkUtility.isKnownException(t)){
 //                errorTextView.setText("Can't load data.\nCheck your network connection.");
 //                errorLinearLayout.setVisibility(View.VISIBLE);
                 }
