@@ -1,9 +1,5 @@
 <resources>
     <string name="app_name">Loop</string>
-    <!--<string name="loading">Loading...</string>-->
-    <!--<string name="file_not_found">File not found</string>-->
-    <!--<string name="likes">Likes</string>-->
-    <!--<string name="no_liked_tracks">No Liked Tracks</string>-->
 
     <string name="drawer_open">Open navigation drawer</string>
     <string name="drawer_close">Close navigation drawer</string>
@@ -20,13 +16,6 @@
     <string name="email_message">Please describe the issue you are having here.</string>
     <string name="support_email">lawloretienne@gmail.com</string>
     <string name="platform">Phone</string>
-
-    <!--<string name="client_redirect_uri">urn:ietf:wg:oauth:2.0:oob</string>-->
-    <string name="client_redirect_uri">http://localhost</string>
-    <string name="vimeo_state">f9bsne76z8vs17cs</string>
-
-
-    <string name="token_type">token_type</string>
 
     <string name="watch_later_empty_prompt">Watch Later is a handy way to bookmark videos you don\'t have time to watch right now.
         When you click the Watch Later icon on any video screen, it will be added here.</string>

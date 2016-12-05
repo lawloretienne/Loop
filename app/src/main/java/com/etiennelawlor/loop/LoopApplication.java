@@ -12,6 +12,8 @@ import com.squareup.leakcanary.RefWatcher;
 
 import java.io.File;
 
+import okhttp3.Cache;
+import okhttp3.OkHttpClient;
 import timber.log.Timber;
 
 /**
@@ -19,12 +21,17 @@ import timber.log.Timber;
  */
 public class LoopApplication extends Application {
 
+    // region Constants
+    private static final int DISK_CACHE_SIZE = 10 * 1024 * 1024; // 10MB
+    // endregion
+
     static {
         AppCompatDelegate.setCompatVectorFromResourcesEnabled(true);
     }
 
     // region Static Variables
     private static LoopApplication currentApplication = null;
+    private static OkHttpClient okHttpClient;
     // endregion
 
     // region Member Variables
@@ -40,7 +47,7 @@ public class LoopApplication extends Application {
         initializeLeakCanary();
         initializeTimber();
         initializeFlurry();
-
+        initializeOkHttpClient();
         currentApplication = this;
     }
     // endregion
@@ -58,6 +65,10 @@ public class LoopApplication extends Application {
 
     public static File getCacheDirectory()  {
         return currentApplication.getCacheDir();
+    }
+
+    public static OkHttpClient getOkHttpClient() {
+        return okHttpClient;
     }
 
     public static RefWatcher getRefWatcher(Context context) {
@@ -103,6 +114,25 @@ public class LoopApplication extends Application {
         FlurryAgent.setLogEnabled(false);
 
         FlurryAgent.init(this, getString(R.string.flurry_api_key));
+    }
+
+    private void initializeOkHttpClient(){
+        okHttpClient = new OkHttpClient.Builder()
+                .cache(getCache())
+                .build();
+    }
+
+    private static Cache getCache() {
+
+        Cache cache = null;
+        // Install an HTTP cache in the application cache directory.
+        try {
+            File cacheDir = new File(getCacheDirectory(), "http");
+            cache = new Cache(cacheDir, DISK_CACHE_SIZE);
+        } catch (Exception e) {
+            Timber.e(e, "Unable to install disk cache.");
+        }
+        return cache;
     }
     // endregion
 

@@ -5,6 +5,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
+import android.util.Log;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
@@ -42,75 +43,26 @@ public class LoginActivity extends AppCompatActivity {
     private VimeoService vimeoService;
 
     private WebViewClient webViewClient = new WebViewClient() {
-        public boolean shouldOverrideUrlLoading(WebView view, String url) {
-            Timber.d("LoginActivity : shouldOverrideUrlLoading() : url - "+url);
-
-            // http://localhost/?code=0e4c71d1ed6f61c70b708a6098f37337033082ff
-            if (!TextUtils.isEmpty(url) && !url.startsWith(getString(R.string.client_redirect_uri))) {
-                view.loadUrl(url); // Uri.parse(url).getQueryParameter("code")
-            } else {
-                Uri uri = Uri.parse(url);
-
-                String code = uri.getQueryParameter("code");
-                if(!TextUtils.isEmpty(code)) {
-                    String state = uri.getQueryParameter("state");
-                    if (state.equals(getString(R.string.vimeo_state))) {
-//                        String code = uri.getQueryParameter("code");
-
-                        Call exchangeCodeCall = vimeoService.exchangeCode("authorization_code",
-                                code,
-                                getString(R.string.client_redirect_uri));
-                        exchangeCodeCall.enqueue(exchangeCodeCallback);
-                    }
-                }
-            }
-
-            return true;
-        }
-
         @Override
-        public void onPageFinished(WebView view, String url) {
-            Timber.d("LoginActivity : onPageFinished() : url - "+url);
+        public boolean shouldOverrideUrlLoading(WebView view, String url) {
+            Uri uri = Uri.parse(url);
 
-//                setSupportProgressBarIndeterminateVisibility(false);
-//                mSmoothProgressBar.setVisibility(View.GONE);
+            String code = uri.getQueryParameter("code");
+            String state = uri.getQueryParameter("state");
+            if(!TextUtils.isEmpty(code)
+                && !TextUtils.isEmpty(state)
+                && state.equals(getString(R.string.vimeo_state))) {
 
-            if (!TextUtils.isEmpty(url) && url.startsWith(getString(R.string.client_redirect_uri))) {
-                Uri uri = Uri.parse(url);
-                String state = uri.getQueryParameter("state");
-                if (state.equals(getString(R.string.vimeo_state))) {
-                    String code = uri.getQueryParameter("code");
-
-                    Call exchangeCodeCall = vimeoService.exchangeCode("authorization_code",
-                            code,
-                            getString(R.string.client_redirect_uri));
-                    exchangeCodeCall.enqueue(exchangeCodeCallback);
-                }
-
+                Call exchangeCodeCall = vimeoService.exchangeCode("authorization_code",
+                        code,
+                        getString(R.string.client_redirect_uri));
+                exchangeCodeCall.enqueue(exchangeCodeCallback);
             }
-        }
 
-        public void onReceivedError(WebView view, int errorCode, String description, String failingUrl) {
-            Timber.e("Error: " + errorCode + ":" + description + ":" + failingUrl);
 
-//                mSmoothProgressBar.setVisibility(View.GONE);
-
-            if (!isFinishing()) {
-//                    alertDialog.setTitle("Error");
-//                    alertDialog.setMessage("Unable to connect. Please check your internet connectivity.");
-//                    alertDialog.setButton(DialogInterface.BUTTON_POSITIVE, getString(android.R.string.ok), new DialogInterface.OnClickListener() {
-//                        public void onClick(DialogInterface dialog, int which) {
-//                            dialog.dismiss();
-//                        }
-//                    });
-//
-//                    alertDialog.show();
-            }
+            return super.shouldOverrideUrlLoading(view, url);
         }
     };
-    // endregion
-
-    // region Listeners
     // endregion
 
     // region Callbacks
@@ -181,32 +133,27 @@ public class LoginActivity extends AppCompatActivity {
         webView.setScrollBarStyle(WebView.SCROLLBARS_OUTSIDE_OVERLAY);
         webView.setWebViewClient(webViewClient);
 
-        webView.loadUrl(setUpAuthorizeUrl());
-    }
-
-    @Override
-    protected void onResume() {
-        super.onResume();
+        webView.loadUrl(setUpUrl());
     }
     // endregion
 
     // region Helper Methods
-    private String setUpAuthorizeUrl() {
-        String authroizeUrl;
-
+    private String setUpUrl() {
+        String authroizeUrl = getString(R.string.authorize_url);
         String webLoginClientId = getString(R.string.client_id);
+        String redirectUri = getString(R.string.client_redirect_uri);
         String scope = TextUtils.join(" ", getResources().getStringArray(R.array.scopes));
-        String redirect_uri = getString(R.string.client_redirect_uri);
         String state = getString(R.string.vimeo_state);
 
-        authroizeUrl =
-                String.format("https://api.vimeo.com/oauth/authorize?scope=%s&client_id=%s&response_type=code&redirect_uri=%s&state=%s",
-                        scope,
+        String url =
+                String.format("%s?client_id=%s&response_type=code&redirect_uri=%s&state=%s&scope=%s",
+                        authroizeUrl,
                         webLoginClientId,
-                        redirect_uri,
-                        state);
+                        redirectUri,
+                        state,
+                        scope);
 
-        return authroizeUrl;
+        return url;
     }
     // endregion
 }
