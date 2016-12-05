@@ -145,7 +145,8 @@ public class VideosFragment extends BaseFragment implements VideosAdapter.OnItem
             if (videosCollection != null) {
                 List<Video> videos = videosCollection.getVideos();
                 if (videos != null) {
-                    videosAdapter.addAll(videos);
+                    if(videos.size()>0)
+                        videosAdapter.addAll(videos);
 
                     if (videos.size() >= PAGE_SIZE) {
                         videosAdapter.addFooter();
@@ -194,7 +195,8 @@ public class VideosFragment extends BaseFragment implements VideosAdapter.OnItem
             if (videosCollection != null) {
                 List<Video> videos = videosCollection.getVideos();
                 if (videos != null) {
-                    videosAdapter.addAll(videos);
+                    if(videos.size()>0)
+                        videosAdapter.addAll(videos);
 
                     if(videos.size() >= PAGE_SIZE){
                         videosAdapter.addFooter();

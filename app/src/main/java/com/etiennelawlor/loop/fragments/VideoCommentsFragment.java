@@ -162,11 +162,12 @@ public class VideoCommentsFragment extends BaseFragment implements VideoComments
             CommentsCollection commentsCollection = response.body();
             if (commentsCollection != null) {
                 List<Comment> comments = commentsCollection.getComments();
-                if (comments != null && comments.size() > 0) {
-
-                    Collections.reverse(comments);
-                    videoCommentsAdapter.addAll(comments);
-                    recyclerView.scrollToPosition(videoCommentsAdapter.getItemCount() - 1);
+                if (comments != null) {
+                    if(comments.size()>0) {
+                        Collections.reverse(comments);
+                        videoCommentsAdapter.addAll(comments);
+                        recyclerView.scrollToPosition(videoCommentsAdapter.getItemCount() - 1);
+                    }
 
                     if (comments.size() >= PAGE_SIZE) {
 //                            mVideoCommentsAdapter.addLoading();

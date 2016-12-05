@@ -153,7 +153,8 @@ public class WatchLaterVideosFragment extends BaseFragment implements VideosAdap
             if (videosCollection != null) {
                 List<Video> videos = videosCollection.getVideos();
                 if (videos != null) {
-                    videosAdapter.addAll(videos);
+                    if(videos.size()>0)
+                        videosAdapter.addAll(videos);
 
                     if(videos.size() >= PAGE_SIZE){
                         videosAdapter.addFooter();
@@ -210,7 +211,8 @@ public class WatchLaterVideosFragment extends BaseFragment implements VideosAdap
             if (videosCollection != null) {
                 List<Video> videos = videosCollection.getVideos();
                 if (videos != null) {
-                    videosAdapter.addAll(videos);
+                    if(videos.size()>0)
+                        videosAdapter.addAll(videos);
 
                     if(videos.size() >= PAGE_SIZE){
                         videosAdapter.addFooter();

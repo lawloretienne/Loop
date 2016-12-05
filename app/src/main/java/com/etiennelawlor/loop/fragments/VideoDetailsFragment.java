@@ -167,7 +167,8 @@ public class VideoDetailsFragment extends BaseFragment implements RelatedVideosA
             if (videosCollection != null) {
                 List<Video> videos = videosCollection.getVideos();
                 if (videos != null) {
-                    relatedVideosAdapter.addAll(videos);
+                    if(videos.size()>0)
+                        relatedVideosAdapter.addAll(videos);
 
                     if (videos.size() >= PAGE_SIZE) {
                         relatedVideosAdapter.addFooter();
@@ -213,8 +214,8 @@ public class VideoDetailsFragment extends BaseFragment implements RelatedVideosA
             if (videosCollection != null) {
                 List<Video> videos = videosCollection.getVideos();
                 if (videos != null) {
-                    Timber.d("onResponse() : Success : videos.size() - " + videos.size());
-                    relatedVideosAdapter.addAll(videos);
+                    if(videos.size()>0)
+                        relatedVideosAdapter.addAll(videos);
 
                     if (videos.size() >= PAGE_SIZE) {
                         relatedVideosAdapter.addFooter();
