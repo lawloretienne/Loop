@@ -19,7 +19,7 @@ import com.etiennelawlor.loop.adapters.CategoriesAdapter;
 import com.etiennelawlor.loop.models.AccessToken;
 import com.etiennelawlor.loop.network.ServiceGenerator;
 import com.etiennelawlor.loop.network.VimeoService;
-import com.etiennelawlor.loop.network.models.response.CategoriesCollection;
+import com.etiennelawlor.loop.network.models.response.CategoriesEnvelope;
 import com.etiennelawlor.loop.network.models.response.Category;
 import com.etiennelawlor.loop.prefs.LoopPrefs;
 import com.etiennelawlor.loop.ui.GridSpacesItemDecoration;
@@ -30,8 +30,6 @@ import com.etiennelawlor.loop.utilities.NetworkLogUtility;
 import com.etiennelawlor.loop.utilities.NetworkUtility;
 import com.etiennelawlor.loop.utilities.TrestleUtility;
 
-import java.net.ConnectException;
-import java.net.UnknownHostException;
 import java.util.List;
 
 import butterknife.Bind;
@@ -82,9 +80,9 @@ public class ExploreFragment extends BaseFragment implements CategoriesAdapter.O
     // endregion
 
     // region Callbacks
-    private Callback<CategoriesCollection> getCategoriesCallback = new Callback<CategoriesCollection>() {
+    private Callback<CategoriesEnvelope> getCategoriesCallback = new Callback<CategoriesEnvelope>() {
         @Override
-        public void onResponse(Call<CategoriesCollection> call, Response<CategoriesCollection> response) {
+        public void onResponse(Call<CategoriesEnvelope> call, Response<CategoriesEnvelope> response) {
             loadingImageView.setVisibility(View.GONE);
 
             if (!response.isSuccessful()) {
@@ -96,15 +94,15 @@ public class ExploreFragment extends BaseFragment implements CategoriesAdapter.O
                 return;
             }
 
-            CategoriesCollection categoriesCollection = response.body();
-            if (categoriesCollection != null) {
-                List<Category> categories = categoriesCollection.getCategories();
+            CategoriesEnvelope categoriesEnvelope = response.body();
+            if (categoriesEnvelope != null) {
+                List<Category> categories = categoriesEnvelope.getCategories();
                 categoriesAdapter.addAll(categories);
             }
         }
 
         @Override
-        public void onFailure(Call<CategoriesCollection> call, Throwable t) {
+        public void onFailure(Call<CategoriesEnvelope> call, Throwable t) {
             NetworkLogUtility.logFailure(call, t);
 
             if (!call.isCanceled()){

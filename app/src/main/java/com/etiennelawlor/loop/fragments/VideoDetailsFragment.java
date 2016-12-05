@@ -45,7 +45,7 @@ import com.etiennelawlor.loop.network.VimeoService;
 import com.etiennelawlor.loop.network.models.response.Pictures;
 import com.etiennelawlor.loop.network.models.response.Size;
 import com.etiennelawlor.loop.network.models.response.Video;
-import com.etiennelawlor.loop.network.models.response.VideosCollection;
+import com.etiennelawlor.loop.network.models.response.VideosEnvelope;
 import com.etiennelawlor.loop.prefs.LoopPrefs;
 import com.etiennelawlor.loop.utilities.FontCache;
 import com.etiennelawlor.loop.utilities.NetworkLogUtility;
@@ -67,7 +67,6 @@ import rx.Subscription;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.functions.Action1;
 import rx.subscriptions.CompositeSubscription;
-import timber.log.Timber;
 
 /**
  * Created by etiennelawlor on 5/23/15.
@@ -151,9 +150,9 @@ public class VideoDetailsFragment extends BaseFragment implements RelatedVideosA
 
     // region Callbacks
 
-    private Callback<VideosCollection> getRelatedVideosFirstFetchCallback = new Callback<VideosCollection>() {
+    private Callback<VideosEnvelope> getRelatedVideosFirstFetchCallback = new Callback<VideosEnvelope>() {
         @Override
-        public void onResponse(Call<VideosCollection> call, Response<VideosCollection> response) {
+        public void onResponse(Call<VideosEnvelope> call, Response<VideosEnvelope> response) {
             if (!response.isSuccessful()) {
                 int responseCode = response.code();
                 if(responseCode == 504) { // 504 Unsatisfiable Request (only-if-cached)
@@ -163,9 +162,9 @@ public class VideoDetailsFragment extends BaseFragment implements RelatedVideosA
                 return;
             }
 
-            VideosCollection videosCollection = response.body();
-            if (videosCollection != null) {
-                List<Video> videos = videosCollection.getVideos();
+            VideosEnvelope videosEnvelope = response.body();
+            if (videosEnvelope != null) {
+                List<Video> videos = videosEnvelope.getVideos();
                 if (videos != null) {
                     if(videos.size()>0)
                         relatedVideosAdapter.addAll(videos);
@@ -180,7 +179,7 @@ public class VideoDetailsFragment extends BaseFragment implements RelatedVideosA
         }
 
         @Override
-        public void onFailure(Call<VideosCollection> call, Throwable t) {
+        public void onFailure(Call<VideosEnvelope> call, Throwable t) {
             NetworkLogUtility.logFailure(call, t);
 
             if (!call.isCanceled()){
@@ -192,9 +191,9 @@ public class VideoDetailsFragment extends BaseFragment implements RelatedVideosA
         }
     };
 
-    private Callback<VideosCollection> getRelatedVideosNextFetchCallback = new Callback<VideosCollection>() {
+    private Callback<VideosEnvelope> getRelatedVideosNextFetchCallback = new Callback<VideosEnvelope>() {
         @Override
-        public void onResponse(Call<VideosCollection> call, Response<VideosCollection> response) {
+        public void onResponse(Call<VideosEnvelope> call, Response<VideosEnvelope> response) {
             relatedVideosAdapter.removeFooter();
             isLoading = false;
 
@@ -210,9 +209,9 @@ public class VideoDetailsFragment extends BaseFragment implements RelatedVideosA
                 return;
             }
 
-            VideosCollection videosCollection = response.body();
-            if (videosCollection != null) {
-                List<Video> videos = videosCollection.getVideos();
+            VideosEnvelope videosEnvelope = response.body();
+            if (videosEnvelope != null) {
+                List<Video> videos = videosEnvelope.getVideos();
                 if (videos != null) {
                     if(videos.size()>0)
                         relatedVideosAdapter.addAll(videos);
@@ -227,7 +226,7 @@ public class VideoDetailsFragment extends BaseFragment implements RelatedVideosA
         }
 
         @Override
-        public void onFailure(Call<VideosCollection> call, Throwable t) {
+        public void onFailure(Call<VideosEnvelope> call, Throwable t) {
             NetworkLogUtility.logFailure(call, t);
 
             if (!call.isCanceled()){

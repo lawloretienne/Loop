@@ -7,7 +7,7 @@ import java.util.List;
 /**
  * Created by etiennelawlor on 5/23/15.
  */
-public class VideosCollection {
+public class VideosEnvelope {
 
     // region Fields
     @SerializedName("total")

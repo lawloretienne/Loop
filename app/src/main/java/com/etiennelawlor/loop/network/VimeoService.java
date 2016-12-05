@@ -1,11 +1,12 @@
 package com.etiennelawlor.loop.network;
 
 import com.etiennelawlor.loop.network.models.request.CommentPost;
-import com.etiennelawlor.loop.network.models.response.CategoriesCollection;
+import com.etiennelawlor.loop.network.models.response.CategoriesEnvelope;
 import com.etiennelawlor.loop.network.models.response.Comment;
-import com.etiennelawlor.loop.network.models.response.CommentsCollection;
+import com.etiennelawlor.loop.network.models.response.CommentsEnvelope;
+import com.etiennelawlor.loop.network.models.response.FeedItemsEnvelope;
 import com.etiennelawlor.loop.network.models.response.OAuthResponse;
-import com.etiennelawlor.loop.network.models.response.VideosCollection;
+import com.etiennelawlor.loop.network.models.response.VideosEnvelope;
 
 import okhttp3.ResponseBody;
 import retrofit2.Call;
@@ -27,32 +28,37 @@ public interface VimeoService {
     String BASE_URL = "https://api.vimeo.com";
 
     @GET("/videos")
-    Call<VideosCollection> findVideos(@Query("query") String query,
-                                      @Query("sort") String sort,
-                                      @Query("direction") String direction,
-                                      @Query("page") Integer page,
-                                      @Query("per_page") Integer perPage);
+    Call<VideosEnvelope> findVideos(@Query("query") String query,
+                                    @Query("sort") String sort,
+                                    @Query("direction") String direction,
+                                    @Query("page") Integer page,
+                                    @Query("per_page") Integer perPage,
+                                    @Query("filter") String filter);
 
     @GET("/me/likes")
-    Call<VideosCollection> findLikedVideos(@Query("query") String query,
-                        @Query("sort") String sort,
-                        @Query("direction") String direction,
-                        @Query("page") Integer page,
-                        @Query("per_page") Integer perPage);
-
-    @GET("/me/watchlater")
-    Call<VideosCollection> findWatchLaterVideos(@Query("query") String query,
-                             @Query("sort") String sort,
-                             @Query("direction") String direction,
-                             @Query("page") Integer page,
-                             @Query("per_page") Integer perPage);
-
-    @GET("/videos/{videoId}/comments")
-    Call<CommentsCollection> getComments(@Path("videoId") Long videoId,
+    Call<VideosEnvelope> findLikedVideos(@Query("query") String query,
                                          @Query("sort") String sort,
                                          @Query("direction") String direction,
                                          @Query("page") Integer page,
                                          @Query("per_page") Integer perPage);
+
+    @GET("/me/watchlater")
+    Call<VideosEnvelope> findWatchLaterVideos(@Query("query") String query,
+                                              @Query("sort") String sort,
+                                              @Query("direction") String direction,
+                                              @Query("page") Integer page,
+                                              @Query("per_page") Integer perPage);
+
+    @GET("/me/feed")
+    Call<FeedItemsEnvelope> findMyFeedVideos(@Query("page") Integer page,
+                                             @Query("per_page") Integer perPage);
+
+    @GET("/videos/{videoId}/comments")
+    Call<CommentsEnvelope> getComments(@Path("videoId") Long videoId,
+                                       @Query("sort") String sort,
+                                       @Query("direction") String direction,
+                                       @Query("page") Integer page,
+                                       @Query("per_page") Integer perPage);
 
     @POST("/videos/{videoId}/comments")
     Call<Comment> addComment(@Path("videoId") Long videoId,
@@ -63,12 +69,12 @@ public interface VimeoService {
                                @Path("commentId") Long commentId);
 
     @GET("/videos/{videoId}/videos?filter=related")
-    Call<VideosCollection> findRelatedVideos( @Path("videoId") Long videoId,
-                            @Query("page") Integer page,
-                            @Query("per_page") Integer perPage);
+    Call<VideosEnvelope> findRelatedVideos(@Path("videoId") Long videoId,
+                                           @Query("page") Integer page,
+                                           @Query("per_page") Integer perPage);
 
     @GET("/categories")
-    Call<CategoriesCollection> getCategories();
+    Call<CategoriesEnvelope> getCategories();
 
     @FormUrlEncoded
     @POST("/oauth/access_token")

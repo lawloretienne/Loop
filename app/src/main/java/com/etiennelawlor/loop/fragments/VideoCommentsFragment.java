@@ -30,7 +30,7 @@ import com.etiennelawlor.loop.network.VimeoService;
 import com.etiennelawlor.loop.network.models.request.CommentPost;
 import com.etiennelawlor.loop.network.models.response.AuthorizedUser;
 import com.etiennelawlor.loop.network.models.response.Comment;
-import com.etiennelawlor.loop.network.models.response.CommentsCollection;
+import com.etiennelawlor.loop.network.models.response.CommentsEnvelope;
 import com.etiennelawlor.loop.network.models.response.User;
 import com.etiennelawlor.loop.network.models.response.Video;
 import com.etiennelawlor.loop.prefs.LoopPrefs;
@@ -43,8 +43,6 @@ import com.etiennelawlor.loop.utilities.NetworkUtility;
 import com.etiennelawlor.loop.utilities.TrestleUtility;
 import com.jakewharton.rxbinding.widget.RxTextView;
 
-import java.net.ConnectException;
-import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -144,9 +142,9 @@ public class VideoCommentsFragment extends BaseFragment implements VideoComments
     // endregion
 
     // region Callbacks
-    private Callback<CommentsCollection> getCommentsFirstFetchCallback = new Callback<CommentsCollection>() {
+    private Callback<CommentsEnvelope> getCommentsFirstFetchCallback = new Callback<CommentsEnvelope>() {
         @Override
-        public void onResponse(Call<CommentsCollection> call, Response<CommentsCollection> response) {
+        public void onResponse(Call<CommentsEnvelope> call, Response<CommentsEnvelope> response) {
             loadingImageView.setVisibility(View.GONE);
             isLoading = false;
 
@@ -159,9 +157,9 @@ public class VideoCommentsFragment extends BaseFragment implements VideoComments
                 return;
             }
 
-            CommentsCollection commentsCollection = response.body();
-            if (commentsCollection != null) {
-                List<Comment> comments = commentsCollection.getComments();
+            CommentsEnvelope commentsEnvelope = response.body();
+            if (commentsEnvelope != null) {
+                List<Comment> comments = commentsEnvelope.getComments();
                 if (comments != null) {
                     if(comments.size()>0) {
                         Collections.reverse(comments);
@@ -187,7 +185,7 @@ public class VideoCommentsFragment extends BaseFragment implements VideoComments
         }
 
         @Override
-        public void onFailure(Call<CommentsCollection> call, Throwable t) {
+        public void onFailure(Call<CommentsEnvelope> call, Throwable t) {
             NetworkLogUtility.logFailure(call, t);
 
             if (!call.isCanceled()){

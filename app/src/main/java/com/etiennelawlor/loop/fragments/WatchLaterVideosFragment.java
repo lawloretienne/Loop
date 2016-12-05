@@ -32,7 +32,7 @@ import com.etiennelawlor.loop.models.AccessToken;
 import com.etiennelawlor.loop.network.ServiceGenerator;
 import com.etiennelawlor.loop.network.VimeoService;
 import com.etiennelawlor.loop.network.models.response.Video;
-import com.etiennelawlor.loop.network.models.response.VideosCollection;
+import com.etiennelawlor.loop.network.models.response.VideosEnvelope;
 import com.etiennelawlor.loop.prefs.LoopPrefs;
 import com.etiennelawlor.loop.ui.LoadingImageView;
 import com.etiennelawlor.loop.utilities.FontCache;
@@ -134,9 +134,9 @@ public class WatchLaterVideosFragment extends BaseFragment implements VideosAdap
     // endregion
 
     // region Callbacks
-    private Callback<VideosCollection> findVideosFirstFetchCallback = new Callback<VideosCollection>() {
+    private Callback<VideosEnvelope> findVideosFirstFetchCallback = new Callback<VideosEnvelope>() {
         @Override
-        public void onResponse(Call<VideosCollection> call, Response<VideosCollection> response) {
+        public void onResponse(Call<VideosEnvelope> call, Response<VideosEnvelope> response) {
             loadingImageView.setVisibility(View.GONE);
             isLoading = false;
 
@@ -149,9 +149,9 @@ public class WatchLaterVideosFragment extends BaseFragment implements VideosAdap
                 return;
             }
 
-            VideosCollection videosCollection = response.body();
-            if (videosCollection != null) {
-                List<Video> videos = videosCollection.getVideos();
+            VideosEnvelope videosEnvelope = response.body();
+            if (videosEnvelope != null) {
+                List<Video> videos = videosEnvelope.getVideos();
                 if (videos != null) {
                     if(videos.size()>0)
                         videosAdapter.addAll(videos);
@@ -174,7 +174,7 @@ public class WatchLaterVideosFragment extends BaseFragment implements VideosAdap
         }
 
         @Override
-        public void onFailure(Call<VideosCollection> call, Throwable t) {
+        public void onFailure(Call<VideosEnvelope> call, Throwable t) {
             NetworkLogUtility.logFailure(call, t);
 
             if (!call.isCanceled()){
@@ -189,9 +189,9 @@ public class WatchLaterVideosFragment extends BaseFragment implements VideosAdap
         }
     };
 
-    private Callback<VideosCollection> findVideosNextFetchCallback = new Callback<VideosCollection>() {
+    private Callback<VideosEnvelope> findVideosNextFetchCallback = new Callback<VideosEnvelope>() {
         @Override
-        public void onResponse(Call<VideosCollection> call, Response<VideosCollection> response) {
+        public void onResponse(Call<VideosEnvelope> call, Response<VideosEnvelope> response) {
             videosAdapter.removeFooter();
             isLoading = false;
 
@@ -207,9 +207,9 @@ public class WatchLaterVideosFragment extends BaseFragment implements VideosAdap
                 return;
             }
 
-            VideosCollection videosCollection = response.body();
-            if (videosCollection != null) {
-                List<Video> videos = videosCollection.getVideos();
+            VideosEnvelope videosEnvelope = response.body();
+            if (videosEnvelope != null) {
+                List<Video> videos = videosEnvelope.getVideos();
                 if (videos != null) {
                     if(videos.size()>0)
                         videosAdapter.addAll(videos);
@@ -224,7 +224,7 @@ public class WatchLaterVideosFragment extends BaseFragment implements VideosAdap
         }
 
         @Override
-        public void onFailure(Call<VideosCollection> call, Throwable t) {
+        public void onFailure(Call<VideosEnvelope> call, Throwable t) {
             NetworkLogUtility.logFailure(call, t);
 
             if (!call.isCanceled()){

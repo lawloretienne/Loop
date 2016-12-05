@@ -43,12 +43,13 @@ public class LoopApplication extends Application {
     public void onCreate() {
         super.onCreate();
 
+        currentApplication = this;
+
 //        initializeFabric();
         initializeLeakCanary();
         initializeTimber();
         initializeFlurry();
         initializeOkHttpClient();
-        currentApplication = this;
     }
     // endregion
 

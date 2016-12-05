@@ -48,6 +48,7 @@ public class WatchNowFragment extends BaseFragment {
 
     // region Constants
     public static final String KEY_QUERY = "KEY_QUERY";
+    public static final String KEY_FILTER = "KEY_FILTER";
     // endregion
 
     // region Views
@@ -128,7 +129,7 @@ public class WatchNowFragment extends BaseFragment {
         }
 
         tabLayout.setupWithViewPager(viewPager);
-        tabLayout.setTabMode(TabLayout.MODE_SCROLLABLE);
+        tabLayout.setTabMode(TabLayout.MODE_FIXED);
 
         updateTabLayout();
 
@@ -188,27 +189,27 @@ public class WatchNowFragment extends BaseFragment {
 
     // region Helper Methods
     private void setupViewPager(ViewPager viewPager) {
-//        Adapter adapter = new Adapter(getActivity().getSupportFragmentManager());
         Adapter adapter = new Adapter(getChildFragmentManager());
 
-        adapter.addFragment(setUpFragment(getString(R.string.bodyboarding)), getString(R.string.bodyboarding));
-        adapter.addFragment(setUpFragment(getString(R.string.surfing)), getString(R.string.surfing));
-        adapter.addFragment(setUpFragment(getString(R.string.wind_surfing)), getString(R.string.wind_surfing));
-        adapter.addFragment(setUpFragment(getString(R.string.snowboarding)), getString(R.string.snowboarding));
-        adapter.addFragment(setUpFragment(getString(R.string.skiing)), getString(R.string.skiing));
-        adapter.addFragment(setUpFragment(getString(R.string.skateboarding)), getString(R.string.skateboarding));
-        adapter.addFragment(setUpFragment(getString(R.string.bmx)), getString(R.string.bmx));
-        adapter.addFragment(setUpFragment(getString(R.string.motocross)), getString(R.string.motocross));
+        MyFeedFragment myFeedFragment = MyFeedFragment.newInstance();
+        adapter.addFragment(myFeedFragment, getString(R.string.my_feed));
+
+
+        Bundle bundle = new Bundle();
+        bundle.putString(KEY_FILTER, "trending");
+        VideosFragment videosFragment2 = VideosFragment.newInstance(bundle);
+        adapter.addFragment(videosFragment2, getString(R.string.trending));
+
         viewPager.setAdapter(adapter);
     }
 
-    private Fragment setUpFragment(String query) {
-        Bundle bundle = new Bundle();
-        bundle.putString(KEY_QUERY, query);
-
-        return VideosFragment.newInstance(bundle);
-//        return PlaceholderFragment.newInstance();
-    }
+//    private Fragment setUpFragment(String query) {
+//        Bundle bundle = new Bundle();
+//        bundle.putString(KEY_FILTER, query);
+//
+//        return VideosFragment.newInstance(bundle);
+////        return PlaceholderFragment.newInstance();
+//    }
 
     private void launchSearchActivity(String query) {
         Intent intent = new Intent(getContext(), SearchableActivity.class);

@@ -53,6 +53,8 @@
 
     <string name="check_your_network_connection">Can\'t load data. Check your network connection.</string>
     <string name="no_available_categories">No available categories.</string>
+    <string name="trending">Trending</string>
+    <string name="my_feed">My Feed</string>
 
 
 </resources>

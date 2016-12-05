@@ -1,10 +1,8 @@
 package com.etiennelawlor.loop.fragments;
 
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.view.ViewCompat;
-import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -13,11 +11,9 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.Spinner;
 import android.widget.TextView;
 
 import com.etiennelawlor.loop.R;
@@ -26,13 +22,15 @@ import com.etiennelawlor.loop.adapters.VideosAdapter;
 import com.etiennelawlor.loop.models.AccessToken;
 import com.etiennelawlor.loop.network.ServiceGenerator;
 import com.etiennelawlor.loop.network.VimeoService;
+import com.etiennelawlor.loop.network.models.response.FeedItem;
+import com.etiennelawlor.loop.network.models.response.FeedItemsEnvelope;
 import com.etiennelawlor.loop.network.models.response.Video;
-import com.etiennelawlor.loop.network.models.response.VideosEnvelope;
 import com.etiennelawlor.loop.prefs.LoopPrefs;
 import com.etiennelawlor.loop.ui.LoadingImageView;
 import com.etiennelawlor.loop.utilities.NetworkLogUtility;
 import com.etiennelawlor.loop.utilities.NetworkUtility;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import butterknife.Bind;
@@ -46,7 +44,7 @@ import retrofit2.Response;
 /**
  * Created by etiennelawlor on 5/23/15.
  */
-public class VideosFragment extends BaseFragment implements VideosAdapter.OnItemClickListener, VideosAdapter.OnReloadClickListener {
+public class MyFeedFragment extends BaseFragment implements VideosAdapter.OnItemClickListener, VideosAdapter.OnReloadClickListener {
 
     // region Constants
     public static final int PAGE_SIZE = 30;
@@ -71,14 +69,14 @@ public class VideosFragment extends BaseFragment implements VideosAdapter.OnItem
     // region Member Variables
     private boolean isLastPage = false;
     private int currentPage = 1;
-    private int selectedSortByKey = 0;
-    private int selectedSortOrderKey = 1;
+//    private int selectedSortByKey = 0;
+//    private int selectedSortOrderKey = 1;
     private boolean isLoading = false;
-    private String sortByValue = "relevant";
-    private String sortOrderValue = "desc";
-    private String filter;
+//    private String sortByValue = "relevant";
+//    private String sortOrderValue = "desc";
+//    private String filter;
     private VideosAdapter videosAdapter;
-    private String query;
+//    private String query;
     private LinearLayoutManager layoutManager;
     private VimeoService vimeoService;
     // endregion
@@ -112,21 +110,16 @@ public class VideosFragment extends BaseFragment implements VideosAdapter.OnItem
         errorLinearLayout.setVisibility(View.GONE);
         loadingImageView.setVisibility(View.VISIBLE);
 
-        Call findVideosCall = vimeoService.findVideos(query,
-                sortByValue,
-                sortOrderValue,
-                currentPage,
-                PAGE_SIZE,
-                filter);
-        calls.add(findVideosCall);
-        findVideosCall.enqueue(findVideosFirstFetchCallback);
+        Call findMyFeedVideosCall = vimeoService.findMyFeedVideos(currentPage, PAGE_SIZE);
+        calls.add(findMyFeedVideosCall);
+        findMyFeedVideosCall.enqueue(findMyFeedVideosFirstFetchCallback);
     }
     // endregion
 
     // region Callbacks
-    private Callback<VideosEnvelope> findVideosFirstFetchCallback = new Callback<VideosEnvelope>() {
+    private Callback<FeedItemsEnvelope> findMyFeedVideosFirstFetchCallback = new Callback<FeedItemsEnvelope>() {
         @Override
-        public void onResponse(Call<VideosEnvelope> call, Response<VideosEnvelope> response) {
+        public void onResponse(Call<FeedItemsEnvelope> call, Response<FeedItemsEnvelope> response) {
             loadingImageView.setVisibility(View.GONE);
             isLoading = false;
 
@@ -139,10 +132,16 @@ public class VideosFragment extends BaseFragment implements VideosAdapter.OnItem
                 return;
             }
 
-            VideosEnvelope videosEnvelope = response.body();
-            if (videosEnvelope != null) {
-                List<Video> videos = videosEnvelope.getVideos();
-                if (videos != null) {
+            FeedItemsEnvelope feedItemsEnvelope = response.body();
+            if (feedItemsEnvelope != null) {
+                List<FeedItem> feedItems = feedItemsEnvelope.getFeedItems();
+                if (feedItems != null) {
+                    List<Video> videos = new ArrayList<>();
+                    for(FeedItem feedItem : feedItems){
+                        Video video = feedItem.getClip();
+                        videos.add(video);
+                    }
+
                     if(videos.size()>0)
                         videosAdapter.addAll(videos);
 
@@ -156,7 +155,7 @@ public class VideosFragment extends BaseFragment implements VideosAdapter.OnItem
         }
 
         @Override
-        public void onFailure(Call<VideosEnvelope> call, Throwable t) {
+        public void onFailure(Call<FeedItemsEnvelope> call, Throwable t) {
             NetworkLogUtility.logFailure(call, t);
 
             if (!call.isCanceled()){
@@ -171,9 +170,9 @@ public class VideosFragment extends BaseFragment implements VideosAdapter.OnItem
         }
     };
 
-    private Callback<VideosEnvelope> findVideosNextFetchCallback = new Callback<VideosEnvelope>() {
+    private Callback<FeedItemsEnvelope> findMyFeedVideosNextFetchCallback = new Callback<FeedItemsEnvelope>() {
         @Override
-        public void onResponse(Call<VideosEnvelope> call, Response<VideosEnvelope> response) {
+        public void onResponse(Call<FeedItemsEnvelope> call, Response<FeedItemsEnvelope> response) {
             videosAdapter.removeFooter();
             isLoading = false;
 
@@ -189,14 +188,20 @@ public class VideosFragment extends BaseFragment implements VideosAdapter.OnItem
                 return;
             }
 
-            VideosEnvelope videosEnvelope = response.body();
-            if (videosEnvelope != null) {
-                List<Video> videos = videosEnvelope.getVideos();
-                if (videos != null) {
+            FeedItemsEnvelope feedItemsEnvelope = response.body();
+            if (feedItemsEnvelope != null) {
+                List<FeedItem> feedItems = feedItemsEnvelope.getFeedItems();
+                if (feedItems != null) {
+                    List<Video> videos = new ArrayList<>();
+                    for(FeedItem feedItem : feedItems){
+                        Video video = feedItem.getClip();
+                        videos.add(video);
+                    }
+
                     if(videos.size()>0)
                         videosAdapter.addAll(videos);
 
-                    if(videos.size() >= PAGE_SIZE){
+                    if (videos.size() >= PAGE_SIZE) {
                         videosAdapter.addFooter();
                     } else {
                         isLastPage = true;
@@ -206,7 +211,7 @@ public class VideosFragment extends BaseFragment implements VideosAdapter.OnItem
         }
 
         @Override
-        public void onFailure(Call<VideosEnvelope> call, Throwable t) {
+        public void onFailure(Call<FeedItemsEnvelope> call, Throwable t) {
             NetworkLogUtility.logFailure(call, t);
 
             if (!call.isCanceled()){
@@ -219,17 +224,17 @@ public class VideosFragment extends BaseFragment implements VideosAdapter.OnItem
     // endregion
 
     // region Constructors
-    public VideosFragment() {
+    public MyFeedFragment() {
     }
     // endregion
 
     // region Factory Methods
-    public static VideosFragment newInstance() {
-        return new VideosFragment();
+    public static MyFeedFragment newInstance() {
+        return new MyFeedFragment();
     }
 
-    public static VideosFragment newInstance(Bundle extras) {
-        VideosFragment fragment = new VideosFragment();
+    public static MyFeedFragment newInstance(Bundle extras) {
+        MyFeedFragment fragment = new MyFeedFragment();
         fragment.setArguments(extras);
         return fragment;
     }
@@ -242,8 +247,8 @@ public class VideosFragment extends BaseFragment implements VideosAdapter.OnItem
         super.onCreate(savedInstanceState);
 
         if (getArguments() != null) {
-            query = getArguments().getString(WatchNowFragment.KEY_QUERY);
-            filter = getArguments().getString(WatchNowFragment.KEY_FILTER);
+//            query = getArguments().getString(WatchNowFragment.KEY_QUERY);
+//            filter = getArguments().getString(WatchNowFragment.KEY_FILTER);
         }
 
         AccessToken token = LoopPrefs.getAccessToken(getActivity());
@@ -284,14 +289,9 @@ public class VideosFragment extends BaseFragment implements VideosAdapter.OnItem
         // Pagination
         recyclerView.addOnScrollListener(recyclerViewOnScrollListener);
 
-        Call findVideosCall = vimeoService.findVideos(query,
-                sortByValue,
-                sortOrderValue,
-                currentPage,
-                PAGE_SIZE,
-                filter);
-        calls.add(findVideosCall);
-        findVideosCall.enqueue(findVideosFirstFetchCallback);
+        Call findMyFeedVideosCall = vimeoService.findMyFeedVideos(currentPage, PAGE_SIZE);
+        calls.add(findMyFeedVideosCall);
+        findMyFeedVideosCall.enqueue(findMyFeedVideosFirstFetchCallback);
     }
 
     @Override
@@ -376,14 +376,9 @@ public class VideosFragment extends BaseFragment implements VideosAdapter.OnItem
     public void onReloadClick() {
         videosAdapter.updateFooter(VideosAdapter.FooterType.LOAD_MORE);
 
-        Call findLikedVideosCall = vimeoService.findVideos(query,
-                sortByValue,
-                sortOrderValue,
-                currentPage,
-                PAGE_SIZE,
-                filter);
-        calls.add(findLikedVideosCall);
-        findLikedVideosCall.enqueue(findVideosNextFetchCallback);
+        Call findMyFeedVideosCall = vimeoService.findMyFeedVideos(currentPage, PAGE_SIZE);
+        calls.add(findMyFeedVideosCall);
+        findMyFeedVideosCall.enqueue(findMyFeedVideosNextFetchCallback);
     }
 
     // endregion
@@ -394,14 +389,9 @@ public class VideosFragment extends BaseFragment implements VideosAdapter.OnItem
 
         currentPage += 1;
 
-        Call findVideosCall = vimeoService.findVideos(query,
-                sortByValue,
-                sortOrderValue,
-                currentPage,
-                PAGE_SIZE,
-                filter);
-        calls.add(findVideosCall);
-        findVideosCall.enqueue(findVideosNextFetchCallback);
+        Call findMyFeedVideosCall = vimeoService.findMyFeedVideos(currentPage, PAGE_SIZE);
+        calls.add(findMyFeedVideosCall);
+        findMyFeedVideosCall.enqueue(findMyFeedVideosNextFetchCallback);
     }
 
 //    private void showSortDialog() {
@@ -463,9 +453,9 @@ public class VideosFragment extends BaseFragment implements VideosAdapter.OnItem
 //        alertDialogBuilder.show();
 //    }
 
-    public String getQuery() {
-        return query;
-    }
+//    public String getQuery() {
+//        return query;
+//    }
 
     private void removeListeners(){
         recyclerView.removeOnScrollListener(recyclerViewOnScrollListener);

@@ -230,7 +230,7 @@ import java.util.List;
 /**
  * Created by etiennelawlor on 5/23/15.
  */
-public class CategoriesCollection {
+public class CategoriesEnvelope {
 
     // region Fields
     @SerializedName("total")

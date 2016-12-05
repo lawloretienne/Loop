@@ -7,7 +7,7 @@ import java.util.List;
 /**
  * Created by etiennelawlor on 5/23/15.
  */
-public class CommentsCollection {
+public class FeedItemsEnvelope {
 
     // region Fields
     @SerializedName("total")
@@ -19,7 +19,7 @@ public class CommentsCollection {
     @SerializedName("paging")
     private Paging paging;
     @SerializedName("data")
-    private List<Comment> comments;
+    private List<FeedItem> feedItems;
     // endregion
 
     // region Getters
@@ -39,8 +39,8 @@ public class CommentsCollection {
         return paging;
     }
 
-    public List<Comment> getComments() {
-        return comments;
+    public List<FeedItem> getFeedItems() {
+        return feedItems;
     }
     // endregion
 
@@ -61,8 +61,8 @@ public class CommentsCollection {
         this.paging = paging;
     }
 
-    public void setComments(List<Comment> comments) {
-        this.comments = comments;
+    public void setFeedItems(List<FeedItem> feedItems) {
+        this.feedItems = feedItems;
     }
     // endregion
 }
