@@ -25,15 +25,15 @@ import retrofit2.http.Query;
  */
 public interface VimeoService {
 
-    String BASE_URL = "https://api.vimeo.com";
+    String BASE_URL = "https://api.vimeo.com/";
 
     @FormUrlEncoded
-    @POST("/oauth/access_token")
+    @POST("oauth/access_token")
     Call<OAuthResponse> exchangeCode(@Field("grant_type") String grantType,
                                      @Field("code") String code,
                                      @Field("redirect_uri") String redirectUri);
 
-    @GET("/videos")
+    @GET("videos")
     Call<VideosEnvelope> findVideos(@Query("query") String query,
                                     @Query("sort") String sort,
                                     @Query("direction") String direction,
@@ -41,59 +41,59 @@ public interface VimeoService {
                                     @Query("per_page") Integer perPage,
                                     @Query("filter") String filter);
 
-    @GET("/videos/{videoId}/comments")
+    @GET("videos/{videoId}/comments")
     Call<CommentsEnvelope> getComments(@Path("videoId") Long videoId,
                                        @Query("sort") String sort,
                                        @Query("direction") String direction,
                                        @Query("page") Integer page,
                                        @Query("per_page") Integer perPage);
 
-    @POST("/videos/{videoId}/comments")
+    @POST("videos/{videoId}/comments")
     Call<Comment> addComment(@Path("videoId") Long videoId,
                              @Body CommentPost commentPost);
 
-    @DELETE("/videos/{videoId}/comments/{commentId}")
+    @DELETE("videos/{videoId}/comments/{commentId}")
     Call<ResponseBody> deleteComment(@Path("videoId") Long videoId,
                                @Path("commentId") Long commentId);
 
-    @GET("/videos/{videoId}/videos?filter=related")
+    @GET("videos/{videoId}/videos?filter=related")
     Call<VideosEnvelope> findRelatedVideos(@Path("videoId") Long videoId,
                                            @Query("page") Integer page,
                                            @Query("per_page") Integer perPage);
 
-    @GET("/categories")
+    @GET("categories")
     Call<CategoriesEnvelope> getCategories();
 
-    @GET("/me/likes")
+    @GET("me/likes")
     Call<VideosEnvelope> findLikedVideos(@Query("query") String query,
                                          @Query("sort") String sort,
                                          @Query("direction") String direction,
                                          @Query("page") Integer page,
                                          @Query("per_page") Integer perPage);
 
-    @GET("/me/watchlater")
+    @GET("me/watchlater")
     Call<VideosEnvelope> findWatchLaterVideos(@Query("query") String query,
                                               @Query("sort") String sort,
                                               @Query("direction") String direction,
                                               @Query("page") Integer page,
                                               @Query("per_page") Integer perPage);
 
-    @GET("/me/feed")
+    @GET("me/feed")
     Call<FeedItemsEnvelope> findMyFeedVideos(@Query("page") Integer page,
                                              @Query("per_page") Integer perPage);
 
-    @PUT("/me/likes/{videoId}")
+    @PUT("me/likes/{videoId}")
     Call<ResponseBody> likeVideo(@Path("videoId") String videoId);
 
 
-    @DELETE("/me/likes/{videoId}")
+    @DELETE("me/likes/{videoId}")
     Call<ResponseBody> unlikeVideo(@Path("videoId") String videoId);
 
-    @PUT("/me/watchlater/{videoId}")
+    @PUT("me/watchlater/{videoId}")
     Call<ResponseBody> addVideoToWatchLater(@Path("videoId") String videoId);
 
 
-    @DELETE("/me/watchlater/{videoId}")
+    @DELETE("me/watchlater/{videoId}")
     Call<ResponseBody> removeVideoFromWatchLater(@Path("videoId") String videoId);
 
 }

@@ -11,8 +11,8 @@ import retrofit2.http.Path;
  */
 public interface VimeoPlayerService {
 
-    String BASE_URL = "http://player.vimeo.com";
+    String BASE_URL = "http://player.vimeo.com/";
 
-    @GET("/video/{videoId}/config")
+    @GET("video/{videoId}/config")
     Call<VideoConfig> getVideoConfig(@Path("videoId") Long videoId);
 }
