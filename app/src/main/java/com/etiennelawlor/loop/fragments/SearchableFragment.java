@@ -37,6 +37,7 @@ import com.etiennelawlor.loop.bus.events.ShowSearchSuggestionsEvent;
 import com.etiennelawlor.loop.models.AccessToken;
 import com.etiennelawlor.loop.network.ServiceGenerator;
 import com.etiennelawlor.loop.network.VimeoService;
+import com.etiennelawlor.loop.network.interceptors.AuthorizedNetworkInterceptor;
 import com.etiennelawlor.loop.network.models.response.Video;
 import com.etiennelawlor.loop.network.models.response.VideosEnvelope;
 import com.etiennelawlor.loop.prefs.LoopPrefs;
@@ -288,7 +289,7 @@ public class SearchableFragment extends BaseFragment implements VideosAdapter.On
         vimeoService = ServiceGenerator.createService(
                 VimeoService.class,
                 VimeoService.BASE_URL,
-                token);
+                new AuthorizedNetworkInterceptor(token));
 
         setHasOptionsMenu(true);
 

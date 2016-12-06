@@ -19,6 +19,7 @@ import com.etiennelawlor.loop.adapters.CategoriesAdapter;
 import com.etiennelawlor.loop.models.AccessToken;
 import com.etiennelawlor.loop.network.ServiceGenerator;
 import com.etiennelawlor.loop.network.VimeoService;
+import com.etiennelawlor.loop.network.interceptors.AuthorizedNetworkInterceptor;
 import com.etiennelawlor.loop.network.models.response.CategoriesEnvelope;
 import com.etiennelawlor.loop.network.models.response.Category;
 import com.etiennelawlor.loop.prefs.LoopPrefs;
@@ -144,7 +145,7 @@ public class ExploreFragment extends BaseFragment implements CategoriesAdapter.O
         vimeoService = ServiceGenerator.createService(
                 VimeoService.class,
                 VimeoService.BASE_URL,
-                token);
+                new AuthorizedNetworkInterceptor(token));
 
         font = FontCache.getTypeface("Ubuntu-Medium.ttf", getContext());
     }

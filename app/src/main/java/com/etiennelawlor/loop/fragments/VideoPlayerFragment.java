@@ -22,6 +22,7 @@ import com.etiennelawlor.loop.models.AccessToken;
 import com.etiennelawlor.loop.models.VideoSavedState;
 import com.etiennelawlor.loop.network.ServiceGenerator;
 import com.etiennelawlor.loop.network.VimeoPlayerService;
+import com.etiennelawlor.loop.network.interceptors.AuthorizedNetworkInterceptor;
 import com.etiennelawlor.loop.network.models.response.Files;
 import com.etiennelawlor.loop.network.models.response.H264;
 import com.etiennelawlor.loop.network.models.response.HLS;
@@ -175,7 +176,7 @@ public class VideoPlayerFragment extends BaseFragment {
         vimeoPlayerService = ServiceGenerator.createService(
                 VimeoPlayerService.class,
                 VimeoPlayerService.BASE_URL,
-                token);
+                new AuthorizedNetworkInterceptor(token));
 
         setHasOptionsMenu(true);
     }

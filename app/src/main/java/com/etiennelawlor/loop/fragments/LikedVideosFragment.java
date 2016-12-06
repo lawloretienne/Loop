@@ -31,6 +31,7 @@ import com.etiennelawlor.loop.bus.events.LikeVideoClickedEvent;
 import com.etiennelawlor.loop.models.AccessToken;
 import com.etiennelawlor.loop.network.ServiceGenerator;
 import com.etiennelawlor.loop.network.VimeoService;
+import com.etiennelawlor.loop.network.interceptors.AuthorizedNetworkInterceptor;
 import com.etiennelawlor.loop.network.models.response.Video;
 import com.etiennelawlor.loop.network.models.response.VideosEnvelope;
 import com.etiennelawlor.loop.prefs.LoopPrefs;
@@ -270,7 +271,7 @@ public class LikedVideosFragment extends BaseFragment implements VideosAdapter.O
         vimeoService = ServiceGenerator.createService(
                 VimeoService.class,
                 VimeoService.BASE_URL,
-                token);
+                new AuthorizedNetworkInterceptor(token));
 
         setHasOptionsMenu(true);
 

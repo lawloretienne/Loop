@@ -14,6 +14,7 @@ import com.etiennelawlor.loop.R;
 import com.etiennelawlor.loop.models.AccessToken;
 import com.etiennelawlor.loop.network.ServiceGenerator;
 import com.etiennelawlor.loop.network.VimeoService;
+import com.etiennelawlor.loop.network.interceptors.UnauthorizedNetworkInterceptor;
 import com.etiennelawlor.loop.network.models.response.AuthorizedUser;
 import com.etiennelawlor.loop.network.models.response.OAuthResponse;
 import com.etiennelawlor.loop.prefs.LoopPrefs;
@@ -119,8 +120,7 @@ public class LoginActivity extends AppCompatActivity {
         vimeoService = ServiceGenerator.createService(
                 VimeoService.class,
                 VimeoService.BASE_URL,
-                getString(R.string.client_id),
-                getString(R.string.client_secret));
+                new UnauthorizedNetworkInterceptor(this));
 
         WebSettings webSettings = webView.getSettings();
         webSettings.setJavaScriptEnabled(true);

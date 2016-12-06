@@ -27,6 +27,7 @@ import com.etiennelawlor.loop.adapters.VideoCommentsAdapter;
 import com.etiennelawlor.loop.models.AccessToken;
 import com.etiennelawlor.loop.network.ServiceGenerator;
 import com.etiennelawlor.loop.network.VimeoService;
+import com.etiennelawlor.loop.network.interceptors.AuthorizedNetworkInterceptor;
 import com.etiennelawlor.loop.network.models.request.CommentPost;
 import com.etiennelawlor.loop.network.models.response.AuthorizedUser;
 import com.etiennelawlor.loop.network.models.response.Comment;
@@ -316,7 +317,7 @@ public class VideoCommentsFragment extends BaseFragment implements VideoComments
         vimeoService = ServiceGenerator.createService(
                 VimeoService.class,
                 VimeoService.BASE_URL,
-                token);
+                new AuthorizedNetworkInterceptor(token));
 
         font = FontCache.getTypeface("Ubuntu-Medium.ttf", getContext());
 

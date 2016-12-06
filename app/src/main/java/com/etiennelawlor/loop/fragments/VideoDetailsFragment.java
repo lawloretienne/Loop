@@ -42,6 +42,7 @@ import com.etiennelawlor.loop.bus.events.WatchLaterClickedEvent;
 import com.etiennelawlor.loop.models.AccessToken;
 import com.etiennelawlor.loop.network.ServiceGenerator;
 import com.etiennelawlor.loop.network.VimeoService;
+import com.etiennelawlor.loop.network.interceptors.AuthorizedNetworkInterceptor;
 import com.etiennelawlor.loop.network.models.response.Pictures;
 import com.etiennelawlor.loop.network.models.response.Size;
 import com.etiennelawlor.loop.network.models.response.Video;
@@ -484,7 +485,7 @@ public class VideoDetailsFragment extends BaseFragment implements RelatedVideosA
         vimeoService = ServiceGenerator.createService(
                 VimeoService.class,
                 VimeoService.BASE_URL,
-                token);
+                new AuthorizedNetworkInterceptor(token));
 
         setHasOptionsMenu(true);
 

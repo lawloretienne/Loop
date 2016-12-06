@@ -1,16 +1,12 @@
 package com.etiennelawlor.loop.network;
 
-import android.util.Base64;
-
 import com.etiennelawlor.loop.BuildConfig;
 import com.etiennelawlor.loop.LoopApplication;
-import com.etiennelawlor.loop.models.AccessToken;
-import com.etiennelawlor.loop.utilities.RequestUtility;
 
+import java.io.File;
 import java.io.IOException;
-import java.util.HashMap;
-import java.util.Map;
 
+import okhttp3.Cache;
 import okhttp3.Interceptor;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
@@ -26,90 +22,57 @@ import timber.log.Timber;
  */
 public class ServiceGenerator {
 
-    private static Retrofit.Builder retrofitBuilder =
-            new Retrofit.Builder();
+    // region Constants
+    private static final int DISK_CACHE_SIZE = 10 * 1024 * 1024; // 10MB
+    // endregion
+
+    private static Retrofit.Builder retrofitBuilder
+            = new Retrofit.Builder()
+                .addCallAdapterFactory(RxJavaCallAdapterFactory.create())
+                .addConverterFactory(GsonConverterFactory.create());
+
+    private static OkHttpClient defaultOkHttpClient
+            = new OkHttpClient.Builder()
+                .cache(getCache())
+                .build();
 
     // No need to instantiate this class.
     private ServiceGenerator() {
     }
 
-    public static <S> S createService(Class<S> serviceClass, String baseUrl, final String clientId, final String clientSecret) {
+    public static <S> S createService(Class<S> serviceClass, String baseUrl) {
+        return createService(serviceClass, baseUrl, null);
+    }
 
-        OkHttpClient defaultOkHttpClient = LoopApplication.getOkHttpClient();
+    public static <S> S createService(Class<S> serviceClass, String baseUrl, Interceptor networkInterceptor) {
+        OkHttpClient.Builder okHttpClientBuilder = defaultOkHttpClient.newBuilder();
 
-        OkHttpClient modifiedOkHttpClient = defaultOkHttpClient.newBuilder()
-                .addNetworkInterceptor(new Interceptor() {
-                    @Override
-                    public Response intercept(Chain chain) throws IOException {
-                        if (chain != null) {
-                            Request originalRequest = chain.request();
+        if(networkInterceptor != null){
+            okHttpClientBuilder.addNetworkInterceptor(networkInterceptor);
+        }
 
-                            Map<String, String> headersMap = new HashMap<>();
-
-                            // concatenate username and password with colon for authentication
-                            final String credentials = clientId + ":" + clientSecret;
-                            String authorization = "Basic " + Base64.encodeToString(credentials.getBytes(), Base64.NO_WRAP);
-                            headersMap.put("Authorization", authorization);
-                            headersMap.put("Accept", "application/json");
-                            Request modifiedRequest = RequestUtility.updateHeaders(originalRequest, headersMap);
-
-                            return chain.proceed(modifiedRequest);
-                        }
-
-                        return null;
-                    }
-                })
+        OkHttpClient modifiedOkHttpClient = okHttpClientBuilder
                 .addInterceptor(getHttpLoggingInterceptor())
                 .build();
 
         retrofitBuilder.client(modifiedOkHttpClient);
         retrofitBuilder.baseUrl(baseUrl);
-        retrofitBuilder.addCallAdapterFactory(RxJavaCallAdapterFactory.create());
-        retrofitBuilder.addConverterFactory(GsonConverterFactory.create());
 
         Retrofit retrofit = retrofitBuilder.build();
         return retrofit.create(serviceClass);
     }
 
-    public static <S> S createService(Class<S> serviceClass, String baseUrl, final AccessToken accessToken) {
+    private static Cache getCache() {
 
-        OkHttpClient defaultOkHttpClient = LoopApplication.getOkHttpClient();
-
-        OkHttpClient modifiedOkHttpClient = defaultOkHttpClient.newBuilder()
-                .addNetworkInterceptor(new Interceptor() {
-                    @Override
-                    public Response intercept(Chain chain) throws IOException {
-                        if (chain != null) {
-                            Request originalRequest = chain.request();
-
-                            if (accessToken != null) {
-                                Map<String, String> headersMap = new HashMap<>();
-                                String authorization = accessToken.getTokenType() + " " + accessToken.getAccessToken();
-                                headersMap.put("Authorization", authorization);
-                                headersMap.put("Accept", "application/vnd.vimeo.*+json; version=3.2");
-                                Request modifiedRequest = RequestUtility.updateHeaders(originalRequest, headersMap);
-
-                                Timber.d("Authorization : " + authorization);
-
-                                return chain.proceed(modifiedRequest);
-                            } else {
-                                return chain.proceed(originalRequest);
-                            }
-                        }
-
-                        return null;
-                    }
-                })
-                .addInterceptor(getHttpLoggingInterceptor())
-                .build();
-
-        retrofitBuilder.client(modifiedOkHttpClient);
-        retrofitBuilder.baseUrl(baseUrl);
-        retrofitBuilder.addCallAdapterFactory(RxJavaCallAdapterFactory.create());
-        retrofitBuilder.addConverterFactory(GsonConverterFactory.create());
-
-        Retrofit retrofit = retrofitBuilder.build();
-        return retrofit.create(serviceClass);
+        Cache cache = null;
+        // Install an HTTP cache in the application cache directory.
+        try {
+            File cacheDir = new File(LoopApplication.getCacheDirectory(), "http");
+            cache = new Cache(cacheDir, DISK_CACHE_SIZE);
+        } catch (Exception e) {
+            Timber.e(e, "Unable to install disk cache.");
+        }
+        return cache;
     }
 
     private static HttpLoggingInterceptor getHttpLoggingInterceptor(){
@@ -121,6 +84,8 @@ public class ServiceGenerator {
         }
         return httpLoggingInterceptor;
     }
+
+    // region Inner Classes
 
     private static class LoggingInterceptor implements Interceptor {
         @Override
@@ -140,5 +105,7 @@ public class ServiceGenerator {
             return response;
         }
     }
+
+    // endregion
 }
 
