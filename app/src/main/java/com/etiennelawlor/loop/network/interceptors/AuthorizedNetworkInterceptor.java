@@ -17,11 +17,15 @@ import okhttp3.Response;
 
 public class AuthorizedNetworkInterceptor implements Interceptor {
 
+    // region Member Variables
     private AccessToken accessToken;
+    // endregion
 
+    // region Constructors
     public AuthorizedNetworkInterceptor(AccessToken accessToken) {
         this.accessToken = accessToken;
     }
+    // endregion
 
     @Override
     public Response intercept(Chain chain) throws IOException {

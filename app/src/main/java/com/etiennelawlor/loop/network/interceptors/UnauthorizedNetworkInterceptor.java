@@ -20,11 +20,15 @@ import okhttp3.Response;
 
 public class UnauthorizedNetworkInterceptor implements Interceptor {
 
+    // region Member Variables
     private Context context;
+    // endregion
 
+    // region Constructors
     public UnauthorizedNetworkInterceptor(Context context) {
         this.context = context;
     }
+    // endregion
 
     @Override
     public Response intercept(Chain chain) throws IOException {
