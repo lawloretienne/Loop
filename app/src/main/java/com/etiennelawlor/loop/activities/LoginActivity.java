@@ -5,9 +5,11 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
+import android.view.View;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
+import android.widget.FrameLayout;
 
 import com.etiennelawlor.loop.R;
 import com.etiennelawlor.loop.models.AccessToken;
@@ -34,6 +36,8 @@ public class LoginActivity extends AppCompatActivity {
     // region Views
     @Bind(R.id.wv)
     WebView webView;
+    @Bind(R.id.fl)
+    FrameLayout frameLayout;
     // endregion
 
     // region Member Variables
@@ -49,6 +53,8 @@ public class LoginActivity extends AppCompatActivity {
             if(!TextUtils.isEmpty(code)
                 && !TextUtils.isEmpty(state)
                 && state.equals(getString(R.string.vimeo_state))) {
+
+                frameLayout.setVisibility(View.VISIBLE);
 
                 Call exchangeCodeCall = vimeoService.exchangeCode("authorization_code",
                         code,
