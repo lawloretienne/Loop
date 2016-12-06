@@ -17,12 +17,8 @@ import com.etiennelawlor.trestle.library.Regex;
 import com.etiennelawlor.trestle.library.Span;
 import com.etiennelawlor.trestle.library.Trestle;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import butterknife.Bind;
 import butterknife.ButterKnife;
-import timber.log.Timber;
 
 /**
  * Created by etiennelawlor on 5/23/15.

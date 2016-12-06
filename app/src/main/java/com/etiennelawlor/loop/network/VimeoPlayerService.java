@@ -6,10 +6,6 @@ import retrofit2.Call;
 import retrofit2.http.GET;
 import retrofit2.http.Path;
 
-//import retrofit.Call;
-//import retrofit.http.GET;
-//import retrofit.http.Path;
-
 /**
  * Created by etiennelawlor on 6/14/15.
  */

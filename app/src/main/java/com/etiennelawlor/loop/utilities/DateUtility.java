@@ -10,8 +10,6 @@ import java.util.Locale;
 import java.util.TimeZone;
 import java.util.concurrent.TimeUnit;
 
-import timber.log.Timber;
-
 /**
  * Created by etiennelawlor on 11/8/15.
  */

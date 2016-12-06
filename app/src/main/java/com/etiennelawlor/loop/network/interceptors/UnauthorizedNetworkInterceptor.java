@@ -4,7 +4,6 @@ import android.content.Context;
 import android.util.Base64;
 
 import com.etiennelawlor.loop.R;
-import com.etiennelawlor.loop.models.AccessToken;
 import com.etiennelawlor.loop.utilities.RequestUtility;
 
 import java.io.IOException;

@@ -35,17 +35,12 @@ import com.etiennelawlor.loop.utilities.Transformers;
 import com.greenfrvr.hashtagview.HashtagView;
 
 import java.text.NumberFormat;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
-import timber.log.Timber;
 
 /**
  * Created by etiennelawlor on 5/23/15.

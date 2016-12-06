@@ -4,7 +4,6 @@ import android.graphics.Typeface;
 import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.os.Handler;
-import android.support.design.widget.Snackbar;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -36,10 +35,7 @@ import com.etiennelawlor.loop.ui.LoadingImageView;
 import com.etiennelawlor.loop.utilities.FontCache;
 import com.etiennelawlor.loop.utilities.NetworkLogUtility;
 import com.etiennelawlor.loop.utilities.NetworkUtility;
-import com.etiennelawlor.loop.utilities.TrestleUtility;
 
-import java.net.ConnectException;
-import java.net.UnknownHostException;
 import java.util.List;
 
 import butterknife.Bind;

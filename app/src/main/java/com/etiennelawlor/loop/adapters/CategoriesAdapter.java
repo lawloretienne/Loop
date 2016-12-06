@@ -7,7 +7,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.FrameLayout;
-import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
@@ -19,12 +18,10 @@ import com.etiennelawlor.loop.network.models.response.Size;
 import com.etiennelawlor.loop.ui.DynamicHeightImageView;
 import com.etiennelawlor.loop.ui.LoadingImageView;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
-import timber.log.Timber;
 
 /**
  * Created by etiennelawlor on 5/23/15.
