@@ -27,6 +27,12 @@ public interface VimeoService {
 
     String BASE_URL = "https://api.vimeo.com";
 
+    @FormUrlEncoded
+    @POST("/oauth/access_token")
+    Call<OAuthResponse> exchangeCode(@Field("grant_type") String grantType,
+                                     @Field("code") String code,
+                                     @Field("redirect_uri") String redirectUri);
+
     @GET("/videos")
     Call<VideosEnvelope> findVideos(@Query("query") String query,
                                     @Query("sort") String sort,
@@ -34,24 +40,6 @@ public interface VimeoService {
                                     @Query("page") Integer page,
                                     @Query("per_page") Integer perPage,
                                     @Query("filter") String filter);
-
-    @GET("/me/likes")
-    Call<VideosEnvelope> findLikedVideos(@Query("query") String query,
-                                         @Query("sort") String sort,
-                                         @Query("direction") String direction,
-                                         @Query("page") Integer page,
-                                         @Query("per_page") Integer perPage);
-
-    @GET("/me/watchlater")
-    Call<VideosEnvelope> findWatchLaterVideos(@Query("query") String query,
-                                              @Query("sort") String sort,
-                                              @Query("direction") String direction,
-                                              @Query("page") Integer page,
-                                              @Query("per_page") Integer perPage);
-
-    @GET("/me/feed")
-    Call<FeedItemsEnvelope> findMyFeedVideos(@Query("page") Integer page,
-                                             @Query("per_page") Integer perPage);
 
     @GET("/videos/{videoId}/comments")
     Call<CommentsEnvelope> getComments(@Path("videoId") Long videoId,
@@ -76,11 +64,23 @@ public interface VimeoService {
     @GET("/categories")
     Call<CategoriesEnvelope> getCategories();
 
-    @FormUrlEncoded
-    @POST("/oauth/access_token")
-    Call<OAuthResponse> exchangeCode(@Field("grant_type") String grantType,
-                      @Field("code") String code,
-                      @Field("redirect_uri") String redirectUri);
+    @GET("/me/likes")
+    Call<VideosEnvelope> findLikedVideos(@Query("query") String query,
+                                         @Query("sort") String sort,
+                                         @Query("direction") String direction,
+                                         @Query("page") Integer page,
+                                         @Query("per_page") Integer perPage);
+
+    @GET("/me/watchlater")
+    Call<VideosEnvelope> findWatchLaterVideos(@Query("query") String query,
+                                              @Query("sort") String sort,
+                                              @Query("direction") String direction,
+                                              @Query("page") Integer page,
+                                              @Query("per_page") Integer perPage);
+
+    @GET("/me/feed")
+    Call<FeedItemsEnvelope> findMyFeedVideos(@Query("page") Integer page,
+                                             @Query("per_page") Integer perPage);
 
     @PUT("/me/likes/{videoId}")
     Call<ResponseBody> likeVideo(@Path("videoId") String videoId);
