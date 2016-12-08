@@ -384,7 +384,7 @@ public class RelatedVideosAdapter extends BaseAdapter<Video> {
         }
 
         String createdTime = video.getCreatedTime();
-        String formattedCreatedTime = DateUtility.getFormattedDate(createdTime);
+        String formattedCreatedTime = DateUtility.getFormattedTime(createdTime, DateUtility.FORMAT_RELATIVE);
 
         if (viewCount > 0) {
             String formattedViewCount = formatViewCount(viewCount);
@@ -446,7 +446,7 @@ public class RelatedVideosAdapter extends BaseAdapter<Video> {
     private void setUpUploadedDate2(TextView tv, Video video) {
         String createdTime = video.getCreatedTime();
 
-        String formattedCreatedTime = DateUtility.getFormattedDate(createdTime);
+        String formattedCreatedTime = DateUtility.getFormattedTime(createdTime, DateUtility.FORMAT_RELATIVE);
         if (!TextUtils.isEmpty(formattedCreatedTime)) {
             tv.setText(String.format("Uploaded %s", formattedCreatedTime));
             tv.setVisibility(View.VISIBLE);

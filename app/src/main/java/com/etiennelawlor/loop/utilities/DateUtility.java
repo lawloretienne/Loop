@@ -2,6 +2,9 @@ package com.etiennelawlor.loop.utilities;
 
 import android.text.format.DateUtils;
 
+import com.etiennelawlor.loop.LoopApplication;
+import com.etiennelawlor.loop.R;
+
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -15,44 +18,30 @@ import java.util.concurrent.TimeUnit;
  */
 public class DateUtility {
 
-    public static String getFormattedDate(String createdTime) {
-//        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'hh:mm:ss'Z'", Locale.ENGLISH);
-        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'hh:mm:ssZ", Locale.ENGLISH);
+    // region Constants
+    public static final String PATTERN = "yyyy-MM-dd'T'hh:mm:ssZ";
+    public static final int FORMAT_RELATIVE = 0;
+    public static final int FORMAT_ABSOLUTE = 1;
+    // endregion
+
+    public static Calendar getCalendar(String timestamp){
+        Calendar calendar = Calendar.getInstance();
+
+        SimpleDateFormat sdf = new SimpleDateFormat(PATTERN, Locale.ENGLISH);
         sdf.setTimeZone(TimeZone.getTimeZone("GMT"));
-
-        String uploadedDate = "";
-
         try {
-            Date date = sdf.parse(createdTime);
-
-            Calendar calendar = Calendar.getInstance();
+            Date date = sdf.parse(timestamp);
             calendar.setTime(date);
-
-            uploadedDate = DateUtility.getDate(calendar);
-
-        } catch (ParseException e) {
+        } catch (ParseException e){
             e.printStackTrace();
         }
 
-        return uploadedDate;
+        return calendar;
     }
 
     public static long getDaysFromTimestamp(String timestamp){
-        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'hh:mm:ss'Z'", Locale.ENGLISH);
-        sdf.setTimeZone(TimeZone.getTimeZone("GMT"));
-
-        long days = -1L;
-
-        try {
-            Date date = sdf.parse(timestamp);
-
-            Calendar futureCalendar = Calendar.getInstance();
-            futureCalendar.setTime(date);
-
-            days = getDateDiff(futureCalendar.getTime(), Calendar.getInstance().getTime(), TimeUnit.DAYS);
-        } catch (ParseException e) {
-            e.printStackTrace();
-        }
+        Calendar calendar = getCalendar(timestamp);
+        long days = getTimeUnitDiff(calendar, Calendar.getInstance(), TimeUnit.DAYS);
 
         return days;
     }
@@ -64,269 +53,123 @@ public class DateUtility {
         return (year1 == year2);
     }
 
-    public static long getDateDiff(Date date1, Date date2, TimeUnit timeUnit) {
-        long diffInMillies = date2.getTime() - date1.getTime();
+    public static long getTimeUnitDiff(Calendar cal1, Calendar cal2, TimeUnit timeUnit) {
+        long diffInMillies = cal2.getTime().getTime() - cal1.getTime().getTime();
         return timeUnit.convert(diffInMillies, TimeUnit.MILLISECONDS);
     }
 
-    public static String getDate(Calendar calendar) {
+    public static String getFormattedTime(String timestamp, int format) {
+        String formattedTime = "";
+        Calendar calendar = getCalendar(timestamp);
+        long days = getTimeUnitDiff(calendar, Calendar.getInstance(), TimeUnit.DAYS);
+        switch (format) {
+            case FORMAT_ABSOLUTE:
+                if(days>=7){
+                    formattedTime = getFormattedAbsoluteDate(calendar);
+                } else {
+                    formattedTime = getFormattedAbsoluteTime(calendar);
+                }
+                break;
+            case FORMAT_RELATIVE:
+                if(days>=30){
+                    formattedTime = getFormattedAbsoluteDate(calendar);
+                } else {
+                    formattedTime = getFormattedRelativeTime(calendar);
+                }
+                break;
+            default:
+                break;
+        }
 
-        String customDate;
+        return formattedTime;
+    }
 
-        long days = getDateDiff(calendar.getTime(), Calendar.getInstance().getTime(), TimeUnit.DAYS);
+    public static String getFormattedAbsoluteTime(Calendar calendar) {
+        String formattedAbsoluteTime = "";
 
+        long days = getTimeUnitDiff(calendar, Calendar.getInstance(), TimeUnit.DAYS);
+
+        if (days < 1) {
+            if(calendar.get(Calendar.DAY_OF_WEEK) != Calendar.getInstance().get(Calendar.DAY_OF_WEEK)){
+                formattedAbsoluteTime = String.format("%s %d:%02d %s",
+                        getDayOfWeek(calendar.get(Calendar.DAY_OF_WEEK)),
+                        getHour(calendar.get(Calendar.HOUR)),
+                        calendar.get(Calendar.MINUTE),
+                        getMeridiem(calendar.get(Calendar.AM_PM)));
+            } else {
+                formattedAbsoluteTime = String.format("%d:%02d %s",
+                        getHour(calendar.get(Calendar.HOUR)),
+                        calendar.get(Calendar.MINUTE),
+                        getMeridiem(calendar.get(Calendar.AM_PM)));
+            }
+        } else if (days < 7) {
+            formattedAbsoluteTime = String.format("%s %d:%02d %s",
+                    getDayOfWeek(calendar.get(Calendar.DAY_OF_WEEK)),
+                    getHour(calendar.get(Calendar.HOUR)),
+                    calendar.get(Calendar.MINUTE),
+                    getMeridiem(calendar.get(Calendar.AM_PM)));
+        }
+
+        return formattedAbsoluteTime;
+    }
+
+    public static String getFormattedRelativeTime(Calendar calendar) {
+        String formattedRelativeTime = "";
+        long days = getTimeUnitDiff(calendar, Calendar.getInstance(), TimeUnit.DAYS);
         if (days < 7) {
-            long seconds = getDateDiff(calendar.getTime(), Calendar.getInstance().getTime(), TimeUnit.SECONDS);
+            long seconds = getTimeUnitDiff(calendar, Calendar.getInstance(), TimeUnit.SECONDS);
 
             if(seconds < 60){
-                customDate = "Just now";
+                formattedRelativeTime = "Just now";
             } else {
                 CharSequence relativeTime = DateUtils.getRelativeTimeSpanString(calendar.getTimeInMillis(), System.currentTimeMillis(),
                         DateUtils.SECOND_IN_MILLIS);
 
-                customDate = relativeTime.toString();
+                formattedRelativeTime = relativeTime.toString();
             }
         } else if (days >= 7 && days < 30){
-            customDate = String.format("%d days ago", days);
-        } else if (days >= 30 && isSameYear(calendar, Calendar.getInstance())){
-            CharSequence relativeTime = DateUtils.getRelativeTimeSpanString(calendar.getTimeInMillis(), System.currentTimeMillis(),
-                    DateUtils.SECOND_IN_MILLIS, DateUtils.FORMAT_ABBREV_MONTH);
-
-            customDate = relativeTime.toString();
-
-        } else {
-            CharSequence relativeTime = DateUtils.getRelativeTimeSpanString(calendar.getTimeInMillis(), System.currentTimeMillis(),
-                    DateUtils.SECOND_IN_MILLIS, DateUtils.FORMAT_ABBREV_MONTH|DateUtils.FORMAT_SHOW_YEAR);
-
-            customDate = relativeTime.toString();
+            formattedRelativeTime = String.format("%d days ago", days);
         }
 
-//        Timber.d("getMagicDate() : NO_FORMAT : %s",DateUtils.getRelativeTimeSpanString(future.getTimeInMillis(), System.currentTimeMillis(),
-//                DateUtils.SECOND_IN_MILLIS).toString());
-//
-//        Timber.d("getMagicDate() : FORMAT_ABBREV_ALL : %s", DateUtils.getRelativeTimeSpanString(future.getTimeInMillis(), System.currentTimeMillis(),
-//                DateUtils.SECOND_IN_MILLIS,
-//                DateUtils.FORMAT_ABBREV_ALL).toString());
-//
-//        Timber.d("getMagicDate() : FORMAT_ABBREV_MONTH : %s",DateUtils.getRelativeTimeSpanString(future.getTimeInMillis(), System.currentTimeMillis(),
-//                DateUtils.SECOND_IN_MILLIS,
-//                DateUtils.FORMAT_ABBREV_MONTH).toString());
-//
-//        Timber.d("getMagicDate() : FORMAT_ABBREV_TIME : %s",DateUtils.getRelativeTimeSpanString(future.getTimeInMillis(), System.currentTimeMillis(),
-//                DateUtils.SECOND_IN_MILLIS,
-//                DateUtils.FORMAT_ABBREV_TIME).toString());
-//
-//        Timber.d("getMagicDate() : FORMAT_ABBREV_RELATIVE : %s",DateUtils.getRelativeTimeSpanString(future.getTimeInMillis(), System.currentTimeMillis(),
-//                DateUtils.SECOND_IN_MILLIS,
-//                DateUtils.FORMAT_ABBREV_RELATIVE).toString());
-//
-//        Timber.d("getMagicDate() : FORMAT_ABBREV_WEEKDAY : %s",DateUtils.getRelativeTimeSpanString(future.getTimeInMillis(), System.currentTimeMillis(),
-//                DateUtils.SECOND_IN_MILLIS,
-//                DateUtils.FORMAT_ABBREV_WEEKDAY).toString());
-//
-//        Timber.d("getMagicDate() : FORMAT_NO_MIDNIGHT : %s",DateUtils.getRelativeTimeSpanString(future.getTimeInMillis(), System.currentTimeMillis(),
-//                DateUtils.SECOND_IN_MILLIS,
-//                DateUtils.FORMAT_NO_MIDNIGHT).toString());
-//
-//        Timber.d("getMagicDate() : FORMAT_NO_MONTH_DAY : %s",DateUtils.getRelativeTimeSpanString(future.getTimeInMillis(), System.currentTimeMillis(),
-//                DateUtils.SECOND_IN_MILLIS,
-//                DateUtils.FORMAT_NO_MONTH_DAY).toString());
-//
-//        Timber.d("getMagicDate() : FORMAT_NO_NOON : %s",DateUtils.getRelativeTimeSpanString(future.getTimeInMillis(), System.currentTimeMillis(),
-//                DateUtils.SECOND_IN_MILLIS,
-//                DateUtils.FORMAT_NO_NOON).toString());
-//
-//        Timber.d("getMagicDate() : FORMAT_NO_YEAR : %s",DateUtils.getRelativeTimeSpanString(future.getTimeInMillis(), System.currentTimeMillis(),
-//                DateUtils.SECOND_IN_MILLIS,
-//                DateUtils.FORMAT_NO_YEAR).toString());
-//
-//        Timber.d("getMagicDate() : FORMAT_NUMERIC_DATE : %s",DateUtils.getRelativeTimeSpanString(future.getTimeInMillis(), System.currentTimeMillis(),
-//                DateUtils.SECOND_IN_MILLIS,
-//                DateUtils.FORMAT_NUMERIC_DATE).toString());
-//
-//        Timber.d("getMagicDate() : FORMAT_SHOW_DATE : %s",DateUtils.getRelativeTimeSpanString(future.getTimeInMillis(), System.currentTimeMillis(),
-//                DateUtils.SECOND_IN_MILLIS,
-//                DateUtils.FORMAT_SHOW_DATE).toString());
-//
-//        Timber.d("getMagicDate() : FORMAT_SHOW_TIME : %s",DateUtils.getRelativeTimeSpanString(future.getTimeInMillis(), System.currentTimeMillis(),
-//                DateUtils.SECOND_IN_MILLIS,
-//                DateUtils.FORMAT_SHOW_TIME).toString());
-//
-//        Timber.d("getMagicDate() : FORMAT_SHOW_WEEKDAY : %s",DateUtils.getRelativeTimeSpanString(future.getTimeInMillis(), System.currentTimeMillis(),
-//                DateUtils.SECOND_IN_MILLIS,
-//                DateUtils.FORMAT_SHOW_WEEKDAY).toString());
-//
-//        Timber.d("getMagicDate() : FORMAT_SHOW_YEAR : %s",DateUtils.getRelativeTimeSpanString(future.getTimeInMillis(), System.currentTimeMillis(),
-//                DateUtils.SECOND_IN_MILLIS,
-//                DateUtils.FORMAT_SHOW_YEAR).toString());
-
-        return customDate;
+        return formattedRelativeTime;
     }
 
+    public static String getFormattedAbsoluteDate(Calendar calendar) {
+        String formattedAbsoluteDate = "";
 
-//    public static String getRegularDate(Calendar future) {
-//
-//        String formattedDate = "";
-//
-//        long days = getDateDiff(future.getTime(), Calendar.getInstance().getTime(), TimeUnit.DAYS);
-//
-//        if (days < 1) {
-//            if(future.get(Calendar.DAY_OF_WEEK) != Calendar.getInstance().get(Calendar.DAY_OF_WEEK)){
-//                formattedDate = String.format("%s %d:%02d %s", getDayOfWeek(future.get(Calendar.DAY_OF_WEEK)), getHour(future.get(Calendar.HOUR)), future.get(Calendar.MINUTE), getMeridiem(future.get(Calendar.AM_PM)));
-//            } else {
-//                formattedDate = String.format("%d:%02d %s", getHour(future.get(Calendar.HOUR)), future.get(Calendar.MINUTE), getMeridiem(future.get(Calendar.AM_PM)));
-//            }
-//        } else if (days < 7) {
-//            formattedDate = String.format("%s %d:%02d %s", getDayOfWeek(future.get(Calendar.DAY_OF_WEEK)), getHour(future.get(Calendar.HOUR)), future.get(Calendar.MINUTE), getMeridiem(future.get(Calendar.AM_PM)));
-//        } else if (days >= 7){
-//            formattedDate = getDate(future);
-//        }
-//
-//        return formattedDate;
-//    }
+        int year = calendar.get(Calendar.YEAR);
+        String month = getMonth(calendar.get(Calendar.MONTH));
+        int day = calendar.get(Calendar.DAY_OF_MONTH);
 
-//    public static String getRelativeDate(Calendar future) {
-//
-//        String relativeDate = "";
-//
-//        long days = getDateDiff(future.getTime(), Calendar.getInstance().getTime(), TimeUnit.DAYS);
-//
-//        if (days < 7) {
-//            CharSequence relativeTime = DateUtils.getRelativeTimeSpanString(future.getTimeInMillis(), System.currentTimeMillis(),
-//                    DateUtils.SECOND_IN_MILLIS,
-//                    DateUtils.FORMAT_ABBREV_ALL);
-//
-////      Timber.d("relativeTime - " + relativeTime);
-//
-//            if (relativeTime.toString().equals("0 minutes ago")
-//                    || relativeTime.toString().equals("in 0 minutes")) {
-//                relativeDate = "Just now";
-//            } else if(relativeTime.toString().contains("sec.")){
-//                if(relativeTime.toString().equals("0 sec. ago") || relativeTime.toString().equals("In 0 sec.")){
-//                    relativeDate = "Just now";
-//                } else {
-//                    relativeDate = relativeTime.toString().replace("sec. ", "seconds ");
-//                }
-//            } else if(relativeTime.toString().contains("min.")){
-//                relativeDate = relativeTime.toString().replace("min. ", "minutes ");
-//            } else if(relativeTime.toString().contains("hr. ")){
-//                if(relativeTime.toString().equals("1 hr. ago")){
-//                    relativeDate = "1 hour ago";
-//                } else {
-//                    relativeDate = relativeTime.toString().replace("hr. ", "hours ");
-//                }
-//            } else {
-//                relativeDate = relativeTime.toString();
-//            }
-//        } else if (days >= 7 && days < 14) {
-//            relativeDate = "A week ago";
-//        } else if (days >= 14 && days < 21) {
-//            relativeDate = "2 weeks ago";
-//        } else if (days >= 21 && days < 30) {
-//            relativeDate = "3 weeks ago";
-//        } else if ((days / 30) == 1) {
-//            relativeDate = "1 month ago";
-//        } else if ((days / 30) >= 2 && (days / 30) < 12) {
-//            relativeDate = String.format("%d months ago", (days / 30));
-//        } else if ((days / 365) == 1) {
-//            relativeDate = "1 year ago";
-//        } else if ((days / 365) > 1) {
-//            relativeDate = String.format("%d years ago", (days / 365));
-//        }
-//
-////        Timber.d("getRelativeDate() : days - " + days);
-////        Timber.d("getRelativeDate() : relativeDate - " + relativeDate);
-//
-//        return relativeDate;
-//    }
+        if (isSameYear(calendar, Calendar.getInstance())) {
+            formattedAbsoluteDate = String.format("%s %d", month, day);
+        } else {
+            formattedAbsoluteDate = String.format("%s %d, %d", month, day, year);
+        }
 
+        return formattedAbsoluteDate;
+    }
 
-//    public static String getDate(Calendar future) {
-//        String date;
-//
-//        int year = future.get(Calendar.YEAR);
-//        String month = getMonth(future.get(Calendar.MONTH));
-//        int day = future.get(Calendar.DAY_OF_MONTH);
-//
-//        int currentYear = Calendar.getInstance().get(Calendar.YEAR);
-//
-//        if (year != currentYear) {
-//            date = String.format("%s %d, %d", month, day, year);
-//        } else {
-//            date = String.format("%s %d", month, day);
-//        }
-//
-//        return date;
-//    }
-//
-//    private static String getMonth(int month) {
-//        switch (month) {
-//            case 0:
-//                return "Jan";
-//            case 1:
-//                return "Feb";
-//            case 2:
-//                return "Mar";
-//            case 3:
-//                return "Apr";
-//            case 4:
-//                return "May";
-//            case 5:
-//                return "Jun";
-//            case 6:
-//                return "Jul";
-//            case 7:
-//                return "Aug";
-//            case 8:
-//                return "Sept";
-//            case 9:
-//                return "Oct";
-//            case 10:
-//                return "Nov";
-//            case 11:
-//                return "Dec";
-//            default:
-//                return "";
-//        }
-//    }
-//
-//    private static String getDayOfWeek(int dayOfWeek){
-//        switch (dayOfWeek) {
-//            case 1:
-//                return "Sun";
-//            case 2:
-//                return "Mon";
-//            case 3:
-//                return "Tue";
-//            case 4:
-//                return "Wed";
-//            case 5:
-//                return "Thur";
-//            case 6:
-//                return "Fri";
-//            case 7:
-//                return "Sat";
-//            default:
-//                return "";
-//        }
-//    }
-//
-//    private static String getMeridiem(int m){
-//        switch (m){
-//            case Calendar.AM:
-//                return "AM";
-//            case Calendar.PM:
-//                return  "PM";
-//            default:
-//                return "";
-//        }
-//    }
-//
-//    private static int getHour(int h){
-//        if(h == 0)
-//            return 12;
-//        else
-//            return h;
-//    }
+    private static String getMonth(int month) {
+        String[] months = LoopApplication.getInstance().getResources().getStringArray(R.array.months);
+        return months[month];
+    }
+
+    private static String getDayOfWeek(int dayOfWeek){
+        String[] days = LoopApplication.getInstance().getResources().getStringArray(R.array.days);
+        return days[dayOfWeek];
+    }
+
+    private static String getMeridiem(int meridiem){
+        String[] meridiems = LoopApplication.getInstance().getResources().getStringArray(R.array.meridiems);
+        return meridiems[meridiem];
+    }
+
+    private static int getHour(int h){
+        if(h == 0)
+            return 12;
+        else
+            return h;
+    }
 
 }

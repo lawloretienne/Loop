@@ -177,24 +177,9 @@ public class VideoCommentsAdapter extends RecyclerView.Adapter<RecyclerView.View
     }
 
     private String getCommentDate(Comment comment){
-//        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'hh:mm:ssZ", Locale.ENGLISH);
-//        String commentDate = "";
-
         String createdOn = comment.getCreatedOn();
 
-        String formattedCreatedOn = DateUtility.getFormattedDate(createdOn);
-
-//        try {
-//            Date date = sdf.parse(createdOn);
-//
-//            Calendar futureCalendar = Calendar.getInstance();
-//            futureCalendar.setTime(date);
-//
-//            commentDate = DateUtility.getRelativeDate(futureCalendar);
-//        } catch (ParseException e) {
-//            Timber.e("");
-//        }
-
+        String formattedCreatedOn = DateUtility.getFormattedTime(createdOn, DateUtility.FORMAT_RELATIVE);
         return formattedCreatedOn;
     }
 
