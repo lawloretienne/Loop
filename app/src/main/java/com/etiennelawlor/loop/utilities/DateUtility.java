@@ -39,13 +39,6 @@ public class DateUtility {
         return calendar;
     }
 
-    public static long getDaysFromTimestamp(String timestamp){
-        Calendar calendar = getCalendar(timestamp);
-        long days = getTimeUnitDiff(calendar, Calendar.getInstance(), TimeUnit.DAYS);
-
-        return days;
-    }
-
     public static boolean isSameYear(Calendar cal1, Calendar cal2){
         int year1 = cal1.get(Calendar.YEAR);
         int year2 = cal2.get(Calendar.YEAR);
@@ -58,9 +51,8 @@ public class DateUtility {
         return timeUnit.convert(diffInMillies, TimeUnit.MILLISECONDS);
     }
 
-    public static String getFormattedTime(String timestamp, int format) {
+    public static String getFormattedTime(Calendar calendar, int format) {
         String formattedTime = "";
-        Calendar calendar = getCalendar(timestamp);
         long days = getTimeUnitDiff(calendar, Calendar.getInstance(), TimeUnit.DAYS);
         switch (format) {
             case FORMAT_ABSOLUTE:

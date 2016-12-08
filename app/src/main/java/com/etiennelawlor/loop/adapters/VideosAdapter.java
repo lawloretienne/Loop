@@ -227,7 +227,7 @@ public class VideosAdapter extends BaseAdapter<Video> {
             viewCount = stats.getPlays();
         }
 
-        String formattedCreatedTime = DateUtility.getFormattedTime(createdTime, DateUtility.FORMAT_RELATIVE);
+        String formattedCreatedTime = DateUtility.getFormattedTime(DateUtility.getCalendar(createdTime), DateUtility.FORMAT_RELATIVE);
 
         if (viewCount > 0) {
             String formattedViewCount = formatViewCount(viewCount);
