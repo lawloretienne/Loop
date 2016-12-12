@@ -22,6 +22,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
@@ -78,6 +79,8 @@ public class SearchableFragment extends BaseFragment implements VideosAdapter.On
     View emptyView;
     @Bind(R.id.empty_tv)
     TextView emptyTextView;
+    @Bind(R.id.iv)
+    ImageView imageView;
     @Bind(R.id.loading_iv)
     LoadingImageView loadingImageView;
     @Bind(R.id.error_ll)
@@ -180,11 +183,13 @@ public class SearchableFragment extends BaseFragment implements VideosAdapter.On
             materialSearchView.enableFilter();
 
             if (videosAdapter.isEmpty()) {
-                emptyTextView.setText(getString(R.string.watch_later_empty_prompt));
-                Drawable drawable = ContextCompat.getDrawable(getContext(), R.drawable.ic_watch_later_large);
-                DrawableCompat.setTint(drawable, ContextCompat.getColor(getActivity(), R.color.grey_500));
-                emptyTextView.setCompoundDrawablesWithIntrinsicBounds(null, drawable, null, null);
+                emptyTextView.setText("There are no videos matching your search");
+//                Drawable drawable = ContextCompat.getDrawable(getContext(), R.drawable.ic_watch_later_large);
+//                DrawableCompat.setTint(drawable, ContextCompat.getColor(getActivity(), R.color.grey_500));
+//                emptyTextView.setCompoundDrawablesWithIntrinsicBounds(null, drawable, null, null);
+                imageView.setImageResource(R.drawable.ic_watch_now_large);
                 emptyView.setVisibility(View.VISIBLE);
+
             }
         }
 

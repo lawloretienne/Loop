@@ -22,6 +22,7 @@
     <style name="Theme.Loop.VideoPlayerActivity" parent="Theme.Loop">
         <item name="android:windowDrawsSystemBarBackgrounds">true</item>
         <item name="android:statusBarColor">@color/five_percent_transparency_black</item>
+        <item name="android:windowTranslucentStatus">true</item>
     </style>
 
 </resources>

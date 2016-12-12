@@ -4,6 +4,9 @@ import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AppCompatActivity;
 import android.view.MenuItem;
+import android.view.View;
+import android.view.Window;
+import android.view.WindowManager;
 
 import com.etiennelawlor.loop.R;
 import com.etiennelawlor.loop.fragments.VideoPlayerFragment;
@@ -19,15 +22,25 @@ public class VideoPlayerActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+//        requestWindowFeature(Window.FEATURE_NO_TITLE); //Remove title bar
+//        getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN); //Remove notification bar
+
+        final int uiOptions = View.SYSTEM_UI_FLAG_FULLSCREEN
+                | View.SYSTEM_UI_FLAG_LAYOUT_STABLE;
+
+        final View decorView = getWindow().getDecorView();
+//        decorView.setSystemUiVisibility(uiOptions);
+
         setContentView(R.layout.activity_video_player);
         ButterKnife.bind(this);
 
-        Fragment fragment = getSupportFragmentManager().findFragmentById(R.id.content_fl);
+        Fragment fragment = getSupportFragmentManager().findFragmentById(android.R.id.content);
         if(fragment == null){
             fragment = VideoPlayerFragment.newInstance(getIntent().getExtras());
             getSupportFragmentManager()
                     .beginTransaction()
-                    .replace(R.id.content_fl, fragment, "")
+                    .replace(android.R.id.content, fragment, "")
                     .commit();
         } else {
             getSupportFragmentManager()

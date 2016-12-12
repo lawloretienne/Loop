@@ -12,7 +12,7 @@
         android:id="@+id/sepv"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        app:resize_mode="fit"/>
+        app:resize_mode="fixed_height"/>
 
     <!--android:fitsSystemWindows="true"-->
 

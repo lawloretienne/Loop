@@ -2,6 +2,7 @@ package com.etiennelawlor.loop.fragments;
 
 import android.graphics.Typeface;
 import android.media.MediaPlayer;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.text.TextUtils;
@@ -35,6 +36,25 @@ import com.etiennelawlor.loop.ui.LoadingImageView;
 import com.etiennelawlor.loop.utilities.FontCache;
 import com.etiennelawlor.loop.utilities.NetworkLogUtility;
 import com.etiennelawlor.loop.utilities.NetworkUtility;
+import com.google.android.exoplayer2.DefaultLoadControl;
+import com.google.android.exoplayer2.ExoPlayerFactory;
+import com.google.android.exoplayer2.LoadControl;
+import com.google.android.exoplayer2.SimpleExoPlayer;
+import com.google.android.exoplayer2.extractor.DefaultExtractorsFactory;
+import com.google.android.exoplayer2.extractor.ExtractorsFactory;
+import com.google.android.exoplayer2.source.ExtractorMediaSource;
+import com.google.android.exoplayer2.source.LoopingMediaSource;
+import com.google.android.exoplayer2.source.MediaSource;
+import com.google.android.exoplayer2.trackselection.AdaptiveVideoTrackSelection;
+import com.google.android.exoplayer2.trackselection.DefaultTrackSelector;
+import com.google.android.exoplayer2.trackselection.TrackSelection;
+import com.google.android.exoplayer2.trackselection.TrackSelector;
+import com.google.android.exoplayer2.ui.SimpleExoPlayerView;
+import com.google.android.exoplayer2.upstream.BandwidthMeter;
+import com.google.android.exoplayer2.upstream.DataSource;
+import com.google.android.exoplayer2.upstream.DefaultBandwidthMeter;
+import com.google.android.exoplayer2.upstream.DefaultDataSourceFactory;
+import com.google.android.exoplayer2.util.Util;
 
 import java.util.List;
 
@@ -55,8 +75,8 @@ public class VideoPlayerFragment extends BaseFragment {
     // endregion
 
     // region Views
-    @Bind(R.id.vv)
-    VideoView videoView;
+    @Bind(R.id.sepv)
+    SimpleExoPlayerView simpleExoPlayerView;
     @Bind(R.id.loading_iv)
     LoadingImageView loadingImageView;
     @Bind(R.id.error_ll)
@@ -68,10 +88,10 @@ public class VideoPlayerFragment extends BaseFragment {
     // region Member Variables
     private Long videoId;
     private String videoUrl;
-    private MediaController mediaController;
     private VimeoPlayerService vimeoPlayerService;
     private VideoSavedState videoSavedState;
     private Typeface font;
+    private SimpleExoPlayer player;
     // endregion
 
     // region Listeners
@@ -90,8 +110,9 @@ public class VideoPlayerFragment extends BaseFragment {
     private Callback<VideoConfig> getVideoConfigCallback = new Callback<VideoConfig>() {
         @Override
         public void onResponse(Call<VideoConfig> call, Response<VideoConfig> response) {
+            loadingImageView.setVisibility(View.GONE);
+
             if (!response.isSuccessful()) {
-                loadingImageView.setVisibility(View.GONE);
 
                 int responseCode = response.code();
                 switch (responseCode){
@@ -114,7 +135,9 @@ public class VideoPlayerFragment extends BaseFragment {
             if (videoConfig != null) {
                 videoUrl = getVideoUrl(videoConfig);
                 if (!TextUtils.isEmpty(videoUrl)) {
-                    playVideo(videoUrl, 0);
+
+                    // Prepare the player with the source.
+                    player.prepare(getMediaSource(videoUrl));
                 }
             }
         }
@@ -133,7 +156,6 @@ public class VideoPlayerFragment extends BaseFragment {
             }
         }
     };
-
     // endregion
 
     // region Constructors
@@ -190,31 +212,38 @@ public class VideoPlayerFragment extends BaseFragment {
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        mediaController = new MediaController(getActivity());
-        mediaController.setAnchorView(videoView);
-        mediaController.setMediaPlayer(videoView);
-        videoView.setMediaController(mediaController);
+        // Create a default TrackSelector
+        TrackSelector trackSelector = createTrackSelector();
 
-        setUpSystemUiControls();
+        // Create a default LoadControl
+        LoadControl loadControl = new DefaultLoadControl();
+
+        // Create the player
+        player = ExoPlayerFactory.newSimpleInstance(getContext(), trackSelector, loadControl);
+        player.setPlayWhenReady(true);
+
+        simpleExoPlayerView.setPlayer(player);
+
+//        setUpSystemUiControls();
 
         VideoSavedState videoSavedState = getVideoSavedState();
         if(videoSavedState != null && !TextUtils.isEmpty(videoSavedState.getVideoUrl())){
+            loadingImageView.setVisibility(View.GONE);
             String videoUrl = videoSavedState.getVideoUrl();
-            int currentPosition = videoSavedState.getCurrentPosition();
-            playVideo(videoUrl, currentPosition);
+            long currentPosition = videoSavedState.getCurrentPosition();
+            player.seekTo(currentPosition);
+            player.prepare(getMediaSource(videoUrl));
         } else {
             Call getVideoConfigCall = vimeoPlayerService.getVideoConfig(videoId);
             calls.add(getVideoConfigCall);
             getVideoConfigCall.enqueue(getVideoConfigCallback);
         }
+
     }
 
     @Override
     public void onResume() {
         super.onResume();
-
-        if (!videoView.isPlaying())
-            videoView.resume();
     }
 
     @Override
@@ -224,27 +253,22 @@ public class VideoPlayerFragment extends BaseFragment {
         if(!TextUtils.isEmpty(videoUrl)){
             VideoSavedState videoSavedState = new VideoSavedState();
             videoSavedState.setVideoUrl(videoUrl);
-            videoSavedState.setCurrentPosition(videoView.getCurrentPosition());
+            videoSavedState.setCurrentPosition(player.getCurrentPosition());
             setVideoSavedState(videoSavedState);
         }
-
-        if (videoView.isPlaying())
-            videoView.suspend();
     }
 
     @Override
     public void onDestroyView() {
         super.onDestroyView();
         ButterKnife.unbind(this);
+
+        player.release();
     }
 
     @Override
     public void onDestroy() {
         super.onDestroy();
-        if (videoView != null) {
-            videoView.stopPlayback();
-//            mVideoView.setVisibility(View.GONE);
-        }
     }
     // endregion
 
@@ -260,55 +284,56 @@ public class VideoPlayerFragment extends BaseFragment {
 
     // region Helper Methods
     private void setUpSystemUiControls(){
-        final View decorView = getActivity().getWindow().getDecorView();
+//        final View decorView = getActivity().getWindow().getDecorView();
+////        final int uiOptions = View.SYSTEM_UI_FLAG_FULLSCREEN |
+////                View.SYSTEM_UI_FLAG_HIDE_NAVIGATION |
+////                View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN |
+////                View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION |
+////                View.SYSTEM_UI_FLAG_LAYOUT_STABLE;
+//
 //        final int uiOptions = View.SYSTEM_UI_FLAG_FULLSCREEN |
 //                View.SYSTEM_UI_FLAG_HIDE_NAVIGATION |
 //                View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN |
-//                View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION |
-//                View.SYSTEM_UI_FLAG_LAYOUT_STABLE;
-
-        final int uiOptions = View.SYSTEM_UI_FLAG_FULLSCREEN |
-                View.SYSTEM_UI_FLAG_HIDE_NAVIGATION |
-                View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN |
-                View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION;
-
-        decorView.setSystemUiVisibility(uiOptions);
-
-        decorView.setOnSystemUiVisibilityChangeListener
-                (new View.OnSystemUiVisibilityChangeListener() {
-                    @Override
-                    public void onSystemUiVisibilityChange(int visibility) {
-                        // Note that system bars will only be "visible" if none of the
-                        // LOW_PROFILE, HIDE_NAVIGATION, or FULLSCREEN flags are set.
-                        if ((visibility & View.SYSTEM_UI_FLAG_FULLSCREEN) == 0) {
-                            // TODO: The system bars are visible. Make any desired
-                            // adjustments to your UI, such as showing the action bar or
-                            // other navigational controls.
-                            Timber.d("onSystemUiVisibilityChange() : system bars VISIBLE");
-
-                            mediaController.show(3000);
-
-                            new Handler().postDelayed(new Runnable() {
-
-                                @Override
-                                public void run() {
-                                    decorView.setSystemUiVisibility(uiOptions);
-
-//                                    // Remember that you should never show the action bar if the
-//                                    // status bar is hidden, so hide that too if necessary.
-//                                    ActionBar actionBar = getActionBar();
-//                                    actionBar.hide();
-                                }
-                            }, 3000);
-                        } else {
-                            // TODO: The system bars are NOT visible. Make any desired
-                            // adjustments to your UI, such as hiding the action bar or
-                            // other navigational controls.
-                            Timber.d("onSystemUiVisibilityChange() : system bars NOT VISIBLE");
-                            mediaController.hide();
-                        }
-                    }
-                });
+//                View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION;
+//
+//        decorView.setSystemUiVisibility(uiOptions);
+//
+//        decorView.setOnSystemUiVisibilityChangeListener
+//                (new View.OnSystemUiVisibilityChangeListener() {
+//                    @Override
+//                    public void onSystemUiVisibilityChange(int visibility) {
+//                        // Note that system bars will only be "visible" if none of the
+//                        // LOW_PROFILE, HIDE_NAVIGATION, or FULLSCREEN flags are set.
+//                        if ((visibility & View.SYSTEM_UI_FLAG_FULLSCREEN) == 0) {
+//                            // TODO: The system bars are visible. Make any desired
+//                            // adjustments to your UI, such as showing the action bar or
+//                            // other navigational controls.
+//                            Timber.d("onSystemUiVisibilityChange() : system bars VISIBLE");
+//
+//                            player
+//                            mediaController.show(3000);
+//
+//                            new Handler().postDelayed(new Runnable() {
+//
+//                                @Override
+//                                public void run() {
+//                                    decorView.setSystemUiVisibility(uiOptions);
+//
+////                                    // Remember that you should never show the action bar if the
+////                                    // status bar is hidden, so hide that too if necessary.
+////                                    ActionBar actionBar = getActionBar();
+////                                    actionBar.hide();
+//                                }
+//                            }, 3000);
+//                        } else {
+//                            // TODO: The system bars are NOT visible. Make any desired
+//                            // adjustments to your UI, such as hiding the action bar or
+//                            // other navigational controls.
+//                            Timber.d("onSystemUiVisibilityChange() : system bars NOT VISIBLE");
+//                            mediaController.hide();
+//                        }
+//                    }
+//                });
     }
 
     private String getVideoUrl(VideoConfig videoConfig) {
@@ -449,30 +474,42 @@ public class VideoPlayerFragment extends BaseFragment {
         return videoUrl;
     }
 
-    private void playVideo(String videoUrl, int currentPosition) {
-
-        videoView.setVideoPath(videoUrl);
-
-        videoView.requestFocus();
-        videoView.seekTo(currentPosition);
-
-        videoView.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
-            @Override
-            public void onPrepared(MediaPlayer arg0) {
-                loadingImageView.setVisibility(View.GONE);
-                videoView.start();
-
-//                mVideoView.requestFocus();
-            }
-        });
-    }
-
     public void setVideoSavedState(VideoSavedState videoSavedState) {
         this.videoSavedState = videoSavedState;
     }
 
     public VideoSavedState getVideoSavedState() {
         return videoSavedState;
+    }
+
+
+    private TrackSelector createTrackSelector(){
+        // Create a default TrackSelector
+        Handler mainHandler = new Handler();
+        // Measures bandwidth during playback. Can be null if not required.
+        BandwidthMeter bandwidthMeter = new DefaultBandwidthMeter();
+        TrackSelection.Factory videoTrackSelectionFactory =
+                new AdaptiveVideoTrackSelection.Factory(bandwidthMeter);
+        TrackSelector trackSelector =
+                new DefaultTrackSelector(mainHandler, videoTrackSelectionFactory);
+        return trackSelector;
+    }
+
+    private MediaSource getMediaSource(String videoUrl){
+        DefaultBandwidthMeter bandwidthMeter = new DefaultBandwidthMeter();
+        // Produces DataSource instances through which media data is loaded.
+        DataSource.Factory dataSourceFactory = new DefaultDataSourceFactory(getContext(),
+                Util.getUserAgent(getContext(), "Loop"), bandwidthMeter);
+        // Produces Extractor instances for parsing the media data.
+        ExtractorsFactory extractorsFactory = new DefaultExtractorsFactory();
+        // This is the MediaSource representing the media to be played.
+        MediaSource mediaSource = new ExtractorMediaSource(Uri.parse(videoUrl),
+                dataSourceFactory, extractorsFactory, null, null);
+        // Loops the video indefinitely.
+        LoopingMediaSource loopingSource = new LoopingMediaSource(mediaSource);
+//        MediaSource videoSource = new ExtractorMediaSource(mp4VideoUri,
+//                dataSourceFactory, extractorsFactory, null, null);
+        return loopingSource;
     }
     // endregion
 }

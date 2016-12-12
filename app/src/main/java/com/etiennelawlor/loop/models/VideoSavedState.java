@@ -7,7 +7,7 @@ public class VideoSavedState {
 
     // region Fields
     private String videoUrl;
-    private int currentPosition;
+    private long currentPosition;
     // endregion
 
     public VideoSavedState(){
@@ -19,7 +19,7 @@ public class VideoSavedState {
         return videoUrl;
     }
 
-    public int getCurrentPosition() {
+    public long getCurrentPosition() {
         return currentPosition;
     }
     // endregion
@@ -29,7 +29,7 @@ public class VideoSavedState {
         this.videoUrl = videoUrl;
     }
 
-    public void setCurrentPosition(int currentPosition) {
+    public void setCurrentPosition(long currentPosition) {
         this.currentPosition = currentPosition;
     }
     // endregion
