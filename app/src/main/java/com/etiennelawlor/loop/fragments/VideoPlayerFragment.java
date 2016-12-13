@@ -224,7 +224,7 @@ public class VideoPlayerFragment extends BaseFragment {
 
         simpleExoPlayerView.setPlayer(player);
 
-//        setUpSystemUiControls();
+        setUpSystemUiControls();
 
         VideoSavedState videoSavedState = getVideoSavedState();
         if(videoSavedState != null && !TextUtils.isEmpty(videoSavedState.getVideoUrl())){
@@ -284,56 +284,55 @@ public class VideoPlayerFragment extends BaseFragment {
 
     // region Helper Methods
     private void setUpSystemUiControls(){
-//        final View decorView = getActivity().getWindow().getDecorView();
-////        final int uiOptions = View.SYSTEM_UI_FLAG_FULLSCREEN |
-////                View.SYSTEM_UI_FLAG_HIDE_NAVIGATION |
-////                View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN |
-////                View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION |
-////                View.SYSTEM_UI_FLAG_LAYOUT_STABLE;
-//
+        final View decorView = getActivity().getWindow().getDecorView();
 //        final int uiOptions = View.SYSTEM_UI_FLAG_FULLSCREEN |
 //                View.SYSTEM_UI_FLAG_HIDE_NAVIGATION |
 //                View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN |
-//                View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION;
-//
-//        decorView.setSystemUiVisibility(uiOptions);
-//
-//        decorView.setOnSystemUiVisibilityChangeListener
-//                (new View.OnSystemUiVisibilityChangeListener() {
-//                    @Override
-//                    public void onSystemUiVisibilityChange(int visibility) {
-//                        // Note that system bars will only be "visible" if none of the
-//                        // LOW_PROFILE, HIDE_NAVIGATION, or FULLSCREEN flags are set.
-//                        if ((visibility & View.SYSTEM_UI_FLAG_FULLSCREEN) == 0) {
-//                            // TODO: The system bars are visible. Make any desired
-//                            // adjustments to your UI, such as showing the action bar or
-//                            // other navigational controls.
-//                            Timber.d("onSystemUiVisibilityChange() : system bars VISIBLE");
-//
-//                            player
+//                View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION |
+//                View.SYSTEM_UI_FLAG_LAYOUT_STABLE;
+
+        final int uiOptions = View.SYSTEM_UI_FLAG_FULLSCREEN |
+                View.SYSTEM_UI_FLAG_HIDE_NAVIGATION |
+                View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN |
+                View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION;
+
+        decorView.setSystemUiVisibility(uiOptions);
+
+        decorView.setOnSystemUiVisibilityChangeListener
+                (new View.OnSystemUiVisibilityChangeListener() {
+                    @Override
+                    public void onSystemUiVisibilityChange(int visibility) {
+                        // Note that system bars will only be "visible" if none of the
+                        // LOW_PROFILE, HIDE_NAVIGATION, or FULLSCREEN flags are set.
+                        if ((visibility & View.SYSTEM_UI_FLAG_FULLSCREEN) == 0) {
+                            // TODO: The system bars are visible. Make any desired
+                            // adjustments to your UI, such as showing the action bar or
+                            // other navigational controls.
+                            Timber.d("onSystemUiVisibilityChange() : system bars VISIBLE");
+
 //                            mediaController.show(3000);
-//
-//                            new Handler().postDelayed(new Runnable() {
-//
-//                                @Override
-//                                public void run() {
-//                                    decorView.setSystemUiVisibility(uiOptions);
-//
-////                                    // Remember that you should never show the action bar if the
-////                                    // status bar is hidden, so hide that too if necessary.
-////                                    ActionBar actionBar = getActionBar();
-////                                    actionBar.hide();
-//                                }
-//                            }, 3000);
-//                        } else {
-//                            // TODO: The system bars are NOT visible. Make any desired
-//                            // adjustments to your UI, such as hiding the action bar or
-//                            // other navigational controls.
-//                            Timber.d("onSystemUiVisibilityChange() : system bars NOT VISIBLE");
+
+                            new Handler().postDelayed(new Runnable() {
+
+                                @Override
+                                public void run() {
+                                    decorView.setSystemUiVisibility(uiOptions);
+
+//                                    // Remember that you should never show the action bar if the
+//                                    // status bar is hidden, so hide that too if necessary.
+//                                    ActionBar actionBar = getActionBar();
+//                                    actionBar.hide();
+                                }
+                            }, 3000);
+                        } else {
+                            // TODO: The system bars are NOT visible. Make any desired
+                            // adjustments to your UI, such as hiding the action bar or
+                            // other navigational controls.
+                            Timber.d("onSystemUiVisibilityChange() : system bars NOT VISIBLE");
 //                            mediaController.hide();
-//                        }
-//                    }
-//                });
+                        }
+                    }
+                });
     }
 
     private String getVideoUrl(VideoConfig videoConfig) {
