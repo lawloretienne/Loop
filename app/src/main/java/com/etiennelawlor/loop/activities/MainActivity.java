@@ -55,7 +55,7 @@ public class MainActivity extends AppCompatActivity {
     private static final String LIKES = "Likes";
     private static final String WATCH_LATER = "Watch Later";
     private static final String EXPLORE = "Explore";
-    private static final String SETTINGS = "Settings";
+//    private static final String SETTINGS = "Settings";
     private static final String HELP_AND_FEEDBACK = "Help and Feedback";
     private static final String LOGOUT = "Logout";
     // endregion
@@ -125,13 +125,13 @@ public class MainActivity extends AppCompatActivity {
                                         .commit();
                             }
                             break;
-                        case SETTINGS:
-                            getSupportFragmentManager()
-                                    .beginTransaction()
-                                    .setCustomAnimations(android.R.anim.fade_in, android.R.anim.fade_out)
-                                    .replace(R.id.content_fl, PlaceholderFragment.newInstance(), "")
-                                    .commit();
-                            break;
+//                        case SETTINGS:
+//                            getSupportFragmentManager()
+//                                    .beginTransaction()
+//                                    .setCustomAnimations(android.R.anim.fade_in, android.R.anim.fade_out)
+//                                    .replace(R.id.content_fl, PlaceholderFragment.newInstance(), "")
+//                                    .commit();
+//                            break;
                         case HELP_AND_FEEDBACK:
                             try {
                                 startActivity(EmailUtility.getEmailIntent(MainActivity.this));
