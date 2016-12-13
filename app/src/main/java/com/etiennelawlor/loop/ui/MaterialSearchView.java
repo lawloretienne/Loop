@@ -1,6 +1,7 @@
 package com.etiennelawlor.loop.ui;
 
 import android.app.Activity;
+import android.app.Dialog;
 import android.content.Context;
 import android.content.ContextWrapper;
 import android.content.DialogInterface;
@@ -8,6 +9,7 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
 import android.content.res.TypedArray;
+import android.graphics.Typeface;
 import android.os.Bundle;
 import android.speech.RecognizerIntent;
 import android.support.v4.content.ContextCompat;
@@ -20,6 +22,7 @@ import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.inputmethod.EditorInfo;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
@@ -36,6 +39,8 @@ import com.etiennelawlor.loop.bus.events.SearchPerformedEvent;
 import com.etiennelawlor.loop.bus.events.ShowSearchSuggestionsEvent;
 import com.etiennelawlor.loop.realm.RealmUtility;
 import com.etiennelawlor.loop.utilities.DisplayUtility;
+import com.etiennelawlor.loop.utilities.FontCache;
+import com.etiennelawlor.loop.utilities.TrestleUtility;
 
 import java.util.List;
 
@@ -72,6 +77,7 @@ public class MaterialSearchView extends FrameLayout implements
     private int marginLeft;
     private int marginRight;
     private String voicePrompt;
+    private Typeface font;
     private SuggestionsAdapter suggestionsAdapter = new SuggestionsAdapter();
     private boolean isSearchEditTextFocused = false;
 
@@ -250,23 +256,35 @@ public class MaterialSearchView extends FrameLayout implements
         final String suggestion = suggestionTextView.getText().toString();
 
         AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(getContext(), R.style.DialogTheme);
-        alertDialogBuilder.setMessage("Remove from search history?");
-        alertDialogBuilder.setPositiveButton(getContext().getString(android.R.string.ok), new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                RealmUtility.deleteQuery(suggestion);
-                RxBus.getInstance().send(new ShowSearchSuggestionsEvent(getQuery()));
-                dialog.dismiss();
-            }
-        });
-        alertDialogBuilder.setNegativeButton(getContext().getString(android.R.string.cancel), new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                dialog.dismiss();
-            }
-        });
+        alertDialogBuilder.setMessage(TrestleUtility.getFormattedText("Remove from search history?", font));
 
-        alertDialogBuilder.show();
+        alertDialogBuilder.setPositiveButton(
+                getContext().getString(android.R.string.ok),
+                new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        RealmUtility.deleteQuery(suggestion);
+                        RxBus.getInstance().send(new ShowSearchSuggestionsEvent(getQuery()));
+                        dialog.dismiss();
+                    }
+                });
+        alertDialogBuilder.setNegativeButton(
+                getContext().getString(android.R.string.cancel),
+                new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.dismiss();
+                    }
+                });
+
+        AlertDialog alertDialog = alertDialogBuilder.show();
+
+        Button btnPositive = alertDialog.getButton(Dialog.BUTTON_POSITIVE);
+        btnPositive.setTypeface(font);
+
+        Button btnNegative = alertDialog.getButton(Dialog.BUTTON_NEGATIVE);
+        btnNegative.setTypeface(font);
+
     }
     // endregion
 
@@ -284,6 +302,8 @@ public class MaterialSearchView extends FrameLayout implements
         if (!isInEditMode()) {
             LayoutInflater.from(getContext()).inflate((R.layout.material_search_view), this, true);
             ButterKnife.bind(this);
+
+            font = FontCache.getTypeface("Ubuntu-Medium.ttf", getContext());
 
             if (attrs != null) {
                 TypedArray a = getContext().getTheme().obtainStyledAttributes(attrs, R.styleable.MaterialSearchView, 0, 0);

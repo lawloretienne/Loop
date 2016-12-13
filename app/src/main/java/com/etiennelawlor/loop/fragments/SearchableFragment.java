@@ -1,12 +1,15 @@
 package com.etiennelawlor.loop.fragments;
 
 import android.app.Activity;
+import android.app.Dialog;
 import android.app.SearchManager;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.graphics.Typeface;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.speech.RecognizerIntent;
+import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityOptionsCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.graphics.drawable.DrawableCompat;
@@ -22,6 +25,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.Spinner;
@@ -45,6 +49,7 @@ import com.etiennelawlor.loop.prefs.LoopPrefs;
 import com.etiennelawlor.loop.realm.RealmUtility;
 import com.etiennelawlor.loop.ui.LoadingImageView;
 import com.etiennelawlor.loop.ui.MaterialSearchView;
+import com.etiennelawlor.loop.utilities.FontCache;
 import com.etiennelawlor.loop.utilities.NetworkLogUtility;
 import com.etiennelawlor.loop.utilities.NetworkUtility;
 
@@ -104,6 +109,7 @@ public class SearchableFragment extends BaseFragment implements VideosAdapter.On
     private String filter = "CC";
     private VideosAdapter videosAdapter;
     private String query;
+    private Typeface font;
     private LinearLayoutManager layoutManager;
     private VimeoService vimeoService;
     private CompositeSubscription compositeSubscription;
@@ -297,6 +303,8 @@ public class SearchableFragment extends BaseFragment implements VideosAdapter.On
                 new AuthorizedNetworkInterceptor(token));
 
         setHasOptionsMenu(true);
+
+        font = FontCache.getTypeface("Ubuntu-Medium.ttf", getContext());
 
         compositeSubscription = new CompositeSubscription();
     }
@@ -540,13 +548,39 @@ public class SearchableFragment extends BaseFragment implements VideosAdapter.On
         final Spinner sortBySpinner = (Spinner) promptsView.findViewById(R.id.sort_by_s);
         final Spinner sortOrderSpinner = (Spinner) promptsView.findViewById(R.id.sort_order_s);
 
-        String[] mSortByKeysArray = getResources().getStringArray(R.array.videos_sort_by_keys);
-        ArrayAdapter<String> sortByAdapter = new ArrayAdapter<>(getActivity(), android.R.layout.simple_spinner_dropdown_item, mSortByKeysArray);
-        sortBySpinner.setAdapter(sortByAdapter);
+        sortBySpinner.setAdapter(new ArrayAdapter<String>(getActivity(), R.layout.sort_row, R.id.sort_tv, getResources().getStringArray(R.array.videos_sort_by_keys)){
+            @NonNull
+            @Override
+            public View getView(int position, View convertView, ViewGroup parent) {
+                View v = super.getView(position, convertView, parent);
 
-        String[] mSortOrderKeysArray = getResources().getStringArray(R.array.videos_sort_order_keys);
-        ArrayAdapter<String> sortOrderAdapter = new ArrayAdapter<>(getActivity(), android.R.layout.simple_spinner_dropdown_item, mSortOrderKeysArray);
-        sortOrderSpinner.setAdapter(sortOrderAdapter);
+                return v;
+            }
+
+            @Override
+            public View getDropDownView(int position, View convertView, ViewGroup parent) {
+                View v = super.getView(position, convertView, parent);
+
+                return v;
+            }
+        });
+
+        sortOrderSpinner.setAdapter(new ArrayAdapter<String>(getActivity(), R.layout.sort_row, R.id.sort_tv, getResources().getStringArray(R.array.videos_sort_order_keys)){
+            @NonNull
+            @Override
+            public View getView(int position, View convertView, ViewGroup parent) {
+                View v = super.getView(position, convertView, parent);
+
+                return v;
+            }
+
+            @Override
+            public View getDropDownView(int position, View convertView, ViewGroup parent) {
+                View v = super.getView(position, convertView, parent);
+
+                return v;
+            }
+        });
 
         sortBySpinner.setSelection(selectedSortByKey);
         sortOrderSpinner.setSelection(selectedSortOrderKey);
@@ -592,7 +626,13 @@ public class SearchableFragment extends BaseFragment implements VideosAdapter.On
             }
         });
 
-        alertDialogBuilder.show();
+        AlertDialog alertDialog = alertDialogBuilder.show();
+
+        Button btnPositive = alertDialog.getButton(Dialog.BUTTON_POSITIVE);
+        btnPositive.setTypeface(font);
+
+        Button btnNegative = alertDialog.getButton(Dialog.BUTTON_NEGATIVE);
+        btnNegative.setTypeface(font);
     }
 
     private void launchSearchActivity(String query){

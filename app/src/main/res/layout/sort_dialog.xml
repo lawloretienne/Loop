@@ -10,13 +10,13 @@
 
     <FrameLayout
         android:layout_width="match_parent"
-        android:layout_height="48dp">
+        android:layout_height="wrap_content">
 
         <com.etiennelawlor.loop.ui.CustomFontTextView
             android:layout_width="wrap_content"
-            android:layout_height="match_parent"
+            android:layout_height="wrap_content"
             android:layout_marginRight="48dp"
-            android:gravity="center_vertical"
+            android:layout_gravity="center_vertical"
             android:text="@string/sort_by"
             android:textColor="@color/primary_text"
             android:textSize="16sp"
@@ -26,18 +26,18 @@
             android:id="@+id/sort_by_s"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
-            android:layout_gravity="right" />
+            android:layout_gravity="center_vertical|right" />
     </FrameLayout>
 
     <FrameLayout
         android:layout_width="match_parent"
-        android:layout_height="48dp">
+        android:layout_height="wrap_content">
 
         <com.etiennelawlor.loop.ui.CustomFontTextView
             android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:gravity="center_vertical"
+            android:layout_height="wrap_content"
             android:text="@string/sort_order"
+            android:layout_gravity="center_vertical"
             android:textColor="@color/primary_text"
             android:textSize="16sp"
             app:textFont="ubuntu_medium"/>
@@ -46,7 +46,7 @@
             android:id="@+id/sort_order_s"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
-            android:layout_gravity="right" />
+            android:layout_gravity="center_vertical|right" />
     </FrameLayout>
 
 </LinearLayout>

@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.etiennelawlor.loop.ui.CustomFontTextView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/sort_tv"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:padding="16dp"
+    android:textColor="@color/primary"
+    android:textColorHint="@color/hint_text"
+    android:textSize="16sp"
+    app:textFont="ubuntu_medium" />
