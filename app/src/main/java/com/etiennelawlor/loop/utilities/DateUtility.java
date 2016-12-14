@@ -19,16 +19,15 @@ import java.util.concurrent.TimeUnit;
 public class DateUtility {
 
     // region Constants
-    public static final String PATTERN = "yyyy-MM-dd'T'hh:mm:ssZ";
     public static final int FORMAT_RELATIVE = 0;
     public static final int FORMAT_ABSOLUTE = 1;
     // endregion
 
-    public static Calendar getCalendar(String timestamp){
+    public static Calendar getCalendar(String timestamp, String pattern){
         Calendar calendar = Calendar.getInstance();
 
-        SimpleDateFormat sdf = new SimpleDateFormat(PATTERN, Locale.ENGLISH);
-        sdf.setTimeZone(TimeZone.getTimeZone("GMT"));
+        SimpleDateFormat sdf = new SimpleDateFormat(pattern, Locale.ENGLISH);
+        sdf.setTimeZone(TimeZone.getDefault());
         try {
             Date date = sdf.parse(timestamp);
             calendar.setTime(date);
@@ -46,28 +45,36 @@ public class DateUtility {
         return (year1 == year2);
     }
 
+    public static boolean isToday(Calendar calendar){
+        return DateUtils.isToday(calendar.getTimeInMillis());
+    }
+
+    public static boolean isTomorrow(Calendar calendar){
+        Calendar cal = (Calendar) calendar.clone();
+        cal.add(Calendar.DAY_OF_YEAR, -1);
+        return DateUtils.isToday(cal.getTimeInMillis());
+    }
+
+    public static boolean isSameDayOfWeek(Calendar cal1, Calendar cal2){
+        int dayOfWeek1 = cal1.get(Calendar.DAY_OF_WEEK);
+        int dayOfWeek2 = cal2.get(Calendar.DAY_OF_WEEK);
+
+        return (dayOfWeek1 == dayOfWeek2);
+    }
+
     public static long getTimeUnitDiff(Calendar cal1, Calendar cal2, TimeUnit timeUnit) {
-        long diffInMillies = cal2.getTime().getTime() - cal1.getTime().getTime();
+        long diffInMillies = cal1.getTime().getTime() - cal2.getTime().getTime();
         return timeUnit.convert(diffInMillies, TimeUnit.MILLISECONDS);
     }
 
-    public static String getFormattedTime(Calendar calendar, int format) {
+    public static String getFormattedDateAndTime(Calendar calendar, int format) {
         String formattedTime = "";
-        long days = getTimeUnitDiff(calendar, Calendar.getInstance(), TimeUnit.DAYS);
         switch (format) {
             case FORMAT_ABSOLUTE:
-                if(days>=7){
-                    formattedTime = getFormattedAbsoluteDate(calendar);
-                } else {
-                    formattedTime = getFormattedAbsoluteTime(calendar);
-                }
+                formattedTime = getFormattedAbsoluteDateAndTime(calendar);
                 break;
             case FORMAT_RELATIVE:
-                if(days>=30){
-                    formattedTime = getFormattedAbsoluteDate(calendar);
-                } else {
-                    formattedTime = getFormattedRelativeTime(calendar);
-                }
+                formattedTime = getFormattedRelativeDateAndTime(calendar);
                 break;
             default:
                 break;
@@ -76,70 +83,81 @@ public class DateUtility {
         return formattedTime;
     }
 
-    public static String getFormattedAbsoluteTime(Calendar calendar) {
-        String formattedAbsoluteTime = "";
-
+    public static String getFormattedAbsoluteDateAndTime(Calendar calendar) {
+        String formattedAbsoluteDateAndTime;
         long days = getTimeUnitDiff(calendar, Calendar.getInstance(), TimeUnit.DAYS);
-
-        if (days < 1) {
-            if(calendar.get(Calendar.DAY_OF_WEEK) != Calendar.getInstance().get(Calendar.DAY_OF_WEEK)){
-                formattedAbsoluteTime = String.format("%s %d:%02d %s",
-                        getDayOfWeek(calendar.get(Calendar.DAY_OF_WEEK)),
-                        getHour(calendar.get(Calendar.HOUR)),
-                        calendar.get(Calendar.MINUTE),
-                        getMeridiem(calendar.get(Calendar.AM_PM)));
-            } else {
-                formattedAbsoluteTime = String.format("%d:%02d %s",
-                        getHour(calendar.get(Calendar.HOUR)),
-                        calendar.get(Calendar.MINUTE),
-                        getMeridiem(calendar.get(Calendar.AM_PM)));
-            }
-        } else if (days < 7) {
-            formattedAbsoluteTime = String.format("%s %d:%02d %s",
+        if(days <= -7){
+            formattedAbsoluteDateAndTime = String.format("%s %s %s",
                     getDayOfWeek(calendar.get(Calendar.DAY_OF_WEEK)),
-                    getHour(calendar.get(Calendar.HOUR)),
-                    calendar.get(Calendar.MINUTE),
-                    getMeridiem(calendar.get(Calendar.AM_PM)));
-        }
-
-        return formattedAbsoluteTime;
-    }
-
-    public static String getFormattedRelativeTime(Calendar calendar) {
-        String formattedRelativeTime = "";
-        long days = getTimeUnitDiff(calendar, Calendar.getInstance(), TimeUnit.DAYS);
-        if (days < 7) {
-            long seconds = getTimeUnitDiff(calendar, Calendar.getInstance(), TimeUnit.SECONDS);
-
-            if(seconds < 60){
-                formattedRelativeTime = "Just now";
+                    getFormattedDate(calendar),
+                    getFormattedTime(calendar));
+        } else if(days>-7 && days<7){
+            if(isToday(calendar)){
+                formattedAbsoluteDateAndTime = getFormattedTime(calendar);
+            } else if(isSameDayOfWeek(calendar, Calendar.getInstance())){
+                formattedAbsoluteDateAndTime = String.format("%s %s %s",
+                        getDayOfWeek(calendar.get(Calendar.DAY_OF_WEEK)),
+                        getFormattedDate(calendar),
+                        getFormattedTime(calendar));
             } else {
-                CharSequence relativeTime = DateUtils.getRelativeTimeSpanString(calendar.getTimeInMillis(), System.currentTimeMillis(),
-                        DateUtils.SECOND_IN_MILLIS);
-
-                formattedRelativeTime = relativeTime.toString();
+                formattedAbsoluteDateAndTime = String.format("%s %s", getDayOfWeek(calendar.get(Calendar.DAY_OF_WEEK)), getFormattedTime(calendar));
             }
-        } else if (days >= 7 && days < 30){
-            formattedRelativeTime = String.format("%d days ago", days);
+        } else {
+            formattedAbsoluteDateAndTime = String.format("%s %s %s",
+                    getDayOfWeek(calendar.get(Calendar.DAY_OF_WEEK)),
+                    getFormattedDate(calendar),
+                    getFormattedTime(calendar));
         }
 
-        return formattedRelativeTime;
+        return formattedAbsoluteDateAndTime;
     }
 
-    public static String getFormattedAbsoluteDate(Calendar calendar) {
-        String formattedAbsoluteDate = "";
+    public static String getFormattedRelativeDateAndTime(Calendar calendar){
+        String formattedRelativeDateAndTime;
 
-        int year = calendar.get(Calendar.YEAR);
+        long days = getTimeUnitDiff(calendar, Calendar.getInstance(), TimeUnit.DAYS);
+        if(days<=-30){
+            formattedRelativeDateAndTime = getFormattedDate(calendar);
+        } else if(days>-30 && days<=-7){
+            formattedRelativeDateAndTime = String.format("%d days ago", Math.abs(days));
+        } else if(days>-7 && days<7){
+            long seconds = getTimeUnitDiff(calendar, Calendar.getInstance(), TimeUnit.SECONDS);
+            if(seconds>-60 && seconds<=0){
+                formattedRelativeDateAndTime = "Just now";
+            } else {
+                formattedRelativeDateAndTime = DateUtils.getRelativeTimeSpanString(calendar.getTimeInMillis(), System.currentTimeMillis(), DateUtils.SECOND_IN_MILLIS).toString();
+            }
+        } else if(days>=7 && days < 30){
+            formattedRelativeDateAndTime = String.format("In %d days", days);
+        } else {
+            formattedRelativeDateAndTime = getFormattedDate(calendar);
+        }
+        return formattedRelativeDateAndTime;
+    }
+
+    public static String getFormattedDate(Calendar calendar) {
+        String formattedDate;
+
         String month = getMonth(calendar.get(Calendar.MONTH));
         int day = calendar.get(Calendar.DAY_OF_MONTH);
+        int year = calendar.get(Calendar.YEAR);
 
         if (isSameYear(calendar, Calendar.getInstance())) {
-            formattedAbsoluteDate = String.format("%s %d", month, day);
+            formattedDate = String.format("%s %d", month, day);
         } else {
-            formattedAbsoluteDate = String.format("%s %d, %d", month, day, year);
+            formattedDate = String.format("%s %d, %d", month, day, year);
         }
 
-        return formattedAbsoluteDate;
+        return formattedDate;
+    }
+
+    public static String getFormattedTime(Calendar calendar) {
+        String formattedAbsoluteTime = String.format("%d:%02d %s",
+                getHour(calendar.get(Calendar.HOUR)),
+                calendar.get(Calendar.MINUTE),
+                getMeridiem(calendar.get(Calendar.AM_PM)));
+
+        return formattedAbsoluteTime;
     }
 
     private static String getMonth(int month) {

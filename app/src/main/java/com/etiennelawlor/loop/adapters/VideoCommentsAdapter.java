@@ -32,6 +32,10 @@ import butterknife.ButterKnife;
 // Setup ReverseBaseAdapter for pagination
 public class VideoCommentsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
+    // region Constants
+    public static final String PATTERN = "yyyy-MM-dd'T'hh:mm:ssZ";
+    // endregion
+
     // region Member Variables
     private List<Comment> comments;
     private Typeface boldFont;
@@ -179,7 +183,7 @@ public class VideoCommentsAdapter extends RecyclerView.Adapter<RecyclerView.View
     private String getCommentDate(Comment comment){
         String createdOn = comment.getCreatedOn();
 
-        String formattedCreatedOn = DateUtility.getFormattedTime(DateUtility.getCalendar(createdOn), DateUtility.FORMAT_RELATIVE);
+        String formattedCreatedOn = DateUtility.getFormattedDateAndTime(DateUtility.getCalendar(createdOn, PATTERN), DateUtility.FORMAT_RELATIVE);
         return formattedCreatedOn;
     }
 
