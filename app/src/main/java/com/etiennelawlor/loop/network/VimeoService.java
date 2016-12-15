@@ -61,6 +61,11 @@ public interface VimeoService {
                                            @Query("page") Integer page,
                                            @Query("per_page") Integer perPage);
 
+    @GET("users/{userId}/videos")
+    Call<VideosEnvelope> getUserVideos(@Path("userId") Long userId,
+                                           @Query("page") Integer page,
+                                           @Query("per_page") Integer perPage);
+
     @GET("categories")
     Call<CategoriesEnvelope> getCategories();
 

@@ -9,7 +9,7 @@
         android:id="@+id/bg_cover_fl"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="@color/eighty_percent_transparency_black"
+        android:background="@color/fifty_percent_transparency_black"
         android:visibility="gone" />
 
     <include layout="@layout/material_search_view_cardview" />

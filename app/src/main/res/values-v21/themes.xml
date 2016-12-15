@@ -11,6 +11,7 @@
         <!--<item name="android:statusBarColor">@android:color/transparent</item>-->
         <item name="android:windowDrawsSystemBarBackgrounds">true</item>
         <item name="android:statusBarColor">@color/five_percent_transparency_black</item>
+        <!--<item name="android:windowLightStatusBar">true</item>-->
     </style>
 
     <style name="Theme.Loop.VideoDetailsActivity" parent="Theme.Loop">
