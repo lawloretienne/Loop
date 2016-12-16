@@ -12,7 +12,8 @@
         android:id="@+id/sepv"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        app:resize_mode="fixed_height"/>
+        app:resize_mode="fixed_height"
+        app:show_timeout="5000"/>
 
     <!--android:fitsSystemWindows="true"-->
 

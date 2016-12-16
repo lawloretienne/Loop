@@ -30,6 +30,7 @@
     </style>
 
     <style name="Theme.Loop.VideoPlayerActivity" parent="Theme.Loop">
+        <item name="colorButtonNormal">@color/fifty_percent_transparency_black</item>
     </style>
 
 </resources>

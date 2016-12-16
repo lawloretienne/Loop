@@ -1,7 +1,6 @@
 package com.etiennelawlor.loop.fragments;
 
 import android.graphics.Typeface;
-import android.media.MediaPlayer;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
@@ -13,9 +12,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
-import android.widget.MediaController;
 import android.widget.TextView;
-import android.widget.VideoView;
 
 import com.etiennelawlor.loop.R;
 import com.etiennelawlor.loop.models.AccessToken;
@@ -43,12 +40,12 @@ import com.google.android.exoplayer2.SimpleExoPlayer;
 import com.google.android.exoplayer2.extractor.DefaultExtractorsFactory;
 import com.google.android.exoplayer2.extractor.ExtractorsFactory;
 import com.google.android.exoplayer2.source.ExtractorMediaSource;
-import com.google.android.exoplayer2.source.LoopingMediaSource;
 import com.google.android.exoplayer2.source.MediaSource;
 import com.google.android.exoplayer2.trackselection.AdaptiveVideoTrackSelection;
 import com.google.android.exoplayer2.trackselection.DefaultTrackSelector;
 import com.google.android.exoplayer2.trackselection.TrackSelection;
 import com.google.android.exoplayer2.trackselection.TrackSelector;
+import com.google.android.exoplayer2.ui.PlaybackControlView;
 import com.google.android.exoplayer2.ui.SimpleExoPlayerView;
 import com.google.android.exoplayer2.upstream.BandwidthMeter;
 import com.google.android.exoplayer2.upstream.DataSource;
@@ -83,6 +80,8 @@ public class VideoPlayerFragment extends BaseFragment {
     LinearLayout errorLinearLayout;
     @Bind(R.id.error_tv)
     TextView errorTextView;
+    @Bind(R.id.control_view_ll)
+    LinearLayout controlViewLinearLayout;
     // endregion
 
     // region Member Variables
@@ -224,7 +223,18 @@ public class VideoPlayerFragment extends BaseFragment {
 
         simpleExoPlayerView.setPlayer(player);
 
-        setUpSystemUiControls();
+        showSystemUI();
+
+        simpleExoPlayerView.setControllerVisibilityListener(new PlaybackControlView.VisibilityListener() {
+            @Override
+            public void onVisibilityChange(int visibility) {
+                if(visibility == View.GONE){
+                    hideSystemUI();
+                } else {
+                    showSystemUI();
+                }
+            }
+        });
 
         VideoSavedState videoSavedState = getVideoSavedState();
         if(videoSavedState != null && !TextUtils.isEmpty(videoSavedState.getVideoUrl())){
@@ -283,56 +293,31 @@ public class VideoPlayerFragment extends BaseFragment {
     }
 
     // region Helper Methods
-    private void setUpSystemUiControls(){
+    // This snippet hides the system bars.
+    private void hideSystemUI() {
         final View decorView = getActivity().getWindow().getDecorView();
-//        final int uiOptions = View.SYSTEM_UI_FLAG_FULLSCREEN |
-//                View.SYSTEM_UI_FLAG_HIDE_NAVIGATION |
-//                View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN |
-//                View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION |
-//                View.SYSTEM_UI_FLAG_LAYOUT_STABLE;
 
-        final int uiOptions = View.SYSTEM_UI_FLAG_FULLSCREEN |
-                View.SYSTEM_UI_FLAG_HIDE_NAVIGATION |
-                View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN |
-                View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION;
+        // Set the IMMERSIVE flag.
+        // Set the content to appear under the system bars so that the content
+        // doesn't resize when the system bars hide and show.
+        decorView.setSystemUiVisibility(
+                View.SYSTEM_UI_FLAG_LAYOUT_STABLE
+                        | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
+                        | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
+                        | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION // hide nav bar
+                        | View.SYSTEM_UI_FLAG_FULLSCREEN // hide status bar
+                        | View.SYSTEM_UI_FLAG_IMMERSIVE);
+    }
 
-        decorView.setSystemUiVisibility(uiOptions);
+    // This snippet shows the system bars. It does this by removing all the flags
+    // except for the ones that make the content appear under the system bars.
+    private void showSystemUI() {
+        final View decorView = getActivity().getWindow().getDecorView();
 
-        decorView.setOnSystemUiVisibilityChangeListener
-                (new View.OnSystemUiVisibilityChangeListener() {
-                    @Override
-                    public void onSystemUiVisibilityChange(int visibility) {
-                        // Note that system bars will only be "visible" if none of the
-                        // LOW_PROFILE, HIDE_NAVIGATION, or FULLSCREEN flags are set.
-                        if ((visibility & View.SYSTEM_UI_FLAG_FULLSCREEN) == 0) {
-                            // TODO: The system bars are visible. Make any desired
-                            // adjustments to your UI, such as showing the action bar or
-                            // other navigational controls.
-                            Timber.d("onSystemUiVisibilityChange() : system bars VISIBLE");
-
-//                            mediaController.show(3000);
-
-                            new Handler().postDelayed(new Runnable() {
-
-                                @Override
-                                public void run() {
-                                    decorView.setSystemUiVisibility(uiOptions);
-
-//                                    // Remember that you should never show the action bar if the
-//                                    // status bar is hidden, so hide that too if necessary.
-//                                    ActionBar actionBar = getActionBar();
-//                                    actionBar.hide();
-                                }
-                            }, 3000);
-                        } else {
-                            // TODO: The system bars are NOT visible. Make any desired
-                            // adjustments to your UI, such as hiding the action bar or
-                            // other navigational controls.
-                            Timber.d("onSystemUiVisibilityChange() : system bars NOT VISIBLE");
-//                            mediaController.hide();
-                        }
-                    }
-                });
+        decorView.setSystemUiVisibility(
+                View.SYSTEM_UI_FLAG_LAYOUT_STABLE
+                        | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
+                        | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN);
     }
 
     private String getVideoUrl(VideoConfig videoConfig) {
@@ -481,7 +466,6 @@ public class VideoPlayerFragment extends BaseFragment {
         return videoSavedState;
     }
 
-
     private TrackSelector createTrackSelector(){
         // Create a default TrackSelector
         Handler mainHandler = new Handler();
@@ -489,8 +473,10 @@ public class VideoPlayerFragment extends BaseFragment {
         BandwidthMeter bandwidthMeter = new DefaultBandwidthMeter();
         TrackSelection.Factory videoTrackSelectionFactory =
                 new AdaptiveVideoTrackSelection.Factory(bandwidthMeter);
+//        TrackSelector trackSelector =
+//                new DefaultTrackSelector(mainHandler, videoTrackSelectionFactory);
         TrackSelector trackSelector =
-                new DefaultTrackSelector(mainHandler, videoTrackSelectionFactory);
+                new DefaultTrackSelector(videoTrackSelectionFactory);
         return trackSelector;
     }
 
@@ -505,10 +491,11 @@ public class VideoPlayerFragment extends BaseFragment {
         MediaSource mediaSource = new ExtractorMediaSource(Uri.parse(videoUrl),
                 dataSourceFactory, extractorsFactory, null, null);
         // Loops the video indefinitely.
-        LoopingMediaSource loopingSource = new LoopingMediaSource(mediaSource);
+//        LoopingMediaSource loopingSource = new LoopingMediaSource(mediaSource);
+
 //        MediaSource videoSource = new ExtractorMediaSource(mp4VideoUri,
 //                dataSourceFactory, extractorsFactory, null, null);
-        return loopingSource;
+        return mediaSource;
     }
     // endregion
 }
