@@ -5,12 +5,15 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.FrameLayout;
+import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
@@ -34,16 +37,21 @@ import com.etiennelawlor.loop.utilities.FontCache;
 import com.etiennelawlor.loop.utilities.NetworkLogUtility;
 import com.etiennelawlor.loop.utilities.NetworkUtility;
 import com.google.android.exoplayer2.DefaultLoadControl;
+import com.google.android.exoplayer2.ExoPlaybackException;
+import com.google.android.exoplayer2.ExoPlayer;
 import com.google.android.exoplayer2.ExoPlayerFactory;
 import com.google.android.exoplayer2.LoadControl;
 import com.google.android.exoplayer2.SimpleExoPlayer;
+import com.google.android.exoplayer2.Timeline;
 import com.google.android.exoplayer2.extractor.DefaultExtractorsFactory;
 import com.google.android.exoplayer2.extractor.ExtractorsFactory;
 import com.google.android.exoplayer2.source.ExtractorMediaSource;
 import com.google.android.exoplayer2.source.MediaSource;
+import com.google.android.exoplayer2.source.TrackGroupArray;
 import com.google.android.exoplayer2.trackselection.AdaptiveVideoTrackSelection;
 import com.google.android.exoplayer2.trackselection.DefaultTrackSelector;
 import com.google.android.exoplayer2.trackselection.TrackSelection;
+import com.google.android.exoplayer2.trackselection.TrackSelectionArray;
 import com.google.android.exoplayer2.trackselection.TrackSelector;
 import com.google.android.exoplayer2.ui.PlaybackControlView;
 import com.google.android.exoplayer2.ui.SimpleExoPlayerView;
@@ -80,6 +88,10 @@ public class VideoPlayerFragment extends BaseFragment {
     LinearLayout errorLinearLayout;
     @Bind(R.id.error_tv)
     TextView errorTextView;
+    @Bind(R.id.exo_replay)
+    ImageButton replayImageButton;
+    @Bind(R.id.exo_btns_fl)
+    FrameLayout exoButtonsFrameLayout;
     @Bind(R.id.control_view_ll)
     LinearLayout controlViewLinearLayout;
     // endregion
@@ -94,6 +106,13 @@ public class VideoPlayerFragment extends BaseFragment {
     // endregion
 
     // region Listeners
+    @OnClick(R.id.exo_replay)
+    public void onReplayButtonClicked() {
+        replayImageButton.setVisibility(View.GONE);
+        exoButtonsFrameLayout.setVisibility(View.VISIBLE);
+        player.seekTo(0);
+    }
+
     @OnClick(R.id.reload_btn)
     public void onReloadButtonClicked() {
         errorLinearLayout.setVisibility(View.GONE);
@@ -103,6 +122,60 @@ public class VideoPlayerFragment extends BaseFragment {
         calls.add(getVideoConfigCall);
         getVideoConfigCall.enqueue(getVideoConfigCallback);
     }
+
+    private ExoPlayer.EventListener exoPlayerEventListener = new ExoPlayer.EventListener() {
+        @Override
+        public void onTimelineChanged(Timeline timeline, Object manifest) {
+        }
+
+        @Override
+        public void onTracksChanged(TrackGroupArray trackGroups, TrackSelectionArray trackSelections) {
+
+        }
+
+        @Override
+        public void onLoadingChanged(boolean isLoading) {
+
+        }
+
+        @Override
+        public void onPlayerStateChanged(boolean playWhenReady, int playbackState) {
+            switch (playbackState){
+                case ExoPlayer.STATE_BUFFERING:
+                case ExoPlayer.STATE_READY:
+                    replayImageButton.setVisibility(View.GONE);
+                    exoButtonsFrameLayout.setVisibility(View.VISIBLE);
+                    break;
+                case ExoPlayer.STATE_ENDED:
+                    exoButtonsFrameLayout.setVisibility(View.GONE);
+                    replayImageButton.setVisibility(View.VISIBLE);
+                    break;
+                default:
+                    break;
+            }
+        }
+
+        @Override
+        public void onPlayerError(ExoPlaybackException error) {
+
+        }
+
+        @Override
+        public void onPositionDiscontinuity() {
+
+        }
+    };
+
+    private PlaybackControlView.VisibilityListener playbackControlViewVisibilityListener = new PlaybackControlView.VisibilityListener() {
+        @Override
+        public void onVisibilityChange(int visibility) {
+            if(visibility == View.GONE){
+                hideSystemUI();
+            } else {
+                showSystemUI();
+            }
+        }
+    };
     // endregion
 
     // region Callbacks
@@ -222,19 +295,11 @@ public class VideoPlayerFragment extends BaseFragment {
         player.setPlayWhenReady(true);
 
         simpleExoPlayerView.setPlayer(player);
+        player.addListener(exoPlayerEventListener);
 
         showSystemUI();
 
-        simpleExoPlayerView.setControllerVisibilityListener(new PlaybackControlView.VisibilityListener() {
-            @Override
-            public void onVisibilityChange(int visibility) {
-                if(visibility == View.GONE){
-                    hideSystemUI();
-                } else {
-                    showSystemUI();
-                }
-            }
-        });
+        simpleExoPlayerView.setControllerVisibilityListener(playbackControlViewVisibilityListener);
 
         VideoSavedState videoSavedState = getVideoSavedState();
         if(videoSavedState != null && !TextUtils.isEmpty(videoSavedState.getVideoUrl())){
@@ -272,7 +337,7 @@ public class VideoPlayerFragment extends BaseFragment {
     public void onDestroyView() {
         super.onDestroyView();
         ButterKnife.unbind(this);
-
+        removeListeners();
         player.release();
     }
 
@@ -293,6 +358,11 @@ public class VideoPlayerFragment extends BaseFragment {
     }
 
     // region Helper Methods
+    private void removeListeners(){
+        player.removeListener(exoPlayerEventListener);
+//        simpleExoPlayerView.setControllerVisibilityListener(null);
+    }
+
     // This snippet hides the system bars.
     private void hideSystemUI() {
         final View decorView = getActivity().getWindow().getDecorView();

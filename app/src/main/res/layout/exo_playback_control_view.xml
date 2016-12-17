@@ -16,16 +16,28 @@
         android:layout_marginLeft="8dp"
         android:layout_gravity="center_vertical">
 
-        <ImageButton android:id="@id/exo_play"
+        <FrameLayout
+            android:id="@+id/exo_btns_fl"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content">
+
+            <ImageButton android:id="@id/exo_play"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:srcCompat="@drawable/ic_play"/>
+
+            <ImageButton android:id="@id/exo_pause"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:srcCompat="@drawable/ic_pause"/>
+
+        </FrameLayout>
+
+        <ImageButton android:id="@+id/exo_replay"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-
-            app:srcCompat="@drawable/ic_play"/>
-
-        <ImageButton android:id="@id/exo_pause"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            app:srcCompat="@drawable/ic_pause"/>
+            android:visibility="gone"
+            app:srcCompat="@drawable/ic_replay"/>
 
     </FrameLayout>
 
