@@ -8,8 +8,8 @@
         <item name="colorButtonNormal">@color/primary</item>
         <item name="colorControlActivated">@color/primary</item>
         <item name="colorControlHighlight">@color/grey_500</item>
-        <item name="android:textColorPrimary">@color/primary_text</item>
-        <item name="android:textColorSecondary">@color/secondary_text</item>
+        <item name="android:textColorPrimary">@color/primary_text_dark</item>
+        <item name="android:textColorSecondary">@color/secondary_text_dark</item>
         <item name="android:dialogTheme">@style/DialogTheme</item>
         <item name="android:alertDialogTheme">@style/AlertDialogTheme</item>
     </style>

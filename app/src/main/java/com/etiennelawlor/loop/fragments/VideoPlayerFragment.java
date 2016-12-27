@@ -63,9 +63,10 @@ import com.google.android.exoplayer2.util.Util;
 
 import java.util.List;
 
-import butterknife.Bind;
+import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
+import butterknife.Unbinder;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -80,19 +81,19 @@ public class VideoPlayerFragment extends BaseFragment {
     // endregion
 
     // region Views
-    @Bind(R.id.sepv)
+    @BindView(R.id.sepv)
     SimpleExoPlayerView simpleExoPlayerView;
-    @Bind(R.id.loading_iv)
+    @BindView(R.id.loading_iv)
     LoadingImageView loadingImageView;
-    @Bind(R.id.error_ll)
+    @BindView(R.id.error_ll)
     LinearLayout errorLinearLayout;
-    @Bind(R.id.error_tv)
+    @BindView(R.id.error_tv)
     TextView errorTextView;
-    @Bind(R.id.exo_replay)
+    @BindView(R.id.exo_replay)
     ImageButton replayImageButton;
-    @Bind(R.id.exo_btns_fl)
+    @BindView(R.id.exo_btns_fl)
     FrameLayout exoButtonsFrameLayout;
-    @Bind(R.id.control_view_ll)
+    @BindView(R.id.control_view_ll)
     LinearLayout controlViewLinearLayout;
     // endregion
 
@@ -102,6 +103,7 @@ public class VideoPlayerFragment extends BaseFragment {
     private VimeoPlayerService vimeoPlayerService;
     private VideoSavedState videoSavedState;
     private Typeface font;
+    private Unbinder unbinder;
     private SimpleExoPlayer player;
     // endregion
 
@@ -275,7 +277,7 @@ public class VideoPlayerFragment extends BaseFragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_video_player, container, false);
-        ButterKnife.bind(this, rootView);
+        unbinder = ButterKnife.bind(this, rootView);
 
         return rootView;
     }
@@ -336,7 +338,7 @@ public class VideoPlayerFragment extends BaseFragment {
     @Override
     public void onDestroyView() {
         super.onDestroyView();
-        ButterKnife.unbind(this);
+        unbinder.unbind();
         removeListeners();
         player.release();
     }

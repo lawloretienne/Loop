@@ -17,7 +17,7 @@ import com.etiennelawlor.trestle.library.Regex;
 import com.etiennelawlor.trestle.library.Span;
 import com.etiennelawlor.trestle.library.Trestle;
 
-import butterknife.Bind;
+import butterknife.BindView;
 import butterknife.ButterKnife;
 
 /**
@@ -181,9 +181,9 @@ public class SuggestionsAdapter extends BaseAdapter<String> {
 
     public static class SuggestionViewHolder extends RecyclerView.ViewHolder {
         // region Views
-        @Bind(R.id.suggestion_tv)
+        @BindView(R.id.suggestion_tv)
         TextView suggestionTextView;
-        @Bind(R.id.search_suggest_complete_iv)
+        @BindView(R.id.search_suggest_complete_iv)
         ImageView suggestionCompleteImageView;
         // endregion
 

@@ -44,7 +44,7 @@ import com.etiennelawlor.loop.utilities.TrestleUtility;
 
 import java.util.List;
 
-import butterknife.Bind;
+import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import butterknife.OnFocusChange;
@@ -81,25 +81,25 @@ public class MaterialSearchView extends FrameLayout implements
     private SuggestionsAdapter suggestionsAdapter = new SuggestionsAdapter();
     private boolean isSearchEditTextFocused = false;
 
-    @Bind(R.id.search_et)
+    @BindView(R.id.search_et)
     EditText searchEditText;
-    @Bind(R.id.microphone_iv)
+    @BindView(R.id.microphone_iv)
     ImageView microphoneImageView;
-    @Bind(R.id.clear_iv)
+    @BindView(R.id.clear_iv)
     ImageView clearImageView;
-    @Bind(R.id.filter_iv)
+    @BindView(R.id.filter_iv)
     ImageView filterImageView;
-    @Bind(R.id.cv)
+    @BindView(R.id.cv)
     CardView cardView;
-    @Bind(R.id.left_drawable_iv)
+    @BindView(R.id.left_drawable_iv)
     ImageView leftDrawableImageView;
-    @Bind(R.id.left_drawable_riv)
+    @BindView(R.id.left_drawable_riv)
     CircleImageView leftDrawableRoundedImageView;
-    @Bind(R.id.divider_v)
+    @BindView(R.id.divider_v)
     View dividerView;
-    @Bind(R.id.bg_cover_fl)
+    @BindView(R.id.bg_cover_fl)
     FrameLayout backgroundCoverFrameLayout;
-    @Bind(R.id.rv)
+    @BindView(R.id.rv)
     RecyclerView recyclerView;
     // endregion
 

@@ -25,7 +25,7 @@ import com.squareup.picasso.Transformation;
 
 import java.util.List;
 
-import butterknife.Bind;
+import butterknife.BindView;
 import butterknife.ButterKnife;
 
 /**
@@ -43,9 +43,9 @@ public class AvatarView extends FrameLayout {
     // endregion
 
     // region Views
-    @Bind(R.id.initials_tv)
+    @BindView(R.id.initials_tv)
     TextView textView;
-    @Bind(R.id.photo_iv)
+    @BindView(R.id.photo_iv)
     ImageView imageView;
     // endregion
 

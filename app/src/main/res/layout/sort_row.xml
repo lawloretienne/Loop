@@ -7,6 +7,6 @@
     android:layout_height="wrap_content"
     android:padding="16dp"
     android:textColor="@color/primary"
-    android:textColorHint="@color/hint_text"
+    android:textColorHint="@color/hint_text_dark"
     android:textSize="16sp"
     app:textFont="ubuntu_medium" />

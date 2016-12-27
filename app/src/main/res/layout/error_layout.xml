@@ -23,7 +23,7 @@
         android:layout_marginBottom="12dp"
         android:layout_marginTop="16dp"
         android:gravity="center"
-        android:textColor="@color/secondary_text"
+        android:textColor="@color/secondary_text_dark"
         android:textSize="20sp"
         app:textFont="ubuntu_medium"
         tools:text="Can't load data.\nCheck your network connection." />

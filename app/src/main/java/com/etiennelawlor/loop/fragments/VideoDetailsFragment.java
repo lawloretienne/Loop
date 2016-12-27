@@ -56,9 +56,10 @@ import com.etiennelawlor.loop.utilities.TrestleUtility;
 import java.util.HashMap;
 import java.util.List;
 
-import butterknife.Bind;
+import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
+import butterknife.Unbinder;
 import jp.wasabeef.recyclerview.animators.SlideInUpAnimator;
 import okhttp3.ResponseBody;
 import retrofit2.Call;
@@ -86,11 +87,11 @@ public class VideoDetailsFragment extends BaseFragment implements RelatedVideosA
     // endregion
 
     // region Views
-    @Bind(R.id.video_thumbnail_iv)
+    @BindView(R.id.video_thumbnail_iv)
     ImageView videoThumbnailImageView;
-    @Bind(R.id.toolbar)
+    @BindView(R.id.toolbar)
     Toolbar toolbar;
-    @Bind(R.id.videos_rv)
+    @BindView(R.id.videos_rv)
     RecyclerView videosRecyclerView;
     // endregion
 
@@ -106,6 +107,7 @@ public class VideoDetailsFragment extends BaseFragment implements RelatedVideosA
     private boolean isLoading = false;
     private boolean isInfoExpanded = false;
     private Typeface font;
+    private Unbinder unbinder;
     private CompositeSubscription compositeSubscription;
     // endregion
 
@@ -497,7 +499,7 @@ public class VideoDetailsFragment extends BaseFragment implements RelatedVideosA
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_video_details, container, false);
-        ButterKnife.bind(this, rootView);
+        unbinder = ButterKnife.bind(this, rootView);
 
         return rootView;
     }
@@ -552,7 +554,7 @@ public class VideoDetailsFragment extends BaseFragment implements RelatedVideosA
     public void onDestroyView() {
         super.onDestroyView();
         removeListeners();
-        ButterKnife.unbind(this);
+        unbinder.unbind();
     }
 
     @Override

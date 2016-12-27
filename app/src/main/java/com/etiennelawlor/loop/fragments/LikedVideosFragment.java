@@ -43,9 +43,10 @@ import com.etiennelawlor.loop.utilities.TrestleUtility;
 
 import java.util.List;
 
-import butterknife.Bind;
+import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
+import butterknife.Unbinder;
 import jp.wasabeef.recyclerview.animators.SlideInUpAnimator;
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -66,19 +67,19 @@ public class LikedVideosFragment extends BaseFragment implements VideosAdapter.O
     // endregion
 
     // region Views
-    @Bind(R.id.rv)
+    @BindView(R.id.rv)
     RecyclerView recyclerView;
-    @Bind(android.R.id.empty)
+    @BindView(android.R.id.empty)
     View emptyView;
-    @Bind(R.id.empty_tv)
+    @BindView(R.id.empty_tv)
     TextView emptyTextView;
-    @Bind(R.id.loading_iv)
+    @BindView(R.id.loading_iv)
     LoadingImageView loadingImageView;
-    @Bind(R.id.error_ll)
+    @BindView(R.id.error_ll)
     LinearLayout errorLinearLayout;
-    @Bind(R.id.error_tv)
+    @BindView(R.id.error_tv)
     TextView errorTextView;
-    @Bind(R.id.toolbar)
+    @BindView(R.id.toolbar)
     Toolbar toolbar;
 //    @Bind(R.id.search_view_widget)
 //    SearchViewWidget searchViewWidget;
@@ -92,6 +93,7 @@ public class LikedVideosFragment extends BaseFragment implements VideosAdapter.O
     private boolean isLoading = false;
     private String sortByValue = "date";
     private String sortOrderValue = "desc";
+    private Unbinder unbinder;
     private VideosAdapter videosAdapter;
     private String query;
     private LinearLayoutManager layoutManager;
@@ -284,7 +286,7 @@ public class LikedVideosFragment extends BaseFragment implements VideosAdapter.O
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_liked_videos, container, false);
-        ButterKnife.bind(this, rootView);
+        unbinder = ButterKnife.bind(this, rootView);
 
         return rootView;
     }
@@ -329,7 +331,7 @@ public class LikedVideosFragment extends BaseFragment implements VideosAdapter.O
     public void onDestroyView() {
         super.onDestroyView();
         removeListeners();
-        ButterKnife.unbind(this);
+        unbinder.unbind();
     }
 
     @Override

@@ -22,7 +22,7 @@ import com.etiennelawlor.trestle.library.Trestle;
 import java.util.ArrayList;
 import java.util.List;
 
-import butterknife.Bind;
+import butterknife.BindView;
 import butterknife.ButterKnife;
 
 /**
@@ -161,7 +161,7 @@ public class VideoCommentsAdapter extends RecyclerView.Adapter<RecyclerView.View
             spans.add(new Span.Builder("\n")
                     .build());
             spans.add(new Span.Builder(commentDate)
-                    .foregroundColor(ContextCompat.getColor(tv.getContext(), R.color.tertiary_text))
+                    .foregroundColor(ContextCompat.getColor(tv.getContext(), R.color.tertiary_text_dark))
                     .typeface(italicFont)
                     .build());
         } else if(!TextUtils.isEmpty(commentText)
@@ -171,7 +171,7 @@ public class VideoCommentsAdapter extends RecyclerView.Adapter<RecyclerView.View
             spans.add(new Span.Builder("\n")
                     .build());
             spans.add(new Span.Builder(commentDate)
-                    .foregroundColor(ContextCompat.getColor(tv.getContext(), R.color.tertiary_text))
+                    .foregroundColor(ContextCompat.getColor(tv.getContext(), R.color.tertiary_text_dark))
                     .typeface(italicFont)
                     .build());
         }
@@ -202,9 +202,9 @@ public class VideoCommentsAdapter extends RecyclerView.Adapter<RecyclerView.View
 
     public static class CommentViewHolder extends RecyclerView.ViewHolder {
         // region Views
-        @Bind(R.id.comment_tv)
+        @BindView(R.id.comment_tv)
         TextView commentTextView;
-        @Bind(R.id.comment_iv)
+        @BindView(R.id.comment_iv)
         AvatarView commentImageView;
         // endregion
 

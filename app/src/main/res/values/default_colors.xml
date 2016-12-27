@@ -115,31 +115,28 @@
     -->
 
     <!-- Dark text on light backgrounds -->
-    <color name="primary_text">#DE000000</color>
-    <color name="secondary_text">#8A000000</color>
-    <color name="tertiary_text">#61000000</color>
-    <color name="hint_text">#61000000</color>
-    <color name="disabled_text">#61000000</color>
-    <color name="divider">#1F000000</color>
+    <color name="primary_text_dark">#DE000000</color>
+    <color name="secondary_text_dark">#8A000000</color>
+    <color name="tertiary_text_dark">#61000000</color>
+    <color name="hint_text_dark">#61000000</color>
+    <color name="disabled_text_dark">#61000000</color>
 
     <!-- White text on dark backgrounds -->
-    <color name="inverse_primary_text">#FFFFFFFF</color>
-    <color name="inverse_secondary_text">#B3FFFFFF</color>
-    <color name="inverse_tertiary_text">#80FFFFFF</color>
-    <color name="inverse_hint_text">#80FFFFFF</color>
-    <color name="inverse_disabled_text">#80FFFFFF</color>
+    <color name="primary_text_light">#FFFFFFFF</color>
+    <color name="secondary_text_light">#B3FFFFFF</color>
+    <color name="tertiary_text_light">#80FFFFFF</color>
+    <color name="hint_text_light">#80FFFFFF</color>
+    <color name="disabled_text_light">#80FFFFFF</color>
 
-    <!-- Dark icons on light backgrounds -->
-    <!--<color name="active_icon">#8A000000</color>-->
-    <!--<color name="inactive_icon">#61000000</color>-->
+    <color name="divider">#1F000000</color>
 
-    <!-- These colors are slighly different than guidelines -->
-    <color name="active_icon">#61000000</color>
-    <color name="inactive_icon">#33000000</color>
+    <!-- Dark icons on light backgrounds -->  <!-- These colors are slighly different than guidelines -->
+    <color name="active_icon_dark">#8A000000</color>
+    <color name="inactive_icon_dark">#61000000</color>
 
     <!-- White icons on dark backgrounds -->
-    <color name="inverse_active_icon">#FFFFFFFF</color>
-    <color name="inverse_inactive_icon">#80FFFFFF</color>
+    <color name="active_icon_light">#FFFFFFFF</color>
+    <color name="inactive_icon_light">#80FFFFFF</color>
 
     <color name="control_normal">@color/grey_300</color>
     <color name="control_highlight">@color/grey_500</color>

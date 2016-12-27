@@ -36,8 +36,8 @@
                     android:background="@null"
                     android:hint="@string/leave_a_comment"
                     android:padding="16dp"
-                    android:textColor="@color/primary_text"
-                    android:textColorHint="@color/tertiary_text"
+                    android:textColor="@color/primary_text_dark"
+                    android:textColorHint="@color/tertiary_text_dark"
                     android:textSize="16sp"
                     app:textFont="ubuntu_medium" />
 

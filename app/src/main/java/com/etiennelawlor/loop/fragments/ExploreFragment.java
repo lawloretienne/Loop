@@ -33,9 +33,10 @@ import com.etiennelawlor.loop.utilities.TrestleUtility;
 
 import java.util.List;
 
-import butterknife.Bind;
+import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
+import butterknife.Unbinder;
 import jp.wasabeef.recyclerview.animators.SlideInUpAnimator;
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -48,17 +49,17 @@ import timber.log.Timber;
 public class ExploreFragment extends BaseFragment implements CategoriesAdapter.OnItemClickListener {
 
     // region Views
-    @Bind(R.id.rv)
+    @BindView(R.id.rv)
     RecyclerView recyclerView;
-    @Bind(android.R.id.empty)
+    @BindView(android.R.id.empty)
     View emptyView;
-    @Bind(R.id.loading_iv)
+    @BindView(R.id.loading_iv)
     LoadingImageView loadingImageView;
-    @Bind(R.id.error_ll)
+    @BindView(R.id.error_ll)
     LinearLayout errorLinearLayout;
-    @Bind(R.id.error_tv)
+    @BindView(R.id.error_tv)
     TextView errorTextView;
-    @Bind(R.id.toolbar)
+    @BindView(R.id.toolbar)
     Toolbar toolbar;
     // endregion
 
@@ -66,6 +67,7 @@ public class ExploreFragment extends BaseFragment implements CategoriesAdapter.O
     private CategoriesAdapter categoriesAdapter;
     private VimeoService vimeoService;
     private Typeface font;
+    private Unbinder unbinder;
     // endregion
 
     // region Listeners
@@ -154,7 +156,7 @@ public class ExploreFragment extends BaseFragment implements CategoriesAdapter.O
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_explore, container, false);
-        ButterKnife.bind(this, rootView);
+        unbinder = ButterKnife.bind(this, rootView);
 
         return rootView;
     }
@@ -190,7 +192,7 @@ public class ExploreFragment extends BaseFragment implements CategoriesAdapter.O
     @Override
     public void onDestroyView() {
         super.onDestroyView();
-        ButterKnife.unbind(this);
+        unbinder.unbind();
     }
     // endregion
 

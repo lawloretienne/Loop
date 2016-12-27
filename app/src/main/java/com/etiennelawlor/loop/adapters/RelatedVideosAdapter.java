@@ -39,7 +39,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
-import butterknife.Bind;
+import butterknife.BindView;
 import butterknife.ButterKnife;
 
 /**
@@ -511,29 +511,29 @@ public class RelatedVideosAdapter extends BaseAdapter<Video> {
 
     public static class HeaderViewHolder extends RecyclerView.ViewHolder {
         // region Views
-        @Bind(R.id.title_tv)
+        @BindView(R.id.title_tv)
         TextView titleTextView;
-        @Bind(R.id.subtitle_tv)
+        @BindView(R.id.subtitle_tv)
         TextView subtitleTextView;
-        @Bind(R.id.user_iv)
+        @BindView(R.id.user_iv)
         AvatarView userImageView;
-        @Bind(R.id.view_count_tv)
+        @BindView(R.id.view_count_tv)
         TextView viewCountTextView;
-        @Bind(R.id.upload_date_tv)
+        @BindView(R.id.upload_date_tv)
         TextView uploadDateTextView;
-        @Bind(R.id.like_iv)
+        @BindView(R.id.like_iv)
         ImageView likeImageView;
-        @Bind(R.id.watch_later_iv)
+        @BindView(R.id.watch_later_iv)
         ImageView watchLaterImageView;
-        @Bind(R.id.comments_iv)
+        @BindView(R.id.comments_iv)
         ImageView commentsImageView;
-        @Bind(R.id.info_iv)
+        @BindView(R.id.info_iv)
         ImageView infoImageView;
-        @Bind(R.id.htv)
+        @BindView(R.id.htv)
         HashtagView hashtagView;
-        @Bind(R.id.description_tv)
+        @BindView(R.id.description_tv)
         TextView descriptionTextView;
-        @Bind(R.id.additional_info_ll)
+        @BindView(R.id.additional_info_ll)
         LinearLayout additionalInfoLinearLayout;
         // endregion
 
@@ -547,15 +547,15 @@ public class RelatedVideosAdapter extends BaseAdapter<Video> {
 
     public static class VideoViewHolder extends RecyclerView.ViewHolder {
         // region Views
-        @Bind(R.id.video_thumbnail_iv)
+        @BindView(R.id.video_thumbnail_iv)
         ImageView videoThumbnailImageView;
-        @Bind(R.id.title_tv)
+        @BindView(R.id.title_tv)
         TextView titleTextView;
-        @Bind(R.id.uploaded_date_tv)
+        @BindView(R.id.uploaded_date_tv)
         TextView uploadedDateTextView;
-        @Bind(R.id.duration_tv)
+        @BindView(R.id.duration_tv)
         TextView durationTextView;
-        @Bind(R.id.subtitle_tv)
+        @BindView(R.id.subtitle_tv)
         TextView subtitleTextView;
         // endregion
 
@@ -569,13 +569,13 @@ public class RelatedVideosAdapter extends BaseAdapter<Video> {
 
     public static class FooterViewHolder extends RecyclerView.ViewHolder {
         // region Views
-        @Bind(R.id.loading_fl)
+        @BindView(R.id.loading_fl)
         FrameLayout loadingFrameLayout;
-        @Bind(R.id.error_rl)
+        @BindView(R.id.error_rl)
         RelativeLayout errorRelativeLayout;
-        @Bind(R.id.loading_iv)
+        @BindView(R.id.loading_iv)
         LoadingImageView loadingImageView;
-        @Bind(R.id.reload_btn)
+        @BindView(R.id.reload_btn)
         Button reloadButton;
         // endregion
 

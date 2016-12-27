@@ -24,7 +24,7 @@ import com.etiennelawlor.loop.utilities.DateUtility;
 
 import java.util.List;
 
-import butterknife.Bind;
+import butterknife.BindView;
 import butterknife.ButterKnife;
 
 /**
@@ -262,15 +262,15 @@ public class VideosAdapter extends BaseAdapter<Video> {
 
     public static class VideoViewHolder extends RecyclerView.ViewHolder {
         // region Views
-        @Bind(R.id.video_thumbnail_iv)
+        @BindView(R.id.video_thumbnail_iv)
         ImageView videoThumbnailImageView;
-        @Bind(R.id.title_tv)
+        @BindView(R.id.title_tv)
         TextView titleTextView;
-        @Bind(R.id.uploaded_date_tv)
+        @BindView(R.id.uploaded_date_tv)
         TextView uploadedDateTextView;
-        @Bind(R.id.duration_tv)
+        @BindView(R.id.duration_tv)
         TextView durationTextView;
-        @Bind(R.id.subtitle_tv)
+        @BindView(R.id.subtitle_tv)
         TextView subtitleTextView;
         // endregion
 
@@ -284,13 +284,13 @@ public class VideosAdapter extends BaseAdapter<Video> {
 
     public static class FooterViewHolder extends RecyclerView.ViewHolder {
         // region Views
-        @Bind(R.id.loading_fl)
+        @BindView(R.id.loading_fl)
         FrameLayout loadingFrameLayout;
-        @Bind(R.id.error_rl)
+        @BindView(R.id.error_rl)
         RelativeLayout errorRelativeLayout;
-        @Bind(R.id.loading_iv)
+        @BindView(R.id.loading_iv)
         LoadingImageView loadingImageView;
-        @Bind(R.id.reload_btn)
+        @BindView(R.id.reload_btn)
         Button reloadButton;
         // endregion
 

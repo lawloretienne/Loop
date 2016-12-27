@@ -20,7 +20,7 @@ import com.etiennelawlor.loop.ui.LoadingImageView;
 
 import java.util.List;
 
-import butterknife.Bind;
+import butterknife.BindView;
 import butterknife.ButterKnife;
 
 /**
@@ -174,9 +174,9 @@ public class CategoriesAdapter extends BaseAdapter<Category> {
 
     public static class CategoryViewHolder extends RecyclerView.ViewHolder {
         // region Views
-        @Bind(R.id.thumbnail_iv)
+        @BindView(R.id.thumbnail_iv)
         DynamicHeightImageView videoThumbnailImageView;
-        @Bind(R.id.title_tv)
+        @BindView(R.id.title_tv)
         TextView titleTextView;
         // endregion
 
@@ -190,13 +190,13 @@ public class CategoriesAdapter extends BaseAdapter<Category> {
 
     public static class FooterViewHolder extends RecyclerView.ViewHolder {
         // region Views
-        @Bind(R.id.loading_fl)
+        @BindView(R.id.loading_fl)
         FrameLayout loadingFrameLayout;
-        @Bind(R.id.error_rl)
+        @BindView(R.id.error_rl)
         RelativeLayout errorRelativeLayout;
-        @Bind(R.id.loading_iv)
+        @BindView(R.id.loading_iv)
         LoadingImageView loadingImageView;
-        @Bind(R.id.reload_btn)
+        @BindView(R.id.reload_btn)
         Button reloadButton;
         // endregion
 

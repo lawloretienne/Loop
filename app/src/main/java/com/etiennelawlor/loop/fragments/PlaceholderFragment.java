@@ -11,6 +11,7 @@ import android.view.ViewGroup;
 import com.etiennelawlor.loop.R;
 
 import butterknife.ButterKnife;
+import butterknife.Unbinder;
 
 /**
  * Created by etiennelawlor on 5/23/15.
@@ -21,6 +22,7 @@ public class PlaceholderFragment extends BaseFragment {
     // endregion
 
     // region Member Variables
+    private Unbinder unbinder;
     // endregion
 
     // region Callbacks
@@ -60,7 +62,7 @@ public class PlaceholderFragment extends BaseFragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_placeholder, container, false);
-        ButterKnife.bind(this, rootView);
+        unbinder = ButterKnife.bind(this, rootView);
 
         return rootView;
     }
@@ -74,7 +76,7 @@ public class PlaceholderFragment extends BaseFragment {
     @Override
     public void onDestroyView() {
         super.onDestroyView();
-        ButterKnife.unbind(this);
+        unbinder.unbind();
     }
     // endregion
 

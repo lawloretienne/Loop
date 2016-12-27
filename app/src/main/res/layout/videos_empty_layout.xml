@@ -23,7 +23,7 @@
         android:layout_marginTop="8dp"
         android:gravity="center"
         android:text="@string/no_videos"
-        android:textColor="@color/secondary_text"
+        android:textColor="@color/secondary_text_dark"
         android:textSize="20sp"
         app:textFont="ubuntu_medium" />
 

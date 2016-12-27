@@ -43,9 +43,10 @@ import com.etiennelawlor.loop.utilities.TrestleUtility;
 
 import java.util.List;
 
-import butterknife.Bind;
+import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
+import butterknife.Unbinder;
 import jp.wasabeef.recyclerview.animators.SlideInUpAnimator;
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -65,19 +66,19 @@ public class WatchLaterVideosFragment extends BaseFragment implements VideosAdap
     // endregion
 
     // region Views
-    @Bind(R.id.rv)
+    @BindView(R.id.rv)
     RecyclerView recyclerView;
-    @Bind(android.R.id.empty)
+    @BindView(android.R.id.empty)
     View emptyView;
-    @Bind(R.id.empty_tv)
+    @BindView(R.id.empty_tv)
     TextView emptyTextView;
-    @Bind(R.id.loading_iv)
+    @BindView(R.id.loading_iv)
     LoadingImageView loadingImageView;
-    @Bind(R.id.error_ll)
+    @BindView(R.id.error_ll)
     LinearLayout errorLinearLayout;
-    @Bind(R.id.error_tv)
+    @BindView(R.id.error_tv)
     TextView errorTextView;
-    @Bind(R.id.toolbar)
+    @BindView(R.id.toolbar)
     Toolbar toolbar;
     // endregion
 
@@ -91,6 +92,7 @@ public class WatchLaterVideosFragment extends BaseFragment implements VideosAdap
     private String sortOrderValue = "desc";
     private VideosAdapter videosAdapter;
     private String query = "";
+    private Unbinder unbinder;
     private LinearLayoutManager layoutManager;
     private VimeoService vimeoService;
     private Typeface font;
@@ -276,7 +278,7 @@ public class WatchLaterVideosFragment extends BaseFragment implements VideosAdap
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_watch_later_videos, container, false);
-        ButterKnife.bind(this, rootView);
+        unbinder = ButterKnife.bind(this, rootView);
 
         return rootView;
     }
@@ -321,7 +323,7 @@ public class WatchLaterVideosFragment extends BaseFragment implements VideosAdap
     public void onDestroyView() {
         super.onDestroyView();
         removeListeners();
-        ButterKnife.unbind(this);
+        unbinder.unbind();
     }
 
     @Override

@@ -36,7 +36,7 @@ import com.etiennelawlor.loop.utilities.TrestleUtility;
 
 import java.util.List;
 
-import butterknife.Bind;
+import butterknife.BindView;
 import butterknife.ButterKnife;
 import de.hdodenhof.circleimageview.CircleImageView;
 import rx.Subscription;
@@ -61,9 +61,9 @@ public class MainActivity extends AppCompatActivity {
     // endregion
 
     // region Views
-    @Bind(R.id.drawer_layout)
+    @BindView(R.id.drawer_layout)
     DrawerLayout drawerLayout;
-    @Bind(R.id.nav_view)
+    @BindView(R.id.nav_view)
     NavigationView navigationView;
 
     private CircleImageView avatarImageView;

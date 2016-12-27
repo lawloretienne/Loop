@@ -54,7 +54,7 @@
             android:layout_height="wrap_content"
             android:includeFontPadding="false"
             app:textFont="ubuntu_medium"
-            android:textColor="@color/inverse_primary_text"/>
+            android:textColor="@color/primary_text_light"/>
 
         <SeekBar android:id="@id/exo_progress"
             android:layout_width="0dp"
@@ -69,7 +69,7 @@
             android:layout_height="wrap_content"
             app:textFont="ubuntu_medium"
             android:includeFontPadding="false"
-            android:textColor="@color/inverse_primary_text"/>
+            android:textColor="@color/primary_text_light"/>
 
     </LinearLayout>
 

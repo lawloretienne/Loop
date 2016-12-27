@@ -22,7 +22,7 @@
         android:layout_marginBottom="12dp"
         android:layout_marginTop="16dp"
         android:gravity="center"
-        android:textColor="@color/inverse_secondary_text"
+        android:textColor="@color/secondary_text_light"
         android:textSize="20sp"
         app:textFont="ubuntu_medium"
         android:text="@string/check_your_network_connection" />

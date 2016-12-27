@@ -48,9 +48,10 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import butterknife.Bind;
+import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
+import butterknife.Unbinder;
 import jp.wasabeef.recyclerview.animators.SlideInUpAnimator;
 import okhttp3.ResponseBody;
 import retrofit2.Call;
@@ -72,23 +73,23 @@ public class VideoCommentsFragment extends BaseFragment implements VideoComments
     // endregion
 
     // region Views
-    @Bind(R.id.comment_et)
+    @BindView(R.id.comment_et)
     EditText commentEditText;
-    @Bind(R.id.sumbit_comment_iv)
+    @BindView(R.id.sumbit_comment_iv)
     ImageView submitCommentImageView;
-    @Bind(R.id.sumbit_comment_pb)
+    @BindView(R.id.sumbit_comment_pb)
     ProgressBar submitCommentProgressBar;
-    @Bind(R.id.sumbit_comment_fl)
+    @BindView(R.id.sumbit_comment_fl)
     FrameLayout submitCommentFrameLayout;
-    @Bind(R.id.rv)
+    @BindView(R.id.rv)
     RecyclerView recyclerView;
-    @Bind(R.id.toolbar)
+    @BindView(R.id.toolbar)
     Toolbar toolbar;
-    @Bind(R.id.loading_iv)
+    @BindView(R.id.loading_iv)
     LoadingImageView loadingImageView;
-    @Bind(R.id.error_ll)
+    @BindView(R.id.error_ll)
     LinearLayout errorLinearLayout;
-    @Bind(R.id.error_tv)
+    @BindView(R.id.error_tv)
     TextView errorTextView;
     // endregion
 
@@ -105,6 +106,7 @@ public class VideoCommentsFragment extends BaseFragment implements VideoComments
     private boolean isLastPage = false;
     private String sortByValue = "date";
     private String sortOrderValue = "desc";
+    private Unbinder unbinder;
     private Typeface font;
     private Comment deletedComment;
     // endregion
@@ -327,7 +329,7 @@ public class VideoCommentsFragment extends BaseFragment implements VideoComments
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_video_comments, container, false);
-        ButterKnife.bind(this, view);
+        unbinder = ButterKnife.bind(this, view);
 
         return view;
     }
@@ -423,7 +425,7 @@ public class VideoCommentsFragment extends BaseFragment implements VideoComments
         super.onDestroyView();
 
         removeListeners();
-        ButterKnife.unbind(this);
+        unbinder.unbind();
     }
 
     @Override

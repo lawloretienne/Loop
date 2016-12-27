@@ -13,10 +13,10 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         app:tabGravity="fill"
-        app:tabIndicatorColor="@color/inverse_primary_text"
+        app:tabIndicatorColor="@color/primary_text_light"
         app:tabIndicatorHeight="2dp"
         app:tabMode="scrollable"
-        app:tabSelectedTextColor="@color/inverse_primary_text"
-        app:tabTextColor="@color/inverse_tertiary_text" />
+        app:tabSelectedTextColor="@color/primary_text_light"
+        app:tabTextColor="@color/tertiary_text_light" />
 
 </android.support.design.widget.AppBarLayout>

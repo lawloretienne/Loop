@@ -22,7 +22,7 @@ import com.etiennelawlor.loop.prefs.LoopPrefs;
 import com.etiennelawlor.loop.utilities.NetworkLogUtility;
 import com.etiennelawlor.loop.utilities.NetworkUtility;
 
-import butterknife.Bind;
+import butterknife.BindView;
 import butterknife.ButterKnife;
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -34,9 +34,9 @@ import retrofit2.Response;
 public class LoginActivity extends AppCompatActivity {
 
     // region Views
-    @Bind(R.id.wv)
+    @BindView(R.id.wv)
     WebView webView;
-    @Bind(R.id.fl)
+    @BindView(R.id.fl)
     FrameLayout frameLayout;
     // endregion
 

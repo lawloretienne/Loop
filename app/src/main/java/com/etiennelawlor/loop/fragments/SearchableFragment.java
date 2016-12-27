@@ -56,9 +56,10 @@ import com.etiennelawlor.loop.utilities.NetworkUtility;
 import java.util.ArrayList;
 import java.util.List;
 
-import butterknife.Bind;
+import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
+import butterknife.Unbinder;
 import jp.wasabeef.recyclerview.animators.SlideInUpAnimator;
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -78,21 +79,21 @@ public class SearchableFragment extends BaseFragment implements VideosAdapter.On
     // endregion
 
     // region Views
-    @Bind(R.id.rv)
+    @BindView(R.id.rv)
     RecyclerView recyclerView;
-    @Bind(android.R.id.empty)
+    @BindView(android.R.id.empty)
     View emptyView;
-    @Bind(R.id.empty_tv)
+    @BindView(R.id.empty_tv)
     TextView emptyTextView;
-    @Bind(R.id.iv)
+    @BindView(R.id.iv)
     ImageView imageView;
-    @Bind(R.id.loading_iv)
+    @BindView(R.id.loading_iv)
     LoadingImageView loadingImageView;
-    @Bind(R.id.error_ll)
+    @BindView(R.id.error_ll)
     LinearLayout errorLinearLayout;
-    @Bind(R.id.error_tv)
+    @BindView(R.id.error_tv)
     TextView errorTextView;
-    @Bind(R.id.material_sv)
+    @BindView(R.id.material_sv)
     MaterialSearchView materialSearchView;
 //    @Bind(R.id.toolbar)
 //    Toolbar toolbar;
@@ -110,6 +111,7 @@ public class SearchableFragment extends BaseFragment implements VideosAdapter.On
     private VideosAdapter videosAdapter;
     private String query;
     private Typeface font;
+    private Unbinder unbinder;
     private LinearLayoutManager layoutManager;
     private VimeoService vimeoService;
     private CompositeSubscription compositeSubscription;
@@ -313,7 +315,7 @@ public class SearchableFragment extends BaseFragment implements VideosAdapter.On
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_searchable, container, false);
-        ButterKnife.bind(this, rootView);
+        unbinder = ButterKnife.bind(this, rootView);
 
         return rootView;
     }
@@ -422,7 +424,7 @@ public class SearchableFragment extends BaseFragment implements VideosAdapter.On
     public void onDestroyView() {
         super.onDestroyView();
         removeListeners();
-        ButterKnife.unbind(this);
+        unbinder.unbind();
     }
 
     @Override

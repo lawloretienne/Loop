@@ -34,9 +34,10 @@ import com.etiennelawlor.loop.utilities.NetworkUtility;
 
 import java.util.List;
 
-import butterknife.Bind;
+import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
+import butterknife.Unbinder;
 import jp.wasabeef.recyclerview.animators.SlideInUpAnimator;
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -53,17 +54,17 @@ public class VideosFragment extends BaseFragment implements VideosAdapter.OnItem
     // endregion
 
     // region Views
-    @Bind(R.id.rv)
+    @BindView(R.id.rv)
     RecyclerView recyclerView;
-    @Bind(android.R.id.empty)
+    @BindView(android.R.id.empty)
     View emptyView;
-    @Bind(R.id.loading_iv)
+    @BindView(R.id.loading_iv)
     LoadingImageView loadingImageView;
-    @Bind(R.id.error_ll)
+    @BindView(R.id.error_ll)
     LinearLayout errorLinearLayout;
-    @Bind(R.id.error_tv)
+    @BindView(R.id.error_tv)
     TextView errorTextView;
-    @Bind(R.id.reload_btn)
+    @BindView(R.id.reload_btn)
     Button reloadButton;
     // endregion
 
@@ -76,6 +77,7 @@ public class VideosFragment extends BaseFragment implements VideosAdapter.OnItem
     private String sortByValue = "relevant";
     private String sortOrderValue = "desc";
     private String filter;
+    private Unbinder unbinder;
     private VideosAdapter videosAdapter;
     private String query;
     private LinearLayoutManager layoutManager;
@@ -258,7 +260,7 @@ public class VideosFragment extends BaseFragment implements VideosAdapter.OnItem
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_videos, container, false);
-        ButterKnife.bind(this, rootView);
+        unbinder = ButterKnife.bind(this, rootView);
 
         return rootView;
     }
@@ -298,7 +300,7 @@ public class VideosFragment extends BaseFragment implements VideosAdapter.OnItem
         super.onDestroyView();
         removeListeners();
         currentPage = 1;
-        ButterKnife.unbind(this);
+        unbinder.unbind();
     }
     // endregion
 

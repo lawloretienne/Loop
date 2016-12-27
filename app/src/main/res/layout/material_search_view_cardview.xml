@@ -56,8 +56,8 @@
                 android:imeOptions="actionSearch"
                 android:inputType="text"
                 android:singleLine="true"
-                android:textColor="@color/secondary_text"
-                android:textColorHint="@color/tertiary_text"
+                android:textColor="@color/secondary_text_dark"
+                android:textColorHint="@color/tertiary_text_dark"
                 android:textSize="@dimen/text_medium"
                 app:textFont="ubuntu_medium"/>
 

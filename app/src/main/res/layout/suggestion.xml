@@ -28,7 +28,7 @@
         android:layout_toLeftOf="@+id/search_suggest_complete_iv"
         android:ellipsize="end"
         android:singleLine="true"
-        android:textColor="@color/secondary_text"
+        android:textColor="@color/secondary_text_dark"
         android:textSize="16sp"
         app:textFont="ubuntu_medium"
         tools:text="Suggestion" />

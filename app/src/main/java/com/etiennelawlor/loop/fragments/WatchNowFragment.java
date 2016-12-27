@@ -33,8 +33,9 @@ import com.etiennelawlor.loop.utilities.FontCache;
 import java.util.ArrayList;
 import java.util.List;
 
-import butterknife.Bind;
+import butterknife.BindView;
 import butterknife.ButterKnife;
+import butterknife.Unbinder;
 import rx.Subscription;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.functions.Action1;
@@ -52,16 +53,17 @@ public class WatchNowFragment extends BaseFragment {
     // endregion
 
     // region Views
-    @Bind(R.id.viewpager)
+    @BindView(R.id.viewpager)
     ViewPager viewPager;
-    @Bind(R.id.tabs)
+    @BindView(R.id.tabs)
     TabLayout tabLayout;
-    @Bind(R.id.material_sv)
+    @BindView(R.id.material_sv)
     MaterialSearchView materialSearchView;
     // endregion
 
     // region Member Variables
     private Typeface font;
+    private Unbinder unbinder;
     private CompositeSubscription compositeSubscription;
     // endregion
 
@@ -105,7 +107,7 @@ public class WatchNowFragment extends BaseFragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_watch_now, container, false);
-        ButterKnife.bind(this, rootView);
+        unbinder = ButterKnife.bind(this, rootView);
 
         return rootView;
     }
@@ -139,7 +141,7 @@ public class WatchNowFragment extends BaseFragment {
     @Override
     public void onDestroyView() {
         super.onDestroyView();
-        ButterKnife.unbind(this);
+        unbinder.unbind();
     }
 
     @Override
