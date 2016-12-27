@@ -13,36 +13,40 @@ public class VideoFormat {
     @SerializedName("url")
     private String url;
     @SerializedName("width")
-    private Integer width;
+    private int width;
     @SerializedName("height")
-    private Integer height;
+    private int height;
     // endregion
 
     // region Getters
+
     public String getUrl() {
-        return TextUtils.isEmpty(url) ? "" : url;
+        return url;
     }
 
-    public Integer getWidth() {
-        return width == null ? -1 : width;
+    public int getWidth() {
+        return width;
     }
 
-    public Integer getHeight() {
-        return height == null ? -1 : height;
+    public int getHeight() {
+        return height;
     }
+
     // endregion
 
     // region Setters
+
     public void setUrl(String url) {
         this.url = url;
     }
 
-    public void setWidth(Integer width) {
+    public void setWidth(int width) {
         this.width = width;
     }
 
-    public void setHeight(Integer height) {
+    public void setHeight(int height) {
         this.height = height;
     }
+
     // endregion
 }

@@ -17,37 +17,52 @@ public class Pictures implements Parcelable {
     @SerializedName("uri")
     private String uri;
     @SerializedName("active")
-    private Boolean active;
+    private boolean active;
     @SerializedName("sizes")
     private List<Size> sizes;
     // endregion
 
-    // region Getters
-    public String getUri() {
-        return TextUtils.isEmpty(uri) ? "" : uri;
+    // region Constructors
+    public Pictures() {
     }
 
-    public Boolean getActive() {
-        return active == null ? false : active;
+    protected Pictures(Parcel in) {
+        this.uri = in.readString();
+        this.active = in.readByte() != 0;
+        this.sizes = in.createTypedArrayList(Size.CREATOR);
+    }
+    // endregion
+
+    // region Getters
+
+    public String getUri() {
+        return uri;
+    }
+
+    public boolean isActive() {
+        return active;
     }
 
     public List<Size> getSizes() {
         return sizes;
     }
+
     // endregion
 
     // region Setters
+
     public void setUri(String uri) {
         this.uri = uri;
     }
 
-    public void setActive(Boolean active) {
+    public void setActive(boolean active) {
         this.active = active;
     }
 
     public void setSizes(List<Size> sizes) {
         this.sizes = sizes;
     }
+
     // endregion
 
     // region Parcelable Methods
@@ -58,23 +73,16 @@ public class Pictures implements Parcelable {
 
     @Override
     public void writeToParcel(Parcel dest, int flags) {
-        dest.writeString(getUri());
-        dest.writeByte((byte) (getActive() ? 1 : 0));
-        dest.writeTypedList(getSizes());
+        dest.writeString(this.uri);
+        dest.writeByte(this.active ? (byte) 1 : (byte) 0);
+        dest.writeTypedList(this.sizes);
     }
     // endregion
 
-    public static final Creator<Pictures> CREATOR = new Creator<Pictures>() {
-
+    public static final Parcelable.Creator<Pictures> CREATOR = new Parcelable.Creator<Pictures>() {
         @Override
         public Pictures createFromParcel(Parcel source) {
-            Pictures pictures = new Pictures();
-
-            pictures.setUri(source.readString());
-            pictures.setActive((source.readByte() == 1));
-            pictures.setSizes(source.createTypedArrayList(Size.CREATOR));
-
-            return pictures;
+            return new Pictures(source);
         }
 
         @Override

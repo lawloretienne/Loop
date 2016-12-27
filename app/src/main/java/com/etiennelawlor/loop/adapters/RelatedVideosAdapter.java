@@ -291,7 +291,7 @@ public class RelatedVideosAdapter extends BaseAdapter<Video> {
                 Interaction likeInteraction = interactions.getLike();
 
                 if (likeInteraction != null) {
-                    if (likeInteraction.getAdded()) {
+                    if (likeInteraction.isAdded()) {
                         setIsLikeOn(true);
                         iv.setImageResource(R.drawable.ic_likes_on);
                     }
@@ -308,7 +308,7 @@ public class RelatedVideosAdapter extends BaseAdapter<Video> {
                 Interaction watchLaterInteraction = interactions.getWatchlater();
 
                 if (watchLaterInteraction != null) {
-                    if (watchLaterInteraction.getAdded()) {
+                    if (watchLaterInteraction.isAdded()) {
                         setIsWatchLaterOn(true);
                         iv.setImageResource(R.drawable.ic_watch_later_on);
                     }

@@ -23,6 +23,17 @@ public class Connections implements Parcelable {
     private Connection texttracks;
     // endregion
 
+    // region Constructors
+    public Connections() {
+    }
+
+    protected Connections(Parcel in) {
+        this.comments = in.readParcelable(Connection.class.getClassLoader());
+        this.pictures = in.readParcelable(Connection.class.getClassLoader());
+        this.texttracks = in.readParcelable(Connection.class.getClassLoader());
+    }
+    // endregion
+
     // region Getters
 
     public Connection getComments() {
@@ -77,27 +88,16 @@ public class Connections implements Parcelable {
 
     @Override
     public void writeToParcel(Parcel dest, int flags) {
-        dest.writeParcelable(getComments(), flags);
-//        dest.writeParcelable(getCredits(), flags);
-//        dest.writeParcelable(getLikes(), flags);
-        dest.writeParcelable(getPictures(), flags);
-        dest.writeParcelable(getTexttracks(), flags);
+        dest.writeParcelable(this.comments, flags);
+        dest.writeParcelable(this.pictures, flags);
+        dest.writeParcelable(this.texttracks, flags);
     }
     // endregion
 
     public static final Parcelable.Creator<Connections> CREATOR = new Parcelable.Creator<Connections>() {
-
         @Override
         public Connections createFromParcel(Parcel source) {
-            Connections connections = new Connections();
-
-            connections.setComments((Connection) source.readParcelable(Connection.class.getClassLoader()));
-//            connections.setCredits((Connection) source.readParcelable(Connection.class.getClassLoader()));
-//            connections.setLikes((Connection) source.readParcelable(Connection.class.getClassLoader()));
-            connections.setPictures((Connection) source.readParcelable(Connection.class.getClassLoader()));
-            connections.setTexttracks((Connection) source.readParcelable(Connection.class.getClassLoader()));
-
-            return connections;
+            return new Connections(source);
         }
 
         @Override

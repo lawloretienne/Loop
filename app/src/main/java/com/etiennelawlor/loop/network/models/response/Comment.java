@@ -27,6 +27,20 @@ public class Comment implements Parcelable {
     private Metadata metadata;
     // endregion
 
+    // region Constructors
+    public Comment() {
+    }
+
+    protected Comment(Parcel in) {
+        this.uri = in.readString();
+        this.type = in.readString();
+        this.text = in.readString();
+        this.createdOn = in.readString();
+        this.user = in.readParcelable(User.class.getClassLoader());
+        this.metadata = in.readParcelable(Metadata.class.getClassLoader());
+    }
+    // endregion
+
     // region Getters
     public String getUri() {
         return TextUtils.isEmpty(uri) ? "" : uri;
@@ -97,29 +111,19 @@ public class Comment implements Parcelable {
 
     @Override
     public void writeToParcel(Parcel dest, int flags) {
-        dest.writeString(getUri());
-        dest.writeString(getType());
-        dest.writeString(getText());
-        dest.writeString(getCreatedOn());
-        dest.writeParcelable(getUser(), flags);
-        dest.writeParcelable(getMetadata(), flags);
+        dest.writeString(this.uri);
+        dest.writeString(this.type);
+        dest.writeString(this.text);
+        dest.writeString(this.createdOn);
+        dest.writeParcelable(this.user, flags);
+        dest.writeParcelable(this.metadata, flags);
     }
     // endregion
 
-    public static final Creator<Comment> CREATOR = new Creator<Comment>() {
-
+    public static final Parcelable.Creator<Comment> CREATOR = new Parcelable.Creator<Comment>() {
         @Override
         public Comment createFromParcel(Parcel source) {
-            Comment video = new Comment();
-
-            video.setUri(source.readString());
-            video.setType(source.readString());
-            video.setText(source.readString());
-            video.setCreatedOn(source.readString());
-            video.setUser((User) source.readParcelable(User.class.getClassLoader()));
-            video.setMetadata((Metadata) source.readParcelable(Metadata.class.getClassLoader()));
-
-            return video;
+            return new Comment(source);
         }
 
         @Override

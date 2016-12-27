@@ -15,47 +15,63 @@ public class Picture implements Parcelable {
     @SerializedName("type")
     private String type;
     @SerializedName("width")
-    private Integer width;
+    private int width;
     @SerializedName("height")
-    private Integer height;
+    private int height;
     @SerializedName("link")
     private String link;
     // endregion
 
-    // region Getters
-    public String getType() {
-        return TextUtils.isEmpty(type) ? "" : type;
+    // region Constructors
+    public Picture() {
     }
 
-    public Integer getWidth() {
-        return width == null ? -1 : width;
-    }
-
-    public Integer getHeight() {
-        return height == null ? -1 : height;
-    }
-
-    public String getLink() {
-        return TextUtils.isEmpty(link) ? "" : link;
+    protected Picture(Parcel in) {
+        this.type = in.readString();
+        this.width = in.readInt();
+        this.height = in.readInt();
+        this.link = in.readString();
     }
     // endregion
 
+    // region Getters
+
+    public String getType() {
+        return type;
+    }
+
+    public int getWidth() {
+        return width;
+    }
+
+    public int getHeight() {
+        return height;
+    }
+
+    public String getLink() {
+        return link;
+    }
+
+    // endregion
+
     // region Setters
+
     public void setType(String type) {
         this.type = type;
     }
 
-    public void setWidth(Integer width) {
+    public void setWidth(int width) {
         this.width = width;
     }
 
-    public void setHeight(Integer height) {
+    public void setHeight(int height) {
         this.height = height;
     }
 
     public void setLink(String link) {
         this.link = link;
     }
+
     // endregion
 
     // region Parcelable Methods
@@ -66,25 +82,17 @@ public class Picture implements Parcelable {
 
     @Override
     public void writeToParcel(Parcel dest, int flags) {
-        dest.writeString(getType());
-        dest.writeInt(getWidth());
-        dest.writeInt(getHeight());
-        dest.writeString(getLink());
+        dest.writeString(this.type);
+        dest.writeInt(this.width);
+        dest.writeInt(this.height);
+        dest.writeString(this.link);
     }
     // endregion
 
-    public static final Creator<Picture> CREATOR = new Creator<Picture>() {
-
+    public static final Parcelable.Creator<Picture> CREATOR = new Parcelable.Creator<Picture>() {
         @Override
         public Picture createFromParcel(Parcel source) {
-            Picture picture = new Picture();
-
-            picture.setType(source.readString());
-            picture.setWidth(source.readInt());
-            picture.setHeight(source.readInt());
-            picture.setLink(source.readString());
-
-            return picture;
+            return new Picture(source);
         }
 
         @Override

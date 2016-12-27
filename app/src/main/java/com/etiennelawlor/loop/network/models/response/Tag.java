@@ -22,25 +22,40 @@ public class Tag implements Parcelable {
     private String canonical;
     // endregion
 
-    // region Getters
-    public String getUri() {
-        return TextUtils.isEmpty(uri) ? "" : uri;
+    // region Constructors
+    public Tag() {
     }
 
-    public String getName() {
-        return TextUtils.isEmpty(name) ? "" : name;
-    }
-
-    public String getTag() {
-        return TextUtils.isEmpty(tag) ? "" : tag;
-    }
-
-    public String getCanonical() {
-        return TextUtils.isEmpty(canonical) ? "" : canonical;
+    protected Tag(Parcel in) {
+        this.uri = in.readString();
+        this.name = in.readString();
+        this.tag = in.readString();
+        this.canonical = in.readString();
     }
     // endregion
 
+    // region Getters
+
+    public String getUri() {
+        return uri;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public String getTag() {
+        return tag;
+    }
+
+    public String getCanonical() {
+        return canonical;
+    }
+
+    // endregion
+
     // region Setters
+
     public void setUri(String uri) {
         this.uri = uri;
     }
@@ -56,6 +71,7 @@ public class Tag implements Parcelable {
     public void setCanonical(String canonical) {
         this.canonical = canonical;
     }
+
     // endregion
 
     // region Parcelable Methods
@@ -66,25 +82,17 @@ public class Tag implements Parcelable {
 
     @Override
     public void writeToParcel(Parcel dest, int flags) {
-        dest.writeString(getUri());
-        dest.writeString(getName());
-        dest.writeString(getTag());
-        dest.writeString(getCanonical());
+        dest.writeString(this.uri);
+        dest.writeString(this.name);
+        dest.writeString(this.tag);
+        dest.writeString(this.canonical);
     }
     // endregion
 
-    public static final Creator<Tag> CREATOR = new Creator<Tag>() {
-
+    public static final Parcelable.Creator<Tag> CREATOR = new Parcelable.Creator<Tag>() {
         @Override
         public Tag createFromParcel(Parcel source) {
-            Tag tags = new Tag();
-
-            tags.setUri(source.readString());
-            tags.setName(source.readString());
-            tags.setTag(source.readString());
-            tags.setCanonical(source.readString());
-
-            return tags;
+            return new Tag(source);
         }
 
         @Override

@@ -19,28 +19,43 @@ public class Category implements Parcelable {
     @SerializedName("link")
     private String link;
     @SerializedName("top_level")
-    private Boolean topLevel;
+    private boolean topLevel;
     @SerializedName("pictures")
     private Pictures pictures;
     @SerializedName("metadata")
     private Metadata metadata;
     // endregion
 
+    // region Constructors
+    public Category() {
+    }
+
+    protected Category(Parcel in) {
+        this.uri = in.readString();
+        this.name = in.readString();
+        this.link = in.readString();
+        this.topLevel = in.readByte() != 0;
+        this.pictures = in.readParcelable(Pictures.class.getClassLoader());
+        this.metadata = in.readParcelable(Metadata.class.getClassLoader());
+    }
+    // endregion
+
     // region Getters
+
     public String getUri() {
-        return TextUtils.isEmpty(uri) ? "" : uri;
+        return uri;
     }
 
     public String getName() {
-        return TextUtils.isEmpty(name) ? "" : name;
+        return name;
     }
 
     public String getLink() {
-        return TextUtils.isEmpty(link) ? "" : link;
+        return link;
     }
 
-    public Boolean getTopLevel() {
-        return topLevel == null ? false : topLevel;
+    public boolean isTopLevel() {
+        return topLevel;
     }
 
     public Pictures getPictures() {
@@ -67,7 +82,7 @@ public class Category implements Parcelable {
         this.link = link;
     }
 
-    public void setTopLevel(Boolean topLevel) {
+    public void setTopLevel(boolean topLevel) {
         this.topLevel = topLevel;
     }
 
@@ -89,29 +104,19 @@ public class Category implements Parcelable {
 
     @Override
     public void writeToParcel(Parcel dest, int flags) {
-        dest.writeString(getUri());
-        dest.writeString(getName());
-        dest.writeString(getLink());
-        dest.writeByte((byte) (getTopLevel() ? 1 : 0));
-        dest.writeParcelable(getPictures(), flags);
-        dest.writeParcelable(getMetadata(), flags);
+        dest.writeString(this.uri);
+        dest.writeString(this.name);
+        dest.writeString(this.link);
+        dest.writeByte(this.topLevel ? (byte) 1 : (byte) 0);
+        dest.writeParcelable(this.pictures, flags);
+        dest.writeParcelable(this.metadata, flags);
     }
     // endregion
 
-    public static final Creator<Category> CREATOR = new Creator<Category>() {
-
+    public static final Parcelable.Creator<Category> CREATOR = new Parcelable.Creator<Category>() {
         @Override
         public Category createFromParcel(Parcel source) {
-            Category video = new Category();
-
-            video.setUri(source.readString());
-            video.setName(source.readString());
-            video.setLink(source.readString());
-            video.setTopLevel((source.readByte() == 1));
-            video.setPictures((Pictures) source.readParcelable(Pictures.class.getClassLoader()));
-            video.setMetadata((Metadata) source.readParcelable(Metadata.class.getClassLoader()));
-
-            return video;
+            return new Category(source);
         }
 
         @Override

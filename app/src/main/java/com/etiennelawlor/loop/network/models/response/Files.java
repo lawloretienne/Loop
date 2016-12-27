@@ -18,7 +18,6 @@ public class Files {
     private VP6 vp6;
     @SerializedName("progressive")
     private List<ProgressiveData> progressive;
-
     // endregion
 
     // region Getters

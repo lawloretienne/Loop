@@ -31,33 +31,50 @@ public class User implements Parcelable {
     private Pictures pictures;
     // endregion
 
+    // region Constructors
+    public User() {
+    }
+
+    protected User(Parcel in) {
+        this.uri = in.readString();
+        this.name = in.readString();
+        this.link = in.readString();
+        this.location = in.readString();
+        this.bio = in.readString();
+        this.createdTime = in.readString();
+        this.account = in.readString();
+        this.pictures = in.readParcelable(Pictures.class.getClassLoader());
+    }
+    // endregion
+
     // region Getters
+
     public String getUri() {
-        return TextUtils.isEmpty(uri) ? "" : uri;
+        return uri;
     }
 
     public String getName() {
-        return TextUtils.isEmpty(name) ? "" : name;
+        return name;
     }
 
     public String getLink() {
-        return TextUtils.isEmpty(link) ? "" : link;
+        return link;
     }
 
     public String getLocation() {
-        return TextUtils.isEmpty(location) ? "" : location;
+        return location;
     }
 
     public String getBio() {
-        return TextUtils.isEmpty(bio) ? "" : bio;
+        return bio;
     }
 
     public String getCreatedTime() {
-        return TextUtils.isEmpty(createdTime) ? "" : createdTime;
+        return createdTime;
     }
 
     public String getAccount() {
-        return TextUtils.isEmpty(account) ? "" : account;
+        return account;
     }
 
     public Pictures getPictures() {
@@ -117,33 +134,21 @@ public class User implements Parcelable {
 
     @Override
     public void writeToParcel(Parcel dest, int flags) {
-        dest.writeString(getUri());
-        dest.writeString(getName());
-        dest.writeString(getLink());
-        dest.writeString(getLocation());
-        dest.writeString(getBio());
-        dest.writeString(getCreatedTime());
-        dest.writeString(getAccount());
-        dest.writeParcelable(getPictures(), flags);
+        dest.writeString(this.uri);
+        dest.writeString(this.name);
+        dest.writeString(this.link);
+        dest.writeString(this.location);
+        dest.writeString(this.bio);
+        dest.writeString(this.createdTime);
+        dest.writeString(this.account);
+        dest.writeParcelable(this.pictures, flags);
     }
     // endregion
 
     public static final Parcelable.Creator<User> CREATOR = new Parcelable.Creator<User>() {
-
         @Override
         public User createFromParcel(Parcel source) {
-            User user = new User();
-
-            user.setUri(source.readString());
-            user.setName(source.readString());
-            user.setLink(source.readString());
-            user.setLocation(source.readString());
-            user.setBio(source.readString());
-            user.setCreatedTime(source.readString());
-            user.setAccount(source.readString());
-            user.setPictures((Pictures) source.readParcelable(Pictures.class.getClassLoader()));
-
-            return user;
+            return new User(source);
         }
 
         @Override

@@ -12,22 +12,35 @@ public class Stats implements Parcelable {
 
     // region Fields
     @SerializedName("plays")
-    private Integer plays;
+    private int plays;
+    // endregion
+
+    // region Constructors
+    public Stats() {
+    }
+
+    protected Stats(Parcel in) {
+        this.plays = in.readInt();
+    }
     // endregion
 
     // region Getters
-    public Integer getPlays() {
-        return plays == null ? -1 : plays;
+
+    public int getPlays() {
+        return plays;
     }
+
     // endregion
 
     // region Setters
-    public void setPlays(Integer plays) {
+
+    public void setPlays(int plays) {
         this.plays = plays;
     }
+
     // endregion
 
-    // region Parcelable Methods
+    // region Parcelable
     @Override
     public int describeContents() {
         return 0;
@@ -35,19 +48,14 @@ public class Stats implements Parcelable {
 
     @Override
     public void writeToParcel(Parcel dest, int flags) {
-        dest.writeInt(getPlays());
+        dest.writeInt(this.plays);
     }
     // endregion
 
-    public static final Creator<Stats> CREATOR = new Creator<Stats>() {
-
+    public static final Parcelable.Creator<Stats> CREATOR = new Parcelable.Creator<Stats>() {
         @Override
         public Stats createFromParcel(Parcel source) {
-            Stats stats = new Stats();
-
-            stats.setPlays(source.readInt());
-
-            return stats;
+            return new Stats(source);
         }
 
         @Override

@@ -25,13 +25,13 @@ public class Video implements Parcelable {
     @SerializedName("link")
     private String link;
     @SerializedName("duration")
-    private Integer duration;
+    private int duration;
     @SerializedName("width")
-    private Integer width;
+    private int width;
     @SerializedName("language")
     private String language;
     @SerializedName("height")
-    private Integer height;
+    private int height;
     @SerializedName("embed")
     private Embed embed;
     @SerializedName("created_time")
@@ -60,37 +60,64 @@ public class Video implements Parcelable {
 //    private Object embedPresets;
     // endregion
 
+    // region Constructors
+    public Video() {
+    }
+
+    protected Video(Parcel in) {
+        this.uri = in.readString();
+        this.name = in.readString();
+        this.description = in.readString();
+        this.link = in.readString();
+        this.duration = in.readInt();
+        this.width = in.readInt();
+        this.language = in.readString();
+        this.height = in.readInt();
+        this.embed = in.readParcelable(Embed.class.getClassLoader());
+        this.createdTime = in.readString();
+        this.modifiedTime = in.readString();
+        this.contentRating = in.createStringArrayList();
+        this.pictures = in.readParcelable(Pictures.class.getClassLoader());
+        this.tags = in.createTypedArrayList(Tag.CREATOR);
+        this.stats = in.readParcelable(Stats.class.getClassLoader());
+        this.metadata = in.readParcelable(Metadata.class.getClassLoader());
+        this.user = in.readParcelable(User.class.getClassLoader());
+        this.status = in.readString();
+    }
+    // endregion
+
     // region Getters
+
     public String getUri() {
-        return TextUtils.isEmpty(uri) ? "" : uri;
+        return uri;
     }
 
     public String getName() {
-        return TextUtils.isEmpty(name) ? "" : name;
+        return name;
     }
 
     public String getDescription() {
-        return TextUtils.isEmpty(description) ? "" : description;
+        return description;
     }
 
     public String getLink() {
-        return TextUtils.isEmpty(link) ? "" : link;
+        return link;
     }
 
-    public Integer getDuration() {
-        return duration == null ? -1 : duration;
+    public int getDuration() {
+        return duration;
     }
 
-    public Integer getWidth() {
-        return width == null ? -1 : width;
+    public int getWidth() {
+        return width;
     }
 
     public String getLanguage() {
-        return TextUtils.isEmpty(language) ? "" : language;
+        return language;
     }
 
-    public Integer getHeight() {
-        return height == null ? -1 : height;
+    public int getHeight() {
+        return height;
     }
 
     public Embed getEmbed() {
@@ -98,20 +125,16 @@ public class Video implements Parcelable {
     }
 
     public String getCreatedTime() {
-        return TextUtils.isEmpty(createdTime) ? "" : createdTime;
+        return createdTime;
     }
 
     public String getModifiedTime() {
-        return TextUtils.isEmpty(modifiedTime) ? "" : modifiedTime;
+        return modifiedTime;
     }
 
     public List<String> getContentRating() {
         return contentRating;
     }
-
-//    public Object getLicense() {
-//        return license;
-//    }
 
     public Pictures getPictures() {
         return pictures;
@@ -133,18 +156,9 @@ public class Video implements Parcelable {
         return user;
     }
 
-//    public Object getApp() {
-//        return app;
-//    }
-
     public String getStatus() {
-        return TextUtils.isEmpty(status) ? "" : status;
+        return status;
     }
-
-//    public Object getEmbedPresets() {
-//        return embedPresets;
-//    }
-
 
     public long getId() {
         long id = -1L;
@@ -159,6 +173,7 @@ public class Video implements Parcelable {
     // endregion
 
     // region Setters
+
     public void setUri(String uri) {
         this.uri = uri;
     }
@@ -175,11 +190,11 @@ public class Video implements Parcelable {
         this.link = link;
     }
 
-    public void setDuration(Integer duration) {
+    public void setDuration(int duration) {
         this.duration = duration;
     }
 
-    public void setWidth(Integer width) {
+    public void setWidth(int width) {
         this.width = width;
     }
 
@@ -187,7 +202,7 @@ public class Video implements Parcelable {
         this.language = language;
     }
 
-    public void setHeight(Integer height) {
+    public void setHeight(int height) {
         this.height = height;
     }
 
@@ -206,10 +221,6 @@ public class Video implements Parcelable {
     public void setContentRating(List<String> contentRating) {
         this.contentRating = contentRating;
     }
-
-//    public void setLicense(Object license) {
-//        this.license = license;
-//    }
 
     public void setPictures(Pictures pictures) {
         this.pictures = pictures;
@@ -231,17 +242,10 @@ public class Video implements Parcelable {
         this.user = user;
     }
 
-//    public void setApp(Object app) {
-//        this.app = app;
-//    }
-
     public void setStatus(String status) {
         this.status = status;
     }
 
-//    public void setEmbedPresets(Object embedPresets) {
-//        this.embedPresets = embedPresets;
-//    }
     // endregion
 
     // region Parcelable Methods
@@ -252,67 +256,31 @@ public class Video implements Parcelable {
 
     @Override
     public void writeToParcel(Parcel dest, int flags) {
-        dest.writeString(getUri());
-        dest.writeString(getName());
-        dest.writeString(getDescription());
-        dest.writeString(getLink());
-        dest.writeInt(getDuration());
-        dest.writeInt(getWidth());
-        dest.writeString(getLanguage());
-        dest.writeInt(getHeight());
-        dest.writeParcelable(getEmbed(), flags);
-        dest.writeString(getCreatedTime());
-        dest.writeString(getModifiedTime());
-        dest.writeStringList(getContentRating());
-//        dest.writeParcelable(getLicense(), flags);
-        dest.writeParcelable(getPictures(), flags);
-//        dest.writeParcelable(getTags(), flags);
-        dest.writeTypedList(getTags());
-        dest.writeParcelable(getStats(), flags);
-        dest.writeParcelable(getMetadata(), flags);
-        dest.writeParcelable(getUser(), flags);
-//        dest.writeParcelable(getApp(), flags);
-        dest.writeString(getStatus());
-//        dest.writeParcelable(getEmbedPresets(), flags);
+        dest.writeString(this.uri);
+        dest.writeString(this.name);
+        dest.writeString(this.description);
+        dest.writeString(this.link);
+        dest.writeInt(this.duration);
+        dest.writeInt(this.width);
+        dest.writeString(this.language);
+        dest.writeInt(this.height);
+        dest.writeParcelable(this.embed, flags);
+        dest.writeString(this.createdTime);
+        dest.writeString(this.modifiedTime);
+        dest.writeStringList(this.contentRating);
+        dest.writeParcelable(this.pictures, flags);
+        dest.writeTypedList(this.tags);
+        dest.writeParcelable(this.stats, flags);
+        dest.writeParcelable(this.metadata, flags);
+        dest.writeParcelable(this.user, flags);
+        dest.writeString(this.status);
     }
     // endregion
 
-    public static final Creator<Video> CREATOR = new Creator<Video>() {
-
+    public static final Parcelable.Creator<Video> CREATOR = new Parcelable.Creator<Video>() {
         @Override
         public Video createFromParcel(Parcel source) {
-            Video video = new Video();
-
-            video.setUri(source.readString());
-            video.setName(source.readString());
-            video.setDescription(source.readString());
-            video.setLink(source.readString());
-            video.setDuration(source.readInt());
-            video.setWidth(source.readInt());
-            video.setLanguage(source.readString());
-            video.setHeight(source.readInt());
-            video.setEmbed((Embed) source.readParcelable(Embed.class.getClassLoader()));
-            video.setCreatedTime(source.readString());
-            video.setModifiedTime(source.readString());
-
-            List<String> contentRating = new ArrayList<>();
-            source.readStringList(contentRating);
-            video.setContentRating(contentRating);
-//            video.setLicense((Object) source.readParcelable(Object.class.getClassLoader()));
-            video.setPictures((Pictures) source.readParcelable(Pictures.class.getClassLoader()));
-//            video.setTags((Tags) source.readParcelable(Tags.class.getClassLoader()));
-
-            video.setTags(source.createTypedArrayList(Tag.CREATOR));
-
-
-            video.setStats((Stats) source.readParcelable(Stats.class.getClassLoader()));
-            video.setMetadata((Metadata) source.readParcelable(Metadata.class.getClassLoader()));
-            video.setUser((User) source.readParcelable(User.class.getClassLoader()));
-//            video.setApp((Object) source.readParcelable(Object.class.getClassLoader()));
-            video.setStatus(source.readString());
-//            video.setEmbedPresets((Object) source.readParcelable(Object.class.getClassLoader()));
-
-            return video;
+            return new Video(source);
         }
 
         @Override

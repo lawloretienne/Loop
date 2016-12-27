@@ -13,29 +13,43 @@ public class Interaction implements Parcelable {
 
     // region Fields
     @SerializedName("added")
-    private Boolean added;
+    private boolean added;
     @SerializedName("added_time")
     private String addedTime;
     @SerializedName("uri")
     private String uri;
     // endregion
 
-    // region Getters
-    public Boolean getAdded() {
-        return added == null ? false : added;
+    // region Constructors
+    public Interaction() {
     }
 
-    public String getAddedTime() {
-        return TextUtils.isEmpty(addedTime) ? "" : addedTime;
-    }
-
-    public String getUri() {
-        return TextUtils.isEmpty(uri) ? "" : uri;
+    protected Interaction(Parcel in) {
+        this.added = in.readByte() != 0;
+        this.addedTime = in.readString();
+        this.uri = in.readString();
     }
     // endregion
 
+    // region Getters
+
+    public boolean isAdded() {
+        return added;
+    }
+
+    public String getAddedTime() {
+        return addedTime;
+    }
+
+    public String getUri() {
+        return uri;
+    }
+
+    // endregion
+
     // region Setters
-    public void setAdded(Boolean added) {
+
+    public void setAdded(boolean added) {
         this.added = added;
     }
 
@@ -46,6 +60,7 @@ public class Interaction implements Parcelable {
     public void setUri(String uri) {
         this.uri = uri;
     }
+
     // endregion
 
     // region Parcelable Methods
@@ -56,23 +71,16 @@ public class Interaction implements Parcelable {
 
     @Override
     public void writeToParcel(Parcel dest, int flags) {
-        dest.writeByte((byte) (getAdded() ? 1 : 0));
-        dest.writeString(getAddedTime());
-        dest.writeString(getUri());
+        dest.writeByte(this.added ? (byte) 1 : (byte) 0);
+        dest.writeString(this.addedTime);
+        dest.writeString(this.uri);
     }
     // endregion
 
-    public static final Creator<Interaction> CREATOR = new Creator<Interaction>() {
-
+    public static final Parcelable.Creator<Interaction> CREATOR = new Parcelable.Creator<Interaction>() {
         @Override
         public Interaction createFromParcel(Parcel source) {
-            Interaction interaction = new Interaction();
-
-            interaction.setAdded((source.readByte() == 1));
-            interaction.setAddedTime(source.readString());
-            interaction.setUri(source.readString());
-
-            return interaction;
+            return new Interaction(source);
         }
 
         @Override

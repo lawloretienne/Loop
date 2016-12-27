@@ -19,17 +19,19 @@ public class HLS {
     // endregion
 
     // region Getters
+
     public String getOrigin() {
-        return TextUtils.isEmpty(origin) ? "" : origin;
+        return origin;
     }
 
     public String getCdn() {
-        return TextUtils.isEmpty(cdn) ? "" : cdn;
+        return cdn;
     }
 
     public String getUrl() {
-        return TextUtils.isEmpty(url) ? "" : url;
+        return url;
     }
+
     // endregion
 
     // region Setters

@@ -21,21 +21,23 @@ public class Paging {
     // endregion
 
     // region Getters
+
     public String getNext() {
-        return TextUtils.isEmpty(next) ? "" : next;
+        return next;
     }
 
     public String getPrevious() {
-        return TextUtils.isEmpty(previous) ? "" : previous;
+        return previous;
     }
 
     public String getFirst() {
-        return TextUtils.isEmpty(first) ? "" : first;
+        return first;
     }
 
     public String getLast() {
-        return TextUtils.isEmpty(last) ? "" : last;
+        return last;
     }
+
     // endregion
 
     // region Setters

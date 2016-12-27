@@ -25,13 +25,13 @@ public class ProgressiveData {
 
     // region Fields
     @SerializedName("profile")
-    private Integer profile;
+    private int profile;
     @SerializedName("width")
-    private Integer width;
+    private int width;
     @SerializedName("mime")
     private String mime;
     @SerializedName("fps")
-    private Integer fps;
+    private int fps;
     @SerializedName("url")
     private String url;
     @SerializedName("cdn")
@@ -39,63 +39,64 @@ public class ProgressiveData {
     @SerializedName("quality")
     private String quality;
     @SerializedName("id")
-    private Long id;
+    private long id;
     @SerializedName("origin")
     private String origin;
     @SerializedName("height")
-    private Integer height;
+    private int height;
     // endregion
 
     // region Getters
 
-    public Integer getProfile() {
-        return profile == null ? -1 : profile;
+    public int getProfile() {
+        return profile;
     }
 
-    public Integer getWidth() {
-        return width == null ? -1 : width;
+    public int getWidth() {
+        return width;
     }
 
     public String getMime() {
-        return TextUtils.isEmpty(mime) ? "" : mime;
+        return mime;
     }
 
-    public Integer getFps() {
-        return fps == null ? -1 : fps;
+    public int getFps() {
+        return fps;
     }
 
     public String getUrl() {
-        return TextUtils.isEmpty(url) ? "" : url;
+        return url;
     }
 
     public String getCdn() {
-        return TextUtils.isEmpty(cdn) ? "" : cdn;
+        return cdn;
     }
 
     public String getQuality() {
-        return TextUtils.isEmpty(quality) ? "" : quality;
+        return quality;
     }
 
-    public Long getId() {
-        return id == null ? -1L : id;
+    public long getId() {
+        return id;
     }
 
     public String getOrigin() {
-        return TextUtils.isEmpty(origin) ? "" : origin;
+        return origin;
     }
 
-    public Integer getHeight() {
-        return height == null ? -1 : height;
+    public int getHeight() {
+        return height;
     }
 
     // endregion
 
     // region Setters
-    public void setProfile(Integer profile) {
+
+    public void setProfile(int profile) {
         this.profile = profile;
     }
 
-    public void setWidth(Integer width) {
+    public void setWidth(int width) {
         this.width = width;
     }
 
@@ -103,7 +104,7 @@ public class ProgressiveData {
         this.mime = mime;
     }
 
-    public void setFps(Integer fps) {
+    public void setFps(int fps) {
         this.fps = fps;
     }
 
@@ -119,7 +120,7 @@ public class ProgressiveData {
         this.quality = quality;
     }
 
-    public void setId(Long id) {
+    public void setId(long id) {
         this.id = id;
     }
 
@@ -127,8 +128,9 @@ public class ProgressiveData {
         this.origin = origin;
     }
 
-    public void setHeight(Integer height) {
+    public void setHeight(int height) {
         this.height = height;
     }
+
     // endregion
 }

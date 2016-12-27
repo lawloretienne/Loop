@@ -20,24 +20,38 @@ public class Connection implements Parcelable {
     @SerializedName("options")
     private List<String> options;
     @SerializedName("total")
-    private Integer total;
+    private int total;
+    // endregion
+
+    // region Constructors
+    public Connection() {
+    }
+
+    protected Connection(Parcel in) {
+        this.uri = in.readString();
+        this.options = in.createStringArrayList();
+        this.total = in.readInt();
+    }
     // endregion
 
     // region Getters
+
     public String getUri() {
-        return TextUtils.isEmpty(uri) ? "" : uri;
+        return uri;
     }
 
     public List<String> getOptions() {
         return options;
     }
 
-    public Integer getTotal() {
-        return total == null ? -1 : total;
+    public int getTotal() {
+        return total;
     }
+
     // endregion
 
     // region Setters
+
     public void setUri(String uri) {
         this.uri = uri;
     }
@@ -46,9 +60,10 @@ public class Connection implements Parcelable {
         this.options = options;
     }
 
-    public void setTotal(Integer total) {
+    public void setTotal(int total) {
         this.total = total;
     }
+
     // endregion
 
     // region Parcelable Methods
@@ -59,27 +74,16 @@ public class Connection implements Parcelable {
 
     @Override
     public void writeToParcel(Parcel dest, int flags) {
-        dest.writeString(getUri());
-        dest.writeStringList(getOptions());
-        dest.writeInt(getTotal());
+        dest.writeString(this.uri);
+        dest.writeStringList(this.options);
+        dest.writeInt(this.total);
     }
     // endregion
 
     public static final Parcelable.Creator<Connection> CREATOR = new Parcelable.Creator<Connection>() {
-
         @Override
         public Connection createFromParcel(Parcel source) {
-            Connection connection = new Connection();
-
-            connection.setUri(source.readString());
-
-            List<String> options = new ArrayList<>();
-            source.readStringList(options);
-            connection.setOptions(options);
-
-            connection.setTotal(source.readInt());
-
-            return connection;
+            return new Connection(source);
         }
 
         @Override

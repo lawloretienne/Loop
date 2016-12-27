@@ -234,11 +234,11 @@ public class CategoriesEnvelope {
 
     // region Fields
     @SerializedName("total")
-    private Integer total;
+    private int total;
     @SerializedName("page")
-    private Integer page;
+    private int page;
     @SerializedName("per_page")
-    private Integer perPage;
+    private int perPage;
     @SerializedName("paging")
     private Paging paging;
     @SerializedName("data")
@@ -246,16 +246,16 @@ public class CategoriesEnvelope {
     // endregion
 
     // region Getters
-    public Integer getTotal() {
-        return total == null ? -1 : total;
+    public int getTotal() {
+        return total;
     }
 
-    public Integer getPage() {
-        return page == null ? -1 : page;
+    public int getPage() {
+        return page;
     }
 
-    public Integer getPerPage() {
-        return perPage == null ? -1 : perPage;
+    public int getPerPage() {
+        return perPage;
     }
 
     public Paging getPaging() {
@@ -268,15 +268,15 @@ public class CategoriesEnvelope {
     // endregion
 
     // region Setters
-    public void setTotal(Integer total) {
+    public void setTotal(int total) {
         this.total = total;
     }
 
-    public void setPage(Integer page) {
+    public void setPage(int page) {
         this.page = page;
     }
 
-    public void setPerPage(Integer perPage) {
+    public void setPerPage(int perPage) {
         this.perPage = perPage;
     }
 

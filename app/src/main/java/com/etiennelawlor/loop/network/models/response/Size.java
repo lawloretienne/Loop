@@ -13,39 +13,54 @@ public class Size implements Parcelable {
 
     // region Fields
     @SerializedName("width")
-    private Integer width;
+    private int width;
     @SerializedName("height")
-    private Integer height;
+    private int height;
     @SerializedName("link")
     private String link;
     // endregion
 
-    // region Getters
-    public Integer getWidth() {
-        return width == null ? -1 : width;
+    // region Constructors
+    public Size() {
     }
 
-    public Integer getHeight() {
-        return height == null ? -1 : height;
-    }
-
-    public String getLink() {
-        return TextUtils.isEmpty(link) ? "" : link;
+    protected Size(Parcel in) {
+        this.width = in.readInt();
+        this.height = in.readInt();
+        this.link = in.readString();
     }
     // endregion
 
+    // region Getters
+
+    public int getWidth() {
+        return width;
+    }
+
+    public int getHeight() {
+        return height;
+    }
+
+    public String getLink() {
+        return link;
+    }
+
+    // endregion
+
     // region Setters
-    public void setWidth(Integer width) {
+
+    public void setWidth(int width) {
         this.width = width;
     }
 
-    public void setHeight(Integer height) {
+    public void setHeight(int height) {
         this.height = height;
     }
 
     public void setLink(String link) {
         this.link = link;
     }
+
     // endregion
 
     // region Parcelable Methods
@@ -56,23 +71,16 @@ public class Size implements Parcelable {
 
     @Override
     public void writeToParcel(Parcel dest, int flags) {
-        dest.writeInt(getWidth());
-        dest.writeInt(getHeight());
-        dest.writeString(getLink());
+        dest.writeInt(this.width);
+        dest.writeInt(this.height);
+        dest.writeString(this.link);
     }
     // endregion
 
     public static final Parcelable.Creator<Size> CREATOR = new Parcelable.Creator<Size>() {
-
         @Override
         public Size createFromParcel(Parcel source) {
-            Size size = new Size();
-
-            size.setWidth(source.readInt());
-            size.setHeight(source.readInt());
-            size.setLink(source.readString());
-
-            return size;
+            return new Size(source);
         }
 
         @Override

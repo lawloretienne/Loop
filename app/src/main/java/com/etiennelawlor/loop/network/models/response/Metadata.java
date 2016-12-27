@@ -17,6 +17,16 @@ public class Metadata implements Parcelable {
     private Interactions interactions;
     // endregion
 
+    // region Constructors
+    public Metadata() {
+    }
+
+    protected Metadata(Parcel in) {
+        this.connections = in.readParcelable(Connections.class.getClassLoader());
+        this.interactions = in.readParcelable(Interactions.class.getClassLoader());
+    }
+    // endregion
+
     // region Getters
     public Connections getConnections() {
         return connections;
@@ -45,21 +55,15 @@ public class Metadata implements Parcelable {
 
     @Override
     public void writeToParcel(Parcel dest, int flags) {
-        dest.writeParcelable(getConnections(), flags);
-        dest.writeParcelable(getInteractions(), flags);
+        dest.writeParcelable(this.connections, flags);
+        dest.writeParcelable(this.interactions, flags);
     }
     // endregion
 
     public static final Parcelable.Creator<Metadata> CREATOR = new Parcelable.Creator<Metadata>() {
-
         @Override
         public Metadata createFromParcel(Parcel source) {
-            Metadata metadata = new Metadata();
-
-            metadata.setConnections((Connections) source.readParcelable(Connections.class.getClassLoader()));
-            metadata.setInteractions((Interactions) source.readParcelable(Interactions.class.getClassLoader()));
-
-            return metadata;
+            return new Metadata(source);
         }
 
         @Override

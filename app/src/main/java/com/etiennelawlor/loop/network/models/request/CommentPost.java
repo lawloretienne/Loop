@@ -12,9 +12,11 @@ public class CommentPost {
     // endregion
 
     // region Getters
+
     public String getText() {
-        return TextUtils.isEmpty(text) ? "" : text;
+        return text;
     }
+
     // endregion
 
     // region Setters

@@ -17,6 +17,16 @@ public class Interactions implements Parcelable {
     private Interaction like;
     // endregion
 
+    // region Constructors
+    public Interactions() {
+    }
+
+    protected Interactions(Parcel in) {
+        this.watchlater = in.readParcelable(Interaction.class.getClassLoader());
+        this.like = in.readParcelable(Interaction.class.getClassLoader());
+    }
+    // endregion
+
     // region Getters
     public Interaction getWatchlater() {
         return watchlater;
@@ -45,21 +55,15 @@ public class Interactions implements Parcelable {
 
     @Override
     public void writeToParcel(Parcel dest, int flags) {
-        dest.writeParcelable(getWatchlater(), flags);
-        dest.writeParcelable(getLike(), flags);
+        dest.writeParcelable(this.watchlater, flags);
+        dest.writeParcelable(this.like, flags);
     }
     // endregion
 
-    public static final Creator<Interactions> CREATOR = new Creator<Interactions>() {
-
+    public static final Parcelable.Creator<Interactions> CREATOR = new Parcelable.Creator<Interactions>() {
         @Override
         public Interactions createFromParcel(Parcel source) {
-            Interactions interactions = new Interactions();
-
-            interactions.setWatchlater((Interaction) source.readParcelable(Interaction.class.getClassLoader()));
-            interactions.setLike((Interaction) source.readParcelable(Interaction.class.getClassLoader()));
-
-            return interactions;
+            return new Interactions(source);
         }
 
         @Override

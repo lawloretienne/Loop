@@ -22,16 +22,17 @@ public final class OAuthResponse {
     // endregion
 
     // region Getters
+
     public String getAccessToken() {
-        return TextUtils.isEmpty(accessToken) ? "" : accessToken;
+        return accessToken;
     }
 
     public String getTokenType() {
-        return TextUtils.isEmpty(tokenType) ? "" : tokenType;
+        return tokenType;
     }
 
     public String getScope() {
-        return TextUtils.isEmpty(scope) ? "" : scope;
+        return scope;
     }
 
     public AuthorizedUser getUser() {

@@ -16,10 +16,21 @@ public class Embed implements Parcelable {
     private String html;
     // endregion
 
-    // region Getters
-    public String getHtml() {
-        return TextUtils.isEmpty(html) ? "" : html;
+    // region Constructors
+    public Embed() {
     }
+
+    protected Embed(Parcel in) {
+        this.html = in.readString();
+    }
+    // endregion
+
+    // region Getters
+
+    public String getHtml() {
+        return html;
+    }
+
     // endregion
 
     // region Setters
@@ -36,19 +47,14 @@ public class Embed implements Parcelable {
 
     @Override
     public void writeToParcel(Parcel dest, int flags) {
-        dest.writeString(getHtml());
+        dest.writeString(this.html);
     }
     // endregion
 
-    public static final Creator<Embed> CREATOR = new Creator<Embed>() {
-
+    public static final Parcelable.Creator<Embed> CREATOR = new Parcelable.Creator<Embed>() {
         @Override
         public Embed createFromParcel(Parcel source) {
-            Embed embed = new Embed();
-
-            embed.setHtml(source.readString());
-
-            return embed;
+            return new Embed(source);
         }
 
         @Override
