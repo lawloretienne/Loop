@@ -26,11 +26,14 @@ import butterknife.ButterKnife;
 
 public class SuggestionsAdapter extends BaseAdapter<String> {
 
+    // region Static Variables
+    private static String currentQuery = "";
+    private static Typeface font;
+    // endregion
+
     // region Member Variables
-    private Typeface font;
     private OnItemLongClickListener onItemLongClickListener;
     private OnSearchSuggestionCompleteClickListener onSearchSuggestionCompleteClickListener;
-    private String currentQuery = "";
     // endregion
 
     // region Interfaces
@@ -122,7 +125,7 @@ public class SuggestionsAdapter extends BaseAdapter<String> {
 
         final String suggestion = getItem(position);
         if (!TextUtils.isEmpty(suggestion)) {
-            setUpSuggestion(holder.suggestionTextView, suggestion);
+            holder.bind(suggestion);
         }
     }
 
@@ -155,23 +158,6 @@ public class SuggestionsAdapter extends BaseAdapter<String> {
         this.onSearchSuggestionCompleteClickListener = onSearchSuggestionCompleteClickListener;
     }
 
-    private void setUpSuggestion(TextView tv, String suggestion){
-        if(!TextUtils.isEmpty(suggestion)){
-            if(!TextUtils.isEmpty(currentQuery)){
-                CharSequence formattedSuggestion = Trestle.getFormattedText(
-                        new Span.Builder(suggestion)
-                                .regex(new Regex(currentQuery, Regex.CASE_INSENSITIVE))
-                                .foregroundColor(ContextCompat.getColor(tv.getContext(), R.color.primary)) // Pass resolved color instead of resource id
-                                .typeface(font)
-                                .build());
-
-                tv.setText(formattedSuggestion);
-            } else {
-                tv.setText(suggestion);
-            }
-        }
-    }
-
     public void setCurrentQuery(String query){
         currentQuery = query;
     }
@@ -191,6 +177,29 @@ public class SuggestionsAdapter extends BaseAdapter<String> {
         public SuggestionViewHolder(View view) {
             super(view);
             ButterKnife.bind(this, view);
+        }
+        // endregion
+
+        // region Helper Methods
+        private void bind(String suggestion){
+            setUpSuggestion(suggestionTextView, suggestion);
+        }
+
+        private void setUpSuggestion(TextView tv, String suggestion){
+            if(!TextUtils.isEmpty(suggestion)){
+                if(!TextUtils.isEmpty(currentQuery)){
+                    CharSequence formattedSuggestion = Trestle.getFormattedText(
+                            new Span.Builder(suggestion)
+                                    .regex(new Regex(currentQuery, Regex.CASE_INSENSITIVE))
+                                    .foregroundColor(ContextCompat.getColor(tv.getContext(), R.color.primary)) // Pass resolved color instead of resource id
+                                    .typeface(font)
+                                    .build());
+
+                    tv.setText(formattedSuggestion);
+                } else {
+                    tv.setText(suggestion);
+                }
+            }
         }
         // endregion
     }

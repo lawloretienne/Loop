@@ -33,14 +33,16 @@ import butterknife.ButterKnife;
 public class VideoCommentsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
     // region Constants
-    public static final String PATTERN = "yyyy-MM-dd'T'hh:mm:ssZ";
+    // endregion
+
+    // region Static Variables
+    private static Typeface boldFont;
+    private static Typeface italicFont;
     // endregion
 
     // region Member Variables
     private List<Comment> comments;
-    private Typeface boldFont;
     private OnItemLongClickListener onItemLongClickListener;
-    private Typeface italicFont;
     // endregion
 
     // region Interfaces
@@ -85,10 +87,8 @@ public class VideoCommentsAdapter extends RecyclerView.Adapter<RecyclerView.View
         CommentViewHolder holder = (CommentViewHolder) viewHolder;
 
         final Comment comment = comments.get(position);
-
         if (comment != null) {
-            setUpCommentText(holder.commentTextView, comment);
-            setUpCommentImage(holder.commentImageView, comment);
+            holder.bind(comment);
         }
     }
 
@@ -134,68 +134,6 @@ public class VideoCommentsAdapter extends RecyclerView.Adapter<RecyclerView.View
     public void setOnItemLongClickListener(OnItemLongClickListener onItemLongClickListener) {
         this.onItemLongClickListener = onItemLongClickListener;
     }
-
-    private void setUpCommentText(TextView tv, Comment comment){
-        String commentText = comment.getText();
-        User user = comment.getUser();
-
-        String commentDate = getCommentDate(comment);
-
-        String displayName = "";
-
-        if (user != null) {
-            displayName = user.getName();
-        }
-
-        List<Span> spans = new ArrayList<>();
-
-        if(!TextUtils.isEmpty(displayName)
-                && !TextUtils.isEmpty(commentText)
-                && !TextUtils.isEmpty(commentDate)){
-            spans.add(new Span.Builder(String.format("%s ", displayName))
-                    .foregroundColor(ContextCompat.getColor(tv.getContext(), R.color.primary))
-                    .typeface(boldFont)
-                    .build());
-            spans.add(new Span.Builder(commentText)
-                    .build());
-            spans.add(new Span.Builder("\n")
-                    .build());
-            spans.add(new Span.Builder(commentDate)
-                    .foregroundColor(ContextCompat.getColor(tv.getContext(), R.color.tertiary_text_dark))
-                    .typeface(italicFont)
-                    .build());
-        } else if(!TextUtils.isEmpty(commentText)
-                    && !TextUtils.isEmpty(commentDate)){
-            spans.add(new Span.Builder(commentText)
-                    .build());
-            spans.add(new Span.Builder("\n")
-                    .build());
-            spans.add(new Span.Builder(commentDate)
-                    .foregroundColor(ContextCompat.getColor(tv.getContext(), R.color.tertiary_text_dark))
-                    .typeface(italicFont)
-                    .build());
-        }
-
-        CharSequence formattedText = Trestle.getFormattedText(spans);
-        tv.setText(formattedText);
-    }
-
-    private String getCommentDate(Comment comment){
-        String createdOn = comment.getCreatedOn();
-
-        String formattedCreatedOn = DateUtility.getFormattedDateAndTime(DateUtility.getCalendar(createdOn, PATTERN), DateUtility.FORMAT_RELATIVE);
-        return formattedCreatedOn;
-    }
-
-    private void setUpCommentImage(AvatarView av, Comment comment){
-        User user = comment.getUser();
-
-        if(user != null){
-            av.bind(user);
-        } else {
-            av.nullify();
-        }
-    }
     // endregion
 
     // region Inner Classes
@@ -212,6 +150,73 @@ public class VideoCommentsAdapter extends RecyclerView.Adapter<RecyclerView.View
         public CommentViewHolder(View view) {
             super(view);
             ButterKnife.bind(this, view);
+        }
+        // endregion
+
+        // region Helper Methods
+        private void bind(Comment comment){
+            setUpFullComment(commentTextView, comment);
+            setUpCommentImage(commentImageView, comment);
+        }
+
+        private void setUpFullComment(TextView tv, Comment comment){
+            String commentText = comment.getText();
+            User user = comment.getUser();
+
+            String commentDate = getCommentDate(comment);
+
+            String displayName = "";
+
+            if (user != null) {
+                displayName = user.getName();
+            }
+
+            List<Span> spans = new ArrayList<>();
+
+            if(!TextUtils.isEmpty(displayName)
+                    && !TextUtils.isEmpty(commentText)
+                    && !TextUtils.isEmpty(commentDate)){
+                spans.add(new Span.Builder(String.format("%s ", displayName))
+                        .foregroundColor(ContextCompat.getColor(tv.getContext(), R.color.primary))
+                        .typeface(boldFont)
+                        .build());
+                spans.add(new Span.Builder(commentText)
+                        .build());
+                spans.add(new Span.Builder("\n")
+                        .build());
+                spans.add(new Span.Builder(commentDate)
+                        .foregroundColor(ContextCompat.getColor(tv.getContext(), R.color.tertiary_text_dark))
+                        .typeface(italicFont)
+                        .build());
+            } else if(!TextUtils.isEmpty(commentText)
+                    && !TextUtils.isEmpty(commentDate)){
+                spans.add(new Span.Builder(commentText)
+                        .build());
+                spans.add(new Span.Builder("\n")
+                        .build());
+                spans.add(new Span.Builder(commentDate)
+                        .foregroundColor(ContextCompat.getColor(tv.getContext(), R.color.tertiary_text_dark))
+                        .typeface(italicFont)
+                        .build());
+            }
+
+            CharSequence formattedText = Trestle.getFormattedText(spans);
+            tv.setText(formattedText);
+        }
+
+        private String getCommentDate(Comment comment){
+            String formattedCreatedOn = comment.getFormattedCreatedOn();
+            return formattedCreatedOn;
+        }
+
+        private void setUpCommentImage(AvatarView av, Comment comment){
+            User user = comment.getUser();
+
+            if(user != null){
+                av.bind(user);
+            } else {
+                av.nullify();
+            }
         }
         // endregion
     }
