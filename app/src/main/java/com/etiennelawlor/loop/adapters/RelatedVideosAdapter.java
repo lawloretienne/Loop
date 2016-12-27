@@ -1,6 +1,7 @@
 package com.etiennelawlor.loop.adapters;
 
 import android.graphics.Typeface;
+import android.support.v4.view.ViewCompat;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
@@ -18,26 +19,15 @@ import com.etiennelawlor.loop.LoopApplication;
 import com.etiennelawlor.loop.R;
 import com.etiennelawlor.loop.bus.RxBus;
 import com.etiennelawlor.loop.bus.events.SearchPerformedEvent;
-import com.etiennelawlor.loop.network.models.response.Interaction;
-import com.etiennelawlor.loop.network.models.response.Interactions;
-import com.etiennelawlor.loop.network.models.response.Metadata;
-import com.etiennelawlor.loop.network.models.response.Pictures;
-import com.etiennelawlor.loop.network.models.response.Size;
-import com.etiennelawlor.loop.network.models.response.Stats;
-import com.etiennelawlor.loop.network.models.response.Tag;
 import com.etiennelawlor.loop.network.models.response.User;
 import com.etiennelawlor.loop.network.models.response.Video;
 import com.etiennelawlor.loop.ui.AvatarView;
 import com.etiennelawlor.loop.ui.LoadingImageView;
-import com.etiennelawlor.loop.utilities.DateUtility;
 import com.etiennelawlor.loop.utilities.FontCache;
 import com.etiennelawlor.loop.utilities.Transformers;
 import com.greenfrvr.hashtagview.HashtagView;
 
-import java.text.NumberFormat;
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Locale;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -48,6 +38,14 @@ import butterknife.ButterKnife;
 
 public class RelatedVideosAdapter extends BaseAdapter<Video> {
 
+    // region Static Variables
+    private static boolean isLikeOn = false;
+    private static boolean isWatchLaterOn = false;
+    private static boolean hasDescription = false;
+    private static boolean hasTags = false;
+    private static Typeface boldFont;
+    // endregion
+
     // region Member Variables
     private Video video;
     private OnLikeClickListener onLikeClickListener;
@@ -55,11 +53,6 @@ public class RelatedVideosAdapter extends BaseAdapter<Video> {
     private OnCommentsClickListener onCommentsClickListener;
     private OnInfoClickListener onInfoClickListener;
     private FooterViewHolder footerViewHolder;
-    private Typeface boldFont;
-    private boolean isLikeOn = false;
-    private boolean isWatchLaterOn = false;
-    private boolean hasDescription = false;
-    private boolean hasTags = false;
     // endregion
 
     // region Interfaces
@@ -188,16 +181,7 @@ public class RelatedVideosAdapter extends BaseAdapter<Video> {
         HeaderViewHolder holder = (HeaderViewHolder) viewHolder;
 
         if(video != null){
-            setUpTitle(holder.titleTextView, video);
-            setUpSubtitle(holder.subtitleTextView, video);
-            setUpViewCount(holder.viewCountTextView, video);
-            setUpLike(holder.likeImageView, video);
-            setUpWatchLater(holder.watchLaterImageView, video);
-            setUpUserImage(holder.userImageView, video);
-            setUpUploadedDate2(holder.uploadDateTextView, video);
-            setUpDescription(holder.descriptionTextView, video);
-            setUpTags(holder.hashtagView, video);
-            setUpInfoImage(holder.infoImageView);
+            holder.bind(video);
         }
     }
 
@@ -207,11 +191,7 @@ public class RelatedVideosAdapter extends BaseAdapter<Video> {
 
         final Video video = getItem(position);
         if (video != null) {
-            setUpTitle(holder.titleTextView, video);
-            setUpSubtitle(holder.subtitleTextView, video);
-            setUpVideoThumbnail(holder.videoThumbnailImageView, video);
-            setUpDuration(holder.durationTextView, video);
-            setUpUploadedDate(holder.uploadedDateTextView, video);
+            holder.bind(video);
         }
     }
 
@@ -266,245 +246,13 @@ public class RelatedVideosAdapter extends BaseAdapter<Video> {
         this.onInfoClickListener = onInfoClickListener;
     }
 
-    private void setUpTitle(TextView tv, Video video) {
-        String name = video.getName();
-        if (!TextUtils.isEmpty(name)) {
-            tv.setText(name);
-        }
-    }
+    public static boolean isLikeOn() {return isLikeOn; }
 
-    private void setUpSubtitle(TextView tv, Video video) {
-        User user = video.getUser();
-        if (user != null) {
-            String userName = user.getName();
-            if (!TextUtils.isEmpty(userName)) {
-                tv.setText(userName);
-            }
-        }
-    }
+    public static void setIsLikeOn(boolean iLO) { isLikeOn = iLO; }
 
-    private void setUpLike(ImageView iv, Video video){
-        Metadata metadata = video.getMetadata();
-        if (metadata != null) {
-            Interactions interactions = metadata.getInteractions();
-            if (interactions != null) {
-                Interaction likeInteraction = interactions.getLike();
+    public static boolean isWatchLaterOn() {return isWatchLaterOn; }
 
-                if (likeInteraction != null) {
-                    if (likeInteraction.isAdded()) {
-                        setIsLikeOn(true);
-                        iv.setImageResource(R.drawable.ic_likes_on);
-                    }
-                }
-            }
-        }
-    }
-
-    private void setUpWatchLater(ImageView iv, Video video){
-        Metadata metadata = video.getMetadata();
-        if (metadata != null) {
-            Interactions interactions = metadata.getInteractions();
-            if (interactions != null) {
-                Interaction watchLaterInteraction = interactions.getWatchlater();
-
-                if (watchLaterInteraction != null) {
-                    if (watchLaterInteraction.isAdded()) {
-                        setIsWatchLaterOn(true);
-                        iv.setImageResource(R.drawable.ic_watch_later_on);
-                    }
-                }
-            }
-        }
-    }
-
-    public boolean isLikeOn() {return isLikeOn; }
-
-    public void setIsLikeOn(boolean isLikeOn) { this.isLikeOn = isLikeOn; }
-
-    public boolean isWatchLaterOn() {return isWatchLaterOn; }
-
-    public void setIsWatchLaterOn(boolean isWatchLaterOn) { this.isWatchLaterOn = isWatchLaterOn; }
-
-    private void setUpVideoThumbnail(ImageView iv, Video video) {
-        Pictures pictures = video.getPictures();
-        if (pictures != null) {
-            List<Size> sizes = pictures.getSizes();
-            if (sizes != null && sizes.size() > 0) {
-                Size size = sizes.get(sizes.size() - 1);
-                if (size != null) {
-                    String link = size.getLink();
-                    if (!TextUtils.isEmpty(link)) {
-                        Glide.with(iv.getContext())
-                                .load(link)
-//                                .placeholder(R.drawable.ic_placeholder)
-//                                .error(R.drawable.ic_error)
-                                .into(iv);
-                    }
-                }
-            }
-        }
-    }
-
-    private void setUpDuration(TextView tv, Video video) {
-        Integer duration = video.getDuration();
-
-        long minutes = duration / 60;
-        long seconds = duration % 60;
-
-        String time;
-        if (minutes == 0L) {
-            if (seconds > 0L) {
-                if (seconds < 10L)
-                    time = String.format("0:0%s", String.valueOf(seconds));
-                else
-                    time = String.format("0:%s", String.valueOf(seconds));
-            } else {
-                time = "0:00";
-            }
-
-        } else {
-            if (seconds > 0L) {
-                if (seconds < 10L)
-                    time = String.format("%s:0%s", String.valueOf(minutes), String.valueOf(seconds));
-                else
-                    time = String.format("%s:%s", String.valueOf(minutes), String.valueOf(seconds));
-            } else {
-                time = String.format("%s:00", String.valueOf(minutes));
-            }
-        }
-
-        tv.setText(time);
-    }
-
-    private void setUpUploadedDate(TextView tv, Video video) {
-        int viewCount = 0;
-        Stats stats = video.getStats();
-        if (stats != null) {
-            viewCount = stats.getPlays();
-        }
-
-        String createdTime = video.getCreatedTime();
-        String formattedCreatedTime = DateUtility.getFormattedDateAndTime(DateUtility.getCalendar(createdTime, PATTERN), DateUtility.FORMAT_RELATIVE);
-
-        if (viewCount > 0) {
-            String formattedViewCount = formatViewCount(viewCount);
-            if(!TextUtils.isEmpty(createdTime))
-                tv.setText(String.format("%s \u2022 %s", formattedViewCount, formattedCreatedTime));
-            else
-                tv.setText(formattedViewCount);
-
-        } else {
-            tv.setText(formattedCreatedTime);
-        }
-    }
-
-    private String formatViewCount(int viewCount) {
-        String formattedViewCount = "";
-
-        if (viewCount < 1000000000 && viewCount >= 1000000) {
-            formattedViewCount = String.format("%dM views", viewCount / 1000000);
-        } else if (viewCount < 1000000 && viewCount >= 1000) {
-            formattedViewCount = String.format("%dK views", viewCount / 1000);
-        } else if (viewCount < 1000 && viewCount > 1) {
-            formattedViewCount = String.format("%d views", viewCount);
-        } else if (viewCount == 1) {
-            formattedViewCount = String.format("%d view", viewCount);
-        }
-
-        return formattedViewCount;
-    }
-
-    private void setUpUserImage(AvatarView av, Video video) {
-        User user = video.getUser();
-        if(user != null){
-            av.bind(user);
-        } else {
-            av.nullify();
-        }
-    }
-
-    private void setUpViewCount(TextView tv, Video video) {
-        int viewCount = 0;
-        Stats stats = video.getStats();
-        if (stats != null) {
-            viewCount = stats.getPlays();
-        }
-
-        if (viewCount > 0) {
-            String formattedViewCount = NumberFormat.getNumberInstance(Locale.US).format(viewCount);
-            if (viewCount > 1) {
-                tv.setText(String.format("%s views", formattedViewCount));
-            } else {
-                tv.setText(String.format("%s view", formattedViewCount));
-            }
-            tv.setVisibility(View.VISIBLE);
-        } else {
-            tv.setVisibility(View.GONE);
-        }
-    }
-
-    private void setUpUploadedDate2(TextView tv, Video video) {
-        String createdTime = video.getCreatedTime();
-
-        String formattedCreatedTime = DateUtility.getFormattedDateAndTime(DateUtility.getCalendar(createdTime, PATTERN), DateUtility.FORMAT_RELATIVE);
-        if (!TextUtils.isEmpty(formattedCreatedTime)) {
-            tv.setText(String.format("Uploaded %s", formattedCreatedTime));
-            tv.setVisibility(View.VISIBLE);
-        } else {
-            tv.setVisibility(View.GONE);
-        }
-    }
-
-    private void setUpTags(final HashtagView htv, Video video) {
-        List<Tag> tags = video.getTags();
-        if (tags != null && tags.size() > 0) {
-            ArrayList<String> canonicalTags = new ArrayList<>();
-
-            for (Tag tag : tags) {
-                String canonicalTag = tag.getCanonical();
-                if(canonicalTag.length() > 0) {
-                    canonicalTags.add(canonicalTag);
-                }
-            }
-
-            if(canonicalTags.size() > 0){
-                hasTags = true;
-                htv.setData(canonicalTags, Transformers.HASH);
-                htv.setTypeface(boldFont);
-                htv.addOnTagClickListener(new HashtagView.TagsClickListener() {
-                    @Override
-                    public void onItemClicked(Object item) {
-                        String tag = (String) item;
-
-                        // TODO this triggers two events somehow
-                        RxBus.getInstance().send(new SearchPerformedEvent(tag));
-                    }
-                });
-                htv.setVisibility(View.VISIBLE);
-            } else {
-                htv.setVisibility(View.GONE);
-            }
-        }
-    }
-
-    private void setUpDescription(TextView tv, Video video) {
-        String description = video.getDescription();
-        if (!TextUtils.isEmpty(description)) {
-            hasDescription = true;
-//            description = description.replaceAll("[\\t\\n\\r]+", "\n");
-            tv.setText(description.trim());
-            tv.setVisibility(View.VISIBLE);
-        } else {
-            tv.setVisibility(View.GONE);
-        }
-    }
-
-    private void setUpInfoImage(ImageView iv){
-        if(hasDescription || hasTags){
-            iv.setVisibility(View.VISIBLE);
-        }
-    }
-
+    public static void setIsWatchLaterOn(boolean iWLO) { isWatchLaterOn = iWLO; }
     // endregion
 
     // region Inner Classes
@@ -543,6 +291,122 @@ public class RelatedVideosAdapter extends BaseAdapter<Video> {
             ButterKnife.bind(this, view);
         }
         // endregion
+
+        // region Helper Methods
+        private void bind(Video video){
+            setUpTitle(titleTextView, video);
+            setUpSubtitle(subtitleTextView, video);
+            setUpViewCount(viewCountTextView, video);
+            setUpLike(likeImageView, video);
+            setUpWatchLater(watchLaterImageView, video);
+            setUpUserImage(userImageView, video);
+            setUpUploadedDate(uploadDateTextView, video);
+            setUpDescription(descriptionTextView, video);
+            setUpTags(hashtagView, video);
+            setUpInfoImage(infoImageView);
+        }
+
+        private void setUpTitle(TextView tv, Video video) {
+            String name = video.getName();
+            if (!TextUtils.isEmpty(name)) {
+                tv.setText(name);
+            }
+        }
+
+        private void setUpSubtitle(TextView tv, Video video) {
+            User user = video.getUser();
+            if (user != null) {
+                String userName = user.getName();
+                if (!TextUtils.isEmpty(userName)) {
+                    tv.setText(userName);
+                }
+            }
+        }
+
+        private void setUpLike(ImageView iv, Video video){
+            boolean isLiked = video.isLiked();
+            if (isLiked) {
+                setIsLikeOn(true);
+                iv.setImageResource(R.drawable.ic_likes_on);
+            }
+        }
+
+        private void setUpWatchLater(ImageView iv, Video video){
+            boolean isAddedToWatchLater = video.isAddedToWatchLater();
+            if (isAddedToWatchLater) {
+                setIsWatchLaterOn(true);
+                iv.setImageResource(R.drawable.ic_watch_later_on);
+            }
+        }
+
+        private void setUpUserImage(AvatarView av, Video video) {
+            User user = video.getUser();
+            if(user != null){
+                av.bind(user);
+            } else {
+                av.nullify();
+            }
+        }
+
+        private void setUpViewCount(TextView tv, Video video) {
+            String formattedViewCount = video.getFormattedViewCount();
+            if(!TextUtils.isEmpty(formattedViewCount)){
+                tv.setText(formattedViewCount);
+                tv.setVisibility(View.VISIBLE);
+            } else {
+                tv.setVisibility(View.GONE);
+            }
+        }
+
+        private void setUpUploadedDate(TextView tv, Video video) {
+            String formattedCreatedTime = video.getFormattedCreatedTime();
+            if (!TextUtils.isEmpty(formattedCreatedTime)) {
+                tv.setText(formattedCreatedTime);
+                tv.setVisibility(View.VISIBLE);
+            } else {
+                tv.setVisibility(View.GONE);
+            }
+        }
+
+        private void setUpTags(final HashtagView htv, Video video) {
+            List<String> canonicalTags = video.getCanonicalTags();
+            if(canonicalTags.size() > 0){
+                hasTags = true;
+                htv.setData(canonicalTags, Transformers.HASH);
+                htv.setTypeface(boldFont);
+                htv.addOnTagClickListener(new HashtagView.TagsClickListener() {
+                    @Override
+                    public void onItemClicked(Object item) {
+                        String tag = (String) item;
+
+                        // TODO this triggers two events somehow
+                        RxBus.getInstance().send(new SearchPerformedEvent(tag));
+                    }
+                });
+                htv.setVisibility(View.VISIBLE);
+            } else {
+                htv.setVisibility(View.GONE);
+            }
+        }
+
+        private void setUpDescription(TextView tv, Video video) {
+            String formattedDescription = video.getFormattedDescription();
+            if (!TextUtils.isEmpty(formattedDescription)) {
+                hasDescription = true;
+//            formattedDescription = formattedDescription.replaceAll("[\\t\\n\\r]+", "\n");
+                tv.setText(formattedDescription);
+                tv.setVisibility(View.VISIBLE);
+            } else {
+                tv.setVisibility(View.GONE);
+            }
+        }
+
+        private void setUpInfoImage(ImageView iv){
+            if(hasDescription || hasTags){
+                iv.setVisibility(View.VISIBLE);
+            }
+        }
+        // endregion
     }
 
     public static class VideoViewHolder extends RecyclerView.ViewHolder {
@@ -551,8 +415,8 @@ public class RelatedVideosAdapter extends BaseAdapter<Video> {
         ImageView videoThumbnailImageView;
         @BindView(R.id.title_tv)
         TextView titleTextView;
-        @BindView(R.id.uploaded_date_tv)
-        TextView uploadedDateTextView;
+        @BindView(R.id.caption_tv)
+        TextView captionTextView;
         @BindView(R.id.duration_tv)
         TextView durationTextView;
         @BindView(R.id.subtitle_tv)
@@ -563,6 +427,59 @@ public class RelatedVideosAdapter extends BaseAdapter<Video> {
         VideoViewHolder(View view) {
             super(view);
             ButterKnife.bind(this, view);
+        }
+        // endregion
+
+        // region Helper Methods
+        private void bind(Video video){
+            setUpTitle(titleTextView, video);
+            setUpSubtitle(subtitleTextView, video);
+            setUpVideoThumbnail(videoThumbnailImageView, video);
+            setUpDuration(durationTextView, video);
+            setUpCaption(captionTextView, video);
+
+            int adapterPos = getAdapterPosition();
+            ViewCompat.setTransitionName(subtitleTextView,"myTransition"+adapterPos);
+        }
+
+        private void setUpTitle(TextView tv, Video video) {
+            String name = video.getName();
+            if (!TextUtils.isEmpty(name)) {
+                tv.setText(name);
+            }
+        }
+
+        private void setUpSubtitle(TextView tv, Video video) {
+            User user = video.getUser();
+            if (user != null) {
+                String userName = user.getName();
+                if (!TextUtils.isEmpty(userName)) {
+                    tv.setText(userName);
+                }
+            }
+        }
+
+        private void setUpVideoThumbnail(ImageView iv, Video video) {
+            String thumbnailUrl = video.getThumbnailUrl();
+            if (!TextUtils.isEmpty(thumbnailUrl)) {
+                Glide.with(iv.getContext())
+                        .load(thumbnailUrl)
+//                                .placeholder(R.drawable.ic_placeholder)
+//                                .error(R.drawable.ic_error)
+                        .into(iv);
+            }
+        }
+
+        private void setUpDuration(TextView tv, Video video) {
+            String formattedDuration = video.getFormattedDuration();
+            if(!TextUtils.isEmpty(formattedDuration))
+                tv.setText(formattedDuration);
+        }
+
+        private void setUpCaption(TextView tv, Video video) {
+            String caption = video.getCaption();
+            if(!TextUtils.isEmpty(caption))
+                tv.setText(caption);
         }
         // endregion
     }

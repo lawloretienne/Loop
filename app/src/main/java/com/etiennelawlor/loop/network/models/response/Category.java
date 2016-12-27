@@ -6,6 +6,8 @@ import android.text.TextUtils;
 
 import com.google.gson.annotations.SerializedName;
 
+import java.util.List;
+
 /**
  * Created by etiennelawlor on 5/23/15.
  */
@@ -66,6 +68,27 @@ public class Category implements Parcelable {
         return metadata;
     }
 
+    public String getThumbnailUrl() {
+        String thumbnailUrl = "";
+        if(pictures != null) {
+            List<Size> sizes = pictures.getSizes();
+            if (sizes != null && sizes.size() > 0) {
+                Size size = sizes.get(sizes.size() - 1);
+                if (size != null) {
+                    thumbnailUrl = size.getLink();
+                }
+            }
+        }
+        return thumbnailUrl;
+    }
+
+    public String getFormattedCategoryName(){
+        String formattedCategoryName = name;
+        if(formattedCategoryName.contains("&")){
+            formattedCategoryName = formattedCategoryName.replace("&", "\n&");
+        }
+        return formattedCategoryName;
+    }
     // endregion
 
     // region Setters

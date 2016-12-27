@@ -68,12 +68,11 @@
             app:textFont="ubuntu_medium"/>
 
         <com.etiennelawlor.loop.ui.CustomFontTextView
-            android:id="@+id/uploaded_date_tv"
+            android:id="@+id/caption_tv"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textColor="@color/tertiary_text_dark"
             android:transitionName="uploadedTransition"
-            tools:text="Uploaded date"
             android:textSize="14sp"
             app:textFont="ubuntu_medium"/>
 

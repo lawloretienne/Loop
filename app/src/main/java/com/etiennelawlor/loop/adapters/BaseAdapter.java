@@ -14,7 +14,6 @@ import java.util.List;
 public abstract class BaseAdapter<T> extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
     // region Constants
-    public static final String PATTERN = "yyyy-MM-dd'T'hh:mm:ssZ";
     protected static final int HEADER = 0;
     protected static final int ITEM = 1;
     protected static final int FOOTER = 2;

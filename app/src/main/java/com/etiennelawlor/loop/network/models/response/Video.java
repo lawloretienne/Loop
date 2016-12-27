@@ -4,16 +4,25 @@ import android.net.Uri;
 import android.os.Parcel;
 import android.os.Parcelable;
 import android.text.TextUtils;
+import android.view.View;
 
+import com.etiennelawlor.loop.R;
+import com.etiennelawlor.loop.utilities.DateUtility;
 import com.google.gson.annotations.SerializedName;
 
+import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
 /**
  * Created by etiennelawlor on 5/23/15.
  */
 public class Video implements Parcelable {
+
+    // region Constants
+    public static final String PATTERN = "yyyy-MM-dd'T'hh:mm:ssZ";
+    // endregion
 
     // region Fields
     @SerializedName("uri")
@@ -170,6 +179,162 @@ public class Video implements Parcelable {
         return id;
     }
 
+    public String getThumbnailUrl(){
+        String thumbnailUrl = "";
+        if (pictures != null) {
+            List<Size> sizes = pictures.getSizes();
+            if (sizes != null && sizes.size() > 0) {
+                Size size = sizes.get(sizes.size() - 1);
+                if (size != null) {
+                    thumbnailUrl = size.getLink();
+                }
+            }
+        }
+        return thumbnailUrl;
+    }
+
+    public String getFormattedDuration(){
+        long minutes = duration / 60;
+        long seconds = duration % 60;
+
+        String formattedDuration;
+        if (minutes == 0L) {
+            if (seconds > 0L) {
+                if (seconds < 10L)
+                    formattedDuration = String.format("0:0%s", String.valueOf(seconds));
+                else
+                    formattedDuration = String.format("0:%s", String.valueOf(seconds));
+            } else {
+                formattedDuration = "0:00";
+            }
+        } else {
+            if (seconds > 0L) {
+                if (seconds < 10L)
+                    formattedDuration = String.format("%s:0%s", String.valueOf(minutes), String.valueOf(seconds));
+                else
+                    formattedDuration = String.format("%s:%s", String.valueOf(minutes), String.valueOf(seconds));
+            } else {
+                formattedDuration = String.format("%s:00", String.valueOf(minutes));
+            }
+        }
+        return formattedDuration;
+    }
+
+    public String getCaption(){
+        String caption = "";
+        int viewCount = 0;
+        if (stats != null) {
+            viewCount = stats.getPlays();
+        }
+
+        String formattedCreatedTime = DateUtility.getFormattedDateAndTime(DateUtility.getCalendar(createdTime, PATTERN), DateUtility.FORMAT_RELATIVE);
+
+        if (viewCount > 0) {
+            String formattedViewCount = formatViewCount(viewCount);
+            if(!TextUtils.isEmpty(createdTime))
+                caption = String.format("%s \u2022 %s", formattedViewCount, formattedCreatedTime);
+            else
+                caption = formattedViewCount;
+
+        } else {
+            caption = formattedCreatedTime;
+        }
+        return caption;
+    }
+
+    private String formatViewCount(int viewCount) {
+        String formattedViewCount = "";
+
+        if (viewCount < 1000000000 && viewCount >= 1000000) {
+            formattedViewCount = String.format("%dM views", viewCount / 1000000);
+        } else if (viewCount < 1000000 && viewCount >= 1000) {
+            formattedViewCount = String.format("%dK views", viewCount / 1000);
+        } else if (viewCount < 1000 && viewCount > 1) {
+            formattedViewCount = String.format("%d views", viewCount);
+        } else if (viewCount == 1) {
+            formattedViewCount = String.format("%d view", viewCount);
+        }
+
+        return formattedViewCount;
+    }
+
+    public boolean isLiked(){
+        boolean isLiked = false;
+        if (metadata != null) {
+            Interactions interactions = metadata.getInteractions();
+            if (interactions != null) {
+                Interaction likeInteraction = interactions.getLike();
+                if (likeInteraction != null) {
+                    if (likeInteraction.isAdded()) {
+                        isLiked = true;
+                    }
+                }
+            }
+        }
+        return isLiked;
+    }
+
+    public boolean isAddedToWatchLater(){
+        boolean isAddedToWatchLater = false;
+        if (metadata != null) {
+            Interactions interactions = metadata.getInteractions();
+            if (interactions != null) {
+                Interaction watchLaterInteraction = interactions.getWatchlater();
+                if (watchLaterInteraction != null) {
+                    if (watchLaterInteraction.isAdded()) {
+                        isAddedToWatchLater = true;
+                    }
+                }
+            }
+        }
+        return isAddedToWatchLater;
+    }
+
+    public String getFormattedViewCount(){
+        String formattedViewCount = "";
+
+        int viewCount = 0;
+        if (stats != null) {
+            viewCount = stats.getPlays();
+        }
+
+        if (viewCount > 0) {
+            formattedViewCount = NumberFormat.getNumberInstance(Locale.US).format(viewCount);
+            if (viewCount > 1) {
+                formattedViewCount = String.format("%s views", formattedViewCount);
+            } else {
+                formattedViewCount = String.format("%s view", formattedViewCount);
+            }
+        }
+        return formattedViewCount;
+    }
+
+    public String getFormattedCreatedTime(){
+        String formattedCreatedTime = DateUtility.getFormattedDateAndTime(DateUtility.getCalendar(createdTime, PATTERN), DateUtility.FORMAT_RELATIVE);
+        if(!TextUtils.isEmpty(formattedCreatedTime))
+            formattedCreatedTime = String.format("Uploaded %s", formattedCreatedTime);
+        return formattedCreatedTime;
+    }
+
+    public List<String> getCanonicalTags(){
+        ArrayList<String> canonicalTags = new ArrayList<>();
+        if (tags != null && tags.size() > 0) {
+            for (Tag tag : tags) {
+                String canonicalTag = tag.getCanonical();
+                if (canonicalTag.length() > 0) {
+                    canonicalTags.add(canonicalTag);
+                }
+            }
+        }
+        return canonicalTags;
+    }
+
+    public String getFormattedDescription(){
+        String formattedDescription = "";
+        if(!TextUtils.isEmpty(description))
+            formattedDescription = description.trim();
+        return formattedDescription;
+    }
     // endregion
 
     // region Setters

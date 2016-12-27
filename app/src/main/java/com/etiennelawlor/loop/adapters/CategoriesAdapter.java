@@ -98,8 +98,7 @@ public class CategoriesAdapter extends BaseAdapter<Category> {
 
         Category category = getItem(position);
         if (category != null) {
-            setUpThumbnail(holder.videoThumbnailImageView, category);
-            setUpTitle(holder.titleTextView, category);
+            holder.bind(category);
         }
     }
 
@@ -131,45 +130,6 @@ public class CategoriesAdapter extends BaseAdapter<Category> {
         add(new Category());
     }
 
-    // region Helper Methods
-
-    private void setUpThumbnail(DynamicHeightImageView iv, Category category){
-//            holder.mVideoThumbnailImageView.setHeightRatio(9.0D/16.0D);
-        iv.setHeightRatio(1.0D/1.0D);
-
-        Pictures pictures = category.getPictures();
-        if(pictures != null){
-            List<Size> sizes = pictures.getSizes();
-            if(sizes != null && sizes.size() > 0){
-                Size size = sizes.get(sizes.size()-1);
-                if(size != null){
-                    String thumbnail = size.getLink();
-                    if(!TextUtils.isEmpty(thumbnail)){
-                        Glide.with(iv.getContext())
-                                .load(thumbnail)
-//                                .placeholder(R.drawable.ic_placeholder)
-//                                .error(R.drawable.ic_error)
-                                .into(iv);
-                    }
-                }
-            }
-        }
-    }
-
-    private void setUpTitle(TextView tv, Category category){
-        String name = category.getName();
-
-        if(!TextUtils.isEmpty(name)){
-            if(name.contains("&")){
-                name = name.replace("&", "\n&");
-            }
-
-            tv.setText(name);
-        }
-    }
-
-    // endregion
-
     // region Inner Classes
 
     public static class CategoryViewHolder extends RecyclerView.ViewHolder {
@@ -184,6 +144,33 @@ public class CategoriesAdapter extends BaseAdapter<Category> {
         public CategoryViewHolder(View view) {
             super(view);
             ButterKnife.bind(this, view);
+        }
+        // endregion
+
+        // region Helper Methods
+        private void bind(Category category){
+            setUpThumbnail(videoThumbnailImageView, category);
+            setUpTitle(titleTextView, category);
+        }
+
+        private void setUpThumbnail(DynamicHeightImageView iv, Category category){
+            iv.setHeightRatio(1.0D/1.0D);
+
+            String thumbnailUrl = category.getThumbnailUrl();
+            if(!TextUtils.isEmpty(thumbnailUrl)){
+                Glide.with(iv.getContext())
+                        .load(thumbnailUrl)
+//                                .placeholder(R.drawable.ic_placeholder)
+//                                .error(R.drawable.ic_error)
+                        .into(iv);
+            }
+        }
+
+        private void setUpTitle(TextView tv, Category category){
+            String formattedCategoryName = category.getFormattedCategoryName();
+            if(!TextUtils.isEmpty(formattedCategoryName)){
+                tv.setText(formattedCategoryName);
+            }
         }
         // endregion
     }

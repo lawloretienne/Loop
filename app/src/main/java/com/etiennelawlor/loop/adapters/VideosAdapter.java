@@ -102,14 +102,7 @@ public class VideosAdapter extends BaseAdapter<Video> {
 
         final Video video = getItem(position);
         if (video != null) {
-            setUpTitle(holder.titleTextView, video);
-            setUpSubtitle(holder.subtitleTextView, video);
-            setUpVideoThumbnail(holder.videoThumbnailImageView, video);
-            setUpDuration(holder.durationTextView, video);
-            setUpUploadedDate(holder.uploadedDateTextView, video);
-
-            int adapterPos = holder.getAdapterPosition();
-            ViewCompat.setTransitionName(holder.subtitleTextView,"myTransition"+adapterPos);
+            holder.bind(video);
         }
     }
 
@@ -143,121 +136,6 @@ public class VideosAdapter extends BaseAdapter<Video> {
         add(new Video());
     }
 
-    // region Helper Methods
-    private void setUpTitle(TextView tv, Video video) {
-        String name = video.getName();
-        if (!TextUtils.isEmpty(name)) {
-            tv.setText(name);
-        }
-    }
-
-    private void setUpSubtitle(TextView tv, Video video) {
-        User user = video.getUser();
-        if (user != null) {
-            String userName = user.getName();
-            if (!TextUtils.isEmpty(userName)) {
-                tv.setText(userName);
-            }
-        }
-    }
-
-    private void setUpVideoThumbnail(ImageView iv, Video video) {
-        boolean isPictureSet = false;
-        Pictures pictures = video.getPictures();
-        if (pictures != null) {
-            List<Size> sizes = pictures.getSizes();
-            if (sizes != null && sizes.size() > 0) {
-                Size size = sizes.get(sizes.size() - 1);
-                if (size != null) {
-                    String link = size.getLink();
-                    if (!TextUtils.isEmpty(link)) {
-                        Glide.with(iv.getContext())
-                                .load(link)
-//                                .placeholder(R.drawable.ic_placeholder)
-//                                .error(R.drawable.ic_error)
-                                .into(iv);
-                        isPictureSet = true;
-                    }
-                }
-            }
-        }
-
-        if(!isPictureSet){
-            iv.setImageBitmap(null);
-        }
-    }
-
-    private void setUpDuration(TextView tv, Video video) {
-        Integer duration = video.getDuration();
-
-        long minutes = duration / 60;
-        long seconds = duration % 60;
-
-        String time;
-        if (minutes == 0L) {
-            if (seconds > 0L) {
-                if (seconds < 10L)
-                    time = String.format("0:0%s", String.valueOf(seconds));
-                else
-                    time = String.format("0:%s", String.valueOf(seconds));
-            } else {
-                time = "0:00";
-            }
-
-        } else {
-            if (seconds > 0L) {
-                if (seconds < 10L)
-                    time = String.format("%s:0%s", String.valueOf(minutes), String.valueOf(seconds));
-                else
-                    time = String.format("%s:%s", String.valueOf(minutes), String.valueOf(seconds));
-            } else {
-                time = String.format("%s:00", String.valueOf(minutes));
-            }
-        }
-
-        tv.setText(time);
-    }
-
-    private void setUpUploadedDate(TextView tv, Video video) {
-        String createdTime = video.getCreatedTime();
-
-        int viewCount = 0;
-        Stats stats = video.getStats();
-        if (stats != null) {
-            viewCount = stats.getPlays();
-        }
-
-        String formattedCreatedTime = DateUtility.getFormattedDateAndTime(DateUtility.getCalendar(createdTime, PATTERN), DateUtility.FORMAT_RELATIVE);
-
-        if (viewCount > 0) {
-            String formattedViewCount = formatViewCount(viewCount);
-            if(!TextUtils.isEmpty(createdTime))
-                tv.setText(String.format("%s \u2022 %s", formattedViewCount, formattedCreatedTime));
-            else
-                tv.setText(formattedViewCount);
-
-        } else {
-            tv.setText(formattedCreatedTime);
-        }
-    }
-
-    private String formatViewCount(int viewCount) {
-        String formattedViewCount = "";
-
-        if (viewCount < 1000000000 && viewCount >= 1000000) {
-            formattedViewCount = String.format("%dM views", viewCount / 1000000);
-        } else if (viewCount < 1000000 && viewCount >= 1000) {
-            formattedViewCount = String.format("%dK views", viewCount / 1000);
-        } else if (viewCount < 1000 && viewCount > 1) {
-            formattedViewCount = String.format("%d views", viewCount);
-        } else if (viewCount == 1) {
-            formattedViewCount = String.format("%d view", viewCount);
-        }
-
-        return formattedViewCount;
-    }
-    // endregion
-
     // region Inner Classes
 
     public static class VideoViewHolder extends RecyclerView.ViewHolder {
@@ -266,8 +144,8 @@ public class VideosAdapter extends BaseAdapter<Video> {
         ImageView videoThumbnailImageView;
         @BindView(R.id.title_tv)
         TextView titleTextView;
-        @BindView(R.id.uploaded_date_tv)
-        TextView uploadedDateTextView;
+        @BindView(R.id.caption_tv)
+        TextView captionTextView;
         @BindView(R.id.duration_tv)
         TextView durationTextView;
         @BindView(R.id.subtitle_tv)
@@ -278,6 +156,59 @@ public class VideosAdapter extends BaseAdapter<Video> {
         public VideoViewHolder(View view) {
             super(view);
             ButterKnife.bind(this, view);
+        }
+        // endregion
+
+        // region Helper Methods
+        private void bind(Video video){
+            setUpTitle(titleTextView, video);
+            setUpSubtitle(subtitleTextView, video);
+            setUpVideoThumbnail(videoThumbnailImageView, video);
+            setUpDuration(durationTextView, video);
+            setUpCaption(captionTextView, video);
+
+            int adapterPos = getAdapterPosition();
+            ViewCompat.setTransitionName(subtitleTextView,"myTransition"+adapterPos);
+        }
+
+        private void setUpTitle(TextView tv, Video video) {
+            String name = video.getName();
+            if (!TextUtils.isEmpty(name)) {
+                tv.setText(name);
+            }
+        }
+
+        private void setUpSubtitle(TextView tv, Video video) {
+            User user = video.getUser();
+            if (user != null) {
+                String userName = user.getName();
+                if (!TextUtils.isEmpty(userName)) {
+                    tv.setText(userName);
+                }
+            }
+        }
+
+        private void setUpVideoThumbnail(ImageView iv, Video video) {
+            String thumbnailUrl = video.getThumbnailUrl();
+            if (!TextUtils.isEmpty(thumbnailUrl)) {
+                Glide.with(iv.getContext())
+                        .load(thumbnailUrl)
+//                                .placeholder(R.drawable.ic_placeholder)
+//                                .error(R.drawable.ic_error)
+                        .into(iv);
+            }
+        }
+
+        private void setUpDuration(TextView tv, Video video) {
+            String formattedDuration = video.getFormattedDuration();
+            if(!TextUtils.isEmpty(formattedDuration))
+                tv.setText(formattedDuration);
+        }
+
+        private void setUpCaption(TextView tv, Video video) {
+            String caption = video.getCaption();
+            if(!TextUtils.isEmpty(caption))
+                tv.setText(caption);
         }
         // endregion
     }
