@@ -4,7 +4,7 @@
 
 ## Overview 
 
-<a href="https://developer.vimeo.com/api"><img src="images/ic_vimeo.png" align="right"></a>
+<a href="https://developer.vimeo.com/api"><img src="images/ic_vimeo2.png" align="right"></a>
 
 Watch the world’s best videos from the Vimeo community.  Like videos and add videos to your watch later queue.
 
