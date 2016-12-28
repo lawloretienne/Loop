@@ -8,7 +8,7 @@
 
 Watch the world’s best videos from the Vimeo community.  Like videos and add videos to your watch later queue.
 
-In order to run this project, you must <a href="register your app">Register Yout App</a> to get proper credentials such as client_id, client_secret ...  Then you can store these credentials into `/res/values/defaults.xml` . 
+In order to run this project, you must <a href="register your app">Register Your App</a> to get proper credentials such as client_id, client_secret ...  Then you can store these credentials into `/res/values/defaults.xml` . 
 
 Otherwise you can just download the .APK in <a href="https://github.com/lawloretienne/Loop/releases">Releases</a>
 
