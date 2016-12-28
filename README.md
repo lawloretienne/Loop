@@ -13,3 +13,5 @@ In order to run this project, you must <a href="register your app">Register Yout
 Otherwise you can just download the .APK in <a href="https://github.com/lawloretienne/Loop/releases">Releases</a>
 
 ## Screencast
+
+[![Loop](https://raw.githubusercontent.com/lawloretienne/Loop/master/images/Loop_Screenshot_Of_Screencast.png)](https://goo.gl/photos/KiiWTShNMZTK8Vha8 "Loop")
