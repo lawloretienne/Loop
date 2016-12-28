@@ -14,4 +14,4 @@ Otherwise you can just download the .APK in <a href="https://github.com/lawloret
 
 ## Screencast
 
-[![Loop](https://raw.githubusercontent.com/lawloretienne/Loop/master/images/Loop_Screenshot_Of_Screencast.png)](https://goo.gl/photos/KiiWTShNMZTK8Vha8 "Loop")
+[![Loop](https://raw.githubusercontent.com/lawloretienne/Loop/master/images/Loop_Screenshot_Of_Screencast_2.png)](https://goo.gl/photos/KiiWTShNMZTK8Vha8 "Loop")
