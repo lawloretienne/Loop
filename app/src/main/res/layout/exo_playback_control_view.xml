@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:layout_marginBottom="0dp"
-    android:background="@color/fifty_percent_transparency_black"
+    android:background="@drawable/exo_playback_control_view_bg"
     android:orientation="horizontal"
     android:layout_gravity="bottom">
 
@@ -22,21 +22,24 @@
             android:layout_height="wrap_content">
 
             <ImageButton android:id="@id/exo_play"
-                android:layout_width="wrap_content"
+                android:layout_width="56dp"
                 android:layout_height="wrap_content"
+                style="?borderlessButtonStyle"
                 app:srcCompat="@drawable/ic_play"/>
 
             <ImageButton android:id="@id/exo_pause"
-                android:layout_width="wrap_content"
+                android:layout_width="56dp"
                 android:layout_height="wrap_content"
+                style="?borderlessButtonStyle"
                 app:srcCompat="@drawable/ic_pause"/>
 
         </FrameLayout>
 
         <ImageButton android:id="@+id/exo_replay"
-            android:layout_width="wrap_content"
+            android:layout_width="56dp"
             android:layout_height="wrap_content"
             android:visibility="gone"
+            style="?borderlessButtonStyle"
             app:srcCompat="@drawable/ic_replay"/>
 
     </FrameLayout>
@@ -45,7 +48,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_gravity="center_vertical"
-        android:layout_marginRight="16dp"
+        android:gravity="center_vertical"
         android:orientation="horizontal">
 
         <com.etiennelawlor.loop.ui.CustomFontTextView
@@ -70,6 +73,13 @@
             app:textFont="ubuntu_medium"
             android:includeFontPadding="false"
             android:textColor="@color/primary_text_light"/>
+
+        <android.support.v7.app.MediaRouteButton
+            android:id="@+id/mrb"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginRight="8dp"
+            android:layout_marginLeft="8dp"/>
 
     </LinearLayout>
 

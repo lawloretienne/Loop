@@ -6,9 +6,6 @@ import android.support.v4.view.ViewCompat;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
-import android.view.Menu;
-import android.view.MenuInflater;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
@@ -44,7 +41,7 @@ import retrofit2.Response;
 /**
  * Created by etiennelawlor on 5/23/15.
  */
-public class VideosFragment extends BaseFragment implements VideosAdapter.OnItemClickListener, VideosAdapter.OnReloadClickListener {
+public class RelatedVideosFragment extends BaseFragment implements VideosAdapter.OnItemClickListener, VideosAdapter.OnReloadClickListener {
 
     // region Constants
     public static final int PAGE_SIZE = 30;
@@ -69,15 +66,12 @@ public class VideosFragment extends BaseFragment implements VideosAdapter.OnItem
     // region Member Variables
     private boolean isLastPage = false;
     private int currentPage = 1;
-    private int selectedSortByKey = 0;
-    private int selectedSortOrderKey = 1;
     private boolean isLoading = false;
     private String sortByValue = "relevant";
     private String sortOrderValue = "desc";
-    private String filter;
     private Unbinder unbinder;
+    private long videoId;
     private VideosAdapter videosAdapter;
-    private String query;
     private LinearLayoutManager layoutManager;
     private VimeoService vimeoService;
     // endregion
@@ -111,19 +105,14 @@ public class VideosFragment extends BaseFragment implements VideosAdapter.OnItem
         errorLinearLayout.setVisibility(View.GONE);
         loadingImageView.setVisibility(View.VISIBLE);
 
-        Call findVideosCall = vimeoService.findVideos(query,
-                sortByValue,
-                sortOrderValue,
-                currentPage,
-                PAGE_SIZE,
-                filter);
-        calls.add(findVideosCall);
-        findVideosCall.enqueue(findVideosFirstFetchCallback);
+        Call findRelatedVideosCall = vimeoService.findRelatedVideos(videoId, currentPage, PAGE_SIZE);
+        calls.add(findRelatedVideosCall);
+        findRelatedVideosCall.enqueue(findRelatedVideosFirstFetchCallback);
     }
     // endregion
 
     // region Callbacks
-    private Callback<VideosEnvelope> findVideosFirstFetchCallback = new Callback<VideosEnvelope>() {
+    private Callback<VideosEnvelope> findRelatedVideosFirstFetchCallback = new Callback<VideosEnvelope>() {
         @Override
         public void onResponse(Call<VideosEnvelope> call, Response<VideosEnvelope> response) {
             loadingImageView.setVisibility(View.GONE);
@@ -170,7 +159,7 @@ public class VideosFragment extends BaseFragment implements VideosAdapter.OnItem
         }
     };
 
-    private Callback<VideosEnvelope> findVideosNextFetchCallback = new Callback<VideosEnvelope>() {
+    private Callback<VideosEnvelope> findRelatedVideosNextFetchCallback = new Callback<VideosEnvelope>() {
         @Override
         public void onResponse(Call<VideosEnvelope> call, Response<VideosEnvelope> response) {
             videosAdapter.removeFooter();
@@ -218,17 +207,17 @@ public class VideosFragment extends BaseFragment implements VideosAdapter.OnItem
     // endregion
 
     // region Constructors
-    public VideosFragment() {
+    public RelatedVideosFragment() {
     }
     // endregion
 
     // region Factory Methods
-    public static VideosFragment newInstance() {
-        return new VideosFragment();
+    public static RelatedVideosFragment newInstance() {
+        return new RelatedVideosFragment();
     }
 
-    public static VideosFragment newInstance(Bundle extras) {
-        VideosFragment fragment = new VideosFragment();
+    public static RelatedVideosFragment newInstance(Bundle extras) {
+        RelatedVideosFragment fragment = new RelatedVideosFragment();
         fragment.setArguments(extras);
         return fragment;
     }
@@ -241,8 +230,7 @@ public class VideosFragment extends BaseFragment implements VideosAdapter.OnItem
         super.onCreate(savedInstanceState);
 
         if (getArguments() != null) {
-            query = getArguments().getString(WatchNowFragment.KEY_QUERY);
-            filter = getArguments().getString(WatchNowFragment.KEY_FILTER);
+            videoId = getArguments().getLong(VideoDetailsFragment.KEY_VIDEO_ID);
         }
 
         AccessToken token = LoopPrefs.getAccessToken(getActivity());
@@ -267,8 +255,6 @@ public class VideosFragment extends BaseFragment implements VideosAdapter.OnItem
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-//        ((AppCompatActivity)getActivity()).getSupportActionBar().setTitle(mQuery);
-
         layoutManager = new LinearLayoutManager(getActivity());
         recyclerView.setLayoutManager(layoutManager);
 
@@ -283,14 +269,9 @@ public class VideosFragment extends BaseFragment implements VideosAdapter.OnItem
         // Pagination
         recyclerView.addOnScrollListener(recyclerViewOnScrollListener);
 
-        Call findVideosCall = vimeoService.findVideos(query,
-                sortByValue,
-                sortOrderValue,
-                currentPage,
-                PAGE_SIZE,
-                filter);
-        calls.add(findVideosCall);
-        findVideosCall.enqueue(findVideosFirstFetchCallback);
+        Call findRelatedVideosCall = vimeoService.findRelatedVideos(videoId, currentPage, PAGE_SIZE);
+        calls.add(findRelatedVideosCall);
+        findRelatedVideosCall.enqueue(findRelatedVideosFirstFetchCallback);
     }
 
     @Override
@@ -301,26 +282,6 @@ public class VideosFragment extends BaseFragment implements VideosAdapter.OnItem
         unbinder.unbind();
     }
     // endregion
-
-    @Override
-    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-        super.onCreateOptionsMenu(menu, inflater);
-
-//        inflater.inflate(R.menu.videos_menu, menu);
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()) {
-//            case R.id.sort:
-//                showSortDialog();
-//                break;
-            default:
-                // do nothing
-                break;
-        }
-        return super.onOptionsItemSelected(item);
-    }
 
     // region VideosAdapter.OnItemClickListener Methods
     @Override
@@ -375,14 +336,9 @@ public class VideosFragment extends BaseFragment implements VideosAdapter.OnItem
     public void onReloadClick() {
         videosAdapter.updateFooter(VideosAdapter.FooterType.LOAD_MORE);
 
-        Call findLikedVideosCall = vimeoService.findVideos(query,
-                sortByValue,
-                sortOrderValue,
-                currentPage,
-                PAGE_SIZE,
-                filter);
-        calls.add(findLikedVideosCall);
-        findLikedVideosCall.enqueue(findVideosNextFetchCallback);
+        Call findRelatedVideosCall = vimeoService.findRelatedVideos(videoId, currentPage, PAGE_SIZE);
+        calls.add(findRelatedVideosCall);
+        findRelatedVideosCall.enqueue(findRelatedVideosNextFetchCallback);
     }
 
     // endregion
@@ -393,77 +349,9 @@ public class VideosFragment extends BaseFragment implements VideosAdapter.OnItem
 
         currentPage += 1;
 
-        Call findVideosCall = vimeoService.findVideos(query,
-                sortByValue,
-                sortOrderValue,
-                currentPage,
-                PAGE_SIZE,
-                filter);
-        calls.add(findVideosCall);
-        findVideosCall.enqueue(findVideosNextFetchCallback);
-    }
-
-//    private void showSortDialog() {
-//        LayoutInflater li = LayoutInflater.from(getActivity());
-//        View promptsView = li.inflate(R.layout.sort_dialog, null);
-//        final Spinner sortBySpinner = (Spinner) promptsView.findViewById(R.id.sort_by_s);
-//        final Spinner sortOrderSpinner = (Spinner) promptsView.findViewById(R.id.sort_order_s);
-//
-//        String[] mSortByKeysArray = getResources().getStringArray(R.array.videos_sort_by_keys);
-//        ArrayAdapter<String> sortByAdapter = new ArrayAdapter<>(getActivity(), android.R.layout.simple_spinner_dropdown_item, mSortByKeysArray);
-//        sortBySpinner.setAdapter(sortByAdapter);
-//
-//        String[] mSortOrderKeysArray = getResources().getStringArray(R.array.videos_sort_order_keys);
-//        ArrayAdapter<String> sortOrderAdapter = new ArrayAdapter<>(getActivity(), android.R.layout.simple_spinner_dropdown_item, mSortOrderKeysArray);
-//        sortOrderSpinner.setAdapter(sortOrderAdapter);
-//
-//        sortBySpinner.setSelection(selectedSortByKey);
-//        sortOrderSpinner.setSelection(selectedSortOrderKey);
-//
-//        AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(getActivity(), R.style.DialogTheme);
-//        alertDialogBuilder.setView(promptsView);
-//        alertDialogBuilder.setPositiveButton(getString(android.R.string.ok), new DialogInterface.OnClickListener() {
-//            @Override
-//            public void onClick(DialogInterface dialog, int which) {
-//                selectedSortByKey = sortBySpinner.getSelectedItemPosition();
-//                selectedSortOrderKey = sortOrderSpinner.getSelectedItemPosition();
-//
-//                String[] sortByValues = getResources().getStringArray(R.array.videos_sort_by_values);
-//                sortByValue = sortByValues[selectedSortByKey];
-//
-//                String[] sortOrderValues = getResources().getStringArray(R.array.videos_sort_order_values);
-//                sortOrderValue = sortOrderValues[selectedSortOrderKey];
-//
-//                videosAdapter.clear();
-//
-//                loadingImageView.setVisibility(View.VISIBLE);
-//
-//                currentPage = 1;
-//
-//                Call findVideosCall = vimeoService.findVideos(query,
-//                        sortByValue,
-//                        sortOrderValue,
-//                        currentPage,
-//                        PAGE_SIZE,
-//                        filter);
-//                calls.add(findVideosCall);
-//                findVideosCall.enqueue(findVideosFirstFetchCallback);
-//
-//                dialog.dismiss();
-//            }
-//        });
-//        alertDialogBuilder.setNegativeButton(getString(android.R.string.cancel), new DialogInterface.OnClickListener() {
-//            @Override
-//            public void onClick(DialogInterface dialog, int which) {
-//                dialog.dismiss();
-//            }
-//        });
-//
-//        alertDialogBuilder.show();
-//    }
-
-    public String getQuery() {
-        return query;
+        Call findRelatedVideosCall = vimeoService.findRelatedVideos(videoId, currentPage, PAGE_SIZE);
+        calls.add(findRelatedVideosCall);
+        findRelatedVideosCall.enqueue(findRelatedVideosNextFetchCallback);
     }
 
     private void removeListeners(){

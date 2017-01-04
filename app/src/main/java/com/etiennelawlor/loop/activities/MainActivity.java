@@ -24,7 +24,6 @@ import com.etiennelawlor.loop.bus.RxBus;
 import com.etiennelawlor.loop.bus.events.LeftDrawableClickedEvent;
 import com.etiennelawlor.loop.fragments.ExploreFragment;
 import com.etiennelawlor.loop.fragments.LikedVideosFragment;
-import com.etiennelawlor.loop.fragments.PlaceholderFragment;
 import com.etiennelawlor.loop.fragments.WatchLaterVideosFragment;
 import com.etiennelawlor.loop.fragments.WatchNowFragment;
 import com.etiennelawlor.loop.network.models.response.AuthorizedUser;

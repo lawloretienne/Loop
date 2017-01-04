@@ -55,6 +55,9 @@
     <string name="no_available_categories">No available categories.</string>
     <string name="trending">Trending</string>
     <string name="my_feed">My Feed</string>
+    <string name="cast">Cast</string>
+    <string name="info">Info</string>
+    <string name="related_videos">Related Videos</string>
 
 
 </resources>

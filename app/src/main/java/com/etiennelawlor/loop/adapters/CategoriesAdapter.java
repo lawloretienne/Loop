@@ -13,12 +13,8 @@ import android.widget.TextView;
 import com.bumptech.glide.Glide;
 import com.etiennelawlor.loop.R;
 import com.etiennelawlor.loop.network.models.response.Category;
-import com.etiennelawlor.loop.network.models.response.Pictures;
-import com.etiennelawlor.loop.network.models.response.Size;
 import com.etiennelawlor.loop.ui.DynamicHeightImageView;
 import com.etiennelawlor.loop.ui.LoadingImageView;
-
-import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;

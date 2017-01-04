@@ -4,9 +4,7 @@ import android.net.Uri;
 import android.os.Parcel;
 import android.os.Parcelable;
 import android.text.TextUtils;
-import android.view.View;
 
-import com.etiennelawlor.loop.R;
 import com.etiennelawlor.loop.utilities.DateUtility;
 import com.google.gson.annotations.SerializedName;
 

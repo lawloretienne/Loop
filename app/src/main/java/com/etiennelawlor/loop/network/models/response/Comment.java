@@ -3,17 +3,10 @@ package com.etiennelawlor.loop.network.models.response;
 import android.net.Uri;
 import android.os.Parcel;
 import android.os.Parcelable;
-import android.support.v4.content.ContextCompat;
 import android.text.TextUtils;
 
-import com.etiennelawlor.loop.R;
 import com.etiennelawlor.loop.utilities.DateUtility;
-import com.etiennelawlor.trestle.library.Span;
-import com.etiennelawlor.trestle.library.Trestle;
 import com.google.gson.annotations.SerializedName;
-
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * Created by etiennelawlor on 5/23/15.

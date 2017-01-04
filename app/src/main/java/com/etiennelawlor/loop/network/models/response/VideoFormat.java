@@ -1,7 +1,5 @@
 package com.etiennelawlor.loop.network.models.response;
 
-import android.text.TextUtils;
-
 import com.google.gson.annotations.SerializedName;
 
 /**

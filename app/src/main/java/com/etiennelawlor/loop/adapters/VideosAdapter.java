@@ -14,15 +14,9 @@ import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 import com.etiennelawlor.loop.R;
-import com.etiennelawlor.loop.network.models.response.Pictures;
-import com.etiennelawlor.loop.network.models.response.Size;
-import com.etiennelawlor.loop.network.models.response.Stats;
 import com.etiennelawlor.loop.network.models.response.User;
 import com.etiennelawlor.loop.network.models.response.Video;
 import com.etiennelawlor.loop.ui.LoadingImageView;
-import com.etiennelawlor.loop.utilities.DateUtility;
-
-import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;

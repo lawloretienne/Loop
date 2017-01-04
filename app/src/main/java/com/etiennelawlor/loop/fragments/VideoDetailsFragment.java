@@ -1,19 +1,19 @@
 package com.etiennelawlor.loop.fragments;
 
 import android.app.Activity;
-import android.app.SearchManager;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Typeface;
+import android.net.Uri;
 import android.os.Bundle;
-import android.support.design.widget.Snackbar;
-import android.support.v4.app.ActivityOptionsCompat;
-import android.support.v4.util.Pair;
+import android.os.Handler;
+import android.support.annotation.Nullable;
+import android.support.design.widget.TabLayout;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentPagerAdapter;
+import android.support.v4.view.ViewPager;
 import android.support.v7.app.ActionBar;
-import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
@@ -22,427 +22,253 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.FrameLayout;
+import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
-import com.etiennelawlor.loop.EventMapKeys;
-import com.etiennelawlor.loop.EventNames;
 import com.etiennelawlor.loop.R;
-import com.etiennelawlor.loop.activities.SearchableActivity;
-import com.etiennelawlor.loop.activities.VideoCommentsActivity;
-import com.etiennelawlor.loop.activities.VideoDetailsActivity;
-import com.etiennelawlor.loop.activities.VideoPlayerActivity;
-import com.etiennelawlor.loop.adapters.RelatedVideosAdapter;
-import com.etiennelawlor.loop.analytics.Event;
-import com.etiennelawlor.loop.analytics.EventLogger;
-import com.etiennelawlor.loop.bus.RxBus;
-import com.etiennelawlor.loop.bus.events.LikeVideoClickedEvent;
-import com.etiennelawlor.loop.bus.events.SearchPerformedEvent;
-import com.etiennelawlor.loop.bus.events.WatchLaterClickedEvent;
 import com.etiennelawlor.loop.models.AccessToken;
+import com.etiennelawlor.loop.models.VideoSavedState;
 import com.etiennelawlor.loop.network.ServiceGenerator;
-import com.etiennelawlor.loop.network.VimeoService;
+import com.etiennelawlor.loop.network.VimeoPlayerService;
 import com.etiennelawlor.loop.network.interceptors.AuthorizedNetworkInterceptor;
-import com.etiennelawlor.loop.network.models.response.Pictures;
-import com.etiennelawlor.loop.network.models.response.Size;
 import com.etiennelawlor.loop.network.models.response.Video;
-import com.etiennelawlor.loop.network.models.response.VideosEnvelope;
+import com.etiennelawlor.loop.network.models.response.VideoConfig;
 import com.etiennelawlor.loop.prefs.LoopPrefs;
 import com.etiennelawlor.loop.utilities.FontCache;
 import com.etiennelawlor.loop.utilities.NetworkLogUtility;
 import com.etiennelawlor.loop.utilities.NetworkUtility;
-import com.etiennelawlor.loop.utilities.TrestleUtility;
+import com.google.android.exoplayer2.DefaultLoadControl;
+import com.google.android.exoplayer2.ExoPlaybackException;
+import com.google.android.exoplayer2.ExoPlayer;
+import com.google.android.exoplayer2.ExoPlayerFactory;
+import com.google.android.exoplayer2.LoadControl;
+import com.google.android.exoplayer2.SimpleExoPlayer;
+import com.google.android.exoplayer2.Timeline;
+import com.google.android.exoplayer2.extractor.DefaultExtractorsFactory;
+import com.google.android.exoplayer2.extractor.ExtractorsFactory;
+import com.google.android.exoplayer2.source.ExtractorMediaSource;
+import com.google.android.exoplayer2.source.MediaSource;
+import com.google.android.exoplayer2.source.TrackGroupArray;
+import com.google.android.exoplayer2.trackselection.AdaptiveVideoTrackSelection;
+import com.google.android.exoplayer2.trackselection.DefaultTrackSelector;
+import com.google.android.exoplayer2.trackselection.TrackSelection;
+import com.google.android.exoplayer2.trackselection.TrackSelectionArray;
+import com.google.android.exoplayer2.trackselection.TrackSelector;
+import com.google.android.exoplayer2.ui.PlaybackControlView;
+import com.google.android.exoplayer2.ui.SimpleExoPlayerView;
+import com.google.android.exoplayer2.upstream.BandwidthMeter;
+import com.google.android.exoplayer2.upstream.DataSource;
+import com.google.android.exoplayer2.upstream.DefaultBandwidthMeter;
+import com.google.android.exoplayer2.upstream.DefaultDataSourceFactory;
+import com.google.android.exoplayer2.util.Util;
 
-import java.util.HashMap;
+import java.util.ArrayList;
 import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import butterknife.Unbinder;
-import jp.wasabeef.recyclerview.animators.SlideInUpAnimator;
-import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
-import rx.Subscription;
-import rx.android.schedulers.AndroidSchedulers;
-import rx.functions.Action1;
-import rx.subscriptions.CompositeSubscription;
+import timber.log.Timber;
+
+import static android.content.res.Configuration.ORIENTATION_LANDSCAPE;
+import static android.content.res.Configuration.ORIENTATION_PORTRAIT;
 
 /**
- * Created by etiennelawlor on 5/23/15.
+ * Created by etiennelawlor on 1/3/17.
  */
-public class VideoDetailsFragment extends BaseFragment implements RelatedVideosAdapter.OnItemClickListener,
-        RelatedVideosAdapter.OnReloadClickListener,
-        RelatedVideosAdapter.OnLikeClickListener,
-        RelatedVideosAdapter.OnWatchLaterClickListener,
-        RelatedVideosAdapter.OnCommentsClickListener,
-        RelatedVideosAdapter.OnInfoClickListener {
+
+public class VideoDetailsFragment extends BaseFragment {
 
     // region Constants
-    public static final int PAGE_SIZE = 30;
     private static final int VIDEO_SHARE_REQUEST_CODE = 1002;
     public static final String KEY_VIDEO_ID = "KEY_VIDEO_ID";
+    public static final String KEY_VIDEO = "KEY_VIDEO";
     // endregion
 
     // region Views
-    @BindView(R.id.video_thumbnail_iv)
-    ImageView videoThumbnailImageView;
     @BindView(R.id.toolbar)
     Toolbar toolbar;
-    @BindView(R.id.videos_rv)
-    RecyclerView videosRecyclerView;
+    @Nullable
+    @BindView(R.id.viewpager)
+    ViewPager viewPager;
+    @Nullable
+    @BindView(R.id.tabs)
+    TabLayout tabLayout;
+    @BindView(R.id.sepv)
+    SimpleExoPlayerView simpleExoPlayerView;
+//    @BindView(R.id.loading_iv)
+//    LoadingImageView loadingImageView;
+//    @BindView(R.id.error_ll)
+//    LinearLayout errorLinearLayout;
+//    @BindView(R.id.error_tv)
+//    TextView errorTextView;
+    @BindView(R.id.exo_artwork)
+    ImageView artworkImageView;
+    @BindView(R.id.exo_replay)
+    ImageButton replayImageButton;
+    @BindView(R.id.exo_btns_fl)
+    FrameLayout exoButtonsFrameLayout;
+    @BindView(R.id.control_view_ll)
+    LinearLayout controlViewLinearLayout;
     // endregion
 
     // region Member Variables
     private Video video;
-    private String transitionName;
-    private RelatedVideosAdapter relatedVideosAdapter;
-    private VimeoService vimeoService;
-    private LinearLayoutManager layoutManager;
-    private Long videoId = -1L;
-    private boolean isLastPage = false;
-    private int currentPage = 1;
-    private boolean isLoading = false;
-    private boolean isInfoExpanded = false;
-    private Typeface font;
+    private String videoUrl;
+    private VimeoPlayerService vimeoPlayerService;
+    private VideoSavedState videoSavedState;
     private Unbinder unbinder;
-    private CompositeSubscription compositeSubscription;
+    private Typeface font;
+    private SimpleExoPlayer exoPlayer;
     // endregion
 
     // region Listeners
-    @OnClick(R.id.play_fab)
-    public void onPlayFABClicked(final View v) {
-        if (videoId != -1L) {
-            Intent intent = new Intent(getActivity(), VideoPlayerActivity.class);
-
-            Bundle bundle = new Bundle();
-            bundle.putLong(KEY_VIDEO_ID, videoId);
-            intent.putExtras(bundle);
-            startActivity(intent);
-
-            // Crashlytics Test Crash
-            // throw new RuntimeException("This is a crash");
-        }
+    @OnClick(R.id.exo_replay)
+    public void onReplayButtonClicked() {
+        replayImageButton.setVisibility(View.GONE);
+        exoButtonsFrameLayout.setVisibility(View.VISIBLE);
+        exoPlayer.seekTo(0);
     }
 
-    private RecyclerView.OnScrollListener recyclerViewOnScrollListener = new RecyclerView.OnScrollListener() {
+//    @OnClick(R.id.reload_btn)
+//    public void onReloadButtonClicked() {
+////        errorLinearLayout.setVisibility(View.GONE);
+////        loadingImageView.setVisibility(View.VISIBLE);
+//
+//        Call getVideoConfigCall = vimeoPlayerService.getVideoConfig(videoId);
+//        calls.add(getVideoConfigCall);
+//        getVideoConfigCall.enqueue(getVideoConfigCallback);
+//    }
+
+    private ExoPlayer.EventListener exoPlayerEventListener = new ExoPlayer.EventListener() {
         @Override
-        public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
-            super.onScrollStateChanged(recyclerView, newState);
+        public void onTimelineChanged(Timeline timeline, Object manifest) {
         }
 
         @Override
-        public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
-            super.onScrolled(recyclerView, dx, dy);
-            int visibleItemCount = layoutManager.getChildCount();
-            int totalItemCount = layoutManager.getItemCount();
-            int firstVisibleItemPosition = layoutManager.findFirstVisibleItemPosition();
+        public void onTracksChanged(TrackGroupArray trackGroups, TrackSelectionArray trackSelections) {
 
-            if (!isLoading && !isLastPage) {
-                if ((visibleItemCount + firstVisibleItemPosition) >= totalItemCount
-                        && firstVisibleItemPosition >= 0
-                        && totalItemCount >= PAGE_SIZE) {
-                    loadMoreItems();
-                }
+        }
+
+        @Override
+        public void onLoadingChanged(boolean isLoading) {
+
+        }
+
+        @Override
+        public void onPlayerStateChanged(boolean playWhenReady, int playbackState) {
+            switch (playbackState){
+                case ExoPlayer.STATE_BUFFERING:
+                case ExoPlayer.STATE_READY:
+                    replayImageButton.setVisibility(View.GONE);
+                    exoButtonsFrameLayout.setVisibility(View.VISIBLE);
+                    break;
+                case ExoPlayer.STATE_ENDED:
+                    exoButtonsFrameLayout.setVisibility(View.GONE);
+                    replayImageButton.setVisibility(View.VISIBLE);
+                    break;
+                default:
+                    break;
+            }
+        }
+
+        @Override
+        public void onPlayerError(ExoPlaybackException error) {
+
+        }
+
+        @Override
+        public void onPositionDiscontinuity() {
+
+        }
+    };
+
+    private PlaybackControlView.VisibilityListener playbackControlViewVisibilityListener = new PlaybackControlView.VisibilityListener() {
+        @Override
+        public void onVisibilityChange(int visibility) {
+
+            int orientation = getContext().getResources().getConfiguration().orientation;
+
+            switch (orientation){
+                case ORIENTATION_PORTRAIT:
+                    if(visibility == View.GONE){
+                        toolbar.setVisibility(View.GONE);
+                        hidePortraitSystemUI();
+                    } else {
+                        showPortraitSystemUI();
+                        toolbar.setVisibility(View.VISIBLE);
+                    }
+                    break;
+                case ORIENTATION_LANDSCAPE:
+                    if(visibility == View.GONE){
+                        toolbar.setVisibility(View.GONE);
+                        hideLandscapeSystemUI();
+                    } else {
+                        showLandscapeSystemUI();
+                        toolbar.setVisibility(View.VISIBLE);
+                    }
+                    break;
+                default:
+                    break;
             }
         }
     };
     // endregion
 
     // region Callbacks
-
-    private Callback<VideosEnvelope> getRelatedVideosFirstFetchCallback = new Callback<VideosEnvelope>() {
+    private Callback<VideoConfig> getVideoConfigCallback = new Callback<VideoConfig>() {
         @Override
-        public void onResponse(Call<VideosEnvelope> call, Response<VideosEnvelope> response) {
-            if (!response.isSuccessful()) {
-                int responseCode = response.code();
-                if(responseCode == 504) { // 504 Unsatisfiable Request (only-if-cached)
-//                    errorTextView.setText("Can't load data.\nCheck your network connection.");
-//                    errorLinearLayout.setVisibility(View.VISIBLE);
-                }
-                return;
-            }
-
-            VideosEnvelope videosEnvelope = response.body();
-            if (videosEnvelope != null) {
-                List<Video> videos = videosEnvelope.getVideos();
-                if (videos != null) {
-                    if(videos.size()>0)
-                        relatedVideosAdapter.addAll(videos);
-
-                    if (videos.size() >= PAGE_SIZE) {
-                        relatedVideosAdapter.addFooter();
-                    } else {
-                        isLastPage = true;
-                    }
-                }
-            }
-        }
-
-        @Override
-        public void onFailure(Call<VideosEnvelope> call, Throwable t) {
-            NetworkLogUtility.logFailure(call, t);
-
-            if (!call.isCanceled()){
-                if(NetworkUtility.isKnownException(t)){
-//                errorTextView.setText("Can't load data.\nCheck your network connection.");
-//                errorLinearLayout.setVisibility(View.VISIBLE);
-                }
-            }
-        }
-    };
-
-    private Callback<VideosEnvelope> getRelatedVideosNextFetchCallback = new Callback<VideosEnvelope>() {
-        @Override
-        public void onResponse(Call<VideosEnvelope> call, Response<VideosEnvelope> response) {
-            relatedVideosAdapter.removeFooter();
-            isLoading = false;
+        public void onResponse(Call<VideoConfig> call, Response<VideoConfig> response) {
+//            loadingImageView.setVisibility(View.GONE);
 
             if (!response.isSuccessful()) {
+
                 int responseCode = response.code();
                 switch (responseCode){
                     case 504: // 504 Unsatisfiable Request (only-if-cached)
+//                        errorTextView.setText("Can't load data.\nCheck your network connection.");
+//                        errorLinearLayout.setVisibility(View.VISIBLE);
                         break;
-                    case 400:
-                        isLastPage = true;
+                    case 403: // Forbidden
+                        // TODO show UI for "Cannot play this video"
+//                        Snackbar.make(getActivity().findViewById(R.id.main_content),
+//                                TrestleUtility.getFormattedText("Cannot play this video.", font, 16),
+//                                Snackbar.LENGTH_LONG)
+//                                .show();
                         break;
                 }
                 return;
             }
 
-            VideosEnvelope videosEnvelope = response.body();
-            if (videosEnvelope != null) {
-                List<Video> videos = videosEnvelope.getVideos();
-                if (videos != null) {
-                    if(videos.size()>0)
-                        relatedVideosAdapter.addAll(videos);
+            VideoConfig videoConfig = response.body();
+            if (videoConfig != null) {
+                videoUrl = videoConfig.getVideoUrl();
+                if (!TextUtils.isEmpty(videoUrl)) {
 
-                    if (videos.size() >= PAGE_SIZE) {
-                        relatedVideosAdapter.addFooter();
-                    } else {
-                        isLastPage = true;
-                    }
+                    // Prepare the player with the source.
+                    exoPlayer.prepare(getMediaSource(videoUrl));
                 }
             }
         }
 
         @Override
-        public void onFailure(Call<VideosEnvelope> call, Throwable t) {
+        public void onFailure(Call<VideoConfig> call, Throwable t) {
             NetworkLogUtility.logFailure(call, t);
 
             if (!call.isCanceled()){
+//                loadingImageView.setVisibility(View.GONE);
+
                 if(NetworkUtility.isKnownException(t)){
-                    relatedVideosAdapter.updateFooter(RelatedVideosAdapter.FooterType.ERROR);
-                }
-            }
-        }
-    };
-
-    private Callback<ResponseBody> likeVideoCallback = new Callback<ResponseBody>() {
-        @Override
-        public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
-
-            if (!response.isSuccessful()) {
-                int responseCode = response.code();
-                if(responseCode == 504) { // 504 Unsatisfiable Request (only-if-cached)
 //                    errorTextView.setText("Can't load data.\nCheck your network connection.");
 //                    errorLinearLayout.setVisibility(View.VISIBLE);
-                }
-                return;
-            }
-
-            okhttp3.Response rawResponse = response.raw();
-            if (rawResponse != null) {
-                int code = rawResponse.code();
-                switch (code) {
-                    case 204:
-                        // No Content
-                        RxBus.getInstance().send(new LikeVideoClickedEvent());
-
-                        HashMap<String, Object> map = new HashMap<>();
-                        map.put(EventMapKeys.NAME, video.getName());
-                        map.put(EventMapKeys.DURATION, video.getDuration());
-                        map.put(EventMapKeys.VIDEO_ID, videoId);
-
-                        Event event = new Event(EventNames.VIDEO_LIKED, map);
-                        EventLogger.logEvent(event);
-
-                        relatedVideosAdapter.setIsLikeOn(true);
-                        ImageView imageView = (ImageView) videosRecyclerView.getLayoutManager().findViewByPosition(0).findViewById(R.id.like_iv);
-                        imageView.setImageResource(R.drawable.ic_likes_on);
-                        break;
-                    case 400:
-                        // If the video is owned by the authenticated user
-                        break;
-                    case 403:
-                        // If the authenticated user is not allowed to like videos
-                        break;
-                }
-            }
-        }
-
-        @Override
-        public void onFailure(Call<ResponseBody> call, Throwable t) {
-            NetworkLogUtility.logFailure(call, t);
-
-            if (!call.isCanceled()){
-                if(NetworkUtility.isKnownException(t)){
-                    Snackbar.make(getActivity().findViewById(R.id.main_content),
-                            TrestleUtility.getFormattedText("Network connection is unavailable.", font, 16),
-                            Snackbar.LENGTH_LONG)
-                            .show();
-                }
-            }
-        }
-    };
-
-    private Callback<ResponseBody> unlikeVideoCallback = new Callback<ResponseBody>() {
-        @Override
-        public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
-
-            if (!response.isSuccessful()) {
-                int responseCode = response.code();
-                if(responseCode == 504) { // 504 Unsatisfiable Request (only-if-cached)
-//                    errorTextView.setText("Can't load data.\nCheck your network connection.");
-//                    errorLinearLayout.setVisibility(View.VISIBLE);
-                }
-                return;
-            }
-
-            okhttp3.Response rawResponse = response.raw();
-            if (rawResponse != null) {
-                int code = rawResponse.code();
-                switch (code) {
-                    case 204:
-                        // No Content
-                        RxBus.getInstance().send(new LikeVideoClickedEvent());
-
-                        HashMap<String, Object> map = new HashMap<>();
-                        map.put(EventMapKeys.NAME, video.getName());
-                        map.put(EventMapKeys.DURATION, video.getDuration());
-                        map.put(EventMapKeys.VIDEO_ID, videoId);
-
-                        Event event = new Event(EventNames.VIDEO_DISLIKED, map);
-                        EventLogger.logEvent(event);
-
-                        relatedVideosAdapter.setIsLikeOn(false);
-                        ImageView imageView = (ImageView) videosRecyclerView.getLayoutManager().findViewByPosition(0).findViewById(R.id.like_iv);
-                        imageView.setImageResource(R.drawable.ic_likes_off);
-                        break;
-                    case 403:
-                        // If the authenticated user is not allowed to like videos
-                        break;
-                }
-            }
-        }
-
-        @Override
-        public void onFailure(Call<ResponseBody> call, Throwable t) {
-            NetworkLogUtility.logFailure(call, t);
-
-            if (!call.isCanceled()){
-                if(NetworkUtility.isKnownException(t)){
-                    Snackbar.make(getActivity().findViewById(R.id.main_content),
-                            TrestleUtility.getFormattedText("Network connection is unavailable.", font, 16),
-                            Snackbar.LENGTH_LONG)
-                            .show();
-                }
-            }
-        }
-    };
-
-    private Callback<ResponseBody> addVideoToWatchLaterCallback = new Callback<ResponseBody>() {
-        @Override
-        public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
-            if (!response.isSuccessful()) {
-                int responseCode = response.code();
-                if(responseCode == 504) { // 504 Unsatisfiable Request (only-if-cached)
-//                    errorTextView.setText("Can't load data.\nCheck your network connection.");
-//                    errorLinearLayout.setVisibility(View.VISIBLE);
-                }
-                return;
-            }
-
-            okhttp3.Response rawResponse = response.raw();
-            if (rawResponse != null) {
-                int code = rawResponse.code();
-                switch (code) {
-                    case 204:
-                        // No Content
-                        RxBus.getInstance().send(new WatchLaterClickedEvent());
-
-                        relatedVideosAdapter.setIsWatchLaterOn(true);
-                        ImageView imageView = (ImageView) videosRecyclerView.getLayoutManager().findViewByPosition(0).findViewById(R.id.watch_later_iv);
-                        imageView.setImageResource(R.drawable.ic_watch_later_on);
-                        break;
-//                            case 400:
-//                                // If the video is owned by the authenticated user
-//                                break;
-//                            case 403:
-//                                // If the authenticated user is not allowed to like videos
-//                                break;
-                }
-            }
-        }
-
-        @Override
-        public void onFailure(Call<ResponseBody> call, Throwable t) {
-            NetworkLogUtility.logFailure(call, t);
-
-            if (!call.isCanceled()){
-                if(NetworkUtility.isKnownException(t)){
-                    Snackbar.make(getActivity().findViewById(R.id.main_content),
-                            TrestleUtility.getFormattedText("Network connection is unavailable.", font, 16),
-                            Snackbar.LENGTH_LONG)
-                            .show();
-                }
-            }
-        }
-    };
-
-    private Callback<ResponseBody> removeVideoFromWatchLaterCallback = new Callback<ResponseBody>() {
-        @Override
-        public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
-            if (!response.isSuccessful()) {
-                int responseCode = response.code();
-                if(responseCode == 504) { // 504 Unsatisfiable Request (only-if-cached)
-//                    errorTextView.setText("Can't load data.\nCheck your network connection.");
-//                    errorLinearLayout.setVisibility(View.VISIBLE);
-                }
-                return;
-            }
-
-            okhttp3.Response rawResponse = response.raw();
-            if (rawResponse != null) {
-                int code = rawResponse.code();
-                switch (code) {
-                    case 204:
-                        // No Content
-                        RxBus.getInstance().send(new WatchLaterClickedEvent());
-
-                        relatedVideosAdapter.setIsWatchLaterOn(false);
-                        ImageView imageView = (ImageView) videosRecyclerView.getLayoutManager().findViewByPosition(0).findViewById(R.id.watch_later_iv);
-                        imageView.setImageResource(R.drawable.ic_watch_later_off);
-                        break;
-//                            case 403:
-//                                // If the authenticated user is not allowed to like videos
-//                                break;
-                }
-            }
-        }
-
-        @Override
-        public void onFailure(Call<ResponseBody> call, Throwable t) {
-            NetworkLogUtility.logFailure(call, t);
-
-            if (!call.isCanceled()){
-                if(NetworkUtility.isKnownException(t)){
-                    Snackbar.make(getActivity().findViewById(R.id.main_content),
-                            TrestleUtility.getFormattedText("Network connection is unavailable.", font, 16),
-                            Snackbar.LENGTH_LONG)
-                            .show();
                 }
             }
         }
@@ -475,7 +301,7 @@ public class VideoDetailsFragment extends BaseFragment implements RelatedVideosA
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        // Retain this fragment across configuration changes.
+//        // Retain this fragment across configuration changes.
         setRetainInstance(true);
 
         if (getArguments() != null) {
@@ -484,15 +310,14 @@ public class VideoDetailsFragment extends BaseFragment implements RelatedVideosA
         }
 
         AccessToken token = LoopPrefs.getAccessToken(getActivity());
-        vimeoService = ServiceGenerator.createService(
-                VimeoService.class,
-                VimeoService.BASE_URL,
+        vimeoPlayerService = ServiceGenerator.createService(
+                VimeoPlayerService.class,
+                VimeoPlayerService.BASE_URL,
                 new AuthorizedNetworkInterceptor(token));
 
         setHasOptionsMenu(true);
 
         font = FontCache.getTypeface("Ubuntu-Medium.ttf", getContext());
-        compositeSubscription = new CompositeSubscription();
     }
 
     @Override
@@ -508,8 +333,6 @@ public class VideoDetailsFragment extends BaseFragment implements RelatedVideosA
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-//        ViewCompat.setTransitionName(mVideoThumbnailImageView, mTransitionName);
-
         ((AppCompatActivity) getActivity()).setSupportActionBar(toolbar);
 
         ActionBar actionBar = ((AppCompatActivity) getActivity()).getSupportActionBar();
@@ -518,41 +341,73 @@ public class VideoDetailsFragment extends BaseFragment implements RelatedVideosA
             actionBar.setTitle("");
         }
 
-        setUpRxBusSubscription();
-
         if (video != null) {
-            setUpVideoThumbnail();
-
-            long id = video.getId();
-            if (id != -1L) {
-                videoId = id;
-
-                layoutManager = new LinearLayoutManager(getActivity());
-                videosRecyclerView.setLayoutManager(layoutManager);
-                relatedVideosAdapter = new RelatedVideosAdapter(video);
-                relatedVideosAdapter.setOnItemClickListener(this);
-                relatedVideosAdapter.setOnReloadClickListener(this);
-                relatedVideosAdapter.setOnLikeClickListener(this);
-                relatedVideosAdapter.setOnWatchLaterClickListener(this);
-                relatedVideosAdapter.setOnCommentsClickListener(this);
-                relatedVideosAdapter.setOnInfoClickListener(this);
-                relatedVideosAdapter.addHeader();
-                videosRecyclerView.setItemAnimator(new SlideInUpAnimator());
-                videosRecyclerView.setAdapter(relatedVideosAdapter);
-
-                // Pagination
-                videosRecyclerView.addOnScrollListener(recyclerViewOnScrollListener);
-
-                Call findRelatedVideosCall = vimeoService.findRelatedVideos(videoId, currentPage, PAGE_SIZE);
-                calls.add(findRelatedVideosCall);
-                findRelatedVideosCall.enqueue(getRelatedVideosFirstFetchCallback);
-            }
+            setUpArtwork();
+            setUpExoPlayer();
+            setUpSimpleExoPlayerView();
         }
+
+        int orientation = view.getResources().getConfiguration().orientation;
+
+        switch (orientation){
+            case ORIENTATION_PORTRAIT:
+                if (viewPager != null) {
+                    setupViewPager(viewPager);
+                }
+
+                tabLayout.setupWithViewPager(viewPager);
+                tabLayout.setTabMode(TabLayout.MODE_FIXED);
+
+                updateTabLayout();
+                showPortraitSystemUI();
+                break;
+            case ORIENTATION_LANDSCAPE:
+                showLandscapeSystemUI();
+                break;
+            default:
+                break;
+        }
+
+        VideoSavedState videoSavedState = getVideoSavedState();
+        if(videoSavedState != null && !TextUtils.isEmpty(videoSavedState.getVideoUrl())){
+//            loadingImageView.setVisibility(View.GONE);
+            String videoUrl = videoSavedState.getVideoUrl();
+            long currentPosition = videoSavedState.getCurrentPosition();
+            exoPlayer.seekTo(currentPosition);
+            exoPlayer.prepare(getMediaSource(videoUrl));
+        } else {
+            Call getVideoConfigCall = vimeoPlayerService.getVideoConfig(video.getId());
+            calls.add(getVideoConfigCall);
+            getVideoConfigCall.enqueue(getVideoConfigCallback);
+        }
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+
+        exoPlayer.setPlayWhenReady(false);
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+
+        if(!exoPlayer.getPlayWhenReady())
+            exoPlayer.setPlayWhenReady(true);
     }
 
     @Override
     public void onDestroyView() {
         super.onDestroyView();
+
+        if(!TextUtils.isEmpty(videoUrl)){
+            VideoSavedState videoSavedState = new VideoSavedState();
+            videoSavedState.setVideoUrl(videoUrl);
+            videoSavedState.setCurrentPosition(exoPlayer.getCurrentPosition());
+            setVideoSavedState(videoSavedState);
+        }
+
         removeListeners();
         unbinder.unbind();
     }
@@ -560,7 +415,8 @@ public class VideoDetailsFragment extends BaseFragment implements RelatedVideosA
     @Override
     public void onDestroy() {
         super.onDestroy();
-        compositeSubscription.unsubscribe();
+        Timber.d("");
+        exoPlayer.release();
     }
 
     // endregion
@@ -616,199 +472,195 @@ public class VideoDetailsFragment extends BaseFragment implements RelatedVideosA
         }
     }
 
-    // region RelatedVideosAdapter.OnItemClickListener Methods
-    @Override
-    public void onItemClick(int position, View view) {
-        Video video = relatedVideosAdapter.getItem(position);
-        if (video != null) {
-            Intent intent = new Intent(getActivity(), VideoDetailsActivity.class);
-
-            Bundle bundle = new Bundle();
-            bundle.putParcelable(LikedVideosFragment.KEY_VIDEO, video);
-            intent.putExtras(bundle);
-
-            Pair<View, String> p1 = Pair.create(view.findViewById(R.id.video_thumbnail_iv), "videoTransition");
-//                Pair<View, String> p2 = Pair.create((View) view.findViewById(R.id.title_tv), "titleTransition");
-//                Pair<View, String> p3 = Pair.create((View) view.findViewById(R.id.subtitle_tv), "subtitleTransition");
-//        Pair<View, String> p4 = Pair.create((View)view.findViewById(R.id.uploaded_tv), "uploadedTransition");
-
-//                ActivityOptionsCompat options = ActivityOptionsCompat.makeSceneTransitionAnimation(getActivity(),
-//                        p1, p2, p3);
-
-            ActivityOptionsCompat options = ActivityOptionsCompat.makeSceneTransitionAnimation(getActivity(),
-                    p1);
-
-
-//            ActivityCompat.startActivity(getActivity(), intent, options.toBundle());
-
-            startActivity(intent);
-        }
-    }
-    // endregion
-
-    // region RelatedVideosAdapter.OnReloadClickListener Methods
-
-    @Override
-    public void onReloadClick() {
-        relatedVideosAdapter.updateFooter(RelatedVideosAdapter.FooterType.LOAD_MORE);
-
-        Call findRelatedVideosCall = vimeoService.findRelatedVideos(videoId, currentPage, PAGE_SIZE);
-        calls.add(findRelatedVideosCall);
-        findRelatedVideosCall.enqueue(getRelatedVideosNextFetchCallback);
-    }
-
-    // endregion
-
-    // region RelatedVideosAdapter.OnLikeClickListener Methods
-    @Override
-    public void onLikeClick(final ImageView imageView) {
-        if (relatedVideosAdapter.isLikeOn()) {
-            AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(getActivity(), R.style.DialogTheme);
-            alertDialogBuilder.setMessage("Are you sure you want to unlike this video?");
-            alertDialogBuilder.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
-                public void onClick(DialogInterface dialog, int whichButton) {
-                    Call unlikeVideoCall = vimeoService.unlikeVideo(String.valueOf(videoId));
-                    calls.add(unlikeVideoCall);
-                    unlikeVideoCall.enqueue(unlikeVideoCallback);
-                }
-            });
-            alertDialogBuilder.setNegativeButton("No", new DialogInterface.OnClickListener() {
-                public void onClick(DialogInterface dialog, int whichButton) {
-                    // Canceled.
-                }
-            });
-            alertDialogBuilder.show();
-        } else {
-            Call likeVideoCall = vimeoService.likeVideo(String.valueOf(videoId));
-            calls.add(likeVideoCall);
-            likeVideoCall.enqueue(likeVideoCallback);
-        }
-    }
-    // endregion
-
-    // region RelatedVideosAdapter.OnWatchLaterClickListener Methods
-    @Override
-    public void onWatchLaterClick(final ImageView imageView) {
-        if (relatedVideosAdapter.isWatchLaterOn()) {
-            AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(getActivity(), R.style.DialogTheme);
-            alertDialogBuilder.setMessage("Are you sure you want to remove this video from your Watch Later collection?");
-            alertDialogBuilder.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
-                public void onClick(DialogInterface dialog, int whichButton) {
-                    Call removeVideoFromWatchLaterCall = vimeoService.removeVideoFromWatchLater(String.valueOf(videoId));
-                    calls.add(removeVideoFromWatchLaterCall);
-                    removeVideoFromWatchLaterCall.enqueue(removeVideoFromWatchLaterCallback);
-                }
-            });
-            alertDialogBuilder.setNegativeButton("No", new DialogInterface.OnClickListener() {
-                public void onClick(DialogInterface dialog, int whichButton) {
-                    // Canceled.
-                }
-            });
-            alertDialogBuilder.show();
-        } else {
-            Call addVideoToWatchLaterCall = vimeoService.addVideoToWatchLater(String.valueOf(videoId));
-            calls.add(addVideoToWatchLaterCall);
-            addVideoToWatchLaterCall.enqueue(addVideoToWatchLaterCallback);
-        }
-    }
-    // endregion
-
-    // region RelatedVideosAdapter.OnCommentsClickListener Methods
-    @Override
-    public void onCommentsClick() {
-
-        Intent intent = new Intent(getActivity(), VideoCommentsActivity.class);
-
-        Bundle bundle = new Bundle();
-        bundle.putParcelable(LikedVideosFragment.KEY_VIDEO, video);
-        intent.putExtras(bundle);
-
-        startActivity(intent);
-    }
-    // endregion
-
-    // region RelatedVideosAdapter.OnInfoClickListener Methods
-    @Override
-    public void onInfoClick(final ImageView imageView) {
-        if(isInfoExpanded){
-            isInfoExpanded = false;
-            imageView.animate().rotation(0.0f).setDuration(300).start();
-        } else {
-            isInfoExpanded = true;
-            imageView.animate().rotation(180.0f).setDuration(300).start();
-        }
-    }
-    // endregion
-
     // region Helper Methods
 
-    private void setUpVideoThumbnail() {
-        Pictures pictures = video.getPictures();
-        if (pictures != null) {
-            List<Size> sizes = pictures.getSizes();
-            if (sizes != null && sizes.size() > 0) {
-                Size size = sizes.get(sizes.size() - 1);
-                if (size != null) {
-                    String link = size.getLink();
-                    if (!TextUtils.isEmpty(link)) {
-                        Glide.with(getActivity())
-                                .load(link)
+    private void setUpExoPlayer(){
+        // Create a default TrackSelector
+        TrackSelector trackSelector = createTrackSelector();
+
+        // Create a default LoadControl
+        LoadControl loadControl = new DefaultLoadControl();
+
+        // Create the player
+        exoPlayer = ExoPlayerFactory.newSimpleInstance(getContext(), trackSelector, loadControl);
+        exoPlayer.setPlayWhenReady(true);
+
+        exoPlayer.addListener(exoPlayerEventListener);
+    }
+
+    private void setUpArtwork() {
+        String thumbnailUrl = video.getThumbnailUrl();
+
+        if (!TextUtils.isEmpty(thumbnailUrl)) {
+            Glide.with(getActivity())
+                    .load(thumbnailUrl)
 //                                .placeholder(R.drawable.ic_placeholder)
 //                                .error(R.drawable.ic_error)
-                                .into(videoThumbnailImageView);
-                    }
+                    .into(artworkImageView);
+        }
+    }
+
+    private void setUpSimpleExoPlayerView(){
+        simpleExoPlayerView.setPlayer(exoPlayer);
+        simpleExoPlayerView.setControllerVisibilityListener(playbackControlViewVisibilityListener);
+    }
+
+    // This snippet hides the system bars.
+    private void hidePortraitSystemUI() {
+        final View decorView = getActivity().getWindow().getDecorView();
+
+        // Set the IMMERSIVE flag.
+        // Set the content to appear under the system bars so that the content
+        // doesn't resize when the system bars hide and show.
+        decorView.setSystemUiVisibility(
+                View.SYSTEM_UI_FLAG_LAYOUT_STABLE
+                        | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
+                        | View.SYSTEM_UI_FLAG_FULLSCREEN // hide status bar
+                        | View.SYSTEM_UI_FLAG_IMMERSIVE);
+    }
+
+    // This snippet shows the system bars. It does this by removing all the flags
+    // except for the ones that make the content appear under the system bars.
+    private void showPortraitSystemUI() {
+        final View decorView = getActivity().getWindow().getDecorView();
+        decorView.setSystemUiVisibility(
+                View.SYSTEM_UI_FLAG_LAYOUT_STABLE
+                        | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN);
+    }
+
+    // This snippet hides the system bars.
+    private void hideLandscapeSystemUI() {
+        final View decorView = getActivity().getWindow().getDecorView();
+
+        // Set the IMMERSIVE flag.
+        // Set the content to appear under the system bars so that the content
+        // doesn't resize when the system bars hide and show.
+        decorView.setSystemUiVisibility(
+                View.SYSTEM_UI_FLAG_LAYOUT_STABLE
+                        | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
+                        | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
+                        | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION // hide nav bar
+                        | View.SYSTEM_UI_FLAG_FULLSCREEN // hide status bar
+                        | View.SYSTEM_UI_FLAG_IMMERSIVE);
+    }
+
+    // This snippet shows the system bars. It does this by removing all the flags
+    // except for the ones that make the content appear under the system bars.
+    private void showLandscapeSystemUI() {
+        final View decorView = getActivity().getWindow().getDecorView();
+
+        decorView.setSystemUiVisibility(
+                View.SYSTEM_UI_FLAG_LAYOUT_STABLE
+                        | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
+                        | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN);
+
+    }
+
+    public void setVideoSavedState(VideoSavedState videoSavedState) {
+        this.videoSavedState = videoSavedState;
+    }
+
+    public VideoSavedState getVideoSavedState() {
+        return videoSavedState;
+    }
+
+    private TrackSelector createTrackSelector(){
+        // Create a default TrackSelector
+        Handler mainHandler = new Handler();
+        // Measures bandwidth during playback. Can be null if not required.
+        BandwidthMeter bandwidthMeter = new DefaultBandwidthMeter();
+        TrackSelection.Factory videoTrackSelectionFactory =
+                new AdaptiveVideoTrackSelection.Factory(bandwidthMeter);
+//        TrackSelector trackSelector =
+//                new DefaultTrackSelector(mainHandler, videoTrackSelectionFactory);
+        TrackSelector trackSelector =
+                new DefaultTrackSelector(videoTrackSelectionFactory);
+        return trackSelector;
+    }
+
+    private MediaSource getMediaSource(String videoUrl){
+        DefaultBandwidthMeter bandwidthMeter = new DefaultBandwidthMeter();
+        // Produces DataSource instances through which media data is loaded.
+        DataSource.Factory dataSourceFactory = new DefaultDataSourceFactory(getContext(),
+                Util.getUserAgent(getContext(), "Loop"), bandwidthMeter);
+        // Produces Extractor instances for parsing the media data.
+        ExtractorsFactory extractorsFactory = new DefaultExtractorsFactory();
+        // This is the MediaSource representing the media to be played.
+        MediaSource mediaSource = new ExtractorMediaSource(Uri.parse(videoUrl),
+                dataSourceFactory, extractorsFactory, null, null);
+        // Loops the video indefinitely.
+//        LoopingMediaSource loopingSource = new LoopingMediaSource(mediaSource);
+
+//        MediaSource videoSource = new ExtractorMediaSource(mp4VideoUri,
+//                dataSourceFactory, extractorsFactory, null, null);
+        return mediaSource;
+    }
+
+    private void removeListeners() {
+        exoPlayer.removeListener(exoPlayerEventListener);
+    }
+
+    private void setupViewPager(ViewPager viewPager) {
+        Adapter adapter = new Adapter(getChildFragmentManager());
+
+        Bundle bundle = new Bundle();
+        bundle.putParcelable(KEY_VIDEO, video);
+        VideoDetailsInfoFragment videoDetailsInfoFragment = VideoDetailsInfoFragment.newInstance(bundle);
+        adapter.addFragment(videoDetailsInfoFragment, getString(R.string.info));
+
+        Bundle bundle2 = new Bundle();
+        bundle2.putLong(KEY_VIDEO_ID, video.getId());
+        RelatedVideosFragment relatedVideosFragment = RelatedVideosFragment.newInstance(bundle2);
+        adapter.addFragment(relatedVideosFragment, getString(R.string.related_videos));
+
+        viewPager.setAdapter(adapter);
+    }
+
+    private void updateTabLayout(){
+        ViewGroup vg = (ViewGroup) tabLayout.getChildAt(0);
+        int tabsCount = vg.getChildCount();
+        for (int j = 0; j < tabsCount; j++) {
+            ViewGroup vgTab = (ViewGroup) vg.getChildAt(j);
+            int tabChildsCount = vgTab.getChildCount();
+            for (int i = 0; i < tabChildsCount; i++) {
+                View tabViewChild = vgTab.getChildAt(i);
+                if (tabViewChild instanceof TextView) {
+                    ((TextView) tabViewChild).setTypeface(font);
                 }
             }
         }
     }
+    // endregion
 
-    private void loadMoreItems() {
-        isLoading = true;
+    // region Inner Classes
+    public static class Adapter extends FragmentPagerAdapter {
+        private final List<Fragment> fragments = new ArrayList<>();
+        private final List<String> fragmentTitles = new ArrayList<>();
 
-        currentPage += 1;
+        public Adapter(FragmentManager fm) {
+            super(fm);
+        }
 
-        Call findRelatedVideosCall = vimeoService.findRelatedVideos(videoId, currentPage, PAGE_SIZE);
-        calls.add(findRelatedVideosCall);
-        findRelatedVideosCall.enqueue(getRelatedVideosNextFetchCallback);
-    }
+        public void addFragment(Fragment fragment, String title) {
+            fragments.add(fragment);
+            fragmentTitles.add(title);
+        }
 
-    private void launchSearchActivity(String query) {
-        Intent intent = new Intent(getContext(), SearchableActivity.class);
-        intent.setAction(Intent.ACTION_SEARCH);
-        Bundle bundle = new Bundle();
-        bundle.putString(SearchManager.QUERY, query);
-        intent.putExtras(bundle);
-        getContext().startActivity(intent);
-    }
+        @Override
+        public Fragment getItem(int position) {
+            return fragments.get(position);
+        }
 
-    private void removeListeners() {
-        videosRecyclerView.removeOnScrollListener(recyclerViewOnScrollListener);
-    }
+        @Override
+        public int getCount() {
+            return fragments.size();
+        }
 
-    private void setUpRxBusSubscription(){
-        Subscription rxBusSubscription = RxBus.getInstance().toObserverable()
-                .observeOn(AndroidSchedulers.mainThread()) // UI Thread
-                .subscribe(new Action1<Object>() {
-                    @Override
-                    public void call(Object event) {
-//                        if (event == null || !isResumed()) {
-//                            return;
-//                        }
-
-                        if (event == null) {
-                            return;
-                        }
-
-                        if(event instanceof SearchPerformedEvent) {
-                            String query = ((SearchPerformedEvent)event).getQuery();
-                            if (!TextUtils.isEmpty(query)) {
-                                launchSearchActivity(query);
-                            }
-                        }
-                    }
-                });
-
-        compositeSubscription.add(rxBusSubscription);
+        @Override
+        public CharSequence getPageTitle(int position) {
+            return fragmentTitles.get(position);
+        }
     }
     // endregion
+
 }

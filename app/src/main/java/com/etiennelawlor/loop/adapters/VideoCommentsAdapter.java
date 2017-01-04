@@ -14,7 +14,6 @@ import com.etiennelawlor.loop.R;
 import com.etiennelawlor.loop.network.models.response.Comment;
 import com.etiennelawlor.loop.network.models.response.User;
 import com.etiennelawlor.loop.ui.AvatarView;
-import com.etiennelawlor.loop.utilities.DateUtility;
 import com.etiennelawlor.loop.utilities.FontCache;
 import com.etiennelawlor.trestle.library.Span;
 import com.etiennelawlor.trestle.library.Trestle;

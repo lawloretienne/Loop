@@ -3,9 +3,16 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <item
+        android:id="@+id/media_route_menu_item"
+        android:title="@string/cast"
+        app:actionProviderClass="android.support.v7.app.MediaRouteActionProvider"
+        app:showAsAction="always"
+        android:orderInCategory="0"/>
+
+    <item
         android:id="@+id/share"
         android:title="@string/share"
         app:showAsAction="always"
         android:icon="@drawable/ic_menu_share"
-        android:orderInCategory="0" />
+        android:orderInCategory="1" />
 </menu>

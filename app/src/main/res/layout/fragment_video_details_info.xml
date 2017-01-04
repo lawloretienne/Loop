@@ -1,0 +1,205 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:fillViewport="true">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:paddingBottom="16dp"
+        android:paddingTop="16dp">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingLeft="16dp"
+            android:paddingRight="16dp"
+            android:orientation="vertical">
+
+            <com.etiennelawlor.loop.ui.CustomFontTextView
+                android:id="@+id/title_tv"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginRight="72dp"
+                android:ellipsize="end"
+                android:maxLines="2"
+                android:textColor="@color/primary_text_dark"
+                android:textSize="22sp"
+                android:transitionName="titleTransition"
+                app:textFont="ubuntu_bold"
+                tools:text="Product Title" />
+
+            <!--android:layout_toLeftOf="@+id/action_iv"-->
+
+            <com.etiennelawlor.loop.ui.CustomFontTextView
+                android:id="@+id/view_count_tv"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="@color/secondary_text_dark"
+                android:textSize="16sp"
+                app:textFont="ubuntu_medium"
+                tools:text="Views" />
+
+            <!--<ImageView-->
+            <!--android:id="@id/action_iv"-->
+            <!--android:layout_marginLeft="16dp"-->
+            <!--android:padding="8dp"-->
+            <!--android:layout_width="wrap_content"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:src="@drawable/ic_expand"-->
+            <!--android:background="?android:attr/selectableItemBackground"-->
+            <!--android:layout_alignParentRight="true"/>-->
+
+        </LinearLayout>
+
+        <FrameLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="12dp">
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <ImageView
+                    android:id="@+id/like_iv"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/ripple"
+                    android:padding="4dp"
+                    app:srcCompat="@drawable/ic_likes_off" />
+
+                <ImageView
+                    android:id="@+id/watch_later_iv"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="16dp"
+                    android:background="@drawable/ripple"
+                    android:padding="4dp"
+                    app:srcCompat="@drawable/ic_watch_later_off" />
+
+                <ImageView
+                    android:id="@+id/comments_iv"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="16dp"
+                    android:background="@drawable/ripple"
+                    android:padding="4dp"
+                    app:srcCompat="@drawable/ic_comment" />
+
+            </LinearLayout>
+
+            <ImageView
+                android:id="@+id/info_iv"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="16dp"
+                android:layout_gravity="right"
+                android:background="@drawable/ripple"
+                android:padding="4dp"
+                app:srcCompat="@drawable/ic_keyboard_arrow_down"
+                android:visibility="gone"/>
+
+        </FrameLayout>
+
+        <LinearLayout
+            android:id="@+id/additional_info_ll"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:paddingBottom="16dp"
+            android:paddingLeft="16dp"
+            android:paddingRight="16dp"
+            android:visibility="gone">
+
+            <com.etiennelawlor.loop.ui.CustomFontTextView
+                android:id="@+id/description_tv"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="@color/secondary_text_dark"
+                android:textSize="14sp"
+                android:paddingBottom="16dp"
+                android:autoLink="all"
+                android:textColorLink="@color/secondary_text_dark"
+                app:textFont="ubuntu_medium"
+                tools:text="Description" />
+
+            <com.greenfrvr.hashtagview.HashtagView
+                android:id="@+id/htv"
+                style="@style/HashtagView"
+                android:visibility="gone"
+                app:rowGravity="left"
+                app:tagBackground="@drawable/item_bg"
+                app:tagForeground="@drawable/flat_button_light"
+                app:tagPaddingBottom="@dimen/padding_vertical"
+                app:tagPaddingLeft="@dimen/padding_horizontal"
+                app:tagPaddingRight="@dimen/padding_horizontal"
+                app:tagPaddingTop="@dimen/padding_vertical"
+                app:tagTextColor="@android:color/white" />
+
+        </LinearLayout>
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="@color/grey_300" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:padding="16dp">
+
+            <com.etiennelawlor.loop.ui.AvatarView
+                android:id="@+id/user_iv"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:scaleType="centerCrop"
+                app:av_radius="@dimen/avatar_radius_large"/>
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="56dp"
+                android:layout_marginLeft="16dp"
+                android:gravity="center_vertical"
+                android:orientation="vertical">
+
+                <com.etiennelawlor.loop.ui.CustomFontTextView
+                    android:id="@+id/subtitle_tv"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:ellipsize="end"
+                    android:maxLines="1"
+                    android:textColor="@color/primary_text_dark"
+                    android:textSize="18sp"
+                    android:transitionName="subtitleTransition"
+                    app:textFont="ubuntu_medium"
+                    tools:text="Video Subtitle" />
+
+                <com.etiennelawlor.loop.ui.CustomFontTextView
+                    android:id="@+id/upload_date_tv"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textColor="@color/secondary_text_dark"
+                    android:textSize="14sp"
+                    app:textFont="ubuntu_medium"
+                    tools:text="Upload date" />
+
+            </LinearLayout>
+        </LinearLayout>
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="@color/grey_300" />
+
+    </LinearLayout>
+
+</ScrollView>
+

@@ -1,7 +1,5 @@
 package com.etiennelawlor.loop.network.models.request;
 
-import android.text.TextUtils;
-
 import com.google.gson.annotations.SerializedName;
 
 public class CommentPost {
