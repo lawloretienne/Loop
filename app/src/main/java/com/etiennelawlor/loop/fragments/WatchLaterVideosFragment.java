@@ -40,6 +40,8 @@ import com.etiennelawlor.loop.utilities.FontCache;
 import com.etiennelawlor.loop.utilities.NetworkLogUtility;
 import com.etiennelawlor.loop.utilities.NetworkUtility;
 import com.etiennelawlor.loop.utilities.TrestleUtility;
+import com.google.android.gms.cast.framework.CastButtonFactory;
+import com.google.android.gms.cast.framework.CastContext;
 
 import java.util.List;
 
@@ -97,6 +99,8 @@ public class WatchLaterVideosFragment extends BaseFragment implements VideosAdap
     private VimeoService vimeoService;
     private Typeface font;
     private CompositeSubscription compositeSubscription;
+    private CastContext castContext;
+    private MenuItem mediaRouteMenuItem;
     // endregion
 
     // region Listeners
@@ -272,6 +276,8 @@ public class WatchLaterVideosFragment extends BaseFragment implements VideosAdap
 
         font = FontCache.getTypeface("Ubuntu-Medium.ttf", getContext());
         compositeSubscription = new CompositeSubscription();
+
+        castContext = CastContext.getSharedInstance(getContext());
     }
 
     @Override
@@ -338,7 +344,9 @@ public class WatchLaterVideosFragment extends BaseFragment implements VideosAdap
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         super.onCreateOptionsMenu(menu, inflater);
 
-        inflater.inflate(R.menu.main_menu, menu);
+        inflater.inflate(R.menu.videos_menu, menu);
+
+        mediaRouteMenuItem = CastButtonFactory.setUpMediaRouteButton(getContext().getApplicationContext(), menu, R.id.media_route);
 
         // Get the SearchView and set the searchable configuration
 //        SearchManager searchManager = (SearchManager) getActivity().getSystemService(Context.SEARCH_SERVICE);

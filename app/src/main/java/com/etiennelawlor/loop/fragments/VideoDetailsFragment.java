@@ -1,8 +1,11 @@
 package com.etiennelawlor.loop.fragments;
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
+import android.content.res.TypedArray;
 import android.graphics.Typeface;
+import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
@@ -11,9 +14,13 @@ import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
+import android.support.v4.content.ContextCompat;
+import android.support.v4.graphics.drawable.DrawableCompat;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.app.MediaRouteButton;
+import android.support.v7.view.ContextThemeWrapper;
 import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
@@ -65,6 +72,8 @@ import com.google.android.exoplayer2.upstream.DataSource;
 import com.google.android.exoplayer2.upstream.DefaultBandwidthMeter;
 import com.google.android.exoplayer2.upstream.DefaultDataSourceFactory;
 import com.google.android.exoplayer2.util.Util;
+import com.google.android.gms.cast.framework.CastButtonFactory;
+import com.google.android.gms.cast.framework.CastContext;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -118,6 +127,8 @@ public class VideoDetailsFragment extends BaseFragment {
     FrameLayout exoButtonsFrameLayout;
     @BindView(R.id.control_view_ll)
     LinearLayout controlViewLinearLayout;
+    @BindView(R.id.mrb)
+    MediaRouteButton mediaRouteButton;
     // endregion
 
     // region Member Variables
@@ -128,6 +139,7 @@ public class VideoDetailsFragment extends BaseFragment {
     private Unbinder unbinder;
     private Typeface font;
     private SimpleExoPlayer exoPlayer;
+    private CastContext castContext;
     // endregion
 
     // region Listeners
@@ -318,6 +330,8 @@ public class VideoDetailsFragment extends BaseFragment {
         setHasOptionsMenu(true);
 
         font = FontCache.getTypeface("Ubuntu-Medium.ttf", getContext());
+
+        castContext = CastContext.getSharedInstance(getContext());
     }
 
     @Override
@@ -345,6 +359,7 @@ public class VideoDetailsFragment extends BaseFragment {
             setUpArtwork();
             setUpExoPlayer();
             setUpSimpleExoPlayerView();
+            setUpCastButton();
         }
 
         int orientation = view.getResources().getConfiguration().orientation;
@@ -629,6 +644,23 @@ public class VideoDetailsFragment extends BaseFragment {
                 }
             }
         }
+    }
+
+    private void setUpCastButton(){
+        Drawable remoteIndicatorDrawable = getRemoteIndicatorDrawable();
+        DrawableCompat.setTint(remoteIndicatorDrawable, ContextCompat.getColor(getContext(), android.R.color.white));
+        mediaRouteButton.setRemoteIndicatorDrawable(remoteIndicatorDrawable);
+        CastButtonFactory.setUpMediaRouteButton(getContext().getApplicationContext(), mediaRouteButton);
+    }
+
+    private Drawable getRemoteIndicatorDrawable(){
+        Context castContext = new ContextThemeWrapper(getContext(), android.support.v7.mediarouter.R.style.Theme_MediaRouter);
+        TypedArray a = castContext.obtainStyledAttributes(null,
+                android.support.v7.mediarouter.R.styleable.MediaRouteButton, android.support.v7.mediarouter.R.attr.mediaRouteButtonStyle, 0);
+        Drawable remoteIndicatorDrawable = a.getDrawable(
+                android.support.v7.mediarouter.R.styleable.MediaRouteButton_externalRouteEnabledDrawable);
+        a.recycle();
+        return remoteIndicatorDrawable;
     }
     // endregion
 

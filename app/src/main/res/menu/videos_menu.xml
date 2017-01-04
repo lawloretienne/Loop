@@ -6,7 +6,15 @@
     <item
         android:id="@+id/sort"
         android:title="@string/sort"
-        app:showAsAction="never"
+        app:showAsAction="always"
+        android:icon="@drawable/ic_filter_list"
         android:orderInCategory="0"/>
+
+    <item
+        android:id="@+id/media_route"
+        android:title="@string/cast"
+        app:actionProviderClass="android.support.v7.app.MediaRouteActionProvider"
+        app:showAsAction="always"
+        android:orderInCategory="1"/>
 
 </menu>

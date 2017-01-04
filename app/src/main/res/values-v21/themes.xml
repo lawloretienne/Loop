@@ -16,7 +16,7 @@
 
     <style name="Theme.Loop.VideoDetailsActivity" parent="Theme.Loop">
         <item name="android:windowDrawsSystemBarBackgrounds">true</item>
-        <item name="android:statusBarColor">@color/five_percent_transparency_black</item>
+        <item name="android:statusBarColor">@color/sixty_percent_transparency_black</item>
         <item name="colorButtonNormal">@color/accent</item>
     </style>
 
