@@ -7,6 +7,8 @@ import android.text.TextUtils;
 
 import com.google.gson.annotations.SerializedName;
 
+import java.util.List;
+
 /**
  * Created by etiennelawlor on 5/23/15.
  */
@@ -90,6 +92,21 @@ public class User implements Parcelable {
         }
         return id;
     }
+
+    public String getAvatarUrl(){
+        String avatarUrl =  "";
+        if (pictures != null) {
+            List<Size> sizes = pictures.getSizes();
+            if (sizes != null && sizes.size() > 0) {
+                Size size = sizes.get(sizes.size() - 1);
+                if (size != null) {
+                    avatarUrl = size.getLink();
+                }
+            }
+        }
+        return avatarUrl;
+    }
+
     // endregion
 
     // region Setters

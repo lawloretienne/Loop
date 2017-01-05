@@ -91,7 +91,10 @@ public class LoopApplication extends Application {
                 // Add the line number to the tag
                 @Override
                 protected String createStackElementTag(StackTraceElement element) {
-                    return super.createStackElementTag(element) + ":" + element.getLineNumber();
+                    return String.format("[Line - %s] [Method - %s] [Class - %s]",
+                            element.getLineNumber(),
+                            element.getMethodName(),
+                            super.createStackElementTag(element));
                 }
             });
         } else {

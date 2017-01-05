@@ -1,5 +1,7 @@
 package com.etiennelawlor.loop.models;
 
+import com.etiennelawlor.loop.fragments.VideoDetailsFragment;
+
 /**
  * Created by etiennelawlor on 10/8/15.
  */
@@ -8,6 +10,8 @@ public class VideoSavedState {
     // region Fields
     private String videoUrl;
     private long currentPosition;
+    private float currentVolume;
+    private VideoDetailsFragment.PlaybackState playbackState;
     // endregion
 
     public VideoSavedState(){
@@ -22,6 +26,15 @@ public class VideoSavedState {
     public long getCurrentPosition() {
         return currentPosition;
     }
+
+    public float getCurrentVolume() {
+        return currentVolume;
+    }
+
+    public VideoDetailsFragment.PlaybackState getPlaybackState() {
+        return playbackState;
+    }
+
     // endregion
 
     // region Setters
@@ -32,5 +45,14 @@ public class VideoSavedState {
     public void setCurrentPosition(long currentPosition) {
         this.currentPosition = currentPosition;
     }
+
+    public void setCurrentVolume(float currentVolume) {
+        this.currentVolume = currentVolume;
+    }
+
+    public void setPlaybackState(VideoDetailsFragment.PlaybackState playbackState) {
+        this.playbackState = playbackState;
+    }
+
     // endregion
 }

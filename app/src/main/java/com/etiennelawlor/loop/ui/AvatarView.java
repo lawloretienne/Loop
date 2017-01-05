@@ -117,22 +117,11 @@ public class AvatarView extends FrameLayout {
             return;
         }
 
-        String url = "";
+        String avatarUrl = user.getAvatarUrl();
 
-        Pictures pictures = user.getPictures();
-        if (pictures != null) {
-            List<Size> sizes = pictures.getSizes();
-            if (sizes != null && sizes.size() > 0) {
-                Size size = sizes.get(sizes.size() - 1);
-                if (size != null) {
-                    url = size.getLink();
-                }
-            }
-        }
-
-        if (!TextUtils.isEmpty(url)) {
+        if (!TextUtils.isEmpty(avatarUrl)) {
             Picasso.with(getContext())
-                    .load(url)
+                    .load(avatarUrl)
                     .transform(roundedTransformation)
                     .resize((int)radius*2, (int)radius*2)
                     .centerCrop()

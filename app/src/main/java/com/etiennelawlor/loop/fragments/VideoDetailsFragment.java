@@ -23,19 +23,23 @@ import android.support.v7.app.MediaRouteButton;
 import android.support.v7.view.ContextThemeWrapper;
 import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.view.SurfaceView;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.SeekBar;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
+import com.etiennelawlor.loop.LoopApplication;
 import com.etiennelawlor.loop.R;
 import com.etiennelawlor.loop.models.AccessToken;
 import com.etiennelawlor.loop.models.VideoSavedState;
@@ -45,6 +49,7 @@ import com.etiennelawlor.loop.network.interceptors.AuthorizedNetworkInterceptor;
 import com.etiennelawlor.loop.network.models.response.Video;
 import com.etiennelawlor.loop.network.models.response.VideoConfig;
 import com.etiennelawlor.loop.prefs.LoopPrefs;
+import com.etiennelawlor.loop.utilities.DateUtility;
 import com.etiennelawlor.loop.utilities.FontCache;
 import com.etiennelawlor.loop.utilities.NetworkLogUtility;
 import com.etiennelawlor.loop.utilities.NetworkUtility;
@@ -65,6 +70,7 @@ import com.google.android.exoplayer2.trackselection.DefaultTrackSelector;
 import com.google.android.exoplayer2.trackselection.TrackSelection;
 import com.google.android.exoplayer2.trackselection.TrackSelectionArray;
 import com.google.android.exoplayer2.trackselection.TrackSelector;
+import com.google.android.exoplayer2.ui.AspectRatioFrameLayout;
 import com.google.android.exoplayer2.ui.PlaybackControlView;
 import com.google.android.exoplayer2.ui.SimpleExoPlayerView;
 import com.google.android.exoplayer2.upstream.BandwidthMeter;
@@ -72,10 +78,17 @@ import com.google.android.exoplayer2.upstream.DataSource;
 import com.google.android.exoplayer2.upstream.DefaultBandwidthMeter;
 import com.google.android.exoplayer2.upstream.DefaultDataSourceFactory;
 import com.google.android.exoplayer2.util.Util;
+import com.google.android.gms.cast.MediaInfo;
+import com.google.android.gms.cast.MediaMetadata;
 import com.google.android.gms.cast.framework.CastButtonFactory;
 import com.google.android.gms.cast.framework.CastContext;
+import com.google.android.gms.cast.framework.CastSession;
+import com.google.android.gms.cast.framework.SessionManagerListener;
+import com.google.android.gms.cast.framework.media.RemoteMediaClient;
+import com.google.android.gms.common.images.WebImage;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
 
 import butterknife.BindView;
@@ -121,6 +134,14 @@ public class VideoDetailsFragment extends BaseFragment {
 //    TextView errorTextView;
     @BindView(R.id.exo_artwork)
     ImageView artworkImageView;
+    @BindView(R.id.exo_shutter)
+    View shutterView;
+    @BindView(R.id.exo_progress)
+    SeekBar exoSeekBar;
+    @BindView(R.id.exo_play)
+    ImageButton exoPlayButton;
+    @BindView(R.id.exo_pause)
+    ImageButton exoPauseButton;
     @BindView(R.id.exo_replay)
     ImageButton replayImageButton;
     @BindView(R.id.exo_btns_fl)
@@ -129,6 +150,8 @@ public class VideoDetailsFragment extends BaseFragment {
     LinearLayout controlViewLinearLayout;
     @BindView(R.id.mrb)
     MediaRouteButton mediaRouteButton;
+    @BindView(R.id.exo_content_frame)
+    AspectRatioFrameLayout aspectRatioFrameLayout;
     // endregion
 
     // region Member Variables
@@ -140,14 +163,55 @@ public class VideoDetailsFragment extends BaseFragment {
     private Typeface font;
     private SimpleExoPlayer exoPlayer;
     private CastContext castContext;
+    private PlaybackLocation location;
+    private CastSession castSession;
+    private PlaybackState playbackState;
+    private boolean isLocalVideoPrepared = false;
+    private long currentPosition = 0;
+    private SessionManagerListener<CastSession> sessionManagerListener;
     // endregion
 
     // region Listeners
+    @OnClick(R.id.exo_play)
+    public void onPlayButtonClicked(){
+        playbackState = PlaybackState.PLAYING;
+        exoPlayButton.setVisibility(View.GONE);
+        exoPauseButton.setVisibility(View.VISIBLE);
+
+        resumeLocalVideo();
+        if(location == PlaybackLocation.REMOTE){
+            resumeRemoteVideo();
+        }
+    }
+
+    @OnClick(R.id.exo_pause)
+    public void onPauseButtonClicked(){
+        playbackState = PlaybackState.PAUSED;
+        exoPauseButton.setVisibility(View.GONE);
+        exoPlayButton.setVisibility(View.VISIBLE);
+
+        pauseLocalVideo();
+        if(location == PlaybackLocation.REMOTE){
+            pauseRemoteVideo();
+        }
+    }
+
     @OnClick(R.id.exo_replay)
     public void onReplayButtonClicked() {
         replayImageButton.setVisibility(View.GONE);
         exoButtonsFrameLayout.setVisibility(View.VISIBLE);
-        exoPlayer.seekTo(0);
+        switch (location){
+            case LOCAL:
+                updateLocalVideoPosition(0);
+                break;
+            case REMOTE:
+                updateLocalVideoPosition(0);
+                pauseLocalVideo();
+                playRemoteVideo(0, true);
+                break;
+            default:
+                break;
+        }
     }
 
 //    @OnClick(R.id.reload_btn)
@@ -172,7 +236,6 @@ public class VideoDetailsFragment extends BaseFragment {
 
         @Override
         public void onLoadingChanged(boolean isLoading) {
-
         }
 
         @Override
@@ -206,7 +269,6 @@ public class VideoDetailsFragment extends BaseFragment {
     private PlaybackControlView.VisibilityListener playbackControlViewVisibilityListener = new PlaybackControlView.VisibilityListener() {
         @Override
         public void onVisibilityChange(int visibility) {
-
             int orientation = getContext().getResources().getConfiguration().orientation;
 
             switch (orientation){
@@ -231,6 +293,134 @@ public class VideoDetailsFragment extends BaseFragment {
                 default:
                     break;
             }
+        }
+    };
+
+    private SeekBar.OnSeekBarChangeListener seekBarOnSeekBarChangeListener = new SeekBar.OnSeekBarChangeListener() {
+        @Override
+        public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+            if(fromUser){
+                currentPosition = (long)(exoPlayer.getDuration() * (progress/1000.0D));
+                long pos = exoPlayer.getCurrentPosition();
+
+                Timber.d("VideoDetailsFragment : onProgressChanged() : getFormattedPosition(currentPosition) - %s : getFormattedPosition(pos) - %s : location - %s",
+                        getFormattedPosition(currentPosition), getFormattedPosition(pos), location);
+
+                switch (location) {
+                    case LOCAL:
+                        updateLocalVideoPosition(currentPosition);
+                        break;
+                    case REMOTE:
+                        updateLocalVideoPosition(currentPosition);
+                        pauseLocalVideo();
+                        castSession.getRemoteMediaClient().addListener(new RemoteMediaClient.Listener() {
+                            @Override
+                            public void onStatusUpdated() {
+                                if(isRemoteVideoPlaying()){
+                                    playbackState = PlaybackState.PLAYING;
+                                    resumeLocalVideo();
+                                } else {
+                                    playbackState = PlaybackState.PAUSED;
+                                    pauseLocalVideo();
+                                }
+                            }
+
+                            @Override
+                            public void onMetadataUpdated() {
+
+                            }
+
+                            @Override
+                            public void onQueueStatusUpdated() {
+
+                            }
+
+                            @Override
+                            public void onPreloadStatusUpdated() {
+
+                            }
+
+                            @Override
+                            public void onSendingRemoteMediaRequest() {
+
+                            }
+
+                            @Override
+                            public void onAdBreakStatusUpdated() {
+
+                            }
+                        });
+                        updateRemoteVideoPosition(currentPosition);
+                        break;
+                    default:
+                        break;
+                }
+            } else {
+//                        playbackState = PlaybackState.PLAYING;
+            }
+        }
+
+        @Override
+        public void onStartTrackingTouch(SeekBar seekBar) {
+
+        }
+
+        @Override
+        public void onStopTrackingTouch(SeekBar seekBar) {
+
+        }
+    };
+
+    private RemoteMediaClient.Listener remoteMediaClientListener = new RemoteMediaClient.Listener() {
+        @Override
+        public void onStatusUpdated() {
+            if(isRemoteVideoPlaying()){
+                playbackState = PlaybackState.PLAYING;
+//                resumeLocalVideo();
+
+                Timber.d("VideoDetailsFragment : loadRemoteMedia() : onStatusUpdated() : isRemoteVideoPlaying() : getFormattedPosition(position) - %s", getFormattedPosition(currentPosition));
+                Timber.d("VideoDetailsFragment : loadRemoteMedia() : onStatusUpdated() : isRemoteVideoPlaying() : getFormattedPosition(castSession.getRemoteMediaClient().getApproximateStreamPosition()) - %s", getFormattedPosition(castSession.getRemoteMediaClient().getApproximateStreamPosition()));
+
+                updateLocalVideoVolume(0.0f);
+
+                if(!isLocalVideoPrepared)
+                    // Prepare the player with the source.
+                    exoPlayer.prepare(getMediaSource(videoUrl));
+
+//                currentPosition = (exoPlayer.getDuration() * (exoSeekBar.getProgress()/1000L));
+//                currentPosition = exoPlayer.getCurrentPosition();
+                currentPosition = castSession.getRemoteMediaClient().getApproximateStreamPosition();
+
+                updateLocalVideoPosition(currentPosition);
+                resumeLocalVideo();
+
+//                remoteMediaClient.removeListener(this);
+            }
+        }
+
+        @Override
+        public void onMetadataUpdated() {
+
+        }
+
+        @Override
+        public void onQueueStatusUpdated() {
+
+        }
+
+        @Override
+        public void onPreloadStatusUpdated() {
+
+        }
+
+        @Override
+        public void onSendingRemoteMediaRequest() {
+
+        }
+
+        @Override
+        public void onAdBreakStatusUpdated() {
+
         }
     };
     // endregion
@@ -264,9 +454,7 @@ public class VideoDetailsFragment extends BaseFragment {
             if (videoConfig != null) {
                 videoUrl = videoConfig.getVideoUrl();
                 if (!TextUtils.isEmpty(videoUrl)) {
-
-                    // Prepare the player with the source.
-                    exoPlayer.prepare(getMediaSource(videoUrl));
+                    playVideo(0);
                 }
             }
         }
@@ -332,6 +520,15 @@ public class VideoDetailsFragment extends BaseFragment {
         font = FontCache.getTypeface("Ubuntu-Medium.ttf", getContext());
 
         castContext = CastContext.getSharedInstance(getContext());
+        castSession = castContext.getSessionManager().getCurrentCastSession();
+
+        playbackState = PlaybackState.PLAYING;
+
+        if (castSession != null && castSession.isConnected()) {
+            location = PlaybackLocation.REMOTE;
+        } else {
+            location = PlaybackLocation.LOCAL;
+        }
     }
 
     @Override
@@ -355,11 +552,17 @@ public class VideoDetailsFragment extends BaseFragment {
             actionBar.setTitle("");
         }
 
+
         if (video != null) {
-            setUpArtwork();
             setUpExoPlayer();
             setUpSimpleExoPlayerView();
+//            hideSurfaceView();
+            setUpArtwork();
             setUpCastButton();
+
+            exoSeekBar.setOnSeekBarChangeListener(seekBarOnSeekBarChangeListener);
+
+            setupCastListener();
         }
 
         int orientation = view.getResources().getConfiguration().orientation;
@@ -386,10 +589,35 @@ public class VideoDetailsFragment extends BaseFragment {
         VideoSavedState videoSavedState = getVideoSavedState();
         if(videoSavedState != null && !TextUtils.isEmpty(videoSavedState.getVideoUrl())){
 //            loadingImageView.setVisibility(View.GONE);
-            String videoUrl = videoSavedState.getVideoUrl();
             long currentPosition = videoSavedState.getCurrentPosition();
-            exoPlayer.seekTo(currentPosition);
-            exoPlayer.prepare(getMediaSource(videoUrl));
+            videoUrl = videoSavedState.getVideoUrl();
+            playbackState = videoSavedState.getPlaybackState();
+
+            boolean autoPlay = false;
+            switch (playbackState){
+                case PLAYING:
+                    autoPlay = true;
+                    break;
+                case PAUSED:
+                    autoPlay = false;
+                    break;
+                default:
+                    break;
+            }
+
+            switch (location) {
+                case LOCAL:
+                    playLocalVideo(currentPosition, autoPlay);
+                    updateLocalVideoVolume(videoSavedState.getCurrentVolume());
+                    break;
+                case REMOTE:
+                    playLocalVideo(castSession.getRemoteMediaClient().getApproximateStreamPosition(), autoPlay);
+                    updateLocalVideoVolume(videoSavedState.getCurrentVolume());
+                    break;
+                default:
+                    break;
+            }
+
         } else {
             Call getVideoConfigCall = vimeoPlayerService.getVideoConfig(video.getId());
             calls.add(getVideoConfigCall);
@@ -398,18 +626,50 @@ public class VideoDetailsFragment extends BaseFragment {
     }
 
     @Override
-    public void onPause() {
-        super.onPause();
-
-        exoPlayer.setPlayWhenReady(false);
-    }
-
-    @Override
     public void onResume() {
         super.onResume();
 
-        if(!exoPlayer.getPlayWhenReady())
-            exoPlayer.setPlayWhenReady(true);
+        castContext.getSessionManager().addSessionManagerListener(
+                sessionManagerListener, CastSession.class);
+
+        if (castSession != null && castSession.isConnected()) {
+            location = PlaybackLocation.REMOTE;
+        } else {
+            location = PlaybackLocation.LOCAL;
+        }
+
+        if(!isLocalVideoPlaying() && playbackState == PlaybackState.PLAYING) {
+            switch (location){
+                case LOCAL:
+                    resumeLocalVideo();
+                    break;
+                case REMOTE:
+                    updateLocalVideoPosition(castSession.getRemoteMediaClient().getApproximateStreamPosition());
+                    resumeLocalVideo();
+                    break;
+                default:
+                    break;
+            }
+        }
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+
+        castContext.getSessionManager().removeSessionManagerListener(
+                sessionManagerListener, CastSession.class);
+
+        switch (location) {
+            case LOCAL:
+                pauseLocalVideo();
+                break;
+            case REMOTE:
+                break;
+            default:
+                break;
+        }
+
     }
 
     @Override
@@ -420,6 +680,8 @@ public class VideoDetailsFragment extends BaseFragment {
             VideoSavedState videoSavedState = new VideoSavedState();
             videoSavedState.setVideoUrl(videoUrl);
             videoSavedState.setCurrentPosition(exoPlayer.getCurrentPosition());
+            videoSavedState.setCurrentVolume(exoPlayer.getVolume());
+            videoSavedState.setPlaybackState(playbackState);
             setVideoSavedState(videoSavedState);
         }
 
@@ -430,7 +692,6 @@ public class VideoDetailsFragment extends BaseFragment {
     @Override
     public void onDestroy() {
         super.onDestroy();
-        Timber.d("");
         exoPlayer.release();
     }
 
@@ -488,7 +749,6 @@ public class VideoDetailsFragment extends BaseFragment {
     }
 
     // region Helper Methods
-
     private void setUpExoPlayer(){
         // Create a default TrackSelector
         TrackSelector trackSelector = createTrackSelector();
@@ -498,9 +758,14 @@ public class VideoDetailsFragment extends BaseFragment {
 
         // Create the player
         exoPlayer = ExoPlayerFactory.newSimpleInstance(getContext(), trackSelector, loadControl);
-        exoPlayer.setPlayWhenReady(true);
+        resumeLocalVideo();
 
         exoPlayer.addListener(exoPlayerEventListener);
+    }
+
+    private void hideSurfaceView(){
+        SurfaceView surfaceView = (SurfaceView) aspectRatioFrameLayout.getChildAt(0);
+        surfaceView.setVisibility(View.GONE);
     }
 
     private void setUpArtwork() {
@@ -581,13 +846,10 @@ public class VideoDetailsFragment extends BaseFragment {
 
     private TrackSelector createTrackSelector(){
         // Create a default TrackSelector
-        Handler mainHandler = new Handler();
         // Measures bandwidth during playback. Can be null if not required.
         BandwidthMeter bandwidthMeter = new DefaultBandwidthMeter();
         TrackSelection.Factory videoTrackSelectionFactory =
                 new AdaptiveVideoTrackSelection.Factory(bandwidthMeter);
-//        TrackSelector trackSelector =
-//                new DefaultTrackSelector(mainHandler, videoTrackSelectionFactory);
         TrackSelector trackSelector =
                 new DefaultTrackSelector(videoTrackSelectionFactory);
         return trackSelector;
@@ -596,8 +858,8 @@ public class VideoDetailsFragment extends BaseFragment {
     private MediaSource getMediaSource(String videoUrl){
         DefaultBandwidthMeter bandwidthMeter = new DefaultBandwidthMeter();
         // Produces DataSource instances through which media data is loaded.
-        DataSource.Factory dataSourceFactory = new DefaultDataSourceFactory(getContext(),
-                Util.getUserAgent(getContext(), "Loop"), bandwidthMeter);
+//        DataSource.Factory dataSourceFactory = new DefaultDataSourceFactory(getContext(), Util.getUserAgent(getContext(), "Loop"), bandwidthMeter);
+        DataSource.Factory dataSourceFactory = new DefaultDataSourceFactory(LoopApplication.getInstance().getApplicationContext(), Util.getUserAgent(LoopApplication.getInstance().getApplicationContext(), "Loop"), bandwidthMeter);
         // Produces Extractor instances for parsing the media data.
         ExtractorsFactory extractorsFactory = new DefaultExtractorsFactory();
         // This is the MediaSource representing the media to be played.
@@ -605,9 +867,6 @@ public class VideoDetailsFragment extends BaseFragment {
                 dataSourceFactory, extractorsFactory, null, null);
         // Loops the video indefinitely.
 //        LoopingMediaSource loopingSource = new LoopingMediaSource(mediaSource);
-
-//        MediaSource videoSource = new ExtractorMediaSource(mp4VideoUri,
-//                dataSourceFactory, extractorsFactory, null, null);
         return mediaSource;
     }
 
@@ -662,6 +921,351 @@ public class VideoDetailsFragment extends BaseFragment {
         a.recycle();
         return remoteIndicatorDrawable;
     }
+
+    private void setupCastListener() {
+        sessionManagerListener = new SessionManagerListener<CastSession>() {
+
+            @Override
+            public void onSessionEnded(CastSession session, int error) {
+                onApplicationDisconnected();
+            }
+
+            @Override
+            public void onSessionResumed(CastSession session, boolean wasSuspended) {
+                onApplicationConnected(session);
+            }
+
+            @Override
+            public void onSessionResumeFailed(CastSession session, int error) {
+                onApplicationDisconnected();
+            }
+
+            @Override
+            public void onSessionStarted(CastSession session, String sessionId) {
+                onApplicationConnected(session);
+            }
+
+            @Override
+            public void onSessionStartFailed(CastSession session, int error) {
+                onApplicationDisconnected();
+            }
+
+            @Override
+            public void onSessionStarting(CastSession session) {}
+
+            @Override
+            public void onSessionEnding(CastSession session) {}
+
+            @Override
+            public void onSessionResuming(CastSession session, String sessionId) {}
+
+            @Override
+            public void onSessionSuspended(CastSession session, int reason) {}
+
+            private void onApplicationConnected(CastSession session) {
+                castSession = session;
+//                castSession.getRemoteMediaClient().addListener(remoteMediaClientListener);
+
+                Timber.d("VideoDetailsFragment : onApplicationConnected() : playbackState - %s", playbackState);
+                location = PlaybackLocation.REMOTE;
+
+                if (playbackState == PlaybackState.PLAYING) {
+                    pauseLocalVideo();
+//                    hideSurfaceView();
+                    shutterView.setVisibility(View.GONE);
+                    artworkImageView.setVisibility(View.VISIBLE);
+
+                    Timber.d("VideoDetailsFragment : onApplicationConnected() : A : exoPlayer.getCurrentPosition() - %s : exoPlayer.getDuration() - %s", getFormattedPosition(exoPlayer.getCurrentPosition()), getFormattedPosition(exoPlayer.getDuration()));
+
+                    loadRemoteMedia(exoPlayer.getCurrentPosition(), true);
+
+                } else if(playbackState == PlaybackState.PAUSED){
+                    pauseLocalVideo();
+//                    hideSurfaceView();
+                    shutterView.setVisibility(View.GONE);
+                    artworkImageView.setVisibility(View.VISIBLE);
+
+                    Timber.d("VideoDetailsFragment : onApplicationConnected() : B : exoPlayer.getCurrentPosition() - %s : exoPlayer.getDuration() - %s", getFormattedPosition(exoPlayer.getCurrentPosition()), getFormattedPosition(exoPlayer.getDuration()));
+
+                    loadRemoteMedia(exoPlayer.getCurrentPosition(), false);
+                }
+//                else {
+//                    playbackState = PlaybackState.IDLE;
+//                }
+            }
+
+            private void onApplicationDisconnected() {
+                castSession = null;
+
+                Timber.d("VideoDetailsFragment : onApplicationDisconnected()");
+                location = PlaybackLocation.LOCAL;
+//                playbackState = PlaybackState.IDLE;
+
+                updateLocalVideoVolume(1.0f);
+            }
+        };
+    }
+
+    private void loadRemoteMedia(final long position, boolean autoPlay) {
+        currentPosition = position;
+
+        final RemoteMediaClient remoteMediaClient = castSession.getRemoteMediaClient();
+        remoteMediaClient.addListener(new RemoteMediaClient.Listener() {
+            @Override
+            public void onStatusUpdated() {
+                Timber.d("VideoDetailsFragment : loadRemoteMedia() : onStatusUpdated()");
+
+                if(isRemoteVideoPlaying()) {
+                    playbackState = PlaybackState.PLAYING;
+                    Timber.d("VideoDetailsFragment : loadRemoteMedia() : onStatusUpdated() : isRemoteVideoPlaying() : getFormattedPosition(position) - %s", getFormattedPosition(position));
+                    updateLocalVideoVolume(0.0f);
+
+                    if(!isLocalVideoPrepared)
+                        // Prepare the player with the source.
+                        exoPlayer.prepare(getMediaSource(videoUrl));
+
+                    updateLocalVideoPosition(position);
+                    resumeLocalVideo();
+
+                    remoteMediaClient.removeListener(this);
+                }
+
+//                Intent intent = new Intent(LocalPlayerActivity.this, ExpandedControlsActivity.class);
+//                startActivity(intent);
+//                remoteMediaClient.removeListener(this);
+            }
+
+            @Override
+            public void onMetadataUpdated() {
+                Timber.d("VideoDetailsFragment : loadRemoteMedia() : onMetadataUpdated()");
+            }
+
+            @Override
+            public void onQueueStatusUpdated() {
+                Timber.d("VideoDetailsFragment : loadRemoteMedia() : onQueueStatusUpdated()");
+            }
+
+            @Override
+            public void onPreloadStatusUpdated() {
+                Timber.d("VideoDetailsFragment : loadRemoteMedia() : onPreloadStatusUpdated()");
+            }
+
+            @Override
+            public void onSendingRemoteMediaRequest() {
+                Timber.d("VideoDetailsFragment : loadRemoteMedia() : onSendingRemoteMediaRequest()");
+            }
+
+            @Override
+            public void onAdBreakStatusUpdated() {
+                Timber.d("VideoDetailsFragment : loadRemoteMedia() : onAdBreakStatusUpdated()");
+
+            }
+        });
+
+        castSession.getRemoteMediaClient().load(buildMediaInfo(), autoPlay, position);
+    }
+
+    public String getFormattedPosition(long position){
+        position = position / 1000L;
+        long minutes = position / 60;
+        long seconds = position % 60;
+
+        String formattedDuration;
+        if (minutes == 0L) {
+            if (seconds > 0L) {
+                if (seconds < 10L)
+                    formattedDuration = String.format("0:0%s", String.valueOf(seconds));
+                else
+                    formattedDuration = String.format("0:%s", String.valueOf(seconds));
+            } else {
+                formattedDuration = "0:00";
+            }
+        } else {
+            if (seconds > 0L) {
+                if (seconds < 10L)
+                    formattedDuration = String.format("%s:0%s", String.valueOf(minutes), String.valueOf(seconds));
+                else
+                    formattedDuration = String.format("%s:%s", String.valueOf(minutes), String.valueOf(seconds));
+            } else {
+                formattedDuration = String.format("%s:00", String.valueOf(minutes));
+            }
+        }
+        return formattedDuration;
+    }
+
+    private MediaInfo buildMediaInfo() {
+        MediaMetadata movieMetadata = new MediaMetadata(MediaMetadata.MEDIA_TYPE_MOVIE);
+
+        movieMetadata.putString(MediaMetadata.KEY_SUBTITLE, video.getUser().getName());
+        movieMetadata.putString(MediaMetadata.KEY_TITLE, video.getName());
+        movieMetadata.addImage(new WebImage(Uri.parse(video.getThumbnailUrl())));
+
+        return new MediaInfo.Builder(videoUrl)
+                .setStreamType(MediaInfo.STREAM_TYPE_BUFFERED)
+                .setContentType("videos/mp4")
+                .setMetadata(movieMetadata)
+                .setStreamDuration(exoPlayer.getDuration() * 1000)
+                .build();
+    }
+
+    private void playVideo(long position){
+        Timber.d("VideoDetailsFragment : playVideo() : location - %s", location);
+        switch (location) {
+            case LOCAL:
+                playLocalVideo(position, true);
+                break;
+            case REMOTE:
+                playRemoteVideo(position, true);
+                break;
+            default:
+                break;
+        }
+    }
+
+    private void playLocalVideo(long position, boolean autoPlay){
+        Timber.d("VideoDetailsFragment : playLocalVideo()");
+        updateLocalVideoPosition(position);
+        // Prepare the player with the source.
+        exoPlayer.prepare(getMediaSource(videoUrl));
+        isLocalVideoPrepared = true;
+        if(!autoPlay)
+            pauseLocalVideo();
+    }
+
+    private void playRemoteVideo(long position, boolean autoPlay){
+        Timber.d("VideoDetailsFragment : playRemoteVideo()");
+        updateRemoteVideoPosition(position);
+//        loadRemoteMedia(exoPlayer.getCurrentPosition(), true);
+        loadRemoteMedia(position, autoPlay);
+    }
+
+    private void updateVideoPosition(int position){
+        switch (location) {
+            case LOCAL:
+                updateLocalVideoPosition(position);
+                break;
+            case REMOTE:
+                updateRemoteVideoPosition(position);
+                break;
+            default:
+                break;
+        }
+    }
+
+    private void updateLocalVideoPosition(long position){
+        Timber.d("VideoDetailsFragment : updateLocalVideoPosition() : getFormattedPosition(position) - %s", getFormattedPosition(position));
+        exoPlayer.seekTo(position);
+    }
+
+    private void updateRemoteVideoPosition(long position){
+        Timber.d("VideoDetailsFragment : updateRemoteVideoPosition() : getFormattedPosition(position) - %s", getFormattedPosition(position));
+//        castSession.getRemoteMediaClient().seek(position);
+        castSession.getRemoteMediaClient().seek(position, RemoteMediaClient.RESUME_STATE_UNCHANGED);
+    }
+
+    private boolean isVideoPlaying(){
+        switch (location) {
+            case LOCAL:
+                return isLocalVideoPlaying();
+            case REMOTE:
+                return isRemoteVideoPlaying();
+            default:
+                return false;
+        }
+    }
+
+    private boolean isLocalVideoPlaying(){
+        Timber.d("VideoDetailsFragment : isLocalVideoPlaying()");
+        return exoPlayer.getPlayWhenReady();
+    }
+
+    private boolean isRemoteVideoPlaying(){
+        Timber.d("VideoDetailsFragment : isRemoteVideoPlaying()");
+        if(castSession != null){
+            RemoteMediaClient remoteMediaClient = castSession.getRemoteMediaClient();
+            return remoteMediaClient.isPlaying();
+        }
+        return false;
+    }
+
+    private void resumeVideo(){
+        switch (location) {
+            case LOCAL:
+                resumeLocalVideo();
+                break;
+            case REMOTE:
+                resumeRemoteVideo();
+                break;
+            default:
+                break;
+        }
+    }
+
+    private void resumeLocalVideo(){
+        Timber.d("VideoDetailsFragment : resumeLocalVideo()");
+        exoPlayer.setPlayWhenReady(true);
+    }
+
+    private void resumeRemoteVideo(){
+        Timber.d("VideoDetailsFragment : resumeRemoteVideo()");
+        if(castSession != null){
+            RemoteMediaClient remoteMediaClient = castSession.getRemoteMediaClient();
+            if(remoteMediaClient != null){
+                remoteMediaClient.play();
+            }
+        }
+    }
+
+    private void pauseVideo(){
+        switch (location) {
+            case LOCAL:
+                pauseLocalVideo();
+                break;
+            case REMOTE:
+                pauseRemoteVideo();
+                break;
+            default:
+                break;
+        }
+    }
+
+    private void pauseLocalVideo(){
+        Timber.d("VideoDetailsFragment : pauseLocalVideo()");
+        exoPlayer.setPlayWhenReady(false);
+    }
+
+    private void pauseRemoteVideo(){
+        Timber.d("VideoDetailsFragment : pauseRemoteVideo()");
+        if(castSession != null){
+            RemoteMediaClient remoteMediaClient = castSession.getRemoteMediaClient();
+            if(remoteMediaClient != null){
+                remoteMediaClient.pause();
+            }
+        }
+    }
+
+    private void updateVideoVolume(float volume){
+        switch (location) {
+            case LOCAL:
+                updateLocalVideoVolume(volume);
+                break;
+            case REMOTE:
+                updateRemoteVideoVolume(volume);
+                break;
+            default:
+                break;
+        }
+    }
+
+    private void updateLocalVideoVolume(float volume){
+        Timber.d("VideoDetailsFragment : updateLocalVideoVolume()");
+        exoPlayer.setVolume(volume);
+    }
+
+    private void updateRemoteVideoVolume(float volume){
+
+    }
+
     // endregion
 
     // region Inner Classes
@@ -692,6 +1296,21 @@ public class VideoDetailsFragment extends BaseFragment {
         public CharSequence getPageTitle(int position) {
             return fragmentTitles.get(position);
         }
+    }
+
+    /**
+     * indicates whether we are doing a local or a remote playback
+     */
+    public enum PlaybackLocation {
+        LOCAL,
+        REMOTE
+    }
+
+    /**
+     * List of various states that we can be in
+     */
+    public enum PlaybackState {
+        PLAYING, PAUSED, BUFFERING, IDLE
     }
     // endregion
 

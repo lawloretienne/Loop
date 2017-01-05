@@ -299,6 +299,7 @@ public class RelatedVideosFragment extends BaseFragment implements VideosAdapter
             bundle.putString(KEY_TRANSITION, ViewCompat.getTransitionName(iv));
 
             intent.putExtras(bundle);
+            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK|Intent.FLAG_ACTIVITY_CLEAR_TOP);
 
 //            Pair<View, String> p1 = Pair.create(view.findViewById(R.id.video_thumbnail_iv), "videoTransition");
 
