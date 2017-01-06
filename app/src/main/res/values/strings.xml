@@ -58,6 +58,9 @@
     <string name="cast">Cast</string>
     <string name="info">Info</string>
     <string name="related_videos">Related Videos</string>
+    <string name="connecting_to_receiver">Connecting to receiver ...</string>
+    <string name="cast_is_paused">Cast is paused</string>
+    <string name="cast_is_loading">Cast is loading ...</string>
 
 
 </resources>

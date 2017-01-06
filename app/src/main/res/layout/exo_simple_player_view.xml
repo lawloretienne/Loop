@@ -13,7 +13,8 @@
      See the License for the specific language governing permissions and
      limitations under the License.
 -->
-<merge xmlns:android="http://schemas.android.com/apk/res/android">
+<merge xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <com.google.android.exoplayer2.ui.AspectRatioFrameLayout android:id="@id/exo_content_frame"
         android:layout_width="match_parent"
@@ -31,6 +32,25 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:scaleType="centerCrop"/>
+
+        <ImageView android:id="@+id/exo_thumbnail"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:scaleType="centerCrop"
+            />
+
+        <com.etiennelawlor.loop.ui.CustomFontTextView
+            android:id="@+id/cast_info_tv"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@drawable/cast_info_bg"
+            android:textColor="@android:color/white"
+            android:textSize="20sp"
+            android:padding="8dp"
+            android:visibility="gone"
+            android:gravity="center"
+            android:layout_gravity="center"
+            app:textFont="ubuntu_medium"/>
 
         <com.google.android.exoplayer2.ui.SubtitleView android:id="@id/exo_subtitles"
             android:layout_width="match_parent"

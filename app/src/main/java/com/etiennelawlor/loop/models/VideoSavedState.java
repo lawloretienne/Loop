@@ -12,6 +12,7 @@ public class VideoSavedState {
     private long currentPosition;
     private float currentVolume;
     private VideoDetailsFragment.PlaybackState playbackState;
+    private String castInfo;
     // endregion
 
     public VideoSavedState(){
@@ -35,6 +36,10 @@ public class VideoSavedState {
         return playbackState;
     }
 
+    public String getCastInfo() {
+        return castInfo;
+    }
+
     // endregion
 
     // region Setters
@@ -52,6 +57,10 @@ public class VideoSavedState {
 
     public void setPlaybackState(VideoDetailsFragment.PlaybackState playbackState) {
         this.playbackState = playbackState;
+    }
+
+    public void setCastInfo(String castInfo) {
+        this.castInfo = castInfo;
     }
 
     // endregion

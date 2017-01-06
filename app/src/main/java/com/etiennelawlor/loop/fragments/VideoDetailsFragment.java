@@ -78,6 +78,7 @@ import com.google.android.exoplayer2.upstream.DataSource;
 import com.google.android.exoplayer2.upstream.DefaultBandwidthMeter;
 import com.google.android.exoplayer2.upstream.DefaultDataSourceFactory;
 import com.google.android.exoplayer2.util.Util;
+import com.google.android.gms.cast.Cast;
 import com.google.android.gms.cast.MediaInfo;
 import com.google.android.gms.cast.MediaMetadata;
 import com.google.android.gms.cast.framework.CastButtonFactory;
@@ -132,8 +133,10 @@ public class VideoDetailsFragment extends BaseFragment {
 //    LinearLayout errorLinearLayout;
 //    @BindView(R.id.error_tv)
 //    TextView errorTextView;
-    @BindView(R.id.exo_artwork)
-    ImageView artworkImageView;
+    @BindView(R.id.exo_thumbnail)
+    ImageView thumbnailImageView;
+    @BindView(R.id.cast_info_tv)
+    TextView castInfoTextView;
     @BindView(R.id.exo_shutter)
     View shutterView;
     @BindView(R.id.exo_progress)
@@ -181,6 +184,7 @@ public class VideoDetailsFragment extends BaseFragment {
         resumeLocalVideo();
         if(location == PlaybackLocation.REMOTE){
             resumeRemoteVideo();
+            castInfoTextView.setText(String.format("Casting to %s", castSession.getCastDevice().getFriendlyName()));
         }
     }
 
@@ -193,6 +197,7 @@ public class VideoDetailsFragment extends BaseFragment {
         pauseLocalVideo();
         if(location == PlaybackLocation.REMOTE){
             pauseRemoteVideo();
+            castInfoTextView.setText(getString(R.string.cast_is_paused));
         }
     }
 
@@ -270,7 +275,6 @@ public class VideoDetailsFragment extends BaseFragment {
         @Override
         public void onVisibilityChange(int visibility) {
             int orientation = getContext().getResources().getConfiguration().orientation;
-
             switch (orientation){
                 case ORIENTATION_PORTRAIT:
                     if(visibility == View.GONE){
@@ -316,38 +320,50 @@ public class VideoDetailsFragment extends BaseFragment {
                         castSession.getRemoteMediaClient().addListener(new RemoteMediaClient.Listener() {
                             @Override
                             public void onStatusUpdated() {
+                                Timber.d("VideoDetailsFragment : onProgressChanged() : onStatusUpdated()");
+
                                 if(isRemoteVideoPlaying()){
                                     playbackState = PlaybackState.PLAYING;
                                     resumeLocalVideo();
+                                    castInfoTextView.setText(String.format("Casting to %s", castSession.getCastDevice().getFriendlyName()));
                                 } else {
-                                    playbackState = PlaybackState.PAUSED;
+//                                    playbackState = PlaybackState.PAUSED;
                                     pauseLocalVideo();
+//                                    castInfoTextView.setText(getString(R.string.cast_is_paused));
+
+                                    if(playbackState == PlaybackState.PLAYING){
+                                        if(isResumed())
+                                            castInfoTextView.setText(getString(R.string.cast_is_loading));
+                                    }
                                 }
+
+                                if(isResumed())
+                                    castInfoTextView.setVisibility(View.VISIBLE);
                             }
 
                             @Override
                             public void onMetadataUpdated() {
-
+                                Timber.d("VideoDetailsFragment : onProgressChanged() : onMetadataUpdated()");
                             }
 
                             @Override
                             public void onQueueStatusUpdated() {
-
+                                Timber.d("VideoDetailsFragment : onProgressChanged() : onQueueStatusUpdated()");
                             }
 
                             @Override
                             public void onPreloadStatusUpdated() {
-
+                                Timber.d("VideoDetailsFragment : onProgressChanged() : onPreloadStatusUpdated()");
                             }
 
                             @Override
                             public void onSendingRemoteMediaRequest() {
-
+                                Timber.d("VideoDetailsFragment : onProgressChanged() : onSendingRemoteMediaRequest()");
                             }
 
                             @Override
                             public void onAdBreakStatusUpdated() {
-
+                                Timber.d("VideoDetailsFragment : onProgressChanged() : onAdBreakStatusUpdated()");
                             }
                         });
                         updateRemoteVideoPosition(currentPosition);
@@ -374,6 +390,8 @@ public class VideoDetailsFragment extends BaseFragment {
     private RemoteMediaClient.Listener remoteMediaClientListener = new RemoteMediaClient.Listener() {
         @Override
         public void onStatusUpdated() {
+            Timber.d("VideoDetailsFragment : remoteMediaClientListener : onStatusUpdated()");
+
             if(isRemoteVideoPlaying()){
                 playbackState = PlaybackState.PLAYING;
 //                resumeLocalVideo();
@@ -395,32 +413,39 @@ public class VideoDetailsFragment extends BaseFragment {
                 resumeLocalVideo();
 
 //                remoteMediaClient.removeListener(this);
+                castInfoTextView.setText(String.format("Casting to %s", castSession.getCastDevice().getFriendlyName()));
+            } else {
+//                castInfoTextView.setText(getString(R.string.cast_is_paused));
+                if(playbackState == PlaybackState.PLAYING){
+                    castInfoTextView.setText(getString(R.string.cast_is_loading));
+                }
             }
+            castInfoTextView.setVisibility(View.VISIBLE);
         }
 
         @Override
         public void onMetadataUpdated() {
-
+            Timber.d("VideoDetailsFragment : remoteMediaClientListener : onMetadataUpdated()");
         }
 
         @Override
         public void onQueueStatusUpdated() {
-
+            Timber.d("VideoDetailsFragment : remoteMediaClientListener : onQueueStatusUpdated()");
         }
 
         @Override
         public void onPreloadStatusUpdated() {
-
+            Timber.d("VideoDetailsFragment : remoteMediaClientListener : onPreloadStatusUpdated()");
         }
 
         @Override
         public void onSendingRemoteMediaRequest() {
-
+            Timber.d("VideoDetailsFragment : remoteMediaClientListener : onSendingRemoteMediaRequest()");
         }
 
         @Override
         public void onAdBreakStatusUpdated() {
-
+            Timber.d("VideoDetailsFragment : remoteMediaClientListener : onAdBreakStatusUpdated()");
         }
     };
     // endregion
@@ -552,12 +577,10 @@ public class VideoDetailsFragment extends BaseFragment {
             actionBar.setTitle("");
         }
 
-
         if (video != null) {
             setUpExoPlayer();
             setUpSimpleExoPlayerView();
-//            hideSurfaceView();
-            setUpArtwork();
+            setUpThumbnail();
             setUpCastButton();
 
             exoSeekBar.setOnSeekBarChangeListener(seekBarOnSeekBarChangeListener);
@@ -592,6 +615,8 @@ public class VideoDetailsFragment extends BaseFragment {
             long currentPosition = videoSavedState.getCurrentPosition();
             videoUrl = videoSavedState.getVideoUrl();
             playbackState = videoSavedState.getPlaybackState();
+            castInfoTextView.setText(videoSavedState.getCastInfo());
+            castInfoTextView.setVisibility(View.VISIBLE);
 
             boolean autoPlay = false;
             switch (playbackState){
@@ -617,7 +642,6 @@ public class VideoDetailsFragment extends BaseFragment {
                 default:
                     break;
             }
-
         } else {
             Call getVideoConfigCall = vimeoPlayerService.getVideoConfig(video.getId());
             calls.add(getVideoConfigCall);
@@ -682,6 +706,7 @@ public class VideoDetailsFragment extends BaseFragment {
             videoSavedState.setCurrentPosition(exoPlayer.getCurrentPosition());
             videoSavedState.setCurrentVolume(exoPlayer.getVolume());
             videoSavedState.setPlaybackState(playbackState);
+            videoSavedState.setCastInfo(castInfoTextView.getText().toString());
             setVideoSavedState(videoSavedState);
         }
 
@@ -763,12 +788,7 @@ public class VideoDetailsFragment extends BaseFragment {
         exoPlayer.addListener(exoPlayerEventListener);
     }
 
-    private void hideSurfaceView(){
-        SurfaceView surfaceView = (SurfaceView) aspectRatioFrameLayout.getChildAt(0);
-        surfaceView.setVisibility(View.GONE);
-    }
-
-    private void setUpArtwork() {
+    private void setUpThumbnail() {
         String thumbnailUrl = video.getThumbnailUrl();
 
         if (!TextUtils.isEmpty(thumbnailUrl)) {
@@ -776,7 +796,7 @@ public class VideoDetailsFragment extends BaseFragment {
                     .load(thumbnailUrl)
 //                                .placeholder(R.drawable.ic_placeholder)
 //                                .error(R.drawable.ic_error)
-                    .into(artworkImageView);
+                    .into(thumbnailImageView);
         }
     }
 
@@ -927,40 +947,53 @@ public class VideoDetailsFragment extends BaseFragment {
 
             @Override
             public void onSessionEnded(CastSession session, int error) {
+                Timber.d("VideoDetailsFragment : onSessionEnded()");
                 onApplicationDisconnected();
             }
 
             @Override
             public void onSessionResumed(CastSession session, boolean wasSuspended) {
+                Timber.d("VideoDetailsFragment : onSessionResumed()");
                 onApplicationConnected(session);
             }
 
             @Override
             public void onSessionResumeFailed(CastSession session, int error) {
+                Timber.d("VideoDetailsFragment : onSessionResumeFailed()");
                 onApplicationDisconnected();
             }
 
             @Override
             public void onSessionStarted(CastSession session, String sessionId) {
+                Timber.d("VideoDetailsFragment : onSessionStarted()");
                 onApplicationConnected(session);
             }
 
             @Override
             public void onSessionStartFailed(CastSession session, int error) {
+                Timber.d("VideoDetailsFragment : onSessionStartFailed()");
                 onApplicationDisconnected();
             }
 
             @Override
-            public void onSessionStarting(CastSession session) {}
+            public void onSessionStarting(CastSession session) {
+                Timber.d("VideoDetailsFragment : onSessionResuming()");
+            }
 
             @Override
-            public void onSessionEnding(CastSession session) {}
+            public void onSessionEnding(CastSession session) {
+                Timber.d("VideoDetailsFragment : onSessionResuming()");
+            }
 
             @Override
-            public void onSessionResuming(CastSession session, String sessionId) {}
+            public void onSessionResuming(CastSession session, String sessionId) {
+                Timber.d("VideoDetailsFragment : onSessionResuming()");
+            }
 
             @Override
-            public void onSessionSuspended(CastSession session, int reason) {}
+            public void onSessionSuspended(CastSession session, int reason) {
+                Timber.d("VideoDetailsFragment : onSessionSuspended()");
+            }
 
             private void onApplicationConnected(CastSession session) {
                 castSession = session;
@@ -969,22 +1002,18 @@ public class VideoDetailsFragment extends BaseFragment {
                 Timber.d("VideoDetailsFragment : onApplicationConnected() : playbackState - %s", playbackState);
                 location = PlaybackLocation.REMOTE;
 
-                if (playbackState == PlaybackState.PLAYING) {
-                    pauseLocalVideo();
-//                    hideSurfaceView();
-                    shutterView.setVisibility(View.GONE);
-                    artworkImageView.setVisibility(View.VISIBLE);
+                pauseLocalVideo();
+//                thumbnailImageView.setVisibility(View.VISIBLE);
+                thumbnailImageView.animate().alpha(1.0f).setDuration(1000);
+                castInfoTextView.setText(getString(R.string.connecting_to_receiver));
+                castInfoTextView.setVisibility(View.VISIBLE);
 
+                if (playbackState == PlaybackState.PLAYING) {
                     Timber.d("VideoDetailsFragment : onApplicationConnected() : A : exoPlayer.getCurrentPosition() - %s : exoPlayer.getDuration() - %s", getFormattedPosition(exoPlayer.getCurrentPosition()), getFormattedPosition(exoPlayer.getDuration()));
 
                     loadRemoteMedia(exoPlayer.getCurrentPosition(), true);
 
                 } else if(playbackState == PlaybackState.PAUSED){
-                    pauseLocalVideo();
-//                    hideSurfaceView();
-                    shutterView.setVisibility(View.GONE);
-                    artworkImageView.setVisibility(View.VISIBLE);
-
                     Timber.d("VideoDetailsFragment : onApplicationConnected() : B : exoPlayer.getCurrentPosition() - %s : exoPlayer.getDuration() - %s", getFormattedPosition(exoPlayer.getCurrentPosition()), getFormattedPosition(exoPlayer.getDuration()));
 
                     loadRemoteMedia(exoPlayer.getCurrentPosition(), false);
@@ -1000,6 +1029,8 @@ public class VideoDetailsFragment extends BaseFragment {
                 Timber.d("VideoDetailsFragment : onApplicationDisconnected()");
                 location = PlaybackLocation.LOCAL;
 //                playbackState = PlaybackState.IDLE;
+                thumbnailImageView.animate().alpha(0.0f).setDuration(1000);
+                castInfoTextView.setVisibility(View.GONE);
 
                 updateLocalVideoVolume(1.0f);
             }
@@ -1027,8 +1058,15 @@ public class VideoDetailsFragment extends BaseFragment {
                     updateLocalVideoPosition(position);
                     resumeLocalVideo();
 
+                    castInfoTextView.setText(String.format("Casting to %s", castSession.getCastDevice().getFriendlyName()));
                     remoteMediaClient.removeListener(this);
+                } else {
+                    if(playbackState == PlaybackState.PLAYING){
+                        castInfoTextView.setText(getString(R.string.cast_is_loading));
+                    }
                 }
+
+                castInfoTextView.setVisibility(View.VISIBLE);
 
 //                Intent intent = new Intent(LocalPlayerActivity.this, ExpandedControlsActivity.class);
 //                startActivity(intent);
@@ -1124,6 +1162,10 @@ public class VideoDetailsFragment extends BaseFragment {
 
     private void playLocalVideo(long position, boolean autoPlay){
         Timber.d("VideoDetailsFragment : playLocalVideo()");
+        if(location == PlaybackLocation.LOCAL){
+            thumbnailImageView.animate().alpha(0.0f).setDuration(1000);
+            castInfoTextView.setVisibility(View.GONE);
+        }
         updateLocalVideoPosition(position);
         // Prepare the player with the source.
         exoPlayer.prepare(getMediaSource(videoUrl));
@@ -1159,7 +1201,6 @@ public class VideoDetailsFragment extends BaseFragment {
 
     private void updateRemoteVideoPosition(long position){
         Timber.d("VideoDetailsFragment : updateRemoteVideoPosition() : getFormattedPosition(position) - %s", getFormattedPosition(position));
-//        castSession.getRemoteMediaClient().seek(position);
         castSession.getRemoteMediaClient().seek(position, RemoteMediaClient.RESUME_STATE_UNCHANGED);
     }
 
@@ -1258,7 +1299,6 @@ public class VideoDetailsFragment extends BaseFragment {
     }
 
     private void updateLocalVideoVolume(float volume){
-        Timber.d("VideoDetailsFragment : updateLocalVideoVolume()");
         exoPlayer.setVolume(volume);
     }
 
