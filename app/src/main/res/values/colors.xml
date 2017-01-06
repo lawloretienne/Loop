@@ -2,7 +2,7 @@
 <resources>
 
     <color name="primary">@color/teal_500</color>
-    <color name="primary_dark">@color/teal_600</color>
+    <color name="primary_dark">@color/teal_700</color>
     <color name="accent">@color/pink_A200</color>
 
     <color name="vimeo_blue">#00c8ff</color>
