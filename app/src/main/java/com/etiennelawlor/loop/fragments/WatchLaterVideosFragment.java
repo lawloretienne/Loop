@@ -4,6 +4,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Typeface;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.v4.app.ActivityOptionsCompat;
 import android.support.v4.util.Pair;
 import android.support.v7.app.ActionBar;
@@ -42,6 +43,9 @@ import com.etiennelawlor.loop.utilities.NetworkUtility;
 import com.etiennelawlor.loop.utilities.TrestleUtility;
 import com.google.android.gms.cast.framework.CastButtonFactory;
 import com.google.android.gms.cast.framework.CastContext;
+import com.google.android.gms.cast.framework.CastState;
+import com.google.android.gms.cast.framework.CastStateListener;
+import com.google.android.gms.cast.framework.IntroductoryOverlay;
 
 import java.util.List;
 
@@ -62,6 +66,9 @@ import rx.subscriptions.CompositeSubscription;
  * Created by etiennelawlor on 5/23/15.
  */
 public class WatchLaterVideosFragment extends BaseFragment implements VideosAdapter.OnItemClickListener, VideosAdapter.OnReloadClickListener {
+
+    // Cast SDK v3 Guide
+    // https://codelabs.developers.google.com/codelabs/cast-videos-android/#0
 
     // region Constants
     public static final int PAGE_SIZE = 30;
@@ -101,6 +108,8 @@ public class WatchLaterVideosFragment extends BaseFragment implements VideosAdap
     private CompositeSubscription compositeSubscription;
     private CastContext castContext;
     private MenuItem mediaRouteMenuItem;
+    private CastStateListener castStateListener;
+    private IntroductoryOverlay introductoryOverlay;
     // endregion
 
     // region Listeners
@@ -302,6 +311,15 @@ public class WatchLaterVideosFragment extends BaseFragment implements VideosAdap
             ab.setTitle(TrestleUtility.getFormattedText(getString(R.string.watch_later), font));
         }
 
+        castStateListener = new CastStateListener() {
+            @Override
+            public void onCastStateChanged(int newState) {
+                if (newState != CastState.NO_DEVICES_AVAILABLE) {
+                    showIntroductoryOverlay();
+                }
+            }
+        };
+
         setUpRxBusSubscription();
 
         layoutManager = new LinearLayoutManager(getActivity());
@@ -323,6 +341,18 @@ public class WatchLaterVideosFragment extends BaseFragment implements VideosAdap
                 PAGE_SIZE);
         calls.add(findWatchLaterVideosCall);
         findWatchLaterVideosCall.enqueue(findVideosFirstFetchCallback);
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        castContext.addCastStateListener(castStateListener);
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        castContext.removeCastStateListener(castStateListener);
     }
 
     @Override
@@ -531,6 +561,32 @@ public class WatchLaterVideosFragment extends BaseFragment implements VideosAdap
                 });
 
         compositeSubscription.add(rxBusSubscription);
+    }
+
+    private void showIntroductoryOverlay() {
+        if (introductoryOverlay != null) {
+            introductoryOverlay.remove();
+        }
+        if ((mediaRouteMenuItem != null) && mediaRouteMenuItem.isVisible()) {
+            new Handler().post(new Runnable() {
+                @Override
+                public void run() {
+                    introductoryOverlay = new IntroductoryOverlay.Builder(
+                            getActivity(), mediaRouteMenuItem)
+                            .setTitleText("Touch to cast videos to your TV")
+                            .setSingleTime()
+                            .setOnOverlayDismissedListener(
+                                    new IntroductoryOverlay.OnOverlayDismissedListener() {
+                                        @Override
+                                        public void onOverlayDismissed() {
+                                            introductoryOverlay = null;
+                                        }
+                                    })
+                            .build();
+                    introductoryOverlay.show();
+                }
+            });
+        }
     }
     // endregion
 }

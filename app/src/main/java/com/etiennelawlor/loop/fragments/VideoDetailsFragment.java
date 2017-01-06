@@ -277,20 +277,20 @@ public class VideoDetailsFragment extends BaseFragment {
             switch (orientation){
                 case ORIENTATION_PORTRAIT:
                     if(visibility == View.GONE){
-                        toolbar.setVisibility(View.GONE);
+                        toolbar.animate().alpha(0.0f).setDuration(300);
                         hidePortraitSystemUI();
                     } else {
                         showPortraitSystemUI();
-                        toolbar.setVisibility(View.VISIBLE);
+                        toolbar.animate().alpha(1.0f).setDuration(300);
                     }
                     break;
                 case ORIENTATION_LANDSCAPE:
                     if(visibility == View.GONE){
-                        toolbar.setVisibility(View.GONE);
+                        toolbar.animate().alpha(0.0f).setDuration(300);
                         hideLandscapeSystemUI();
                     } else {
                         showLandscapeSystemUI();
-                        toolbar.setVisibility(View.VISIBLE);
+                        toolbar.animate().alpha(1.0f).setDuration(300);
                     }
                     break;
                 default:
