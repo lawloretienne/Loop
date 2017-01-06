@@ -10,6 +10,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.Nullable;
+import android.support.design.widget.Snackbar;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -53,6 +54,7 @@ import com.etiennelawlor.loop.utilities.DateUtility;
 import com.etiennelawlor.loop.utilities.FontCache;
 import com.etiennelawlor.loop.utilities.NetworkLogUtility;
 import com.etiennelawlor.loop.utilities.NetworkUtility;
+import com.etiennelawlor.loop.utilities.TrestleUtility;
 import com.google.android.exoplayer2.DefaultLoadControl;
 import com.google.android.exoplayer2.ExoPlaybackException;
 import com.google.android.exoplayer2.ExoPlayer;
@@ -320,25 +322,25 @@ public class VideoDetailsFragment extends BaseFragment {
                         castSession.getRemoteMediaClient().addListener(new RemoteMediaClient.Listener() {
                             @Override
                             public void onStatusUpdated() {
-                                Timber.d("VideoDetailsFragment : onProgressChanged() : onStatusUpdated()");
+                                if(isResumed()){
+                                    Timber.d("VideoDetailsFragment : onProgressChanged() : onStatusUpdated()");
 
-                                if(isRemoteVideoPlaying()){
-                                    playbackState = PlaybackState.PLAYING;
-                                    resumeLocalVideo();
-                                    castInfoTextView.setText(String.format("Casting to %s", castSession.getCastDevice().getFriendlyName()));
-                                } else {
+                                    if(isRemoteVideoPlaying()){
+                                        playbackState = PlaybackState.PLAYING;
+                                        resumeLocalVideo();
+                                        castInfoTextView.setText(String.format("Casting to %s", castSession.getCastDevice().getFriendlyName()));
+                                    } else {
 //                                    playbackState = PlaybackState.PAUSED;
-                                    pauseLocalVideo();
+                                        pauseLocalVideo();
 //                                    castInfoTextView.setText(getString(R.string.cast_is_paused));
 
-                                    if(playbackState == PlaybackState.PLAYING){
-                                        if(isResumed())
+                                        if(playbackState == PlaybackState.PLAYING){
                                             castInfoTextView.setText(getString(R.string.cast_is_loading));
+                                        }
                                     }
-                                }
 
-                                if(isResumed())
                                     castInfoTextView.setVisibility(View.VISIBLE);
+                                }
                             }
 
                             @Override
@@ -390,37 +392,39 @@ public class VideoDetailsFragment extends BaseFragment {
     private RemoteMediaClient.Listener remoteMediaClientListener = new RemoteMediaClient.Listener() {
         @Override
         public void onStatusUpdated() {
-            Timber.d("VideoDetailsFragment : remoteMediaClientListener : onStatusUpdated()");
+            if(isResumed()){
+                Timber.d("VideoDetailsFragment : remoteMediaClientListener : onStatusUpdated()");
 
-            if(isRemoteVideoPlaying()){
-                playbackState = PlaybackState.PLAYING;
+                if(isRemoteVideoPlaying()){
+                    playbackState = PlaybackState.PLAYING;
 //                resumeLocalVideo();
 
-                Timber.d("VideoDetailsFragment : loadRemoteMedia() : onStatusUpdated() : isRemoteVideoPlaying() : getFormattedPosition(position) - %s", getFormattedPosition(currentPosition));
-                Timber.d("VideoDetailsFragment : loadRemoteMedia() : onStatusUpdated() : isRemoteVideoPlaying() : getFormattedPosition(castSession.getRemoteMediaClient().getApproximateStreamPosition()) - %s", getFormattedPosition(castSession.getRemoteMediaClient().getApproximateStreamPosition()));
+                    Timber.d("VideoDetailsFragment : loadRemoteMedia() : onStatusUpdated() : isRemoteVideoPlaying() : getFormattedPosition(position) - %s", getFormattedPosition(currentPosition));
+                    Timber.d("VideoDetailsFragment : loadRemoteMedia() : onStatusUpdated() : isRemoteVideoPlaying() : getFormattedPosition(castSession.getRemoteMediaClient().getApproximateStreamPosition()) - %s", getFormattedPosition(castSession.getRemoteMediaClient().getApproximateStreamPosition()));
 
-                updateLocalVideoVolume(0.0f);
+                    updateLocalVideoVolume(0.0f);
 
-                if(!isLocalVideoPrepared)
-                    // Prepare the player with the source.
-                    exoPlayer.prepare(getMediaSource(videoUrl));
+                    if(!isLocalVideoPrepared)
+                        // Prepare the player with the source.
+                        exoPlayer.prepare(getMediaSource(videoUrl));
 
 //                currentPosition = (exoPlayer.getDuration() * (exoSeekBar.getProgress()/1000L));
 //                currentPosition = exoPlayer.getCurrentPosition();
-                currentPosition = castSession.getRemoteMediaClient().getApproximateStreamPosition();
+                    currentPosition = castSession.getRemoteMediaClient().getApproximateStreamPosition();
 
-                updateLocalVideoPosition(currentPosition);
-                resumeLocalVideo();
+                    updateLocalVideoPosition(currentPosition);
+                    resumeLocalVideo();
 
 //                remoteMediaClient.removeListener(this);
-                castInfoTextView.setText(String.format("Casting to %s", castSession.getCastDevice().getFriendlyName()));
-            } else {
+                    castInfoTextView.setText(String.format("Casting to %s", castSession.getCastDevice().getFriendlyName()));
+                } else {
 //                castInfoTextView.setText(getString(R.string.cast_is_paused));
-                if(playbackState == PlaybackState.PLAYING){
-                    castInfoTextView.setText(getString(R.string.cast_is_loading));
+                    if(playbackState == PlaybackState.PLAYING){
+                        castInfoTextView.setText(getString(R.string.cast_is_loading));
+                    }
                 }
+                castInfoTextView.setVisibility(View.VISIBLE);
             }
-            castInfoTextView.setVisibility(View.VISIBLE);
         }
 
         @Override
@@ -465,11 +469,10 @@ public class VideoDetailsFragment extends BaseFragment {
 //                        errorLinearLayout.setVisibility(View.VISIBLE);
                         break;
                     case 403: // Forbidden
-                        // TODO show UI for "Cannot play this video"
-//                        Snackbar.make(getActivity().findViewById(R.id.main_content),
-//                                TrestleUtility.getFormattedText("Cannot play this video.", font, 16),
-//                                Snackbar.LENGTH_LONG)
-//                                .show();
+                        Snackbar.make(getActivity().findViewById(R.id.main_content),
+                                TrestleUtility.getFormattedText("Cannot play this video.", font, 16),
+                                Snackbar.LENGTH_LONG)
+                                .show();
                         break;
                 }
                 return;
@@ -892,6 +895,8 @@ public class VideoDetailsFragment extends BaseFragment {
 
     private void removeListeners() {
         exoPlayer.removeListener(exoPlayerEventListener);
+        simpleExoPlayerView.setControllerVisibilityListener(null);
+        exoSeekBar.setOnSeekBarChangeListener(null);
     }
 
     private void setupViewPager(ViewPager viewPager) {
@@ -1044,33 +1049,35 @@ public class VideoDetailsFragment extends BaseFragment {
         remoteMediaClient.addListener(new RemoteMediaClient.Listener() {
             @Override
             public void onStatusUpdated() {
-                Timber.d("VideoDetailsFragment : loadRemoteMedia() : onStatusUpdated()");
+                if(isResumed()){
+                    Timber.d("VideoDetailsFragment : loadRemoteMedia() : onStatusUpdated()");
 
-                if(isRemoteVideoPlaying()) {
-                    playbackState = PlaybackState.PLAYING;
-                    Timber.d("VideoDetailsFragment : loadRemoteMedia() : onStatusUpdated() : isRemoteVideoPlaying() : getFormattedPosition(position) - %s", getFormattedPosition(position));
-                    updateLocalVideoVolume(0.0f);
+                    if(isRemoteVideoPlaying()) {
+                        playbackState = PlaybackState.PLAYING;
+                        Timber.d("VideoDetailsFragment : loadRemoteMedia() : onStatusUpdated() : isRemoteVideoPlaying() : getFormattedPosition(position) - %s", getFormattedPosition(position));
+                        updateLocalVideoVolume(0.0f);
 
-                    if(!isLocalVideoPrepared)
-                        // Prepare the player with the source.
-                        exoPlayer.prepare(getMediaSource(videoUrl));
+                        if(!isLocalVideoPrepared)
+                            // Prepare the player with the source.
+                            exoPlayer.prepare(getMediaSource(videoUrl));
 
-                    updateLocalVideoPosition(position);
-                    resumeLocalVideo();
+                        updateLocalVideoPosition(position);
+                        resumeLocalVideo();
 
-                    castInfoTextView.setText(String.format("Casting to %s", castSession.getCastDevice().getFriendlyName()));
-                    remoteMediaClient.removeListener(this);
-                } else {
-                    if(playbackState == PlaybackState.PLAYING){
-                        castInfoTextView.setText(getString(R.string.cast_is_loading));
+                        castInfoTextView.setText(String.format("Casting to %s", castSession.getCastDevice().getFriendlyName()));
+                        remoteMediaClient.removeListener(this);
+                    } else {
+                        if(playbackState == PlaybackState.PLAYING){
+                            castInfoTextView.setText(getString(R.string.cast_is_loading));
+                        }
                     }
-                }
 
-                castInfoTextView.setVisibility(View.VISIBLE);
+                    castInfoTextView.setVisibility(View.VISIBLE);
 
 //                Intent intent = new Intent(LocalPlayerActivity.this, ExpandedControlsActivity.class);
 //                startActivity(intent);
 //                remoteMediaClient.removeListener(this);
+                }
             }
 
             @Override
