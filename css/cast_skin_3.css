@@ -6,11 +6,9 @@
   background-color: #009688;
 }
 
-/*
 .logo {
-  background-image: url(logo.png);
+  background-image: url('https://raw.githubusercontent.com/lawloretienne/Loop/master/app/src/main/res/mipmap-xxxhdpi/ic_launcher.png');
 }
-*/
 
 .progressBar {
   /* background-color: rgb(238, 255, 65); */
