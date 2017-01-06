@@ -105,6 +105,10 @@ import static android.content.res.Configuration.ORIENTATION_PORTRAIT;
 
 public class VideoDetailsFragment extends BaseFragment {
 
+    // ExoPlayer Guide
+    // https://google.github.io/ExoPlayer/guide.html
+    // https://google.github.io/ExoPlayer/doc/reference/com/google/android/exoplayer2/ui/SimpleExoPlayerView.html
+
     // region Constants
     private static final int VIDEO_SHARE_REQUEST_CODE = 1002;
     public static final String KEY_VIDEO_ID = "KEY_VIDEO_ID";
