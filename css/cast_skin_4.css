@@ -3,7 +3,8 @@
 
 .background {
   /* background: center no-repeat url(background.png); */
-  background-color: #009688;
+  /* background-color: #009688; */
+  background-color: #0000ff;
 }
 
 .logo {
@@ -17,7 +18,8 @@
 
 .splash {
   /* background-image: url(splash.png); */
-  background-color: #009688;
+  /* background-color: #009688; */
+  background-color: #ff0000;
 }
 
 /*
