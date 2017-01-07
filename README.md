@@ -1,6 +1,5 @@
 # Loop
 
-![Loop](https://raw.githubusercontent.com/lawloretienne/Loop/master/images/ic_launcher.png) 
 ![Loop](https://raw.githubusercontent.com/lawloretienne/Loop/master/images/cast_splash_preview.png) 
 
 ## Overview 
