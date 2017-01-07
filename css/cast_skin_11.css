@@ -2,23 +2,19 @@
 
 .background {
   /* background: center no-repeat url(background.png); */
-  /* background-color: #009688; */
-  background-color: #0000ff;
+  background-color: #009688;
 }
 
 .logo {
-  background-image: url('https://raw.githubusercontent.com/lawloretienne/Loop/master/images/cast_logo.png');
+  background: #009688 center no-repeat url('https://raw.githubusercontent.com/lawloretienne/Loop/master/images/cast_logo.png');
 }
 
 .progressBar {
-  /* background-color: rgb(238, 255, 65); */
   background-color: #ff4081;
 }
 
 .splash {
   background: #009688 center no-repeat url('https://raw.githubusercontent.com/lawloretienne/Loop/master/images/cast_splash_2.png');
-  /* background-color: #009688; */
-  /* background-color: #ff0000;
 }
 
 /*
