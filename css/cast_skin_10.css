@@ -16,8 +16,8 @@
 }
 
 .splash {
-  background: center no-repeat url('https://raw.githubusercontent.com/lawloretienne/Loop/master/images/cast_splash_2.png');
-  background-color: #009688;
+  background: #009688 center no-repeat url('https://raw.githubusercontent.com/lawloretienne/Loop/master/images/cast_splash_2.png');
+  /* background-color: #009688; */
   /* background-color: #ff0000;
 }
 
