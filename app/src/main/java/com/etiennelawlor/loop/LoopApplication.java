@@ -12,6 +12,8 @@ import com.squareup.leakcanary.RefWatcher;
 
 import java.io.File;
 
+import io.realm.Realm;
+import io.realm.RealmConfiguration;
 import timber.log.Timber;
 
 /**
@@ -42,6 +44,7 @@ public class LoopApplication extends Application {
         initializeLeakCanary();
         initializeTimber();
         initializeFlurry();
+        initializeRealm();
     }
     // endregion
 
@@ -106,6 +109,15 @@ public class LoopApplication extends Application {
         FlurryAgent.setLogEnabled(false);
 
         FlurryAgent.init(this, getString(R.string.flurry_api_key));
+    }
+
+    private void initializeRealm(){
+        Realm.init(this);
+        RealmConfiguration config =
+                new RealmConfiguration.Builder()
+                        .deleteRealmIfMigrationNeeded()
+                        .build();
+        Realm.setDefaultConfiguration(config);
     }
 
     // endregion
