@@ -1,5 +1,3 @@
-<a href="https://tracking.gitads.io/?repo=Loop"><img src="https://images.gitads.io/Loop" alt="GitAds"/></a>
-
 # Loop
 
 ![Loop](https://raw.githubusercontent.com/lawloretienne/Loop/master/images/cast_splash_preview.png) 
